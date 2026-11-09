@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario Académico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  /* ============================================================
+     ESTILOS GLOBALES Y VARIABLES
+     ============================================================ */
+  :root {
+    --lima: #A6CE39; --verde: #007A78; --petroleo: #003B36; --claro: #C5E86C;
+    --fondo: #F3F6F4; --tinta: #16302D; --suave: #5B6F6B; --linea: #DCE5E1; --blanco: #fff;
+    --rojo: #B3261E; --rojo-fondo: #FDE8E7;
+    --display: 'Fraunces', Georgia, serif; --texto: 'Figtree', 'Segoe UI', system-ui, sans-serif;
+    --transicion: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--texto); background: var(--fondo); color: var(--tinta); line-height: 1.45; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+  button, select, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; transition: var(--transicion); }
+  [hidden] { display: none !important; }
+
+  /* Loader */
+  #loader { position: fixed; inset: 0; background: var(--fondo); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; transition: opacity 0.5s; }
+  #loader.hidden { opacity: 0; pointer-events: none; }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--linea); border-top-color: var(--verde); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============================================================
+     VISTA PÚBLICA (Estilos)
+     ============================================================ */
+  .top { background: var(--petroleo); color: #fff; display: flex; align-items: center; gap: 1.2rem; padding: 0.8rem clamp(1rem, 4vw, 3rem); position: sticky; top: 0; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .brand { display: flex; align-items: center; gap: 0.8rem; }
+  .logo-img { height: 34px; width: auto; object-fit: contain; background: #fff; padding: 4px 8px; border-radius: 6px; flex: none; transition: var(--transicion); }
+  .brand:hover .logo-img { transform: scale(1.05); }
+  .brand b { font-family: var(--display); font-size: 1.15rem; display: block; line-height: 1.1; }
+  .brand small { opacity: 0.7; font-size: 0.78rem; }
+  .search { margin-left: auto; position: relative; flex: 0 1 340px; }
+  .search input { width: 100%; padding: 0.55rem 0.9rem 0.55rem 2.3rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; transition: var(--transicion); }
+  .search input:focus { background: rgba(255,255,255,0.15); border-color: var(--lima); outline: none; }
+  .search input::placeholder { color: rgba(255,255,255,0.55); }
+  .search svg { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); opacity: 0.6; }
+  .admin-link { color: var(--claro); font-size: 0.85rem; text-decoration: none; border: 1px solid rgba(197,232,108,0.4); padding: 0.45rem 0.9rem; border-radius: 999px; white-space: nowrap; transition: var(--transicion); background: transparent; cursor: pointer; }
+  .admin-link:hover { background: rgba(197,232,108,0.15); transform: translateY(-1px); }
+
+  .hero { background: var(--lima); position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; }
+  .year-bg { position: absolute; left: -1rem; bottom: -3.2rem; font-family: var(--display); font-weight: 800; font-size: clamp(9rem, 22vw, 17rem); line-height: 1; color: rgba(255,255,255,0.28); pointer-events: none; user-select: none; transition: var(--transicion); }
+  .hero:hover .year-bg { transform: scale(1.02) translateX(10px); }
+  .hero-izq { position: relative; z-index: 2; }
+  .hero-izq .hoy { font-size: 0.9rem; font-weight: 600; color: var(--petroleo); opacity: 0.8; margin-bottom: 0.5rem; }
+  .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.05; color: var(--petroleo); max-width: 14ch; }
+  .hero-izq p.sub { margin-top: 0.9rem; color: var(--petroleo); max-width: 42ch; font-size: 1.02rem; }
+  .proximos { position: relative; background: var(--petroleo); color: #fff; border-radius: 14px; padding: 1.2rem 1.3rem; box-shadow: 0 12px 30px rgba(0,59,54,0.25); z-index: 2; transition: var(--transicion); }
+  .proximos:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,59,54,0.35); }
+  .proximos h2 { font-size: 0.9rem; font-weight: 600; color: var(--claro); margin-bottom: 0.6rem; }
+  .px { display: flex; gap: 0.8rem; align-items: center; padding: 0.6rem 0; border-top: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: var(--transicion); }
+  .px:first-of-type { border-top: 0; }
+  .px:hover { background: rgba(255,255,255,0.05); padding-left: 0.5rem; border-radius: 8px; }
+  .px-dias { min-width: 58px; text-align: center; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 0.35rem 0.2rem; line-height: 1.1; }
+  .px-dias b { font-family: var(--display); font-size: 1.4rem; display: block; }
+  .px-dias span { font-size: 0.68rem; opacity: 0.75; }
+  .px-t { font-weight: 600; font-size: 0.95rem; }
+  .px-m { font-size: 0.8rem; opacity: 0.7; }
+
+  .barra { position: sticky; top: 57px; z-index: 40; background: rgba(243,246,244,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--linea); padding: 0.8rem clamp(1rem, 4vw, 3rem); display: flex; flex-wrap: wrap; gap: 0.7rem 1rem; align-items: center; }
+  .seg { display: inline-flex; background: #fff; border: 1px solid var(--linea); border-radius: 999px; padding: 3px; }
+  .seg button { border: 0; background: transparent; padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.88rem; font-weight: 600; color: var(--suave); }
+  .seg button.on { background: var(--petroleo); color: #fff; box-shadow: 0 2px 6px rgba(0,59,54,0.2); }
+  .barra select { padding: 0.5rem 0.8rem; border-radius: 10px; border: 1px solid var(--linea); background: #fff; font-size: 0.9rem; max-width: 230px; transition: var(--transicion); }
+  .barra select:focus { border-color: var(--verde); outline: none; }
+  .barra .der { margin-left: auto; display: flex; gap: 0.5rem; }
+  .btn { border: 1px solid var(--linea); background: #fff; padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); }
+  .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+  .modulos { padding: 1.6rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.9rem; }
+  .mod { position: relative; overflow: hidden; text-align: left; border: 2px solid transparent; background: var(--verde); color: #fff; border-radius: 12px; padding: 1rem 1rem 1rem 1.2rem; min-height: 92px; display: flex; flex-direction: column; justify-content: space-between; transition: var(--transicion); cursor: pointer; }
+  .mod::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--c, var(--lima)); transition: var(--transicion); }
+  .mod::after { content: ""; position: absolute; right: -26px; bottom: -26px; width: 80px; height: 80px; border: 3px solid var(--lima); border-radius: 50%; opacity: 0.25; transition: var(--transicion); }
+  .mod:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,122,120,0.3); }
+  .mod:hover::after { transform: scale(1.2); opacity: 0.5; }
+  .mod b { font-weight: 700; font-size: 0.98rem; line-height: 1.2; z-index: 1; }
+  .mod span { font-size: 0.8rem; opacity: 0.85; z-index: 1; }
+  .mod.on { border-color: var(--lima); background: var(--petroleo); transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,59,54,0.4); }
+  .mod.cero { opacity: 0.55; }
+  .mod.todos { background: var(--petroleo); }
+  .mod.todos.on { border-color: var(--lima); }
+
+  main { flex: 1; padding: 1rem clamp(1rem, 4vw, 3rem) 3rem; max-width: 1200px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+  
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid var(--linea); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); animation: slideUp 0.4s ease-out; }
+  .cal .dh { background: var(--petroleo); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 0.5rem; text-align: center; }
+  .cal .dia { min-height: 104px; border-top: 1px solid var(--linea); border-left: 1px solid var(--linea); padding: 0.3rem; font-size: 0.75rem; overflow: hidden; transition: background 0.2s; }
+  .cal .dia:hover { background: #f8fbf9; }
+  .cal .dia:nth-child(7n+8) { border-left: 0; }
+  .cal .dia.fuera { background: #F7F9F8; color: #A3B2AE; }
+  .cal .dia.hoy .n { background: var(--lima); color: var(--petroleo); }
+  .cal .dia.festivo { background: var(--rojo-fondo); }
+  .cal .dia.festivo .n { color: var(--rojo); font-weight: 800; }
+  .cal .n { display: inline-block; min-width: 22px; text-align: center; border-radius: 999px; font-weight: 700; margin-bottom: 0.2rem; }
+
+  .pill { --c-fac: #007A78; --c-cat: #007A78; display: block; width: 100%; text-align: left; border: 0; background: color-mix(in srgb, var(--c-fac) 12%, white); border-left: 3px solid var(--c-fac); border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transicion); cursor: pointer; position: relative; }
+  .pill::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c-cat); opacity: 0.8; }
+  .pill:hover { transform: translateX(2px); background: color-mix(in srgb, var(--c-fac) 25%, white); }
+  .pill.festivo { background: var(--rojo); color: white; border-left-color: #8a1c14; font-weight: 700; }
+
+  .lista-eventos { animation: slideUp 0.5s ease-out; }
+  .mes-t { font-family: var(--display); font-size: 1.5rem; margin: 1.6rem 0 0.6rem; color: var(--petroleo); border-bottom: 2px solid var(--lima); display: inline-block; padding-bottom: 0.2rem; }
+  .ev { --c-fac: #007A78; --c-cat: #007A78; display: grid; grid-template-columns: 62px 1fr auto; gap: 1rem; align-items: center; border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 0.55rem; cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; animation: scaleIn 0.3s ease-out; background: #fff; }
+  .ev:hover { box-shadow: 0 8px 20px rgba(0,59,54,0.1); transform: translateY(-2px); }
+  .ev.pasado { opacity: 0.6; }
+  .fecha { text-align: center; line-height: 1.05; }
+  .fecha b { font-family: var(--display); font-size: 1.7rem; display: block; color: var(--petroleo); }
+  .fecha span { font-size: 0.78rem; color: var(--suave); font-weight: 600; }
+  .ev h3 { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; color: var(--tinta); }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; font-size: 0.82rem; color: var(--suave); margin-top: 0.3rem; align-items: center; }
+  .chip { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; color: var(--tinta); background: #fff; padding: 0.15rem 0.5rem; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c-cat); }
+  .estado { font-size: 0.76rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 999px; white-space: nowrap; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .e-curso { color: var(--verde); }
+  .e-pronto { color: #8A5A00; }
+  .e-fin { color: var(--suave); }
+  .ev.festivo { border-left-color: var(--rojo); background-color: var(--rojo-fondo); border-color: #f3b8b4; }
+  .ev.festivo .fecha b { color: var(--rojo); }
+  .ev.festivo .chip { background: #fff; color: var(--rojo); }
+  .ev.festivo .chip i { background: var(--rojo); }
+
+  @keyframes breathe-mix {
+    0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 6%, white); border-left-color: var(--c-fac); }
+    50% { background-color: color-mix(in srgb, var(--c-cat) 10%, white); border-left-color: var(--c-cat); }
+  }
+  .ev.destacado { animation: breathe-mix 4s ease-in-out infinite; }
+  @keyframes breathe-mix-pill {
+    0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 12%, white); border-left-color: var(--c-fac); }
+    50% { background-color: color-mix(in srgb, var(--c-cat) 25%, white); border-left-color: var(--c-cat); }
+  }
+  .pill.destacado { animation: breathe-mix-pill 4s ease-in-out infinite; }
+  @keyframes pulse-next {
+    0%, 100% { opacity: 1; box-shadow: none; }
+    50% { opacity: 0.85; box-shadow: inset 0 0 10px color-mix(in srgb, var(--claro) 30%, transparent); }
+  }
+  .px.destacado { animation: pulse-next 3s infinite; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+  .velo { position: fixed; inset: 0; background: rgba(0,30,27,0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 90; backdrop-filter: blur(2px); }
+  .velo.on { opacity: 1; pointer-events: auto; }
+  .cajon { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: #fff; z-index: 100; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); overflow: auto; padding: 1.6rem; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
+  .cajon.on { transform: none; }
+  .cajon .cerrar { float: right; border: 0; background: var(--fondo); width: 34px; height: 34px; border-radius: 50%; font-size: 1.2rem; transition: var(--transicion); }
+  .cajon .cerrar:hover { background: #e2e8e4; transform: rotate(90deg); }
+
+  #btnTop { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; border-radius: 50%; background: var(--verde); color: white; border: none; box-shadow: 0 4px 15px rgba(0,122,120,0.4); opacity: 0; pointer-events: none; transition: var(--transicion); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; z-index: 80; }
+  #btnTop.show { opacity: 1; pointer-events: auto; }
+  #btnTop:hover { background: var(--petroleo); transform: translateY(-3px); }
+
+  @media(max-width: 820px) {
+    .hero { grid-template-columns: 1fr; }
+    .search { flex-basis: 100%; order: 5; margin-top: 0.5rem; }
+    .top { flex-wrap: wrap; }
+    .ev { grid-template-columns: 52px 1fr; }
+    .estado { grid-column: 2; justify-self: start; margin-top: 0.5rem;}
+    .cal .dia { min-height: 70px; }
+    .pill { font-size: 0; padding: 4px; height: 10px; border-radius: 2px; }
+    .barra { top: 120px; }
+  }
+
+  main{max-width:1600px}
+  .panelwrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:1.4rem;align-items:start}
+  .panel{background:#fff;border:1px solid var(--linea);border-radius:16px;box-shadow:0 6px 20px rgba(0,59,54,.08);padding:1.1rem 1.2rem;animation:slideUp .5s both}
+  .panel.pl{position:sticky;top:130px;animation-delay:.12s}
+  .phead{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}
+  .phead h2{font-family:var(--display);font-size:1.5rem;color:var(--petroleo);flex:1}
+  .phead span{font-size:.8rem;font-weight:700;background:var(--fondo);border-radius:999px;padding:.2rem .7rem;color:var(--suave)}
+  .lista-eventos{position:relative;max-height:calc(100vh - 250px);overflow:auto;padding-right:.4rem;scroll-behavior:smooth}
+  .lista-eventos .mes-t{margin-top:.8rem;position:sticky;top:0;background:#fff;z-index:2;display:block}
+  .cal{box-shadow:none}.cal.izq{animation:desdeIzq .4s both}.cal.der{animation:desdeDer .4s both}
+  .cal .dia.festivo{background:var(--rojo-fondo);box-shadow:inset 0 0 0 1px #f3b8b4}
+  .cal .dia.festivo .n{background:var(--rojo);color:#fff}
+  .cal .dia:hover{background:#eef7f2}
+  .leyenda{font-size:.8rem;color:var(--suave);margin-top:.6rem}.leyenda i{display:inline-block;width:10px;height:10px;background:var(--rojo);border-radius:3px;margin-right:.4rem}
+  .ev.festivo{background:var(--rojo-fondo)}
+  .modulos{grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:.7rem}
+  .mod{background:#fff;color:var(--tinta);border:1px solid var(--linea);min-height:84px;justify-content:flex-start;gap:.15rem;padding:.8rem .8rem .8rem 1.1rem;animation:scaleIn .45s both;animation-delay:calc(var(--i,0)*45ms)}
+  .mod::after{display:none}.mod .ic{font-size:1.25rem;line-height:1;transition:var(--transicion)}
+  .mod:hover .ic{transform:scale(1.25) rotate(-8deg)}.mod:hover{box-shadow:0 10px 22px rgba(0,59,54,.14)}
+  .mod b{font-size:.88rem}.mod .n{font-size:.76rem;color:var(--suave);margin-top:auto}
+  .mod.on{background:var(--petroleo);color:#fff;border-color:var(--petroleo)}.mod.on .n{color:var(--claro)}
+  .mod.todos{background:var(--lima);color:var(--petroleo)}.mod.todos .n{color:var(--petroleo)}.mod.todos.on{background:var(--petroleo);color:#fff}.mod.todos.on .n{color:var(--claro)}
+  .rev{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,box-shadow .3s}.rev.vis{opacity:1;transform:none}
+  .ev.rev{animation:none}.ev.rev.vis:hover{transform:translateX(4px)}
+  .cal .dia.hoy .n{animation:latido 2s infinite}
+  .pill.festivo{animation:fadeIn .4s,brillo 3s infinite}
+  @keyframes latido{0%,100%{box-shadow:0 0 0 0 rgba(166,206,57,.7)}70%{box-shadow:0 0 0 8px rgba(166,206,57,0)}}
+  @keyframes brillo{50%{filter:brightness(1.15)}}
+  @keyframes desdeIzq{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:none}}
+  @keyframes desdeDer{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+  @media(max-width:1100px){.panelwrap{grid-template-columns:1fr}.panel.pl{position:static}.lista-eventos{max-height:70vh}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rev{opacity:1;transform:none}}
+  @media print{.barra,.top,#btnTop,.modulos{display:none}.lista-eventos{max-height:none;overflow:visible}.panelwrap{grid-template-columns:1fr}}
+
+  /* ============================================================
+     VISTA ADMIN (Estilos)
+     ============================================================ */
+  #admin-panel { display: none; }
+  #admin-panel.on { display: block; }
+  
+  #gate { min-height: 100vh; display: grid; place-items: center; background: var(--petroleo); padding: 1rem; position: fixed; inset: 0; z-index: 999; }
+  .gate-card { background: #fff; border-radius: 16px; padding: 2rem; width: min(380px, 100%); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: slideUp 0.5s ease-out; }
+  .gate-card .logo-img { height: 46px; width: auto; object-fit: contain; margin: 0 auto 1rem; display: block; }
+  .gate-card h1 { font-family: var(--display); font-size: 1.6rem; margin-bottom: .3rem; color: var(--petroleo); }
+  .gate-card p { color: var(--suave); font-size: .9rem; margin-bottom: 1.2rem; }
+  .gate-card input { width: 100%; padding: .8rem; border: 1px solid var(--linea); border-radius: 10px; text-align: center; font-size: 1.2rem; letter-spacing: .1rem; margin-bottom: .8rem; transition: var(--transicion); }
+  .gate-card input:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
+
+  #admin-app { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+  .admin-nav { background: var(--petroleo); color: #fff; padding: 1.3rem 1rem; display: flex; flex-direction: column; gap: .3rem; position: sticky; top: 0; height: 100vh; }
+  .admin-nav .brand { display: flex; gap: .7rem; align-items: center; margin-bottom: 1.2rem; padding: 0 .4rem; }
+  .admin-nav .brand .logo-img { height: 32px; width: auto; padding: 3px 6px; border-radius: 6px; flex: none; }
+  .admin-nav .brand b { font-family: var(--display); line-height: 1.1; display: block; }
+  .admin-nav .brand small { opacity: .65; font-size: .75rem; }
+  .admin-nav button.it { display: flex; align-items: center; gap: .7rem; text-align: left; border: 0; background: transparent; color: rgba(255,255,255,.78); padding: .65rem .8rem; border-radius: 10px; font-weight: 600; font-size: .93rem; transition: var(--transicion); }
+  .admin-nav button.it:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .admin-nav button.it.on { background: var(--lima); color: var(--petroleo); box-shadow: 0 4px 10px rgba(166,206,57,0.3); }
+  .admin-nav .sp { flex: 1; }
+  .admin-nav a.ver { display: block; text-align: center; color: var(--claro); border: 1px solid rgba(197,232,108,.4); border-radius: 10px; padding: .6rem; text-decoration: none; font-size: .88rem; font-weight: 600; transition: var(--transicion); }
+  .admin-nav a.ver:hover { background: rgba(197,232,108,0.1); }
+  .admin-nav .aviso { background: #F5A623; color: #3a2600; border-radius: 10px; padding: .6rem .7rem; font-size: .8rem; font-weight: 600; margin-bottom: .5rem; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.7 } }
+  .admin-nav .sep { font-size: .72rem; opacity: .5; padding: .8rem .8rem .2rem; }
+
+  #admin-panel-inner { padding: 2rem clamp(1rem,3vw,2.6rem) 4rem; max-width: 1180px; width: 100%; }
+  h1.pt { font-family: var(--display); font-size: 2rem; color: var(--petroleo); line-height: 1.1; }
+  p.ps { color: var(--suave); margin: .3rem 0 1.4rem; max-width: 62ch; }
+  
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .9rem; margin-bottom: 1.5rem; }
+  .stat { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 1rem 1.1rem; transition: var(--transicion); }
+  .stat:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
+  .stat b { font-family: var(--display); font-size: 2.2rem; display: block; line-height: 1; }
+  .stat span { font-size: .85rem; color: var(--suave); }
+  .stat.verde { background: var(--verde); color: #fff; border: 0; }
+  .stat.verde span { color: rgba(255,255,255,.8); }
+  .caja { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 1.2rem 1.3rem; margin-bottom: 1.2rem; transition: var(--transicion); }
+  .caja:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  .caja h2 { font-size: 1.05rem; margin-bottom: .8rem; color: var(--petroleo); }
+  
+  .tools { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; align-items: center; }
+  .tools input, .tools select { padding: .55rem .8rem; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font-size: .9rem; transition: var(--transicion); }
+  .tools input:focus, .tools select:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
+  .tools input[type=search] { flex: 1 1 200px; }
+  
+  .btn { border: 1px solid var(--linea); background: #fff; padding: .55rem .95rem; border-radius: 10px; font-weight: 600; font-size: .88rem; transition: var(--transicion); }
+  .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+  .btn.pri { background: var(--verde); color: #fff; border-color: var(--verde); }
+  .btn.pri:hover { background: var(--petroleo); color: #fff; }
+  .btn.pel { color: var(--rojo); }
+  .btn.pel:hover { border-color: var(--rojo); color: var(--rojo); background: #fff5f5; }
+  .btn.sm { padding: .3rem .6rem; font-size: .8rem; }
+  
+  .tw { background: #fff; border: 1px solid var(--linea); border-radius: 14px; overflow: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: #F7FAF8; text-align: left; font-size: .78rem; color: var(--suave); padding: .65rem .8rem; white-space: nowrap; }
+  td { padding: .65rem .8rem; border-top: 1px solid var(--linea); vertical-align: middle; transition: background 0.2s; }
+  tr:hover td { background: #FBFDFC; }
+  .chip { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+  .chip i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  td .tt { font-weight: 700; }
+  .est { border: 0; border-radius: 999px; padding: .2rem .7rem; font-size: .76rem; font-weight: 700; cursor: pointer; transition: var(--transicion); }
+  .est.pub { background: #E1F2B8; color: #2f4a00; }
+  .est.bor { background: #EEE; color: #555; }
+  .est:hover { filter: brightness(0.95); }
+  .acc { display: flex; gap: .3rem; justify-content: flex-end; }
+  
+  #modal { position: fixed; inset: 0; background: rgba(0,30,27,.5); display: none; place-items: center; padding: 1rem; z-index: 100; overflow: auto; backdrop-filter: blur(2px); }
+  #modal.on { display: grid; }
+  .mod { background: #fff; border-radius: 16px; width: min(680px, 100%); padding: 1.5rem; margin: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: modalIn 0.3s ease-out; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .mod h2 { font-family: var(--display); font-size: 1.5rem; margin-bottom: 1rem; color: var(--petroleo); }
+  .fr { margin-bottom: .8rem; }
+  .fr label { display: block; font-size: .8rem; font-weight: 700; color: var(--suave); margin-bottom: .25rem; }
+  .fr input, .fr select, .fr textarea { width: 100%; padding: .6rem .75rem; border: 1px solid var(--linea); border-radius: 10px; background: #fff; transition: var(--transicion); }
+  .fr input:focus, .fr select:focus, .fr textarea:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
+  .fr2 { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+  .multi-select { width: 100%; padding: .6rem; border: 1px solid var(--linea); border-radius: 10px; font-size: .85rem; background: #fff; color: var(--tinta); }
+  .multi-select option { padding: 0.3rem; }
+
+  #toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--petroleo); color: #fff; padding: .7rem 1.2rem; border-radius: 999px; font-weight: 600; transition: transform .25s; z-index: 200; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  #toast.on { transform: translateX(-50%) translateY(0); }
+  #toast.err { background: var(--rojo); }
+
+  .masiva { background: var(--petroleo); color: #fff; border-radius: 12px; padding: .6rem .9rem; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .8rem; }
+  .masiva .btn { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.25); }
+  
+  @media(max-width: 860px) {
+    #admin-app { grid-template-columns: 1fr; }
+    .admin-nav { position: static; height: auto; flex-direction: row; flex-wrap: wrap; }
+    .admin-nav .brand, .admin-nav .sep, .admin-nav .sp { display: none; }
+    .dos { grid-template-columns: 1fr; }
+    .fr2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     PANTALLA DE CARGA
+     ============================================================ -->
+<div id="loader"><div class="spinner"></div><p style="color:var(--suave); font-weight:600;">Cargando calendario...</p></div>
+
+<!-- ============================================================
+     VISTA PÚBLICA
+     ============================================================ -->
+<div id="public-panel">
+  <header class="top">
+    <div class="brand">
+      <img src="Logo_de_la_Universidad_El_Bosque.png" alt="Logo" class="logo-img">
+      <div><b>Calendario Académico</b><small id="inst"></small></div>
+    </div>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Buscar: matrícula, grados, nómina…">
+    </div>
+    <button class="admin-link" onclick="irAdmin()">Administrar ↗</button>
+  </header>
+
+  <section class="hero">
+    <div class="year-bg" id="bgAnio"></div>
+    <div class="hero-izq">
+      <p class="hoy" id="hoyTxt"></p>
+      <h1 id="heroTit">Calendario académico</h1>
+      <p class="sub" id="heroSub">Fechas de matrículas, clases, grados, posgrados y más, organizadas por semestre, facultad y área.</p>
+    </div>
+    <div class="proximos"><h2>Lo que viene</h2><div id="proximos"></div></div>
+  </section>
+
+  <div class="barra">
+    <select id="fAnio" aria-label="Año"></select>
+    <div class="seg" id="fSem">
+      <button data-v="">Todo el año</button><button data-v="1">Semestre 1</button><button data-v="2">Semestre 2</button>
+    </div>
+    <select id="fGrupo" aria-label="Facultad o área"></select>
+    <select id="fProg" aria-label="Programa" hidden></select>
+    <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
+    <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
+    <div class="der">
+      <button class="btn" id="bIcs">Añadir a mi calendario</button>
+      <button class="btn" onclick="print()">Imprimir</button>
+    </div>
+  </div>
+
+  <div class="modulos" id="modulos"></div>
+
+  <main>
+    <div class="panelwrap">
+      <section class="panel"><div id="vistaCalendario"></div></section>
+      <section class="panel pl"><div class="phead"><h2>Lista por meses</h2><span id="cuentaLista"></span></div><div id="vistaLista" class="lista-eventos"></div></section>
+    </div>
+  </main>
+
+  <footer style="background:var(--petroleo);color:rgba(255,255,255,.75);padding:1rem clamp(1rem,4vw,3rem);font-size:.82rem;display:flex;flex-wrap:wrap;gap:.5rem 2rem;">
+    <span id="origen"></span><span id="actual"></span>
+  </footer>
+
+  <button id="btnTop" title="Volver arriba">↑</button>
+  <div class="velo" id="velo"></div>
+  <aside class="cajon" id="cajon" aria-live="polite"></aside>
+</div>
+
+<!-- ============================================================
+     VISTA ADMIN
+     ============================================================ -->
+<div id="admin-panel">
+  <div id="gate">
+    <form class="gate-card" id="gateForm">
+      <img src="Logo_de_la_Universidad_El_Bosque.png" alt="Logo" class="logo-img">
+      <h1>Administrar calendario</h1>
+      <p>Escribe tu clave para entrar y editar las fechas.</p>
+      <input id="pin" type="password" autocomplete="off" placeholder="••••" autofocus>
+      <button class="btn pri" style="width:100%">Entrar</button>
+      <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Clave por defecto: <b>1234</b>.</p>
+    </form>
+  </div>
+
+  <div id="admin-app" hidden>
+    <nav class="admin-nav">
+      <div class="brand">
+        <img src="Logo_de_la_Universidad_El_Bosque.png" alt="Logo" class="logo-img">
+        <div><b>Calendario</b><small>Administración</small></div>
+      </div>
+      <button class="it" data-p="resumen">Resumen</button>
+      <button class="it" data-p="eventos">Eventos</button>
+      <div class="sep">Estructura</div>
+      <button class="it" data-p="periodos">Semestres</button>
+      <button class="it" data-p="facultades">Facultades y programas</button>
+      <button class="it" data-p="areas">Áreas administrativas</button>
+      <button class="it" data-p="categorias">Categorías</button>
+      <div class="sp"></div>
+      <div class="aviso" id="aviso" hidden>Hay cambios sin descargar</div>
+      <button class="it" data-p="publicar">Publicar y datos</button>
+      <a class="ver" href="#" onclick="irPublico(event)">Ver público ↗</a>
+    </nav>
+    <section id="admin-panel-inner"></section>
+  </div>
+  <div id="modal"></div>
+  <div id="toast"></div>
+</div>
+
+<script>
+  /* ============================================================
+     LÓGICA GLOBAL Y DATOS
+     ============================================================ */
+  const LS_KEY = 'ub_calendario_v2';
+  const LS_SUCIO = 'ub_calendario_sin_publicar';
+  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const DIAS_C = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const pad = n => String(n).padStart(2, '0');
+  const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const hoy = () => iso(new Date());
+  const diffDias = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+  const sumaDias = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+  const finDe = e => e.fin || e.inicio;
+  const fmtFecha = (s, conAnio = true) => { const d = parse(s); return `${d.getDate()} ${MESES_C[d.getMonth()]}` + (conAnio ? ' ' + d.getFullYear() : ''); };
+  const fmtRango = e => { const f = finDe(e); if (f === e.inicio) return fmtFecha(e.inicio); return parse(e.inicio).getFullYear() === parse(f).getFullYear() ? `${fmtFecha(e.inicio, false)} – ${fmtFecha(f)}` : `${fmtFecha(e.inicio)} – ${fmtFecha(f)}`; };
+  const periodoDe = s => { const d = parse(s); return `${d.getFullYear()}-${d.getMonth() < 6 ? 1 : 2}`; };
+  const periodoAuto = (D, fecha) => { const p = D.periodos.find(p => p.inicio <= fecha && fecha <= p.fin); return p ? p.id : periodoDe(fecha); };
+  const nombrePeriodo = id => { const [a, s] = id.split('-'); return `${a} · Semestre ${s}`; };
+  const catDe = (D, id) => D.categorias.find(c => c.id === id) || { id, nombre: id, color: '#6b7280' };
+  
+  const slug = s => norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 24) || 'x';
+  const nuevoId = (s, lista) => { const b = slug(s); let i = b, n = 2; while (lista.some(x => x.id === i)) i = b + '_' + n++; return i; };
+  const opt = (v, t, sel) => `<option value="${esc(v)}" ${sel ? 'selected' : ''}>${esc(t)}</option>`;
+  const uid = () => 'ev_' + Math.random().toString(36).slice(2, 10);
+
+  // Datos Semilla
+  function semilla() {
+    const ev = [];
+    const E = (titulo, categoria, inicio, fin, o = {}) => ev.push({
+      id: uid(), titulo, descripcion: o.d || '', categoria, inicio, fin: fin || inicio,
+      periodo: o.p || periodoDe(inicio), facultad: o.f ? [o.f] : [], programa: o.pr ? [o.pr] : [], area: o.a ? [o.a] : [],
+      publico: ['Comunidad universitaria'], lugar: o.l || '', lugarEsp: '', piso: '', enlace: o.u || '', estado: 'publicado'
+    });
+    E('Matrícula ordinaria', 'matricula', '2026-01-05', '2026-01-16', { d: 'Pago de derechos de matrícula e inscripción de materias.', f: 'Medicina' });
+    E('Ceremonia de grados', 'grado_c', '2026-03-27', null, { l: 'Auditorio principal' });
+    E('Exámenes finales', 'clases', '2026-05-18', '2026-05-30');
+    return {
+      version: 2, institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(),
+      periodos: [
+        { id: '2026-1', inicio: '2026-01-19', fin: '2026-06-06' },
+        { id: '2026-2', inicio: '2026-07-20', fin: '2026-12-04' }
+      ],
+      facultades: [
+        { id: 'medicina', nombre: 'Medicina', emoji: '🩺', color: '#F5A623', programas: [ { id: 'med', nombre: 'Medicina', nivel: 'pregrado' } ] },
+        { id: 'ing', nombre: 'Ingeniería', emoji: '⚙️', color: '#007A78', programas: [ { id: 'sis', nombre: 'Ing. Sistemas', nivel: 'pregrado' } ] }
+      ],
+      areas: [ { id: 'registro', nombre: 'Registro y Control Académico' } ],
+      categorias: [
+        { id: 'general', nombre: 'Calendario general', color: '#007A78' },
+        { id: 'matricula', nombre: 'Matrículas', color: '#7FA818' },
+        { id: 'clases', nombre: 'Clases pregrado', color: '#3B6E8F' },
+        { id: 'grado_c', nombre: 'Grados ceremoniales', color: '#E39A12' }
+      ],
+      eventos: ev
+    };
+  }
+
+  // Utilidades de Datos
+  function leerLocal() { try { return JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) { return null; } }
+  function guardarLocal(D) { D.actualizado = new Date().toISOString(); localStorage.setItem(LS_KEY, JSON.stringify(D)); }
+  async function leerArchivo() {
+    try { const r = await fetch('calendario-datos.json', { cache: 'no-store' }); if (r.ok) { const d = await r.json(); if (d && d.eventos) return d; } } catch (e) {}
+    return null;
+  }
+
+  let D = null, ORIGEN = '';
+  let listaFiltradaCompleta = []; // Para usar en ICS y UI pública
+
+  /* ============================================================
+     LÓGICA DE LA VISTA PÚBLICA
+     ============================================================ */
+  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', vista: 'agenda', ref: new Date() };
+
+  function getColores(D, e) {
+    const facs = e.facultad || [];
+    const cat = catDe(D, e.categoria);
+    let facColor = cat.color;
+    let emoji = '';
+    if (facs.length === 1) {
+      const f = D.facultades.find(x => x.id === facs[0]);
+      if (f) { facColor = f.color || cat.color; emoji = f.emoji || ''; }
+    }
+    return { facColor, catColor: cat.color, emoji };
+  }
+
+  function ambito(D, e) {
+    const facs = e.facultad || [];
+    const areas = e.area || [];
+    const progs = e.programa || [];
+    let nombres = [];
+    facs.forEach(fid => { const f = D.facultades.find(x => x.id === fid); if (f) nombres.push(`${f.emoji || ''} ${f.nombre}`); });
+    if (progs.length) progs.forEach(pid => { const f = D.facultades.find(x => x.programas.some(p => p.id === pid)); const p = f && f.programas.find(x => x.id === pid); if (p) nombres.push(p.nombre); });
+    areas.forEach(aid => { const a = D.areas.find(x => x.id === aid); if (a) nombres.push(a.nombre); });
+    if (!nombres.length) return 'Toda la institución';
+    return nombres.join(', ');
+  }
+
+  const esInstitucional = e => !(e.facultad || []).length && !(e.area || []).length;
+
+  function calcularFestivos(anio) {
+    const festivos = [];
+    const add = (m, d, n) => festivos.push({ fecha: `${anio}-${pad(m)}-${pad(d)}`, nombre: n, esFestivo: true });
+    add(1, 1, 'Año Nuevo'); add(5, 1, 'Día del Trabajo'); add(7, 20, 'Día de la Independencia');
+    add(8, 7, 'Batalla de Boyacá'); add(12, 8, 'Inmaculada Concepción'); add(12, 25, 'Navidad');
+    const emiliani = (m, d, n) => {
+      let date = new Date(anio, m - 1, d);
+      if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7));
+      add(date.getMonth() + 1, date.getDate(), n);
+    };
+    emiliani(1, 6, 'Reyes Magos'); emiliani(3, 19, 'San José'); emiliani(6, 29, 'San Pedro y San Pablo');
+    emiliani(8, 15, 'Asunción de la Virgen'); emiliani(10, 12, 'Día de la Raza');
+    emiliani(11, 1, 'Todos los Santos'); emiliani(11, 11, 'Independencia de Cartagena');
+    const getPascua = (y) => {
+      const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
+      return new Date(y, month - 1, day);
+    };
+    const pascua = getPascua(anio);
+    const restarDias = (date, n) => { const d = new Date(date); d.setDate(d.getDate() - n); return d; };
+    const jv = restarDias(pascua, 3); add(jv.getMonth() + 1, jv.getDate(), 'Jueves Santo');
+    const vv = restarDias(pascua, 2); add(vv.getMonth() + 1, vv.getDate(), 'Viernes Santo');
+    const addEmiliani = (dateObj, n) => {
+      let date = new Date(dateObj);
+      if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7));
+      add(date.getMonth() + 1, date.getDate(), n);
+    };
+    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 43), 'Ascensión del Señor');
+    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 64), 'Corpus Christi');
+    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 71), 'Sagrado Corazón');
+    return festivos;
+  }
+
+  const FEST = {};
+  function festivosAnio(y) { return FEST[y] || (FEST[y] = calcularFestivos(y).map(f => ({ ...f, id: 'festivo-' + f.fecha, titulo: f.nombre, inicio: f.fecha, fin: f.fecha }))); }
+  const festivosDia = s => festivosAnio(+s.slice(0, 4)).filter(f => f.fecha === s);
+  const amb = e => e.esFestivo ? 'Festivo nacional' : ambito(D, e);
+  
+  let IO; function revelar() { if (IO) IO.disconnect(); if (!window.IntersectionObserver) return $$('.rev').forEach(x => x.classList.add('vis')); IO = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('vis'); IO.unobserve(x.target); } }), { threshold: .05 }); $$('.rev').forEach((el, i) => { el.style.transitionDelay = (i % 8) * 40 + 'ms'; IO.observe(el); }); }
+  function irMes() { const el = $('#m-' + S.ref.getFullYear() + '-' + S.ref.getMonth()), L = $('#vistaLista'); if (el) L.scrollTo({ top: el.offsetTop - 4, behavior: 'smooth' }); }
+  const ORD = [['general','🗓️'],['matricul','📝'],['pregrado','📚'],['posgrado','🔬'],['ceremon','🎓'],['no ceremon','📜'],['talento','👥'],['otro','✨']];
+
+  function aniosDisponibles() { const set = new Set(D.periodos.map(p => +p.id.split('-')[0])); D.eventos.forEach(e => { set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
+  
+  function filtrar({ sinCat = false, sinPeriodo = false } = {}) {
+    const q = norm(S.q);
+    return D.eventos.filter(e => {
+      if (e.estado === 'borrador') return false;
+      if (!sinPeriodo) { 
+        const p1 = e.periodo.startsWith(S.anio + '-');
+        const p2 = e.periodo2 ? e.periodo2.startsWith(S.anio + '-') : false;
+        if (!p1 && !p2) return false; 
+        if (S.sem) {
+          const s1 = e.periodo.endsWith('-' + S.sem);
+          const s2 = e.periodo2 ? e.periodo2.endsWith('-' + S.sem) : false;
+          if (!s1 && !s2) return false;
+        }
+      }
+      if (!sinCat && S.cat && e.categoria !== S.cat) return false;
+      
+      const facs = e.facultad || [];
+      const areas = e.area || [];
+      const progs = e.programa || [];
+
+      if (S.grupo) {
+        const [t, id] = S.grupo.split(':');
+        const coincide = t === 'f' ? facs.includes(id) && (!S.prog || !progs.length || progs.includes(S.prog)) : areas.includes(id);
+        if (!coincide && !(S.inst && esInstitucional(e))) return false;
+      }
+      if (q && !norm(`${e.titulo} ${e.descripcion} ${ambito(D, e)} ${catDe(D, e.categoria).nombre}`).includes(q)) return false;
+      return true;
+    }).sort((a, b) => a.inicio.localeCompare(b.inicio) || a.titulo.localeCompare(b.titulo));
+  }
+  
+  function estadoDe(e) {
+    if (e.esFestivo) return { t: 'Festivo', c: 'e-fin' };
+    const h = hoy(), f = finDe(e);
+    if (f < h) return { t: 'Finalizado', c: 'e-fin', pasado: true };
+    if (e.inicio <= h) return { t: 'En curso', c: 'e-curso' };
+    const d = diffDias(h, e.inicio);
+    if (d <= 14) return { t: d === 1 ? 'Mañana' : `En ${d} días`, c: 'e-pronto' };
+    return { t: '', c: '' };
+  }
+  
+  function esInminente(e) {
+    if (e.esFestivo) return false;
+    const h = hoy(), f = finDe(e);
+    if (f < h) return false;
+    if (e.inicio <= h) return true;
+    const d = diffDias(h, e.inicio);
+    return d <= 3;
+  }
+
+  function pintarEncabezado() {
+    $('#inst').textContent = D.institucion;
+    document.title = 'Calendario Académico · ' + D.institucion;
+    const h = new Date();
+    $('#hoyTxt').textContent = `Hoy, ${DIAS_C[h.getDay()]} ${h.getDate()} de ${MESES[h.getMonth()].toLowerCase()} de ${h.getFullYear()}`;
+    $('#bgAnio').textContent = S.anio;
+    $('#heroTit').textContent = S.sem ? `${S.anio} · Semestre ${S.sem}` : `Año académico ${S.anio}`;
+    $('#fAnio').innerHTML = aniosDisponibles().map(a => `<option ${a === S.anio ? 'selected' : ''}>${a}</option>`).join('');
+    $$('#fSem button').forEach(b => b.classList.toggle('on', b.dataset.v === String(S.sem)));
+    let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${f.emoji || ''} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('') + '</optgroup>';
+    $('#fGrupo').innerHTML = g;
+    const f = S.grupo.startsWith('f:') ? D.facultades.find(x => x.id === S.grupo.slice(2)) : null;
+    const fp = $('#fProg'); fp.hidden = !f;
+    if (f) fp.innerHTML = '<option value="">Todos los programas</option>' + f.programas.map(p => `<option value="${p.id}" ${S.prog === p.id ? 'selected' : ''}>${esc(p.nombre)}${p.nivel === 'posgrado' ? ' (posgrado)' : ''}</option>`).join('');
+    $('#fInst').checked = S.inst;
+    $('#fInst').parentElement.style.display = S.grupo ? '' : 'none';
+  }
+  
+  function pintarProximos() {
+    const h = hoy(); const saved = S.cat; S.cat = '';
+    const ya = +h.slice(0, 4); let lista = [...filtrar({ sinPeriodo: true }), ...(S.festivos ? [...festivosAnio(ya), ...festivosAnio(ya + 1)] : [])].filter(e => finDe(e) >= h).sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 4);
+    S.cat = saved;
+    $('#proximos').innerHTML = lista.length ? lista.map(e => {
+      const en = e.inicio <= h ? 0 : diffDias(h, e.inicio);
+      const inminente = esInminente(e);
+      return `<div class="px ${inminente ? 'destacado' : ''}" data-id="${e.id}"><div class="px-dias" style="${e.esFestivo ? 'background:var(--rojo);color:white;' : ''}"><b>${en === 0 ? 'Hoy' : en}</b><span>${en === 0 ? 'en curso' : en === 1 ? 'día' : 'días'}</span></div><div><div class="px-t">${esc(e.titulo)}</div><div class="px-m">${fmtRango(e)} · ${esc(amb(e))}</div></div></div>`;
+    }).join('') : '<p style="opacity:0.7; font-size:0.9rem; padding:0.4rem 0;">No hay fechas próximas.</p>';
+  }
+
+  function pintarModulos() {
+    const base = filtrar({ sinCat: true }); let i = 0;
+    const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
+    const card = (id, col, ic, nom, n, cls) => `<button class="mod ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></button>`;
+    $('#modulos').innerHTML = card('', 'var(--lima)', '📅', 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
+      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, Number.isInteger(r) ? ORD[r][1] : '📌', c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
+  }
+
+  function filaEvento(e, mostrarAmbito = true) {
+    const st = estadoDe(e);
+    const { facColor, catColor, emoji } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', emoji: '' } : getColores(D, e);
+    const c = e.esFestivo ? { nombre: 'Festivo Nacional' } : catDe(D, e.categoria);
+    const d = parse(e.inicio);
+    const tituloEmoji = emoji ? `${emoji} ` : '';
+    const inminente = esInminente(e);
+    
+    return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
+      <div class="fecha"><b>${d.getDate()}</b><span>${MESES_C[d.getMonth()]} · ${DIAS_C[d.getDay()]}</span></div>
+      <div><h3>${tituloEmoji}${esc(e.titulo)}</h3><div class="meta"><span class="chip"><i></i>${esc(c.nombre)}</span>${mostrarAmbito ? `<span>${esc(amb(e))}</span>` : ''}<span>${fmtRango(e)}</span></div></div>
+      <span class="estado ${st.c}">${st.t}</span>
+    </article>`;
+  }
+
+  function vistaCalendario(L) {
+    const y = S.ref.getFullYear(), m = S.ref.getMonth();
+    const primero = new Date(y, m, 1), offset = (primero.getDay() + 6) % 7;
+    const inicio = new Date(y, m, 1 - offset);
+    let h = `<div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem;"><h2 style="font-family:var(--display); font-size:1.6rem; flex:1;">${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}">`;
+    ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(n => h += `<div class="dh">${n}</div>`);
+    const h0 = hoy();
+    for (let i = 0; i < 42; i++) {
+      const dia = new Date(inicio); dia.setDate(inicio.getDate() + i);
+      const s = iso(dia);
+      const fDelDia = festivosDia(s);
+      const eDelDia = L.filter(e => e.inicio <= s && s <= finDe(e));
+      const todosDelDia = [...fDelDia, ...eDelDia];
+      
+      h += `<div class="dia ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${fDelDia.length ? 'festivo' : ''}"><span class="n">${dia.getDate()}</span>`;
+      todosDelDia.slice(0, 3).forEach(e => {
+        let { facColor, catColor, emoji } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', emoji: '' } : getColores(D, e);
+        let inminente = esInminente(e);
+        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id || 'festivo-'+e.fecha}" title="${esc(e.titulo || e.nombre)}">${emoji ? emoji + ' ' : ''}${esc(e.titulo || e.nombre)}</button>`;
+      });
+      if (todosDelDia.length > 3) h += `<button style="border:0; background:none; color:var(--verde); font-weight:700; font-size:0.72rem; padding:2px 4px;" data-dia="${s}">+${todosDelDia.length - 3} más</button>`;
+      h += '</div>';
+    }
+    return h + '</div><p class="leyenda"><i></i>Festivo nacional de Colombia</p>';
+  }
+
+  function vistaLista(L) {
+    let out = '', mes = '';
+    L.forEach(e => { 
+      const d = parse(e.inicio), k = `${d.getFullYear()}-${d.getMonth()}`; 
+      if (k !== mes) { mes = k; out += `<h2 class="mes-t rev" id="m-${d.getFullYear()}-${d.getMonth()}">${MESES[d.getMonth()]} ${d.getFullYear()}</h2>`; } 
+      out += filaEvento(e); 
+    });
+    return out || `<div style="text-align:center; padding:3rem 1rem; color:var(--suave);"><b style="display:block; font-family:var(--display); font-size:1.3rem; color:var(--tinta); margin-bottom:0.3rem;">No encontramos fechas</b>Prueba con otro semestre, facultad o categoría.</div>`;
+  }
+
+  function pintarPublico() {
+    pintarEncabezado(); pintarProximos(); pintarModulos();
+    const L = filtrar(); let fest = [];
+    if (S.festivos && !S.cat) { const m0 = S.sem == 2 ? 6 : 0, m1 = S.sem == 1 ? 5 : 11; fest = festivosAnio(S.anio).filter(f => { const m = +f.fecha.slice(5, 7) - 1; return m >= m0 && m <= m1; }); if (S.q) fest = fest.filter(f => norm(f.nombre).includes(norm(S.q))); }
+    const todos = [...L, ...fest].sort((a, b) => a.inicio.localeCompare(b.inicio) || a.titulo.localeCompare(b.titulo));
+    listaFiltradaCompleta = todos;
+    $('#vistaCalendario').innerHTML = vistaCalendario(filtrar({ sinPeriodo: true }));
+    $('#vistaLista').innerHTML = vistaLista(todos);
+    $('#cuentaLista').textContent = todos.length + ' fechas';
+    $('#origen').innerHTML = `Fuente: <b>${ORIGEN === 'archivo' ? 'archivo publicado' : ORIGEN === 'navegador' ? 'datos locales' : 'datos de ejemplo'}</b>`;
+    $('#actual').textContent = D.actualizado ? 'Actualizado: ' + new Date(D.actualizado).toLocaleDateString('es-CO') : '';
+    S.dir = ''; revelar();
+  }
+
+  function abrirDetalle(id) {
+    if (id.startsWith('festivo-')) {
+      const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
+      if (!f) return;
+      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem;">${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia. No hay actividades académicas programadas.</dd></dl>`;
+      $('#velo').classList.add('on'); $('#cajon').classList.add('on');
+      return;
+    }
+    const e = D.eventos.find(x => x.id === id); if (!e) return;
+    const c = catDe(D, e.categoria), st = estadoDe(e);
+    const { facColor, catColor, emoji } = getColores(D, e);
+    const gc = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.titulo)}&dates=${e.inicio.replace(/-/g, '')}/${sumaDias(finDe(e), 1).replace(/-/g, '')}&details=${encodeURIComponent(e.descripcion || '')}&location=${encodeURIComponent(e.lugar || '')}`;
+    let pubStr = '';
+    if (e.publico && e.publico.length) pubStr = `<dt style="color:var(--suave); font-weight:600;">Dirigido a</dt><dd>${esc(e.publico.join(', '))}</dd>`;
+
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem;">${emoji ? emoji + ' ' : ''}${esc(e.titulo)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>${pubStr}<dt style="color:var(--suave); font-weight:600;">Ámbito</dt><dd>${esc(amb(e))}</dd><dt style="color:var(--suave); font-weight:600;">Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>${e.lugar ? `<dt style="color:var(--suave); font-weight:600;">Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : ''}</dl>${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}<div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;"><a class="btn" href="${gc}" target="_blank" rel="noopener">Google Calendar</a><button class="btn" data-ics="${e.id}">Descargar (.ics)</button></div>`;
+    $('#velo').classList.add('on'); $('#cajon').classList.add('on');
+  }
+  function abrirDia(s) {
+    const L = filtrar({ sinPeriodo: true }).filter(e => e.inicio <= s && s <= finDe(e));
+    const fDelDia = festivosDia(s);
+    const todos = [...fDelDia, ...L];
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem;">${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
+       if (e.esFestivo) return `<div class="ev festivo" style="--c-fac:var(--rojo);--c-cat:var(--rojo); cursor:default;" data-id="festivo-${e.fecha}"><div class="fecha"><b>${parse(e.fecha).getDate()}</b><span>Festivo</span></div><div><h3>${esc(e.nombre)}</h3></div></div>`;
+       return filaEvento(e);
+    }).join('') : '<p style="color:var(--suave); text-align:center; padding:2rem;">No hay eventos este día.</p>');
+    $('#velo').classList.add('on'); $('#cajon').classList.add('on');
+  }
+  function cerrar() { $('#velo').classList.remove('on'); $('#cajon').classList.remove('on'); }
+
+  function descargarIcs(evs, nombre) {
+    const t = s => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+    const stamp = new Date().toISOString().replace(/[-:]|\.\d{3}/g, '');
+    const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Calendario Academico//ES', 'CALSCALE:GREGORIAN'];
+    evs.forEach(e => L.push('BEGIN:VEVENT', `UID:${e.id || uid()}@calendario`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${e.inicio.replace(/-/g, '')}`, `DTEND;VALUE=DATE:${sumaDias(finDe(e), 1).replace(/-/g, '')}`, `SUMMARY:${t(e.titulo)}`, `DESCRIPTION:${t((e.descripcion ? e.descripcion + ' · ' : '') + ambito(D, e))}`, ...(e.lugar ? [`LOCATION:${t(e.lugar)}`] : []), 'END:VEVENT'));
+    L.push('END:VCALENDAR');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([L.join('\r\n')], { type: 'text/calendar' }));
+    a.download = nombre + '.ics'; a.click();
+  }
+
+  document.addEventListener('click', ev => {
+    const t = ev.target;
+    const mod = t.closest('[data-cat]'); if (mod) { S.cat = mod.dataset.cat; return pintarPublico(); }
+    if (t.closest('[data-cerrar]') || t.id === 'velo') return cerrar();
+    const ics = t.closest('[data-ics]'); if (ics) return descargarIcs([D.eventos.find(e => e.id === ics.dataset.ics)], 'evento');
+    const mas = t.closest('[data-dia]'); if (mas) return abrirDia(mas.dataset.dia);
+    const nav = t.closest('[data-mes]');
+    if (nav) { const v = +nav.dataset.mes; S.dir = v < 0 ? 'izq' : v > 0 ? 'der' : ''; S.ref = v === 0 ? new Date() : new Date(S.ref.getFullYear(), S.ref.getMonth() + v, 1); const y = S.ref.getFullYear(), m = S.ref.getMonth(); if (y !== S.anio) { S.anio = y; S.sem = ''; } else if (S.sem && (m < 6 ? 1 : 2) != S.sem) S.sem = ''; pintarPublico(); return irMes(); }
+    const sm = t.closest('#fSem button'); if (sm) { S.sem = sm.dataset.v; if (S.sem) S.ref = new Date(S.anio, S.sem == 2 ? 6 : 0, 1); pintarPublico(); return irMes(); }
+    const row = t.closest('[data-id]'); if (row) { abrirDetalle(row.dataset.id); }
+  });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrar(); if (ev.key === 'Enter' && ev.target.classList.contains('ev')) abrirDetalle(ev.target.dataset.id); });
+  $('#fAnio').onchange = e => { S.anio = +e.target.value; S.ref = new Date(S.anio, S.ref.getMonth(), 1); pintarPublico(); };
+  $('#fFest').onchange = e => { S.festivos = e.target.checked; pintarPublico(); };
+  $('#fGrupo').onchange = e => { S.grupo = e.target.value; S.prog = ''; pintarPublico(); };
+  $('#fProg').onchange = e => { S.prog = e.target.value; pintarPublico(); };
+  $('#fInst').onchange = e => { S.inst = e.target.checked; pintarPublico(); };
+  $('#q').oninput = e => { S.q = e.target.value; pintarPublico(); };
+  $('#bIcs').onclick = () => { if (!listaFiltradaCompleta.length) return alert('No hay fechas para añadir con estos filtros.'); descargarIcs(listaFiltradaCompleta, `calendario-${S.anio}${S.sem ? '-s' + S.sem : ''}`); };
+
+  window.onscroll = () => { $('#btnTop').classList.toggle('show', window.scrollY > 300); };
+  $('#btnTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
+
+  /* ============================================================
+     LÓGICA DEL ADMINISTRADOR
+     ============================================================ */
+  let P = 'resumen';
+  const F = { q: '', per: '', cat: '', est: '', grupo: '' };
+  const SEL = new Set();
+
+  function toast(m, err) { const t = $('#toast'); t.textContent = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 2400); }
+  function guardar(msg) { guardarLocal(D); localStorage.setItem(LS_SUCIO, '1'); aviso(); if (msg) toast(msg); if($('#public-panel').style.display !== 'none') pintarPublico(); }
+  function aviso() { $('#aviso').hidden = localStorage.getItem(LS_SUCIO) !== '1'; }
+
+  const pinActual = () => localStorage.getItem('ub_cal_pin') || '1234';
+  $('#gateForm').onsubmit = e => {
+    e.preventDefault();
+    if ($('#pin').value === pinActual()) { sessionStorage.setItem('ub_cal_ok', '1'); entrarAdmin(); }
+    else { $('#pin').value = ''; $('#pinAyuda').textContent = 'Contraseña incorrecta.'; }
+  };
+
+  function irAdmin() {
+    $('#public-panel').style.display = 'none';
+    $('#admin-panel').classList.add('on');
+    if (sessionStorage.getItem('ub_cal_ok')) { entrarAdmin(); }
+    else { $('#gate').style.display = 'grid'; $('#admin-app').hidden = true; }
+  }
+
+  function irPublico(e) {
+    if(e) e.preventDefault();
+    $('#admin-panel').classList.remove('on');
+    $('#public-panel').style.display = 'block';
+    pintarPublico();
+  }
+
+  async function entrarAdmin() {
+    if (!D) {
+      D = leerLocal();
+      if (!D || !D.eventos) D = (await leerArchivo()) || semilla();
+      if (!leerLocal()) guardarLocal(D);
+    }
+    $('#gate').style.display = 'none';
+    $('#admin-app').hidden = false;
+    aviso(); ir(P);
+  }
+
+  function ir(p) {
+    P = p; SEL.clear();
+    $$('.admin-nav .it').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+    $('#admin-panel-inner').innerHTML = ({ resumen: pResumen, eventos: pEventos, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, publicar: pPublicar })[p]();
+    if (p === 'eventos') pintarTabla();
+    scrollTo(0, 0);
+  }
+  const refrescar = () => { const y = scrollY; ir(P); scrollTo(0, y); };
+  const encabezado = (t, s) => `<h1 class="pt">${t}</h1><p class="ps">${s}</p>`;
+  const chipCatAdmin = id => { const c = catDe(D, id); return `<span class="chip"><i style="background:${c.color}"></i>${esc(c.nombre)}</span>`; };
+  const usadosPeriodo = id => D.eventos.filter(e => e.periodo === id).length;
+
+  function pResumen() {
+    const pub = D.eventos.filter(e => e.estado !== 'borrador'), bor = D.eventos.length - pub.length;
+    const progs = D.facultades.reduce((n, f) => n + f.programas.length, 0);
+    const h = hoy();
+    const prox = pub.filter(e => finDe(e) >= h).sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 5);
+    const per = [...D.periodos].sort((a, b) => a.id.localeCompare(b.id));
+    
+    const barras = per.map(p => {
+      const L = D.eventos.filter(e => e.periodo === p.id), tot = L.length || 1;
+      const segs = D.categorias.map(c => { const n = L.filter(e => e.categoria === c.id).length; return n ? `<i style="display:block; height:100%; width:${n / tot * 100}%; background:${c.color}" title="${esc(c.nombre)}: ${n}"></i>` : ''; }).join('');
+      return `<div style="margin-bottom:1rem;"><div style="display:flex; justify-content:space-between; font-weight:600; font-size:.92rem; margin-bottom:.3rem;"><span>${nombrePeriodo(p.id)}</span><span>${L.length} eventos</span></div><div style="display:flex; height:14px; border-radius:999px; overflow:hidden; background:var(--fondo);">${segs}</div></div>`;
+    }).join('');
+    
+    return encabezado('Resumen', 'Una mirada rápida a cómo está el calendario hoy.') + `
+    <div class="cards">
+      <div class="stat verde"><b>${pub.length}</b><span>eventos publicados</span></div>
+      <div class="stat"><b>${bor}</b><span>borradores</span></div>
+      <div class="stat"><b>${D.periodos.length}</b><span>semestres creados</span></div>
+      <div class="stat"><b>${D.facultades.length}</b><span>facultades · ${progs} programas</span></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1.2rem;">
+      <div class="caja"><h2>Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
+      <div>
+        <div class="caja"><h2>Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem;"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div>
+      </div>
+    </div>
+    <button class="btn pri" data-a="nuevo" style="margin-top:1rem;">+ Agregar evento</button>`;
+  }
+
+  function pEventos() {
+    const pers = [...new Set(D.eventos.map(e => e.periodo))].sort().reverse();
+    let g = '<option value="">Todas las facultades y áreas</option><option value="inst">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => opt('f:' + f.id, f.nombre)).join('') + '</optgroup><optgroup label="Áreas">' + D.areas.map(a => opt('a:' + a.id, a.nombre)).join('') + '</optgroup>';
+    return encabezado('Eventos', 'Aquí agregas, editas y organizas todas las fechas.') + `
+    <div class="tools">
+      <input type="search" id="x_q" placeholder="Buscar evento…">
+      <select id="x_per"><option value="">Todos los semestres</option>${pers.map(p => opt(p, nombrePeriodo(p))).join('')}</select>
+      <select id="x_cat"><option value="">Todas las categorías</option>${D.categorias.map(c => opt(c.id, c.nombre)).join('')}</select>
+      <select id="x_grupo">${g}</select>
+      <select id="x_est"><option value="">Todos los estados</option><option value="publicado">Publicados</option><option value="borrador">Borradores</option></select>
+      <button class="btn pri" data-a="nuevo">+ Nuevo evento</button>
+      <button class="btn" data-a="descargarPlantilla" style="background:#E1F2B8; border-color:#C5E86C; color:#2f4a00;">⬇ Descargar Plantilla Excel</button>
+      <button class="btn" data-a="cargarEventos" style="background:#FFF1D6; border-color:#F5A623; color:#8A5A00;">⬆ Cargar Eventos</button>
+      <input type="file" id="file_eventos" accept=".xlsx,.xls,.csv,.txt" hidden>
+    </div>
+    <div id="masiva"></div><div class="tw" id="tabla"></div>`;
+  }
+  
+  function eventosFiltrados() {
+    const q = norm(F.q);
+    return D.eventos.filter(e => {
+      if (F.per && e.periodo !== F.per && !(e.periodo2 && e.periodo2 === F.per)) return false;
+      if (F.cat && e.categoria !== F.cat) return false;
+      if (F.est && (e.estado || 'publicado') !== F.est) return false;
+      if (F.grupo === 'inst' && !esInstitucional(e)) return false;
+      
+      const facs = e.facultad || [];
+      const areas = e.area || [];
+
+      if (F.grupo.startsWith('f:') && !facs.includes(F.grupo.slice(2))) return false;
+      if (F.grupo.startsWith('a:') && !areas.includes(F.grupo.slice(2))) return false;
+      if (q && !norm(e.titulo + ' ' + e.descripcion + ' ' + ambito(D, e)).includes(q)) return false;
+      return true;
+    }).sort((a, b) => a.inicio.localeCompare(b.inicio));
+  }
+  
+  function pintarTabla() {
+    ['q', 'per', 'cat', 'grupo', 'est'].forEach(k => { const el = $('#x_' + k); if (el) el.value = F[k]; });
+    const L = eventosFiltrados();
+    $('#masiva').innerHTML = SEL.size ? `<div class="masiva"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">Publicar</button><button class="btn sm" data-a="m_bor">Pasar a borrador</button><button class="btn sm" data-a="m_copiar">Copiar año…</button><button class="btn sm" data-a="m_del">Eliminar</button></div>` : '';
+    $('#tabla').innerHTML = L.length ? `<table><thead><tr><th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th><th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
+      L.map(e => `<tr><td><input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}></td>
+        <td style="white-space:nowrap">${fmtRango(e)}</td>
+        <td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td>
+        <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}</td>
+        <td><button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}" title="Clic para cambiar">${e.estado === 'borrador' ? 'Borrador' : 'Publicado'}</button></td>
+        <td><div class="acc"><button class="btn sm" data-a="editar" data-i="${e.id}">Editar</button><button class="btn sm" data-a="dup" data-i="${e.id}">Duplicar</button><button class="btn sm pel" data-a="del" data-i="${e.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table>'
+      : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
+  }
+
+  function modalEvento(id) {
+    const e = id ? D.eventos.find(x => x.id === id) : { 
+      titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto', 
+      facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado' 
+    };
+    const arrFac = e.facultad || [];
+    const arrProg = e.programa || [];
+    const arrArea = e.area || [];
+    const arrPub = e.publico && e.publico.length ? e.publico : ['Comunidad universitaria'];
+    
+    const pers = D.periodos.map(p => p.id); if (e.periodo !== 'auto' && !pers.includes(e.periodo)) pers.push(e.periodo);
+    const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
+    const esLugarEspecial = lugaresConExtra.includes(e.lugar);
+
+    $('#modal').innerHTML = `<div class="mod"><h2>${id ? 'Editar evento' : 'Nuevo evento'}</h2>
+      <div class="fr"><label>¿Qué pasa? *</label><input id="f_titulo" value="${esc(e.titulo)}" placeholder="Ej: Matrícula ordinaria"></div>
+      <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="2">${esc(e.descripcion)}</textarea></div>
+      <div class="fr2">
+        <div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
+        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p), p === e.periodo)).join('')}</select></div>
+      </div>
+      <div class="fr2"><div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div><div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div></div>
+      
+      <div class="fr">
+        <label>Dirigido a (Selección múltiple)</label>
+        <select id="f_pub" multiple class="multi-select" size="6">
+          ${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${p}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="fr">
+        <label>Facultades (Selección múltiple)</label>
+        <select id="f_fac" multiple class="multi-select" size="4" onchange="actualizarProgsModal()">
+          ${D.facultades.map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${f.emoji || ''} ${esc(f.nombre)}</option>`).join('')}
+        </select>
+      </div>
+      
+      <div class="fr">
+        <label>Programas (Selección múltiple)</label>
+        <select id="f_prog" multiple class="multi-select" size="4"></select>
+      </div>
+
+      <div class="fr">
+        <label>Áreas (Selección múltiple)</label>
+        <select id="f_area" multiple class="multi-select" size="4">
+          ${D.areas.map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="fr2">
+        <div class="fr">
+          <label>Bloque / Ubicación</label>
+          <select id="f_lugar" onchange="toggleLugarEsp()">
+            <option value="">-- Seleccionar --</option>
+            <optgroup label="Bloques">
+              ${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}" ${e.lugar === 'Bloque ' + l ? 'selected' : ''}>Bloque ${l}</option>`).join('')}
+            </optgroup>
+            <optgroup label="Especiales">
+              <option value="Auditorio principal o central" ${e.lugar === 'Auditorio principal o central' ? 'selected' : ''}>Auditorio principal o central</option>
+              <option value="Auditorio Fundadores" ${e.lugar === 'Auditorio Fundadores' ? 'selected' : ''}>Auditorio Fundadores</option>
+              <option value="Clínicas Odontológicas" ${e.lugar === 'Clínicas Odontológicas' ? 'selected' : ''}>Clínicas Odontológicas</option>
+              <option value="Sistema Académico en Línea (SALA)" ${e.lugar === 'Sistema Académico en Línea (SALA)' ? 'selected' : ''}>Sistema Académico en Línea (SALA)</option>
+              <option value="SAUCE" ${e.lugar === 'SAUCE' ? 'selected' : ''}>SAUCE</option>
+              <option value="Sede Chía" ${e.lugar === 'Sede Chía' ? 'selected' : ''}>Sede Chía</option>
+              <option value="Otro" ${e.lugar === 'Otro' ? 'selected' : ''}>Otro</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fr" id="f_lugar_esp_wrap" ${esLugarEspecial ? '' : 'hidden'}>
+          <label>Especifique ubicación</label>
+          <input id="f_lugar_esp" value="${esc(e.lugarEsp || '')}" placeholder="Escriba el lugar...">
+        </div>
+      </div>
+
+      <div class="fr2">
+        <div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div>
+        <div class="fr"><label>Enlace (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="https://…"></div>
+      </div>
+
+      <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select></div>
+      
+      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="guardarEv" data-i="${id || ''}">Guardar</button></div></div>`;
+    
+    $('#modal').classList.add('on');
+    actualizarProgsModal(arrProg);
+    setTimeout(() => $('#f_titulo').focus(), 50);
+  }
+
+  window.actualizarProgsModal = function(preseleccionados = []) {
+    const selectedFacs = [...$('#f_fac').selectedOptions].map(o => o.value);
+    const progsDisponibles = [];
+    selectedFacs.forEach(fid => {
+      const f = D.facultades.find(x => x.id === fid);
+      if (f) {
+        f.programas.forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre, fac: f.nombre }));
+      }
+    });
+    
+    if (preseleccionados.length) {
+      $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${preseleccionados.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
+    } else {
+      const currentProgs = [...$('#f_prog').selectedOptions].map(o => o.value);
+      $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${currentProgs.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
+    }
+  }
+
+  window.toggleLugarEsp = function() {
+    const val = $('#f_lugar').value;
+    $('#f_lugar_esp_wrap').hidden = !['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(val);
+  }
+
+  const cerrarModal = () => { $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
+
+  function guardarEvento(id) {
+    const g = i => $('#' + i).value.trim();
+    const titulo = g('f_titulo'), inicio = g('f_ini'), fin = g('f_fin') || inicio;
+    if (!titulo) return toast('Escribe el nombre del evento', true);
+    if (!inicio) return toast('Falta la fecha de inicio', true);
+    if (fin < inicio) return toast('La fecha final no puede ser antes', true);
+    
+    const publico = [...$('#f_pub').selectedOptions].map(o => o.value);
+    const facultad = [...$('#f_fac').selectedOptions].map(o => o.value);
+    const programa = [...$('#f_prog').selectedOptions].map(o => o.value);
+    const area = [...$('#f_area').selectedOptions].map(o => o.value);
+
+    let periodo = g('f_per'), periodo2 = null;
+    if (periodo === 'auto') {
+      const per1 = periodoAuto(D, inicio);
+      const per2 = periodoAuto(D, fin);
+      periodo = per1;
+      if (per1 !== per2) periodo2 = per2;
+    }
+
+    const lugar = g('f_lugar');
+    const lugarEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lugar) ? g('f_lugar_esp') : '';
+
+    const o = { 
+      id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), 
+      inicio, fin, periodo, periodo2, 
+      facultad, programa, area, publico, 
+      lugar, lugarEsp, piso: g('f_piso'), enlace: g('f_link'), estado: g('f_estado') 
+    };
+    
+    const i = D.eventos.findIndex(x => x.id === id);
+    if (i >= 0) D.eventos[i] = o; else D.eventos.push(o);
+    guardar('Evento guardado'); cerrarModal(); refrescar();
+  }
+
+  function pFacultades() {
+    return encabezado('Facultades y programas', 'Organiza la universidad.') + `
+    <div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;">
+      <div>
+        <label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label>
+        <input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem;">
+      </div>
+      <div>
+        <label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Emoji</label>
+        <input id="n_fac_emoji" placeholder="🎨" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center;">
+      </div>
+      <div>
+        <label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label>
+        <input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;">
+      </div>
+      <button class="btn pri" data-a="addFac">+ Agregar</button>
+    </div>
+    ` + D.facultades.map(f => `
+    <div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};">
+      <div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;">
+        <input style="width:40px; text-align:center; font-size:1.2rem; border:1px solid var(--linea); border-radius:8px; padding:.3rem;" value="${esc(f.emoji || '')}" data-ch="facEmoji" data-i="${f.id}" title="Emoji">
+        <input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent;" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}">
+        <input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;">
+        <span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span>
+        <button class="btn sm pel" data-a="delFac" data-i="${f.id}">Eliminar</button>
+      </div>
+      ${f.programas.map(p => `
+        <div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;">
+          <input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}">
+          <select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;">
+            ${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}
+          </select>
+          <button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button>
+        </div>
+      `).join('')}
+      <div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;">
+        <input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;">
+        <select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;">
+          <option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option>
+        </select>
+        <button class="btn sm" data-a="addProg" data-i="${f.id}">+ Agregar manual</button>
+      </div>
+    </div>
+    `).join('');
+  }
+
+  function pPeriodos() {
+    const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id));
+    return encabezado('Semestres', 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addPer">+ Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>';
+  }
+
+  function pAreas() {
+    return encabezado('Áreas administrativas', 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addArea">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>';
+  }
+
+  function pCategorias() {
+    return encabezado('Categorías', 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>';
+  }
+
+  function pPublicar() {
+    return encabezado('Publicar y datos', 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Edita con calma</h3><p style="color:var(--suave); font-size:0.9rem;">Todo se guarda en tu navegador automáticamente.</p></div></div><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Descarga el archivo</h3><p style="color:var(--suave); font-size:0.9rem; margin-bottom:0.6rem;">Cuando estés listo, descarga el <code>calendario-datos.json</code>.</p><button class="btn pri" data-a="descargar">⬇ Descargar archivo</button></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">3</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Súbelo al servidor</h3><p style="color:var(--suave); font-size:0.9rem;">Copia ese archivo en la misma carpeta de <code>index.html</code>.</p></div></div></div><div class="caja"><h2>Otras opciones</h2><div style="display:flex; flex-wrap:wrap; gap:0.6rem;"><button class="btn" data-a="importar">⬆ Cargar JSON</button><input type="file" id="archivo" accept=".json" hidden><button class="btn" data-a="pin">Cambiar clave</button><button class="btn" data-a="salir">Cerrar sesión</button><button class="btn pel" data-a="reset">Volver a datos de ejemplo</button></div></div>`;
+  }
+
+  async function descargarPlantilla() {
+    if (!window.XLSX) await new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+    const wb = XLSX.utils.book_new();
+    const headers = ["Título", "Descripción", "Categoría", "Fecha Inicio", "Fecha Fin", "Facultad", "Programa", "Área", "Lugar", "Enlace", "Estado"];
+    const data = [
+      ["Ejemplo: Matrícula ordinaria", "Pago de derechos", "Matrículas", "2026-01-05", "2026-01-16", "Toda la institución", "Toda la institución", "Toda la institución", "Bloque A", "", "Publicado"],
+      ["Ejemplo: Sustentación de tesis", "Maestría", "Posgrados", "2026-03-09", "2026-03-11", "Ingeniería", "Maestría en Ingeniería", "", "Auditorio principal o central", "https://...", "Publicado"]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+    XLSX.utils.book_append_sheet(wb, ws, "Eventos");
+    const instrucciones = [
+      ["INSTRUCCIONES PARA CARGAR EVENTOS"],
+      [""],
+      ["1. No cambies el nombre de las columnas."],
+      ["2. Si hay varias facultades o áreas, sepáralas con punto y coma (;)."],
+      ["3. Los nombres de Facultad, Programa y Área deben coincidir exactamente."],
+      ["4. En 'Lugar' puedes poner Bloque A, Auditorio, Sede Chía, etc."],
+      ["5. Estado puede ser: 'Publicado' o 'Borrador'."]
+    ];
+    const ws2 = XLSX.utils.aoa_to_sheet(instrucciones);
+    XLSX.utils.book_append_sheet(wb, ws2, "Instrucciones");
+    XLSX.writeFile(wb, "Plantilla_Eventos.xlsx");
+    toast('Plantilla descargada');
+  }
+
+  function cargarEventos() { $('#file_eventos').click(); }
+
+  async function procesarArchivoEventos(file) {
+    if (!file) return;
+    let rows = [];
+    try {
+      if (/\.xlsx?$/i.test(file.name)) {
+        if (!window.XLSX) await new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+        const wb = XLSX.read(await file.arrayBuffer()); 
+        rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      } else {
+        const text = await file.text();
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        const headers = lines[0].split(/[,;\t]/).map(h => h.trim());
+        rows = lines.slice(1).map(l => {
+          const vals = l.split(/[,;\t]/);
+          const obj = {};
+          headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
+          return obj;
+        });
+      }
+    } catch (x) { return toast('No se pudo leer el archivo', true); }
+
+    if (!rows.length) return toast('El archivo está vacío o no tiene el formato correcto', true);
+
+    let added = 0;
+    let errores = 0;
+    const nuevosEventos = [];
+
+    rows.forEach((r, idx) => {
+      const titulo = r['Título'] || r['Titulo'] || r['titulo'];
+      const fechaIni = r['Fecha Inicio'] || r['FechaInicio'] || r['Fecha inicio'];
+      if (!titulo || !fechaIni) { errores++; return; }
+
+      let inicio = fechaIni;
+      if (fechaIni.includes('/')) {
+        const [d, m, y] = fechaIni.split('/');
+        inicio = `${y}-${pad(m)}-${pad(d)}`;
+      }
+      
+      let fin = r['Fecha Fin'] || r['FechaFin'] || r['Fecha fin'] || inicio;
+      if (fin.includes('/')) {
+        const [d, m, y] = fin.split('/');
+        fin = `${y}-${pad(m)}-${pad(d)}`;
+      }
+      
+      if (isNaN(parse(inicio).getTime())) { errores++; return; }
+
+      const catNom = r['Categoría'] || r['Categoria'] || 'General';
+      const cat = D.categorias.find(c => norm(c.nombre) === norm(catNom)) || D.categorias[0];
+
+      const facNoms = (r['Facultad'] || '').split(';').map(s => s.trim()).filter(Boolean);
+      const progNoms = (r['Programa'] || '').split(';').map(s => s.trim()).filter(Boolean);
+      const areaNoms = (r['Área'] || r['Area'] || '').split(';').map(s => s.trim()).filter(Boolean);
+
+      const facIds = [], progIds = [], areaIds = [];
+
+      facNoms.forEach(fnom => {
+        if (fnom !== 'Toda la institución') {
+          const f = D.facultades.find(x => norm(x.nombre) === norm(fnom));
+          if (f) facIds.push(f.id);
+        }
+      });
+      
+      progNoms.forEach(pnom => {
+        if (pnom !== 'Toda la institución') {
+          const f = D.facultades.find(x => x.programas.some(p => norm(p.nombre) === norm(pnom)));
+          if (f) {
+            const p = f.programas.find(x => norm(x.nombre) === norm(pnom));
+            if (p) progIds.push(p.id);
+          }
+        }
+      });
+
+      areaNoms.forEach(anom => {
+        if (anom !== 'Toda la institución') {
+          const a = D.areas.find(x => norm(x.nombre) === norm(anom));
+          if (a) areaIds.push(a.id);
+        }
+      });
+
+      const estado = norm(r['Estado'] || 'publicado') === 'borrador' ? 'borrador' : 'publicado';
+
+      const per1 = periodoAuto(D, inicio);
+      const per2 = periodoAuto(D, fin);
+
+      nuevosEventos.push({
+        id: uid(), titulo, descripcion: r['Descripción'] || r['Descripcion'] || '', categoria: cat.id, 
+        inicio, fin, periodo: per1, periodo2: per1 !== per2 ? per2 : null, 
+        facultad: facIds, programa: progIds, area: areaIds, publico: ['Comunidad universitaria'],
+        lugar: r['Lugar'] || '', lugarEsp: '', piso: '', enlace: r['Enlace'] || '', estado
+      });
+      added++;
+    });
+
+    if (!added) return toast('No se encontraron eventos válidos para cargar', true);
+    if (!confirm(`Se cargarán ${added} eventos. ${errores > 0 ? 'Hubo ' + errores + ' filas con errores.' : ''} ¿Continuar?`)) return;
+    D.eventos.push(...nuevosEventos);
+    guardar(`${added} eventos cargados`);
+    refrescar();
+  }
+
+  const confirmarEliminarEnUso = (n, que) => n === 0 || confirm(`Hay ${n} evento(s) que usan ${que}. ¿Seguro?`);
+  const ACC = {
+    nuevo: () => modalEvento(), editar: i => modalEvento(i), cerrar: cerrarModal, guardarEv: i => guardarEvento(i),
+    dup: i => { const e = D.eventos.find(x => x.id === i); D.eventos.push({ ...e, id: uid(), titulo: e.titulo + ' (copia)', estado: 'borrador' }); guardar('Duplicado'); pintarTabla(); },
+    del: i => { if (!confirm('¿Eliminar este evento?')) return; D.eventos = D.eventos.filter(e => e.id !== i); SEL.delete(i); guardar('Eliminado'); pintarTabla(); },
+    tog: i => { const e = D.eventos.find(x => x.id === i); e.estado = e.estado === 'borrador' ? 'publicado' : 'borrador'; guardar(e.estado === 'borrador' ? 'Borrador' : 'Publicado'); pintarTabla(); },
+    m_pub: () => { SEL.forEach(i => D.eventos.find(e => e.id === i).estado = 'publicado'); guardar('Publicados'); pintarTabla(); },
+    m_bor: () => { SEL.forEach(i => D.eventos.find(e => e.id === i).estado = 'borrador'); guardar('Borradores'); pintarTabla(); },
+    m_del: () => { if (!confirm(`¿Eliminar ${SEL.size} eventos?`)) return; D.eventos = D.eventos.filter(e => !SEL.has(e.id)); SEL.clear(); guardar('Eliminados'); pintarTabla(); },
+    m_copiar: () => {
+      const y = prompt('¿A qué año quieres copiar los eventos seleccionados? (ej. 2027)');
+      const ny = parseInt(y, 10); if (!ny || ny < 2000 || ny > 2100) return;
+      let n = 0;
+      [...SEL].map(id => D.eventos.find(e => e.id === id)).filter(Boolean).forEach(e => {
+        const d = ny - parse(e.inicio).getFullYear(); if (!d) return;
+        const [py, ps] = e.periodo.split('-'), np = `${+py + d}-${ps}`;
+        D.eventos.push({ ...e, id: uid(), inicio: desplazar(e.inicio, d), fin: desplazar(finDe(e), d), periodo: np, estado: 'borrador' });
+        n++;
+      });
+      SEL.clear(); guardar(`${n} eventos copiados como borrador.`); refrescar();
+    },
+    addPer: () => {
+      const a = +$('#n_anio').value, s = $('#n_sem').value, ini = $('#n_ini').value, fin = $('#n_fin').value, id = `${a}-${s}`;
+      if (!a || !ini || !fin) return toast('Completa año, inicio y fin', true);
+      if (fin < ini) return toast('El fin no puede ser antes', true);
+      if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true);
+      D.periodos.push({ id, inicio: ini, fin }); guardar('Semestre creado'); refrescar();
+    },
+    delPer: i => { if (usadosPeriodo(i)) return toast('Ese semestre tiene eventos', true); D.periodos = D.periodos.filter(p => p.id !== i); guardar('Semestre eliminado'); refrescar(); },
+    addFac: () => { 
+      const n = $('#n_fac').value.trim(); if (!n) return toast('Escribe el nombre', true); 
+      const emoji = $('#n_fac_emoji').value.trim();
+      const color = $('#n_fac_color').value;
+      D.facultades.push({ id: nuevoId(n, D.facultades), nombre: n, emoji, color, programas: [] }); 
+      guardar('Facultad agregada'); refrescar(); 
+    },
+    delFac: i => { 
+      const n = D.eventos.filter(e => (e.facultad||[]).includes(i)).length; 
+      if (!confirm('¿Eliminar esta facultad?') || !confirmarEliminarEnUso(n, 'esta facultad')) return; 
+      D.eventos.forEach(e => { 
+        if (e.facultad) e.facultad = e.facultad.filter(x => x !== i);
+      }); 
+      D.facultades = D.facultades.filter(f => f.id !== i); guardar('Facultad eliminada'); refrescar(); 
+    },
+    addProg: i => { const f = D.facultades.find(x => x.id === i), n = $('#np_' + i).value.trim(); if (!n) return toast('Escribe el nombre', true); f.programas.push({ id: nuevoId(n, D.facultades.flatMap(x => x.programas)), nombre: n, nivel: $('#nn_' + i).value }); guardar('Programa agregado'); refrescar(); },
+    delProg: (i, j) => { 
+      const n = D.eventos.filter(e => (e.programa||[]).includes(j)).length; 
+      if (!confirmarEliminarEnUso(n, 'este programa')) return; 
+      D.eventos.forEach(e => { 
+        if (e.programa) e.programa = e.programa.filter(x => x !== j);
+      }); 
+      const f = D.facultades.find(x => x.id === i); f.programas = f.programas.filter(p => p.id !== j); guardar('Programa quitado'); refrescar(); 
+    },
+    addArea: () => { const n = $('#n_area').value.trim(); if (!n) return toast('Escribe el nombre', true); D.areas.push({ id: nuevoId(n, D.areas), nombre: n }); guardar('Área agregada'); refrescar(); },
+    delArea: i => { 
+      const n = D.eventos.filter(e => (e.area||[]).includes(i)).length; 
+      if (!confirmarEliminarEnUso(n, 'esta área')) return; 
+      D.eventos.forEach(e => { 
+        if (e.area) e.area = e.area.filter(x => x !== i);
+      }); 
+      D.areas = D.areas.filter(a => a.id !== i); guardar('Área eliminada'); refrescar(); 
+    },
+    addCat: () => { const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true); D.categorias.push({ id: nuevoId(n, D.categorias), nombre: n, color: $('#n_col').value }); guardar('Categoría agregada'); refrescar(); },
+    delCat: i => { if (D.eventos.some(e => e.categoria === i)) return toast('Hay eventos en esa categoría', true); if (D.categorias.length === 1) return toast('Debe quedar al menos una', true); D.categorias = D.categorias.filter(c => c.id !== i); guardar('Categoría eliminada'); refrescar(); },
+    descargar: () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(D, null, 2)], { type: 'application/json' }));
+      a.download = 'calendario-datos.json'; a.click();
+      localStorage.removeItem(LS_SUCIO); aviso(); toast('Archivo descargado');
+    },
+    importar: () => $('#archivo').click(),
+    pin: () => { const p = prompt('Nueva clave (mínimo 4):'); if (p && p.length >= 4) { localStorage.setItem('ub_cal_pin', p); toast('Clave actualizada'); } },
+    salir: () => { sessionStorage.removeItem('ub_cal_ok'); irPublico(); },
+    reset: () => { if (!confirm('Se borrarán tus datos. ¿Continuar?')) return; D = semilla(); guardar('Restaurado'); ir('resumen'); },
+    descargarPlantilla: descargarPlantilla,
+    cargarEventos: cargarEventos
+  };
+
+  document.addEventListener('click', e => {
+    const n = e.target.closest('.admin-nav .it'); if (n) return ir(n.dataset.p);
+    if (e.target.id === 'modal') return cerrarModal();
+    const a = e.target.closest('[data-a]'); if (a && ACC[a.dataset.a]) ACC[a.dataset.a](a.dataset.i, a.dataset.j);
+  });
+  document.addEventListener('change', e => {
+    const t = e.target;
+    if (t.id && t.id.startsWith('x_')) { F[t.id.slice(2)] = t.value; return pintarTabla(); }
+    if (t.id === 'archivo') {
+      const f = t.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const d = JSON.parse(r.result);
+          if (!Array.isArray(d.eventos)) throw 0;
+          if (!confirm(`¿Reemplazar todo con ${d.eventos.length} eventos?`)) return;
+          D = d; D.areas = D.areas || []; D.categorias = D.categorias || []; guardar('Cargado'); ir('resumen');
+        } catch (x) { toast('Archivo inválido', true); }
+      };
+      r.readAsText(f); return;
+    }
+    if (t.id === 'file_eventos') {
+      procesarArchivoEventos(t.files[0]);
+      t.value = ''; return;
+    }
+    const k = t.dataset.ch; if (!k) return;
+    const i = t.dataset.i, j = t.dataset.j, v = t.value.trim();
+    if (k === 'todos') { eventosFiltrados().forEach(e => t.checked ? SEL.add(e.id) : SEL.delete(e.id)); return pintarTabla(); }
+    if (k === 'sel') { t.checked ? SEL.add(i) : SEL.delete(i); return pintarTabla(); }
+    if (k === 'perIni') D.periodos.find(p => p.id === i).inicio = t.value;
+    if (k === 'perFin') D.periodos.find(p => p.id === i).fin = t.value;
+    if (k === 'facNom') { if (!v) return refrescar(); D.facultades.find(f => f.id === i).nombre = v; }
+    if (k === 'facEmoji') { D.facultades.find(f => f.id === i).emoji = v; }
+    if (k === 'facColor') { D.facultades.find(f => f.id === i).color = t.value; guardar('Color actualizado'); return; }
+    if (k === 'progNom') { if (!v) return refrescar(); D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nombre = v; }
+    if (k === 'progNivel') D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nivel = t.value;
+    if (k === 'areaNom') { if (!v) return refrescar(); D.areas.find(a => a.id === i).nombre = v; }
+    if (k === 'catNom') { if (!v) return refrescar(); D.categorias.find(c => c.id === i).nombre = v; }
+    if (k === 'catCol') D.categorias.find(c => c.id === i).color = t.value;
+    guardar('Cambio guardado');
+  });
+  document.addEventListener('input', e => { if (e.target.id === 'x_q') { F.q = e.target.value; pintarTabla(); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+  /* ============================================================
+     INICIALIZACIÓN
+     ============================================================ */
+  async function iniciar() {
+    D = leerLocal();
+    if (!D || !D.eventos) {
+      D = (await leerArchivo()) || semilla();
+      guardarLocal(D);
+      ORIGEN = 'archivo';
+    } else {
+      ORIGEN = 'navegador';
+    }
+    
+    // Configurar vista inicial pública
+    $('#public-panel').style.display = 'block';
+    const per = periodoDe(hoy()), anios = aniosDisponibles();
+    S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1];
+    S.sem = per.startsWith(S.anio + '-') ? +per.split('-')[1] : '';
+    if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
+    pintarPublico();
+    $('#loader').classList.add('hidden');
+  }
+  
+  iniciar();
+</script>
+</body>
+</html>
