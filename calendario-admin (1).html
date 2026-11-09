@@ -118,7 +118,7 @@
     <p>Escribe tu clave para entrar y editar las fechas.</p>
     <input id="pin" type="password" autocomplete="off" placeholder="••••" autofocus>
     <button class="btn pri" style="width:100%">Entrar</button>
-    <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Clave por defecto: <b>1234</b>.</p>
+    <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Ingresa tu cave <b>.</b>.</p>
   </form>
 </div>
 
@@ -218,7 +218,7 @@
   function aviso() { $('#aviso').hidden = localStorage.getItem(LS_SUCIO) !== '1'; }
 
   /* --- LOGIN --- */
-  const pinActual = () => localStorage.getItem('ub_cal_pin') || '1234';
+  const pinActual = () => localStorage.getItem('ub_cal_pin') || '1997081211101';
   $('#gateForm').onsubmit = e => {
     e.preventDefault();
     if ($('#pin').value === pinActual()) { sessionStorage.setItem('ub_cal_ok', '1'); entrar(); }
