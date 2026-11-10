@@ -6,8 +6,6 @@
 <title>Calendario Académico - Universidad El Bosque</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;500;600;700&display=swap">
-<!-- Importamos una fuente de emojis a color estilo Flaticon -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 <style>
   :root {
     --lima: #A6CE39; --verde: #007A78; --petroleo: #003B36; --claro: #C5E86C;
@@ -15,7 +13,6 @@
     --rojo: #B3261E; --rojo-fondo: #FDE8E7;
     --display: 'Fraunces', Georgia, serif; --texto: 'Figtree', 'Segoe UI', system-ui, sans-serif;
     --transicion: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --emoji-font: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--texto); background: var(--fondo); color: var(--tinta); line-height: 1.45; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
@@ -23,8 +20,71 @@
   button { cursor: pointer; transition: var(--transicion); }
   [hidden] { display: none !important; }
 
-  /* FORZAR EMOJIS A COLOR */
-  .emoji, .ic, .brand-icon { font-family: var(--emoji-font); font-weight: normal; font-style: normal; }
+  /* ICONOS FLATICON (SVG) */
+  .flaticon { width: 1.4em; height: 1.4em; vertical-align: middle; display: inline-block; flex: none; fill: currentColor; }
+  
+  /* ===== LAS 10 CARAS DE TITA VOLANDO ===== */
+  .tita-bg {
+    position: fixed;
+    z-index: 2; /* Por encima del fondo, por debajo de los paneles principales */
+    pointer-events: none;
+    opacity: 0.85; /* Resaltan más */
+    mix-blend-mode: multiply; /* Hace que los colores blancos de la imagen desaparezcan y se integre mejor */
+    transition: opacity 0.3s;
+  }
+  
+  /* Filtros para que resalten con colores */
+  .tita-1 { width: 140px; top: 5%; left: 5%; animation: flotar1 25s infinite ease-in-out, gesticular 4s infinite alternate; filter: drop-shadow(0 0 12px rgba(166, 206, 57, 0.8)); }
+  .tita-2 { width: 180px; top: 15%; right: 10%; animation: flotar2 30s infinite ease-in-out, gesticular 5s infinite alternate-reverse; filter: drop-shadow(0 0 15px rgba(0, 122, 120, 0.8)); }
+  .tita-3 { width: 120px; top: 45%; left: 15%; animation: flotar3 22s infinite ease-in-out, gesticular 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(179, 38, 30, 0.7)); }
+  .tita-4 { width: 160px; bottom: 10%; right: 5%; animation: flotar4 35s infinite ease-in-out, gesticular 6s infinite alternate; filter: drop-shadow(0 0 18px rgba(255, 193, 7, 0.8)); }
+  .tita-5 { width: 110px; bottom: 25%; left: 8%; animation: flotar5 20s infinite ease-in-out, gesticular 4.5s infinite alternate-reverse; filter: drop-shadow(0 0 12px rgba(156, 39, 176, 0.7)); }
+  .tita-6 { width: 150px; top: 30%; left: 45%; animation: flotar1 28s infinite ease-in-out reverse, gesticular 5.5s infinite alternate; filter: drop-shadow(0 0 15px rgba(33, 150, 243, 0.8)); }
+  .tita-7 { width: 130px; top: 65%; right: 25%; animation: flotar2 24s infinite ease-in-out reverse, gesticular 3.5s infinite alternate-reverse; filter: drop-shadow(0 0 10px rgba(255, 87, 34, 0.8)); }
+  .tita-8 { width: 170px; bottom: 5%; left: 35%; animation: flotar3 40s infinite ease-in-out, gesticular 7s infinite alternate; filter: drop-shadow(0 0 20px rgba(0, 150, 136, 0.8)); }
+  .tita-9 { width: 100px; top: 80%; left: 50%; animation: flotar4 18s infinite ease-in-out, gesticular 4s infinite alternate-reverse; filter: drop-shadow(0 0 12px rgba(233, 30, 99, 0.8)); }
+  .tita-10 { width: 200px; top: 40%; right: -20px; animation: flotar5 32s infinite ease-in-out, gesticular 6s infinite alternate; filter: drop-shadow(0 0 18px rgba(139, 195, 74, 0.8)); }
+
+  /* Trayectorias */
+  @keyframes flotar1 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(150px, 100px) rotate(15deg); }
+    66% { transform: translate(-50px, 200px) rotate(-10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  @keyframes flotar2 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-200px, 150px) rotate(-20deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  @keyframes flotar3 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(100px, -150px) scale(1.1) rotate(10deg); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+  @keyframes flotar4 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-100px, -100px) rotate(30deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  @keyframes flotar5 {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-150px, 50px) scale(0.9); }
+    66% { transform: translate(50px, -50px) scale(1.2) rotate(-15deg); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  /* Gesticulaciones (hace caras, asiente, etc.) */
+  @keyframes gesticular {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.05) rotate(3deg); }
+    50% { transform: scale(0.95) rotate(-3deg); }
+    75% { transform: scale(1.08) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  /* Ocultar Titas en el panel de administración */
+  body.en-admin .tita-bg { display: none; }
 
   #loader { position: fixed; inset: 0; background: var(--fondo); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; transition: opacity 0.5s; }
   #loader.hidden { opacity: 0; pointer-events: none; }
@@ -49,7 +109,7 @@
   .admin-link { color: var(--claro); font-size: 0.85rem; text-decoration: none; border: 1px solid rgba(197,232,108,0.4); padding: 0.45rem 0.9rem; border-radius: 999px; white-space: nowrap; transition: var(--transicion); background: transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
   .admin-link:hover { background: rgba(197,232,108,0.15); transform: translateY(-1px); }
 
-  .hero { background: var(--lima); position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; }
+  .hero { background: var(--lima); position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; z-index: 10; }
   .year-bg { position: absolute; left: -1rem; bottom: -3.2rem; font-family: var(--display); font-weight: 800; font-size: clamp(9rem, 22vw, 17rem); line-height: 1; color: rgba(255,255,255,0.28); pointer-events: none; user-select: none; transition: var(--transicion); }
   .hero:hover .year-bg { transform: scale(1.02) translateX(10px); }
   .hero-izq { position: relative; z-index: 2; }
@@ -61,13 +121,12 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 0.6rem;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     background: rgba(255,255,255,0.4);
     padding: 0.4rem 0.8rem;
     border-radius: 8px;
-    display: inline-block;
   }
 
   .hero-izq .hoy { font-size: 0.9rem; font-weight: 600; color: var(--petroleo); opacity: 0.85; margin-bottom: 0.5rem; }
@@ -87,7 +146,7 @@
 
   .barra { position: sticky; top: 57px; z-index: 40; background: rgba(243,246,244,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--linea); padding: 0.8rem clamp(1rem, 4vw, 3rem); display: flex; flex-wrap: wrap; gap: 0.7rem 1rem; align-items: center; }
   .seg { display: inline-flex; background: #fff; border: 1px solid var(--linea); border-radius: 999px; padding: 3px; }
-  .seg button { border: 0; background: transparent; padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.88rem; font-weight: 600; color: var(--suave); }
+  .seg button { border: 0; background: transparent; padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.88rem; font-weight: 600; color: var(--suave); display: inline-flex; align-items: center; gap: 0.3rem; }
   .seg button.on { background: var(--petroleo); color: #fff; box-shadow: 0 2px 6px rgba(0,59,54,0.2); }
   .barra select { padding: 0.5rem 0.8rem; border-radius: 10px; border: 1px solid var(--linea); background: #fff; font-size: 0.9rem; max-width: 230px; transition: var(--transicion); color: var(--tinta); }
   .barra select:focus { border-color: var(--verde); outline: none; }
@@ -97,7 +156,7 @@
   .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
   /* ===== TARJETAS DE CATEGORÍAS (MODULOS) ===== */
-  .modulos { padding: 1.6rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+  .modulos { padding: 1.6rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; position: relative; z-index: 10; }
   .mod { 
     position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); 
     background: #fff; color: var(--tinta); border-radius: 14px; padding: 1.1rem 1.2rem; 
@@ -109,7 +168,7 @@
   .mod:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: var(--c, var(--verde)); }
   .mod:hover::after { transform: scale(1.4); opacity: 0.2; }
   
-  .mod .ic { font-size: 1.6rem; margin-bottom: 0.6rem; display: inline-block; }
+  .mod .ic { margin-bottom: 0.6rem; display: inline-block; color: var(--c, var(--verde)); }
   .mod b { font-weight: 700; font-size: 1.02rem; line-height: 1.2; z-index: 1; color: var(--tinta); margin-bottom: 0.3rem; display: block; }
   .mod .n { font-size: 0.78rem; font-weight: 700; z-index: 1; color: var(--suave); background: var(--fondo); padding: 0.2rem 0.6rem; border-radius: 99px; display: inline-block; align-self: flex-start; border: 1px solid var(--linea); }
   .mod.on { border-color: var(--c, var(--lima)); box-shadow: 0 8px 25px color-mix(in srgb, var(--c, var(--lima)) 30%, transparent); transform: scale(1.02); background: color-mix(in srgb, var(--c, var(--lima)) 8%, white); }
@@ -127,6 +186,7 @@
   .mod.todos.on { background: var(--verde); box-shadow: 0 8px 25px rgba(0,122,120,0.4); }
   .mod.todos.on b { color: #fff; }
   .mod.todos.on .n { background: #fff; color: var(--verde); }
+  .mod.todos .ic { color: var(--lima); }
 
   main { flex: 1; padding: 1rem clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; width: 100%; margin: 0 auto; position: relative; z-index: 10; }
 
@@ -135,7 +195,7 @@
   .panel { min-width: 0; }
   .panel.pl { position: sticky; top: 130px; max-height: calc(100vh - 150px); display: flex; flex-direction: column; background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 1rem 1rem 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
   .phead { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.6rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--lima); flex: none; }
-  .phead h2 { font-family: var(--display); font-size: 1.3rem; color: var(--petroleo); margin: 0; }
+  .phead h2 { font-family: var(--display); font-size: 1.3rem; color: var(--petroleo); margin: 0; display: flex; align-items: center; gap: 0.4rem; }
   .phead span { font-size: 0.82rem; color: var(--suave); font-weight: 600; }
   .panel.pl .lista-eventos { overflow-y: auto; padding-right: 0.4rem; flex: 1; min-height: 0; }
   .panel.pl .mes-t { font-size: 1.1rem; margin: 1rem 0 0.4rem; color: var(--petroleo); }
@@ -164,24 +224,48 @@
 
   .lista-eventos { animation: slideUp 0.5s ease-out; }
   .mes-t { font-family: var(--display); font-size: 1.5rem; margin: 1.6rem 0 0.6rem; color: var(--petroleo); border-bottom: 2px solid var(--lima); display: inline-block; padding-bottom: 0.2rem; }
-  .ev { --c-fac: #007A78; --c-cat: #007A78; display: grid; grid-template-columns: 56px 1fr auto; gap: 0.8rem; align-items: center; border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); border-radius: 12px; padding: 0.65rem 0.85rem; margin-bottom: 0.5rem; cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; animation: scaleIn 0.3s ease-out; background: #fff; }
+  
+  /* ===== TARJETA DE EVENTO REDISEÑADA ===== */
+  .ev { 
+    --c-fac: #007A78; --c-cat: #007A78; 
+    display: grid; grid-template-columns: 60px 1fr auto; gap: 1rem; align-items: center; 
+    border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); 
+    border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; 
+    cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; 
+    animation: scaleIn 0.3s ease-out; background: #fff; 
+  }
   .ev:hover { box-shadow: 0 8px 20px rgba(0,59,54,0.1); transform: translateY(-2px); }
   .ev.pasado { opacity: 0.6; }
-  .fecha { text-align: center; line-height: 1.05; }
-  .fecha b { font-family: var(--display); font-size: 1.5rem; display: block; color: var(--petroleo); }
-  .fecha span { font-size: 0.72rem; color: var(--suave); font-weight: 600; }
-  .ev h3 { font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; color: var(--tinta); }
-  .meta { display: flex; flex-wrap: wrap; gap: 0.3rem 0.7rem; font-size: 0.78rem; color: var(--suave); margin-top: 0.25rem; align-items: center; }
-  .chip { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700; color: var(--tinta); background: #fff; padding: 0.1rem 0.45rem; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 0.75rem; }
-  .chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c-cat); }
-  .estado { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 999px; white-space: nowrap; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); color: var(--tinta); }
-  .estado.e-curso { color: var(--verde); }
-  .estado.e-pronto { color: #8A5A00; }
+  
+  /* Columna izquierda: Fecha */
+  .fecha { text-align: center; line-height: 1.05; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid var(--linea); padding-right: 0.5rem;}
+  .fecha b { font-family: var(--display); font-size: 1.8rem; display: block; color: var(--petroleo); line-height: 1;}
+  .fecha span { font-size: 0.75rem; color: var(--suave); font-weight: 600; text-transform: uppercase; margin-top: 0.2rem;}
+  
+  /* Columna central: Contenido */
+  .ev-content { display: flex; flex-direction: column; gap: 0.4rem; }
+  .ev-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .ev h3 { font-size: 1.05rem; font-weight: 700; color: var(--tinta); margin: 0; line-height: 1.2; }
+  .cat-pill { font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 99px; background: color-mix(in srgb, var(--c-cat) 15%, white); color: var(--c-cat); border: 1px solid color-mix(in srgb, var(--c-cat) 30%, white); text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.2rem;}
+  .cat-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--c-cat); display: inline-block;}
+  
+  .ev-bottom { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 0.82rem; color: var(--suave); }
+  .ambito-pill { 
+    display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fondo); 
+    padding: 0.2rem 0.6rem; border-radius: 6px; border: 1px solid var(--linea); font-weight: 600; color: var(--tinta); 
+  }
+  .ambito-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--verde); }
+  
+  /* Columna derecha: Estado */
+  .estado { font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 999px; white-space: nowrap; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--linea); color: var(--tinta); display: flex; align-items: center; gap: 0.3rem;}
+  .estado.e-curso { color: var(--verde); border-color: var(--verde); background: #e6f2f1;}
+  .estado.e-pronto { color: #8A5A00; border-color: #c9a83d; background: #fff8e6;}
   .estado.e-fin { color: var(--suave); }
+  
   .ev.festivo { border-left-color: var(--rojo); background-color: var(--rojo-fondo); border-color: #f3b8b4; }
   .ev.festivo .fecha b { color: var(--rojo); }
-  .ev.festivo .chip { background: #fff; color: var(--rojo); }
-  .ev.festivo .chip i { background: var(--rojo); }
+  .ev.festivo .cat-pill { background: #fff; color: var(--rojo); border-color: #f3b8b4; }
+  .ev.festivo .cat-pill::before { background: var(--rojo); }
 
   @keyframes breathe-mix {
     0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 6%, white); border-left-color: var(--c-fac); }
@@ -215,39 +299,6 @@
   #btnTop.show { opacity: 1; pointer-events: auto; }
   #btnTop:hover { background: var(--petroleo); transform: translateY(-3px); }
 
-  /* ===== MASCOTA "CARA TITA" DE FONDO (MULTIPLICADA) ===== */
-  .tita-bg {
-    position: fixed;
-    z-index: 1; /* Detrás del contenido pero delante del fondo general */
-    pointer-events: none;
-    opacity: 0.15; /* Transparente para que no opaque el texto */
-  }
-  
-  /* Diferentes tamaños y animaciones */
-  .tita-1 { width: 300px; top: 10%; left: -100px; animation: flotar1 25s linear infinite; }
-  .tita-2 { width: 200px; top: 40%; right: -50px; animation: flotar2 30s linear infinite; }
-  .tita-3 { width: 150px; bottom: 20%; left: 20%; animation: flotar3 20s linear infinite; opacity: 0.1; }
-  .tita-4 { width: 400px; bottom: -50px; right: 10%; animation: flotar1 35s linear infinite reverse; opacity: 0.08; }
-
-  @keyframes flotar1 {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(100px, 50px) rotate(10deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-  }
-  @keyframes flotar2 {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(-150px, -80px) rotate(-15deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-  }
-  @keyframes flotar3 {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(50px, -100px) scale(1.1); }
-    100% { transform: translate(0, 0) scale(1); }
-  }
-
-  /* Ocultar a Tita al entrar al admin */
-  body.en-admin .tita-bg { display: none; }
-
   /* Admin */
   #admin-panel { display: none; }
   #admin-panel.on { display: block; }
@@ -269,12 +320,12 @@
   .admin-nav .brand small { opacity: .65; font-size: .75rem; color: #fff; }
   .admin-nav .user-info { font-size: .8rem; background: rgba(255,255,255,0.05); padding: 0.5rem 0.8rem; border-radius: 8px; margin-bottom: 1rem; border-left: 3px solid var(--lima); }
   .admin-nav .user-info b { display: block; font-size: 0.9rem; color: #fff; }
-  .admin-nav .user-info span { font-size: 0.7rem; opacity: 0.75; text-transform: uppercase; color: #fff; }
+  .admin-nav .user-info span { font-size: 0.7rem; opacity: 0.75; text-transform: uppercase; color: #fff; display: flex; align-items: center; gap: 0.3rem; }
   .admin-nav button.it { display: flex; align-items: center; gap: .7rem; text-align: left; border: 0; background: transparent; color: rgba(255,255,255,.85); padding: .65rem .8rem; border-radius: 10px; font-weight: 600; font-size: .93rem; transition: var(--transicion); }
   .admin-nav button.it:hover { background: rgba(255,255,255,.08); color: #fff; }
   .admin-nav button.it.on { background: var(--lima); color: var(--petroleo); box-shadow: 0 4px 10px rgba(166,206,57,0.3); }
   .admin-nav .sp { flex: 1; }
-  .admin-nav a.ver, .admin-nav button.logout { display: block; text-align: center; color: var(--claro); border: 1px solid rgba(197,232,108,.4); border-radius: 10px; padding: .6rem; text-decoration: none; font-size: .88rem; font-weight: 600; transition: var(--transicion); background: transparent; width: 100%; margin-top: 0.5rem; }
+  .admin-nav a.ver, .admin-nav button.logout { display: flex; align-items: center; justify-content: center; gap: 0.4rem; text-align: center; color: var(--claro); border: 1px solid rgba(197,232,108,.4); border-radius: 10px; padding: .6rem; text-decoration: none; font-size: .88rem; font-weight: 600; transition: var(--transicion); background: transparent; width: 100%; margin-top: 0.5rem; }
   .admin-nav a.ver:hover, .admin-nav button.logout:hover { background: rgba(197,232,108,0.1); }
   .admin-nav .sep { font-size: .72rem; opacity: .55; padding: .8rem .8rem .2rem; color: #fff; }
 
@@ -282,9 +333,9 @@
   .admin-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: .75rem clamp(1rem,3vw,2.6rem); background: #fff; border-bottom: 1px solid var(--linea); position: sticky; top: 0; z-index: 30; }
   .saludo { font-size: 1rem; color: var(--suave); }
   .saludo b { font-family: var(--display); color: var(--petroleo); font-size: 1.2rem; }
-  .rolchip { margin-left: .5rem; background: #E1F2B8; color: #2f4a00; border-radius: 999px; padding: .15rem .7rem; font-size: .74rem; font-weight: 700; }
+  .rolchip { margin-left: .5rem; background: #E1F2B8; color: #2f4a00; border-radius: 999px; padding: .15rem .7rem; font-size: .74rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem; }
   .admin-top-acc { display: flex; gap: .5rem; }
-  .badge { display: inline-block; border-radius: 999px; padding: .2rem .7rem; font-size: .76rem; font-weight: 700; white-space: nowrap; }
+  .badge { display: inline-flex; align-items: center; gap: 0.3rem; border-radius: 999px; padding: .2rem .7rem; font-size: .76rem; font-weight: 700; white-space: nowrap; }
   .rolsel { padding: .3rem .5rem; border: 1px solid var(--linea); border-radius: 8px; background: #fff; color: var(--tinta); }
   .roles-leyenda { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; }
   .roles-leyenda div { font-size: .85rem; color: var(--suave); }
@@ -296,7 +347,7 @@
   .stat { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 1rem 1.1rem; transition: var(--transicion); color: var(--tinta); }
   .stat:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
   .stat b { font-family: var(--display); font-size: 2.2rem; display: block; line-height: 1; color: var(--petroleo); }
-  .stat span { font-size: .85rem; color: var(--suave); }
+  .stat span { font-size: .85rem; color: var(--suave); display: flex; align-items: center; gap: 0.3rem; }
   .stat.verde { background: var(--verde); color: #fff; border: 0; }
   .stat.verde b { color: #fff; }
   .stat.verde span { color: rgba(255,255,255,.85); }
@@ -305,7 +356,7 @@
   .caja h2 { font-size: 1.05rem; margin-bottom: .8rem; color: var(--petroleo); display: flex; align-items: center; gap: 0.4rem; }
   
   .tools { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; align-items: center; }
-  .tools input, .tools select { padding: .55rem .8rem; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font-size: .9rem; transition: var(--transicion); color: var(--tinta); }
+  .tools input, .tools select { padding: .55rem .8rem; border-radius: 10px; border: 1px solid var(--linea); background: #fff; font-size: .9rem; transition: var(--transicion); color: var(--tinta); }
   .tools input::placeholder { color: #9aa8a4; }
   .tools input:focus, .tools select:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
   .tools input[type=search] { flex: 1 1 200px; }
@@ -326,7 +377,7 @@
   tr:hover td { background: #FBFDFC; }
   td .tt { font-weight: 700; }
   td input, td select { color: var(--tinta); }
-  .est { border: 0; border-radius: 999px; padding: .2rem .7rem; font-size: .76rem; font-weight: 700; cursor: pointer; transition: var(--transicion); }
+  .est { border: 0; border-radius: 999px; padding: .2rem .7rem; font-size: .76rem; font-weight: 700; cursor: pointer; transition: var(--transicion); display: inline-flex; align-items: center; gap: 0.3rem; }
   .est.pub { background: #E1F2B8; color: #2f4a00; }
   .est.bor { background: #EEE; color: #555; }
   .est:hover { filter: brightness(0.95); }
@@ -346,7 +397,7 @@
   .multi-select { width: 100%; padding: .6rem; border: 1px solid var(--linea); border-radius: 10px; font-size: .85rem; background: #fff; color: var(--tinta); }
   .multi-select option { padding: 0.3rem; }
 
-  #toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--petroleo); color: #fff; padding: .7rem 1.2rem; border-radius: 999px; font-weight: 600; transition: transform .25s; z-index: 200; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  #toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--petroleo); color: #fff; padding: .7rem 1.2rem; border-radius: 999px; font-weight: 600; transition: transform .25s; z-index: 200; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 0.4rem; }
   #toast.on { transform: translateX(-50%) translateY(0); }
   #toast.err { background: var(--rojo); }
 
@@ -360,7 +411,7 @@
     .hero { grid-template-columns: 1fr; }
     .search { flex-basis: 100%; order: 5; margin-top: 0.5rem; }
     .top { flex-wrap: wrap; }
-    .ev { grid-template-columns: 48px 1fr; }
+    .ev { grid-template-columns: 50px 1fr; }
     .estado { grid-column: 2; justify-self: start; margin-top: 0.4rem;}
     .cal .dia { min-height: 64px; }
     .pill { font-size: 0; padding: 4px; height: 10px; border-radius: 2px; }
@@ -375,11 +426,17 @@
 </head>
 <body>
 
-<!-- MASCOTA CARA TITA DE FONDO (MULTIPLICADA) -->
+<!-- LAS 10 CARAS DE TITA VOLANDO -->
 <img class="tita-bg tita-1" src="cara tita.png" alt="">
 <img class="tita-bg tita-2" src="cara tita.png" alt="">
 <img class="tita-bg tita-3" src="cara tita.png" alt="">
 <img class="tita-bg tita-4" src="cara tita.png" alt="">
+<img class="tita-bg tita-5" src="cara tita.png" alt="">
+<img class="tita-bg tita-6" src="cara tita.png" alt="">
+<img class="tita-bg tita-7" src="cara tita.png" alt="">
+<img class="tita-bg tita-8" src="cara tita.png" alt="">
+<img class="tita-bg tita-9" src="cara tita.png" alt="">
+<img class="tita-bg tita-10" src="cara tita.png" alt="">
 
 <div id="loader"><div class="spinner"></div><p style="color:var(--suave); font-weight:600;">Cargando calendario...</p></div>
 <div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
@@ -395,32 +452,55 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="Buscar: matrícula, grados, nómina…">
     </div>
-    <button class="admin-link" onclick="irAdmin()">🔐 Administrar</button>
+    <button class="admin-link" onclick="irAdmin()">
+      <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Administrar
+    </button>
   </header>
 
   <section class="hero">
     <div class="year-bg" id="bgAnio"></div>
     <div class="hero-izq">
-      <div class="titulo-oficina">🏛️ Registro y Control Académico</div>
+      <div class="titulo-oficina">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11M8 14v3m4-3v3m4-3v3"/></svg>
+        Registro y Control Académico
+      </div>
       <p class="hoy" id="hoyTxt"></p>
       <h1 id="heroTit">Calendario académico</h1>
       <p class="sub" id="heroSub">Fechas de matrículas, clases, grados, posgrados y más, organizadas por semestre, facultad y área.</p>
     </div>
-    <div class="proximos"><h2>⏰ Lo que viene</h2><div id="proximos"></div></div>
+    <div class="proximos">
+      <h2>
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Lo que viene
+      </h2>
+      <div id="proximos"></div>
+    </div>
   </section>
 
   <div class="barra">
     <select id="fAnio" aria-label="Año"></select>
     <div class="seg" id="fSem">
-      <button data-v="">📅 Todo el año</button><button data-v="1">1er semestre</button><button data-v="2">2do semestre</button>
+      <button data-v="">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Todo el año
+      </button>
+      <button data-v="1">1er semestre</button>
+      <button data-v="2">2do semestre</button>
     </div>
     <select id="fGrupo" aria-label="Facultad o área"></select>
     <select id="fProg" aria-label="Programa" hidden></select>
     <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
-    <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
+    <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <svg class="flaticon" viewBox="0 0 24 24" fill="var(--rojo)" stroke="none"><circle cx="12" cy="12" r="10"/></svg> Festivos</label>
     <div class="der">
-      <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
-      <button class="btn" onclick="print()">🖨️ Imprimir</button>
+      <button class="btn" id="bIcs">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Añadir a mi calendario
+      </button>
+      <button class="btn" onclick="print()">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir
+      </button>
     </div>
   </div>
 
@@ -433,7 +513,10 @@
       </section>
       <section class="panel pl">
         <div class="phead">
-          <h2>📋 Lista por meses</h2>
+          <h2>
+            <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Lista por meses
+          </h2>
           <span id="cuentaLista"></span>
         </div>
         <div id="vistaLista" class="lista-eventos"></div>
@@ -458,9 +541,15 @@
       <h1>Administrar calendario</h1>
       <p>Ingresa tu PIN de 6 a 15 dígitos.</p>
       <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" autofocus>
-      <button class="btn pri" style="width:100%">🔓 Entrar</button>
+      <button class="btn pri" style="width:100%">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Entrar
+      </button>
       <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Si es tu primera vez, crea un PIN de administrador.</p>
-      <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">✨ Crear PIN de Administrador</button>
+      <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Crear PIN de Administrador
+      </button>
     </form>
   </div>
 
@@ -474,27 +563,66 @@
         <b id="userNameDisplay">Cargando...</b>
         <span id="userRoleDisplay">Rol</span>
       </div>
-      <button class="it" data-p="resumen"><span class="emoji">📊</span> Resumen</button>
-      <button class="it" data-p="eventos"><span class="emoji">📅</span> Eventos</button>
+      <button class="it" data-p="resumen">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Resumen
+      </button>
+      <button class="it" data-p="eventos">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Eventos
+      </button>
       <div class="sep admin-only">Estructura</div>
-      <button class="it admin-only" data-p="periodos"><span class="emoji">🗓️</span> Semestres</button>
-      <button class="it admin-only" data-p="facultades"><span class="emoji">🏛️</span> Facultades y programas</button>
-      <button class="it admin-only" data-p="areas"><span class="emoji">🗂️</span> Áreas administrativas</button>
-      <button class="it admin-only" data-p="categorias"><span class="emoji">🏷️</span> Categorías</button>
+      <button class="it admin-only" data-p="periodos">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Semestres
+      </button>
+      <button class="it admin-only" data-p="facultades">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11M8 14v3m4-3v3m4-3v3"/></svg>
+        Facultades y programas
+      </button>
+      <button class="it admin-only" data-p="areas">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Áreas administrativas
+      </button>
+      <button class="it admin-only" data-p="categorias">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Categorías
+      </button>
       <div class="sep admin-only">Seguridad</div>
-      <button class="it admin-only" data-p="usuarios"><span class="emoji">👥</span> Usuarios y Accesos</button>
-      <button class="it admin-only" data-p="logs"><span class="emoji">📜</span> Logs del Sistema</button>
+      <button class="it admin-only" data-p="usuarios">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Usuarios y Accesos
+      </button>
+      <button class="it admin-only" data-p="logs">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Logs del Sistema
+      </button>
       <div class="sp"></div>
-      <button class="it admin-only" data-p="publicar"><span class="emoji">☁️</span> Publicar y datos</button>
-      <a class="ver" href="#" onclick="irPublico(event)"><span class="emoji">👁️</span> Ver público</a>
-      <button class="logout" onclick="cerrarSesion()"><span class="emoji">🚪</span> Cerrar sesión</button>
+      <button class="it admin-only" data-p="publicar">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+        Publicar y datos
+      </button>
+      <a class="ver" href="#" onclick="irPublico(event)">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver público
+      </a>
+      <button class="logout" onclick="cerrarSesion()">
+        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </button>
     </nav>
     <div class="admin-main">
       <div class="admin-top">
         <div class="saludo">Hola, <b id="saludoNombre"></b><span class="rolchip" id="saludoRol"></span></div>
         <div class="admin-top-acc">
-          <button class="btn sm" data-a="pin"><span class="emoji">🔑</span> Cambiar mi PIN</button>
-          <button class="btn sm pel" onclick="cerrarSesion()"><span class="emoji">🚪</span> Cerrar sesión</button>
+          <button class="btn sm" data-a="pin">
+            <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            Cambiar mi PIN
+          </button>
+          <button class="btn sm pel" onclick="cerrarSesion()">
+            <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Cerrar sesión
+          </button>
         </div>
       </div>
       <section id="admin-panel-inner"></section>
@@ -558,7 +686,56 @@
   const opt = (v, t, sel) => `<option value="${esc(v)}" ${sel ? 'selected' : ''}>${esc(t)}</option>`;
   const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
-  // --- Roles permitidos (deben coincidir con el CHECK de la BD) ---
+  /* ============================================================
+     BIBLIOTECA DE ICONOS FLATICON (SVG INLINE)
+     ============================================================ */
+  const FLATICONS = {
+    calendario: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    documento: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+    libro: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+    birrete: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+    trofeo: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+    personas: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    estrella: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    chart: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>',
+    pin: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+    email: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+    basura: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
+    editar: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+    check: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',
+    guardar: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
+    salir: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+    llave: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+    
+    // Facultades
+    ciencias: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"/><path d="M14 9.3V2"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.58 16.5h12.85"/></svg>',
+    enfermeria: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>',
+    economia: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+    derecho: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M5 6h14"/><path d="M5 18h14"/><path d="M5 6l-3 6h6z"/><path d="M19 6l-3 6h6z"/><path d="M5 18l-3-6h6z"/><path d="M19 18l-3-6h6z"/></svg>',
+    creacion: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>',
+    educacion: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+    ingenieria: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    medicina: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M2 12h20"/><path d="M7 7l10 10"/><path d="M7 17L17 7"/></svg>',
+    odontologia: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.5 2 6 4.5 6 7c0 2.5 1.5 4 2 6s1 7 4 9c3-2 3.5-7 4-9s2-3.5 2-6c0-2.5-2.5-5-6-5z"/></svg>',
+    psicologia: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
+    bioetica: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a5 5 0 0 0-5 5v2a5 5 0 0 0 5 5 5 5 0 0 0 5-5V7a5 5 0 0 0-5-5z"/><path d="M12 14v8"/><path d="M8 18h8"/></svg>',
+    humanidades: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'
+  };
+
+  const MAPA_ICONOS = {
+    'ciencias': 'ciencias', 'enfermeria': 'enfermeria', 'economicas': 'economia', 'administrativas': 'economia',
+    'juridicas': 'derecho', 'politicas': 'derecho', 'creacion': 'creacion', 'comunicacion': 'creacion',
+    'educacion': 'educacion', 'ingenieria': 'ingenieria', 'medicina': 'medicina', 'odontologia': 'odontologia',
+    'psicologia': 'psicologia', 'bioetica': 'bioetica', 'humanidades': 'humanidades'
+  };
+  const getIconoFac = nombre => {
+    const n = norm(nombre);
+    for (const key in MAPA_ICONOS) {
+      if (n.includes(key)) return FLATICONS[MAPA_ICONOS[key]];
+    }
+    return FLATICONS.birrete;
+  };
+
   const ROLES_VALIDOS = ['admin', 'creador', 'editor'];
   const normalizarRol = r => {
     const n = String(r || '').toLowerCase().trim();
@@ -569,7 +746,6 @@
     return 'editor';
   };
 
-  // --- Funciones de Nube (Supabase) ---
   async function leerNube() {
     if (!dbClient) return null;
     try {
@@ -600,7 +776,6 @@
     } catch (e) { console.error("Error al leer de Supabase:", e); return null; }
   }
 
-  // --- Logs ---
   async function registrarLog(accion, detalle) {
     if (!dbClient || !USUARIO_ACTUAL) return;
     try {
@@ -609,7 +784,6 @@
     } catch (e) { console.error('Error guardando log:', e); }
   }
 
-  // --- Autenticación ---
   async function verificarPin(pin) {
     if (!dbClient) return null;
     const { data, error } = await dbClient.from('usuarios_admin').select('*').eq('pin', pin);
@@ -632,7 +806,7 @@
     return count > 0;
   }
 
-  function toast(m, err) { const t = $('#toast'); t.textContent = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
+  function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
 
   /* ============================================================
      LÓGICA PÚBLICA
@@ -643,18 +817,18 @@
   function getColores(D, e) {
     const facs = e.facultad || [];
     const cat = catDe(D, e.categoria);
-    let facColor = cat.color, emoji = '';
+    let facColor = cat.color, icono = '';
     if (facs.length === 1) {
       const f = D.facultades.find(x => x.id === facs[0]);
-      if (f) { facColor = f.color || cat.color; emoji = f.emoji || ''; }
+      if (f) { facColor = f.color || cat.color; icono = f.emoji ? `<span style="font-size:1.1em">${f.emoji}</span>` : getIconoFac(f.nombre); }
     }
-    return { facColor, catColor: cat.color, emoji };
+    return { facColor, catColor: cat.color, icono };
   }
 
   function ambito(D, e) {
     const facs = e.facultad || [], areas = e.area || [], progs = e.programa || [];
     let nombres = [];
-    facs.forEach(fid => { const f = D.facultades.find(x => x.id === fid); if (f) nombres.push(`<span class="emoji">${f.emoji || ''}</span> ${f.nombre}`); });
+    facs.forEach(fid => { const f = D.facultades.find(x => x.id === fid); if (f) nombres.push(f.nombre); });
     if (progs.length) progs.forEach(pid => { const f = D.facultades.find(x => x.programas.some(p => p.id === pid)); const p = f && f.programas.find(x => x.id === pid); if (p) nombres.push(p.nombre); });
     areas.forEach(aid => { const a = D.areas.find(x => x.id === aid); if (a) nombres.push(a.nombre); });
     if (!nombres.length) return 'Toda la institución';
@@ -701,7 +875,7 @@
   const amb = e => e.esFestivo ? 'Festivo nacional' : ambito(D, e);
   let IO; function revelar() { if (IO) IO.disconnect(); if (!window.IntersectionObserver) return $$('.rev').forEach(x => x.classList.add('vis')); IO = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('vis'); IO.unobserve(x.target); } }), { threshold: .05 }); $$('.rev').forEach((el, i) => { el.style.transitionDelay = (i % 8) * 40 + 'ms'; IO.observe(el); }); }
   function irMes() { const el = $('#m-' + S.ref.getFullYear() + '-' + S.ref.getMonth()), L = $('#vistaLista'); if (el && L) L.scrollTo({ top: el.offsetTop - 4, behavior: 'smooth' }); }
-  const ORD = [['general','🗓️'],['matricul','📝'],['pregrado','📚'],['posgrado','🔬'],['ceremon','🎓'],['no ceremon','📜'],['talento','👥'],['otro','✨']];
+  const ORD = [['general','calendario'],['matricul','documento'],['pregrado','libro'],['posgrado','birrete'],['ceremon','trofeo'],['no ceremon','documento'],['talento','personas'],['otro','estrella']];
 
   function aniosDisponibles() { const set = new Set(D.periodos.map(p => +p.id.split('-')[0])); D.eventos.forEach(e => { set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
 
@@ -756,7 +930,7 @@
     $('#heroTit').textContent = S.sem ? `${S.anio} · Semestre ${S.sem}` : `Año académico ${S.anio}`;
     $('#fAnio').innerHTML = aniosDisponibles().map(a => `<option ${a === S.anio ? 'selected' : ''}>${a}</option>`).join('');
     $$('#fSem button').forEach(b => b.classList.toggle('on', b.dataset.v === String(S.sem)));
-    let g = '<option value="">🌐 Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${f.emoji || ''} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('') + '</optgroup>';
+    let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('') + '</optgroup>';
     $('#fGrupo').innerHTML = g;
     const f = S.grupo.startsWith('f:') ? D.facultades.find(x => x.id === S.grupo.slice(2)) : null;
     const fp = $('#fProg'); fp.hidden = !f;
@@ -785,29 +959,49 @@
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
     const card = (id, col, ic, nom, n, cls) => `
       <button class="mod ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}">
-        <span class="ic emoji">${ic}</span>
+        <span class="ic">${FLATICONS[ic] || FLATICONS.estrella}</span>
         <b>${esc(nom)}</b>
         <span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span>
       </button>`;
       
-    $('#modulos').innerHTML = card('', 'var(--petroleo)', '📅', 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
+    $('#modulos').innerHTML = card('', 'var(--petroleo)', 'calendario', 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
       D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { 
         const n = base.filter(e => e.categoria === c.id).length; 
-        return card(c.id, c.color, Number.isInteger(r) ? ORD[r][1] : '📌', c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); 
+        return card(c.id, c.color, Number.isInteger(r) ? ORD[r][1] : 'estrella', c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); 
       }).join('');
   }
 
+  /* AQUÍ ESTÁ LA CORRECCIÓN DEL BLOQUE DE EVENTOS */
   function filaEvento(e, mostrarAmbito = true) {
     const st = estadoDe(e);
-    const { facColor, catColor, emoji } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', emoji: '' } : getColores(D, e);
+    const { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
     const c = e.esFestivo ? { nombre: 'Festivo Nacional' } : catDe(D, e.categoria);
     const d = parse(e.inicio);
-    const tituloEmoji = emoji ? `<span class="emoji">${emoji}</span> ` : '';
     const inminente = esInminente(e);
+    
+    // Aquí se usa la función ambito() o el texto directo, sin envolver el SVG en esc()
+    const ambitoHtml = mostrarAmbito && !e.esFestivo ? `<span class="ambito-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span>` : '';
+
     return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
-      <div class="fecha"><b>${d.getDate()}</b><span>${MESES_C[d.getMonth()]} · ${DIAS_C[d.getDay()]}</span></div>
-      <div><h3>${tituloEmoji}${esc(e.titulo)}</h3><div class="meta"><span class="chip"><i></i>${esc(c.nombre)}</span>${mostrarAmbito ? `<span>${esc(amb(e))}</span>` : ''}<span>${fmtRango(e)}</span></div></div>
+      
+      <div class="fecha">
+        <b>${d.getDate()}</b>
+        <span>${MESES_C[d.getMonth()]} '${d.getFullYear().toString().slice(-2)}</span>
+      </div>
+
+      <div class="ev-content">
+        <div class="ev-top">
+          <h3>${esc(e.titulo)}</h3>
+          <span class="cat-pill">${esc(c.nombre)}</span>
+        </div>
+        <div class="ev-bottom">
+          ${ambitoHtml}
+          <span>📅 ${fmtRango(e)}</span>
+        </div>
+      </div>
+
       <span class="estado ${st.c}">${st.t}</span>
+
     </article>`;
   }
 
@@ -818,7 +1012,7 @@
     const finMes = new Date(y, m + 1, 0);
     const iniIso = iso(inicio), finIso = iso(finMes);
     const Lvis = L.filter(e => e.inicio <= finIso && finDe(e) >= iniIso);
-    let h = `<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.8rem; flex-wrap:wrap;"><h2 style="font-family:var(--display); font-size:1.5rem; flex:1; color:var(--petroleo);">📅 ${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}">`;
+    let h = `<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.8rem; flex-wrap:wrap;"><h2 style="font-family:var(--display); font-size:1.5rem; flex:1; color:var(--petroleo);">${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}">`;
     ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(n => h += `<div class="dh">${n}</div>`);
     const h0 = hoy();
     for (let i = 0; i < 42; i++) {
@@ -829,11 +1023,11 @@
       const todosDelDia = [...fDelDia, ...eDelDia];
       h += `<div class="dia ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${fDelDia.length ? 'festivo' : ''}"><span class="n">${dia.getDate()}</span>`;
       todosDelDia.slice(0, 3).forEach(e => {
-        let { facColor, catColor, emoji } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', emoji: '' } : getColores(D, e);
+        let { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
         let inminente = esInminente(e);
         const titulo = e.titulo || e.nombre || '';
         const eid = e.id || ('festivo-' + e.fecha);
-        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${eid}" title="${esc(titulo)}">${emoji ? `<span class="emoji">${emoji}</span> ` : ''}${esc(titulo)}</button>`;
+        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${eid}" title="${esc(titulo)}">${icono ? icono + ' ' : ''}${esc(titulo)}</button>`;
       });
       if (todosDelDia.length > 3) h += `<button style="border:0; background:none; color:var(--verde); font-weight:700; font-size:0.72rem; padding:2px 4px;" data-dia="${s}">+${todosDelDia.length - 3} más</button>`;
       h += '</div>';
@@ -865,7 +1059,7 @@
     listaFiltradaCompleta = todos;
     $('#vistaCalendario').innerHTML = vistaCalendario(L);
     $('#vistaLista').innerHTML = vistaLista(todos);
-    $('#cuentaLista').textContent = '📅 ' + todos.length + ' fechas';
+    $('#cuentaLista').innerHTML = `${FLATICONS.calendario} ${todos.length} fechas`;
     $('#origen').innerHTML = `Fuente: <b>Jhon Vargas</b>`;
     $('#actual').textContent = D.actualizado ? 'Actualizado: ' + new Date(D.actualizado).toLocaleDateString('es-CO') : '';
     S.dir = ''; revelar();
@@ -875,17 +1069,17 @@
     if (String(id).startsWith('festivo-')) {
       const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
       if (!f) return;
-      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; color:var(--petroleo);"><span class="emoji">🎉</span> ${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
+      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; color:var(--petroleo);">${FLATICONS.estrella} ${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
       $('#velo').classList.add('on'); $('#cajon').classList.add('on');
       return;
     }
     const e = D.eventos.find(x => x.id === id); if (!e) return;
     const st = estadoDe(e);
-    const { facColor, catColor, emoji } = getColores(D, e);
+    const { facColor, catColor, icono } = getColores(D, e);
     const gc = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.titulo)}&dates=${e.inicio.replace(/-/g, '')}/${sumaDias(finDe(e), 1).replace(/-/g, '')}&details=${encodeURIComponent(e.descripcion || '')}&location=${encodeURIComponent(e.lugar || '')}`;
     let pubStr = '';
     if (e.publico && e.publico.length) pubStr = `<dt style="color:var(--suave); font-weight:600;">Dirigido a</dt><dd>${esc(e.publico.join(', '))}</dd>`;
-    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem; color:var(--petroleo);">${emoji ? `<span class="emoji">${emoji}</span> ` : ''}${esc(e.titulo)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>${pubStr}<dt style="color:var(--suave); font-weight:600;">Ámbito</dt><dd>${esc(amb(e))}</dd><dt style="color:var(--suave); font-weight:600;">Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>${e.lugar ? `<dt style="color:var(--suave); font-weight:600;">Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : ''}</dl>${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}<div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;"><a class="btn" href="${gc}" target="_blank" rel="noopener">📅 Google Calendar</a><button class="btn" data-ics="${e.id}">📥 Descargar (.ics)</button></div>`;
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem; color:var(--petroleo);">${icono ? icono + ' ' : ''}${esc(e.titulo)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>${pubStr}<dt style="color:var(--suave); font-weight:600;">Ámbito</dt><dd>${esc(amb(e))}</dd><dt style="color:var(--suave); font-weight:600;">Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>${e.lugar ? `<dt style="color:var(--suave); font-weight:600;">Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : ''}</dl>${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}<div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;"><a class="btn" href="${gc}" target="_blank" rel="noopener">${FLATICONS.calendario} Google Calendar</a><button class="btn" data-ics="${e.id}">${FLATICONS.documento} Descargar (.ics)</button></div>`;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
   }
   function abrirDia(s) {
@@ -894,7 +1088,7 @@
       (e.periodo.startsWith(anio + '-') || (e.periodo2 && e.periodo2.startsWith(anio + '-'))));
     const fDelDia = festivosDia(s);
     const todos = [...fDelDia, ...L];
-    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem; color:var(--petroleo);">📅 ${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem; color:var(--petroleo);">${FLATICONS.calendario} ${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
        if (e.esFestivo) return `<div class="ev festivo" style="--c-fac:var(--rojo);--c-cat:var(--rojo); cursor:default;" data-id="festivo-${e.fecha}"><div class="fecha"><b>${parse(e.fecha).getDate()}</b><span>Festivo</span></div><div><h3>${esc(e.nombre)}</h3></div></div>`;
        return filaEvento(e);
     }).join('') : '<p style="color:var(--suave); text-align:center; padding:2rem;">No hay eventos este día.</p>');
@@ -941,7 +1135,7 @@
      ============================================================ */
   let P = 'resumen';
 
-  const ROLES = { admin: '<span class="emoji">👑</span> Administrador', creador: '<span class="emoji">✍️</span> Creador', editor: '<span class="emoji">✏️</span> Editor' };
+  const ROLES = { admin: `${FLATICONS.estrella} Administrador`, creador: `${FLATICONS.editar} Creador`, editor: `${FLATICONS.editar} Editor` };
   const DESC_ROL = {
     admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.',
     creador: 'Tu perfil permite crear eventos nuevos.',
@@ -1066,33 +1260,33 @@
       const segs = D.categorias.map(c => { const n = L.filter(e => e.categoria === c.id).length; return n ? `<i style="display:block; height:100%; width:${n / tot * 100}%; background:${c.color}" title="${esc(c.nombre)}: ${n}"></i>` : ''; }).join('');
       return `<div style="margin-bottom:1rem;"><div style="display:flex; justify-content:space-between; font-weight:600; font-size:.92rem; margin-bottom:.3rem; color:var(--tinta);"><span>${nombrePeriodo(p.id)}</span><span>${L.length} eventos</span></div><div style="display:flex; height:14px; border-radius:999px; overflow:hidden; background:var(--fondo);">${segs}</div></div>`;
     }).join('');
-    return encabezado('<span class="emoji">📊</span> Resumen', DESC_ROL[USUARIO_ACTUAL.rol] || 'Una mirada rápida a cómo está el calendario hoy.') + `
+    return encabezado(`${FLATICONS.chart} Resumen`, DESC_ROL[USUARIO_ACTUAL.rol] || 'Una mirada rápida a cómo está el calendario hoy.') + `
     <div class="cards">
-      <div class="stat verde"><b>${pub.length}</b><span><span class="emoji">✅</span> eventos publicados</span></div>
-      <div class="stat"><b>${bor}</b><span><span class="emoji">📝</span> borradores</span></div>
-      <div class="stat"><b>${D.periodos.length}</b><span><span class="emoji">🗓️</span> semestres creados</span></div>
-      <div class="stat"><b>${D.facultades.length}</b><span><span class="emoji">🏛️</span> facultades · ${progs} programas</span></div>
+      <div class="stat verde"><b>${pub.length}</b><span>${FLATICONS.check} eventos publicados</span></div>
+      <div class="stat"><b>${bor}</b><span>${FLATICONS.documento} borradores</span></div>
+      <div class="stat"><b>${D.periodos.length}</b><span>${FLATICONS.calendario} semestres creados</span></div>
+      <div class="stat"><b>${D.facultades.length}</b><span>${FLATICONS.birrete} facultades · ${progs} programas</span></div>
     </div>
     <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1.2rem;">
-      <div class="caja"><h2><span class="emoji">📈</span> Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
+      <div class="caja"><h2>${FLATICONS.chart} Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
       <div>
-        <div class="caja"><h2><span class="emoji">⏰</span> Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem; color:var(--tinta);"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div>
+        <div class="caja"><h2>${FLATICONS.calendario} Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem; color:var(--tinta);"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div>
       </div>
     </div>
-    ${puede('crear') ? '<button class="btn pri" data-a="nuevo" style="margin-top:1rem;"><span class="emoji">➕</span> Agregar evento</button>' : ''}`;
+    ${puede('crear') ? `<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">${FLATICONS.documento} Agregar evento</button>` : ''}`;
   }
 
   function pEventos() {
     const pers = [...new Set(D.eventos.map(e => e.periodo))].sort().reverse();
     let g = '<option value="">Todas las facultades y áreas</option><option value="inst">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => opt('f:' + f.id, f.nombre)).join('') + '</optgroup><optgroup label="Áreas">' + D.areas.map(a => opt('a:' + a.id, a.nombre)).join('') + '</optgroup>';
-    return encabezado('<span class="emoji">📅</span> Eventos', { admin: 'Aquí agregas, editas y organizas todas las fechas.', creador: 'Aquí puedes crear eventos nuevos.', editor: 'Aquí puedes editar los eventos existentes.' }[USUARIO_ACTUAL.rol] || 'Eventos del calendario.') + `
+    return encabezado(`${FLATICONS.calendario} Eventos`, { admin: 'Aquí agregas, editas y organizas todas las fechas.', creador: 'Aquí puedes crear eventos nuevos.', editor: 'Aquí puedes editar los eventos existentes.' }[USUARIO_ACTUAL.rol] || 'Eventos del calendario.') + `
     <div class="tools">
       <input type="search" id="x_q" placeholder="🔍 Buscar evento…">
       <select id="x_per"><option value="">Todos los semestres</option>${pers.map(p => opt(p, nombrePeriodo(p))).join('')}</select>
       <select id="x_cat"><option value="">Todas las categorías</option>${D.categorias.map(c => opt(c.id, c.nombre)).join('')}</select>
       <select id="x_grupo">${g}</select>
       <select id="x_est"><option value="">Todos los estados</option><option value="publicado">✅ Publicados</option><option value="borrador">📝 Borradores</option></select>
-      ${puede('crear') ? '<button class="btn pri" data-a="nuevo"><span class="emoji">➕</span> Nuevo evento</button>' : ''}
+      ${puede('crear') ? `<button class="btn pri" data-a="nuevo">${FLATICONS.documento} Nuevo evento</button>` : ''}
     </div>
     <div id="masiva"></div><div class="tw" id="tabla"></div>`;
   }
@@ -1116,19 +1310,19 @@
     ['q', 'per', 'cat', 'grupo', 'est'].forEach(k => { const el = $('#x_' + k); if (el) el.value = F[k]; });
     const L = eventosFiltrados();
     const pEd = puede('editar'), pEl = puede('eliminar');
-    $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub"><span class="emoji">✅</span> Publicar</button><button class="btn sm" data-a="m_bor"><span class="emoji">📝</span> Pasar a borrador</button></div>` : '';
+    $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button></div>` : '';
 
-    $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>📅 Fecha</th><th>Evento</th><th>👥 Dirigido a</th><th>🗓️ Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
+    $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
       L.map(e => `<tr>${pEd ? `<td><input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}></td>` : ''}
         <td style="white-space:nowrap">${fmtRango(e)}</td>
         <td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td>
         <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}</td>
         <td>${pEd
-          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '<span class="emoji">📝</span> Borrador' : '<span class="emoji">✅</span> Publicado'}</button>`
-          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '<span class="emoji">📝</span> Borrador' : '<span class="emoji">✅</span> Publicado'}</span>`}</td>
+          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? `${FLATICONS.documento} Borrador` : `${FLATICONS.check} Publicado`}</button>`
+          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? `${FLATICONS.documento} Borrador` : `${FLATICONS.check} Publicado`}</span>`}</td>
         <td><div class="acc">
-          ${pEd ? `<button class="btn sm" data-a="editar" data-i="${e.id}"><span class="emoji">✏️</span> Editar</button>` : ''}
-          ${pEl ? `<button class="btn sm pel" data-a="del" data-i="${e.id}"><span class="emoji">🗑️</span> Eliminar</button>` : ''}
+          ${pEd ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}
+          ${pEl ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}
         </div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
@@ -1147,7 +1341,7 @@
     const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
     const esLugarEspecial = lugaresConExtra.includes(e.lugar);
 
-    $('#modal').innerHTML = `<div class="mod"><h2>${id ? '<span class="emoji">✏️</span> Editar evento' : '<span class="emoji">➕</span> Nuevo evento'}</h2>
+    $('#modal').innerHTML = `<div class="mod"><h2>${id ? `${FLATICONS.editar} Editar evento` : `${FLATICONS.documento} Nuevo evento`}</h2>
       <div class="fr"><label>¿Qué pasa? *</label><input id="f_titulo" value="${esc(e.titulo)}" placeholder="Ej: Matrícula ordinaria"></div>
       <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="2">${esc(e.descripcion)}</textarea></div>
       <div class="fr2">
@@ -1166,7 +1360,7 @@
       <div class="fr">
         <label>Facultades (Selección múltiple)</label>
         <select id="f_fac" multiple class="multi-select" size="4" onchange="actualizarProgsModal()">
-          ${D.facultades.map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${f.emoji || ''} ${esc(f.nombre)}</option>`).join('')}
+          ${D.facultades.map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${esc(f.nombre)}</option>`).join('')}
         </select>
       </div>
       
@@ -1212,9 +1406,9 @@
         <div class="fr"><label>Enlace (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="https://…"></div>
       </div>
 
-      <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', '✅ Publicado', e.estado !== 'borrador')}${opt('borrador', '📝 Borrador', e.estado === 'borrador')}</select></div>
+      <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select></div>
       
-      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="guardarEv" data-i="${id || ''}"><span class="emoji">💾</span> Guardar</button></div></div>`;
+      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} Guardar</button></div></div>`;
     
     $('#modal').classList.add('on');
     actualizarProgsModal(arrProg);
@@ -1303,7 +1497,7 @@
         const nuevosDatos = await leerNube();
         if (nuevosDatos) D = nuevosDatos;
       }
-      toast('Evento guardado ✅'); cerrarModal(); refrescar();
+      toast(`${FLATICONS.check} Evento guardado`); cerrarModal(); refrescar();
     } catch (e) {
       console.error(e);
       toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true);
@@ -1322,45 +1516,31 @@
       if (nuevosDatos) D = nuevosDatos;
     }
     SEL.delete(id);
-    toast('Evento eliminado 🗑️');
+    toast(`${FLATICONS.basura} Evento eliminado`);
     pintarTabla();
   }
 
   function pFacultades() { 
-    // LISTA DE ICONOS SUGERIDOS POR DEFECTO PARA LAS FACULTADES
-    const icFac = {
-      'ciencias': '🔬', 'enfermeria': '🩺', 'economicas': '📈', 'administrativas': '💼',
-      'juridicas': '⚖️', 'politicas': '⚖️', 'creacion': '🎨', 'comunicacion': '🎤',
-      'educacion': '🎓', 'ingenieria': '⚙️', 'medicina': '🩺', 'odontologia': '🦷',
-      'psicologia': '🧠', 'bioetica': '🧬', 'humanidades': '📚'
-    };
-
-    return encabezado('<span class="emoji">🏛️</span> Facultades y programas', 'Organiza la universidad.') + 
+    return encabezado(`${FLATICONS.birrete} Facultades y programas`, 'Organiza la universidad.') + 
     `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;">
       <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; color:var(--tinta); background:#fff;"></div>
-      <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji)</label><input id="n_fac_emoji" placeholder="🎨" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff; font-family: var(--emoji-font);"></div>
+      <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji opcional)</label><input id="n_fac_emoji" placeholder="🏛️" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff;"></div>
       <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div>
-      <button class="btn pri" data-a="addFac"><span class="emoji">➕</span> Agregar</button>
+      <button class="btn pri" data-a="addFac">${FLATICONS.documento} Agregar</button>
     </div>` + 
     
     D.facultades.map(f => {
-      // Asignar icono automático si no tiene uno
-      let emojiActual = f.emoji;
-      if (!emojiActual) {
-        const n = norm(f.nombre);
-        for (const key in icFac) {
-          if (n.includes(key)) { emojiActual = icFac[key]; break; }
-        }
-      }
-      if (!emojiActual) emojiActual = '🏛️';
+      let iconHtml = f.emoji ? `<span style="font-size:1.5rem">${f.emoji}</span>` : getIconoFac(f.nombre);
 
       return `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};">
         <div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;">
-          <input style="width:48px; text-align:center; font-size:1.5rem; border:1px solid var(--linea); border-radius:8px; padding:.3rem; color:var(--tinta); background:#fff; font-family: var(--emoji-font);" value="${esc(emojiActual)}" data-ch="facEmoji" data-i="${f.id}">
+          <div style="width:48px; height:48px; display:grid; place-items:center; border:1px solid var(--linea); border-radius:8px; padding:.3rem; color:var(--verde);">
+            ${iconHtml}
+          </div>
           <input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent; color:var(--petroleo);" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}">
           <input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;">
           <span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span>
-          <button class="btn sm pel" data-a="delFac" data-i="${f.id}"><span class="emoji">🗑️</span> Eliminar</button>
+          <button class="btn sm pel" data-a="delFac" data-i="${f.id}">${FLATICONS.basura} Eliminar</button>
         </div>
         ${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;">
           <input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}">
@@ -1370,25 +1550,25 @@
         <div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;">
           <input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;">
           <select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select>
-          <button class="btn sm" data-a="addProg" data-i="${f.id}"><span class="emoji">➕</span> Agregar manual</button>
+          <button class="btn sm" data-a="addProg" data-i="${f.id}">${FLATICONS.documento} Agregar manual</button>
         </div>
       </div>`;
     }).join(''); 
   }
 
-  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado('<span class="emoji">🗓️</span> Semestres', 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addPer"><span class="emoji">➕</span> Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}"><span class="emoji">🗑️</span> Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
-  function pAreas() { return encabezado('<span class="emoji">🗂️</span> Áreas administrativas', 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addArea"><span class="emoji">➕</span> Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}"><span class="emoji">🗑️</span> Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
-  function pCategorias() { return encabezado('<span class="emoji">🏷️</span> Categorías', 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat"><span class="emoji">➕</span> Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}"><span class="emoji">🗑️</span> Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado(`${FLATICONS.calendario} Semestres`, 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addPer">${FLATICONS.documento} Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pAreas() { return encabezado(`${FLATICONS.personas} Áreas administrativas`, 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addArea">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pCategorias() { return encabezado(`${FLATICONS.estrella} Categorías`, 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
 
   async function pUsuarios() {
     const { data, error } = await dbClient.from('usuarios_admin').select('id,nombre,rol,correo,created_at');
-    if (error) return encabezado('<span class="emoji">👥</span> Usuarios y Accesos', 'No se pudieron cargar los usuarios: ' + esc(error.message));
+    if (error) return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'No se pudieron cargar los usuarios: ' + esc(error.message));
     const col = { admin: ['#E1F2B8', '#2f4a00'], creador: ['#DBEAFE', '#1e3a8a'], editor: ['#F3E8FF', '#6b21a8'] };
     const badge = r => `<span class="badge" style="background:${(col[r] || ['#eee', '#333'])[0]}; color:${(col[r] || ['#eee', '#333'])[1]}">${ROLES[r] || r}</span>`;
     const U = [...(data || [])].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
-    return encabezado('<span class="emoji">👥</span> Usuarios y Accesos', 'Gestiona quién puede entrar al panel y qué puede hacer. Los PINs deben tener entre 6 y 15 dígitos.') + `
+    return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'Gestiona quién puede entrar al panel y qué puede hacer. Los PINs deben tener entre 6 y 15 dígitos.') + `
     <div class="caja">
-      <h2><span class="emoji">🎭</span> Perfiles disponibles</h2>
+      <h2>${FLATICONS.personas} Perfiles disponibles</h2>
       <div class="roles-leyenda">
         <div>${badge('admin')}<br>Administra todo el sistema: eventos, estructura, usuarios y logs.</div>
         <div>${badge('creador')}<br>Solo crea eventos nuevos.</div>
@@ -1396,13 +1576,13 @@
       </div>
     </div>
     <div class="caja">
-      <h2><span class="emoji">➕</span> Crear nuevo usuario</h2>
+      <h2>${FLATICONS.documento} Crear nuevo usuario</h2>
       <div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;">
         <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Nombre</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
         <div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div>
         <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>PIN (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" autocomplete="new-password" placeholder="••••••"></div>
-        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Perfil</label><select id="n_user_rol"><option value="editor">✏️ Editor</option><option value="creador">✍️ Creador</option><option value="admin">👑 Administrador</option></select></div>
-        <button class="btn pri" data-a="addUser"><span class="emoji">➕</span> Crear usuario</button>
+        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Perfil</label><select id="n_user_rol"><option value="editor">Editor</option><option value="creador">Creador</option><option value="admin">Administrador</option></select></div>
+        <button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button>
       </div>
     </div>
     <div class="tw">
@@ -1415,9 +1595,9 @@
             <td>${String(u.id) === String(USUARIO_ACTUAL.id) ? badge(u.rol) : `<select class="rolsel" data-ch="userRol" data-i="${u.id}">${Object.keys(ROLES).map(r => opt(r, ROLES[r], r === u.rol)).join('')}</select>`}</td>
             <td>${u.created_at ? new Date(u.created_at).toLocaleDateString('es-CO') : '—'}</td>
             <td><div class="acc">
-              <button class="btn sm warn" data-a="resetPin" data-i="${u.id}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}><span class="emoji">📧</span> Restablecer PIN</button>
-              <button class="btn sm" data-a="userPin" data-i="${u.id}"><span class="emoji">🔑</span> Cambiar PIN</button>
-              ${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}"><span class="emoji">🗑️</span> Eliminar</button>`}
+              <button class="btn sm warn" data-a="resetPin" data-i="${u.id}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}>${FLATICONS.email} Restablecer PIN</button>
+              <button class="btn sm" data-a="userPin" data-i="${u.id}">${FLATICONS.llave} Cambiar PIN</button>
+              ${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}">${FLATICONS.basura} Eliminar</button>`}
             </div></td>
           </tr>`).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
         </tbody>
@@ -1462,16 +1642,16 @@
 
   async function pLogs() {
     const { data, error } = await dbClient.from('logs').select('*').order('created_at', { ascending: false }).limit(500);
-    if (error) return encabezado('<span class="emoji">📜</span> Logs del Sistema', 'No se pudieron cargar los logs: ' + esc(error.message));
+    if (error) return encabezado(`${FLATICONS.documento} Logs del Sistema`, 'No se pudieron cargar los logs: ' + esc(error.message));
     LOGS = data || [];
     const usrs = [...new Set(LOGS.map(l => l.usuario_nombre))].sort();
     const accs = [...new Set(LOGS.map(l => l.accion))].sort();
-    return encabezado('<span class="emoji">📜</span> Logs del Sistema', 'Registro de los últimos 500 movimientos: quién hizo qué y cuándo.') + `
+    return encabezado(`${FLATICONS.documento} Logs del Sistema`, 'Registro de los últimos 500 movimientos: quién hizo qué y cuándo.') + `
     <div class="tools">
       <input type="search" id="l_q" placeholder="🔍 Buscar en el detalle…" value="${esc(LF.q)}">
       <select id="l_usr"><option value="">Todos los usuarios</option>${usrs.map(u => opt(u, u, u === LF.usr)).join('')}</select>
       <select id="l_acc"><option value="">Todas las acciones</option>${accs.map(a => opt(a, a, a === LF.acc)).join('')}</select>
-      <button class="btn" data-a="logsRef"><span class="emoji">🔄</span> Actualizar</button>
+      <button class="btn" data-a="logsRef">${FLATICONS.editar} Actualizar</button>
     </div>
     <p id="logsCuenta" style="margin:0 0 .8rem; font-size:.85rem; color:var(--suave);"></p>
     <div class="tw" id="logsTabla"></div>`;
@@ -1492,7 +1672,7 @@
     }).join('') + '</tbody></table>' : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay movimientos con estos filtros.</div>';
   }
 
-  async function pPublicar() { return encabezado('<span class="emoji">☁️</span> Publicar y datos', 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);"><span class="emoji">✨</span> Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio, este se envía a Supabase y se refleja al instante en la vista pública.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);"><span class="emoji">🛠️</span> Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin"><span class="emoji">🔑</span> Cambiar clave</button><button class="btn" data-a="salir"><span class="emoji">🚪</span> Cerrar sesión</button></div></div></div></div>`; }
+  async function pPublicar() { return encabezado(`${FLATICONS.documento} Publicar y datos`, 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);">${FLATICONS.estrella} Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio, este se envía a Supabase y se refleja al instante en la vista pública.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);">${FLATICONS.llave} Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin">${FLATICONS.llave} Cambiar clave</button><button class="btn" data-a="salir">${FLATICONS.salir} Cerrar sesión</button></div></div></div></div>`; }
 
   async function recargar() { const n = await leerNube(); if (n) D = n; }
 
@@ -1519,7 +1699,7 @@
     const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
     if ((dup || []).some(x => String(x.id) !== String(id))) return toast('Ese PIN ya está en uso, elige otro', true);
     const { data: u } = await dbClient.from('usuarios_admin').select('nombre').eq('id', id).maybeSingle();
-    if (await ejecutar(() => dbClient.from('usuarios_admin').update({ pin }).eq('id', id), 'PIN actualizado ✅', 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
+    if (await ejecutar(() => dbClient.from('usuarios_admin').update({ pin }).eq('id', id), `${FLATICONS.check} PIN actualizado`, 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
   }
 
   async function cambiarRol(id, rol) {
@@ -1529,14 +1709,14 @@
     const u = (data || []).find(x => String(x.id) === String(id));
     if (!u || u.rol === rolNorm) return;
     if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) { toast('Debe quedar al menos un administrador', true); return ir('usuarios', true); }
-    await ejecutar(() => dbClient.from('usuarios_admin').update({ rol: rolNorm }).eq('id', id), 'Perfil actualizado ✅', 'Cambió perfil', `${u.nombre}: ${u.rol} → ${rolNorm}`);
+    await ejecutar(() => dbClient.from('usuarios_admin').update({ rol: rolNorm }).eq('id', id), `${FLATICONS.check} Perfil actualizado`, 'Cambió perfil', `${u.nombre}: ${u.rol} → ${rolNorm}`);
     ir('usuarios', true);
   }
 
   const masivo = async estado => {
     const ids = [...SEL]; if (!ids.length) return;
     const titulos = ids.map(i => (D.eventos.find(e => e.id === i) || {}).titulo).filter(Boolean).join(', ').slice(0, 200);
-    if (await ejecutar(() => dbClient.from('eventos').update({ estado }).in('id', ids), `${ids.length} evento(s) actualizados`, estado === 'publicado' ? 'Publicó eventos' : 'Pasó eventos a borrador', titulos)) { SEL.clear(); pintarTabla(); }
+    if (await ejecutar(() => dbClient.from('eventos').update({ estado }).in('id', ids), `${FLATICONS.check} ${ids.length} evento(s) actualizados`, estado === 'publicado' ? 'Publicó eventos' : 'Pasó eventos a borrador', titulos)) { SEL.clear(); pintarTabla(); }
   };
 
   const ACC = {
@@ -1546,7 +1726,7 @@
     tog: async i => {
       const e = D.eventos.find(x => x.id === i); if (!e) return;
       const nuevo = e.estado === 'borrador' ? 'publicado' : 'borrador';
-      if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? 'Pasó a borrador' : 'Publicado ✅', nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla();
+      if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? `${FLATICONS.documento} Pasó a borrador` : `${FLATICONS.check} Publicado`, nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla();
     },
     m_pub: () => masivo('publicado'), m_bor: () => masivo('borrador'),
 
@@ -1556,7 +1736,7 @@
       if (fin < ini) return toast('El fin no puede ser antes del inicio', true);
       const id = anio + '-' + sem;
       if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true);
-      if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), 'Semestre creado ✅', 'Creó semestre', nombrePeriodo(id))) refrescar();
+      if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), `${FLATICONS.check} Semestre creado`, 'Creó semestre', nombrePeriodo(id))) refrescar();
     },
     delPer: async i => {
       const n = D.eventos.filter(e => e.periodo === i || e.periodo2 === i).length;
@@ -1568,7 +1748,7 @@
     addFac: async () => {
       const n = $('#n_fac').value.trim(); if (!n) return toast('Escribe el nombre', true);
       const emoji = $('#n_fac_emoji').value.trim(), color = $('#n_fac_color').value;
-      if (await ejecutar(() => dbClient.from('facultades').insert([{ nombre: n, emoji, color }]), 'Facultad agregada ✅', 'Creó facultad', n)) refrescar();
+      if (await ejecutar(() => dbClient.from('facultades').insert([{ nombre: n, emoji, color }]), `${FLATICONS.check} Facultad agregada`, 'Creó facultad', n)) refrescar();
     },
     delFac: async i => {
       const f = D.facultades.find(x => x.id === i); const n = D.eventos.filter(e => (e.facultad || []).includes(i)).length;
@@ -1577,7 +1757,7 @@
     },
     addProg: async i => {
       const f = D.facultades.find(x => x.id === i), n = $('#np_' + i).value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]), 'Programa agregado ✅', 'Creó programa', `${n} (${f ? f.nombre : ''})`)) refrescar();
+      if (await ejecutar(() => dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]), `${FLATICONS.check} Programa agregado`, 'Creó programa', `${n} (${f ? f.nombre : ''})`)) refrescar();
     },
     delProg: async (i, j) => {
       const f = D.facultades.find(x => x.id === i), pr = f && f.programas.find(x => x.id === j); const n = D.eventos.filter(e => (e.programa || []).includes(j)).length;
@@ -1586,7 +1766,7 @@
     },
     addArea: async () => {
       const n = $('#n_area').value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('areas').insert([{ nombre: n }]), 'Área agregada ✅', 'Creó área', n)) refrescar();
+      if (await ejecutar(() => dbClient.from('areas').insert([{ nombre: n }]), `${FLATICONS.check} Área agregada`, 'Creó área', n)) refrescar();
     },
     delArea: async i => {
       const a = D.areas.find(x => x.id === i); const n = D.eventos.filter(e => (e.area || []).includes(i)).length;
@@ -1595,7 +1775,7 @@
     },
     addCat: async () => {
       const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), 'Categoría agregada ✅', 'Creó categoría', n)) refrescar();
+      if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), `${FLATICONS.check} Categoría agregada`, 'Creó categoría', n)) refrescar();
     },
     delCat: async i => {
       const c = D.categorias.find(x => x.id === i);
@@ -1618,7 +1798,7 @@
         if (dup && dup.length) return toast('Ese PIN ya está en uso, elige otro', true);
         await crearUsuario(nombre, pin, rol, correo || null);
         registrarLog('Creó usuario', `${nombre} (${ROLES[rol] || rol})${correo ? ' · ' + correo : ''}`);
-        toast('Usuario creado ✅'); ir('usuarios', true);
+        toast(`${FLATICONS.check} Usuario creado`); ir('usuarios', true);
       } catch (e) {
         console.error(e);
         if (String(e.message).includes('rol_check')) {
@@ -1684,7 +1864,7 @@
     const { error } = await dbClient.from(tabla).update(campos).eq('id', id);
     if (error) { toast('Error al guardar: ' + error.message, true); await recargar(); return refrescar(); }
     registrarLog('Modificó ' + quien, texto);
-    toast('Cambio guardado ✅');
+    toast(`${FLATICONS.check} Cambio guardado`);
   });
 
   document.addEventListener('input', e => {
