@@ -40,7 +40,7 @@
   .search input:focus { background: rgba(255,255,255,0.15); border-color: var(--lima); outline: none; }
   .search input::placeholder { color: rgba(255,255,255,0.55); }
   .search svg { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); opacity: 0.6; }
-  .admin-link { color: var(--claro); font-size: 0.85rem; text-decoration: none; border: 1px solid rgba(197,232,108,0.4); padding: 0.45rem 0.9rem; border-radius: 999px; white-space: nowrap; transition: var(--transicion); background: transparent; cursor: pointer; }
+  .admin-link { color: var(--claro); font-size: 0.85rem; text-decoration: none; border: 1px solid rgba(197,232,108,0.4); padding: 0.45rem 0.9rem; border-radius: 999px; white-space: nowrap; transition: var(--transicion); background: transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
   .admin-link:hover { background: rgba(197,232,108,0.15); transform: translateY(-1px); }
 
   .hero { background: var(--lima); position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; }
@@ -52,7 +52,7 @@
   .hero-izq p.sub { margin-top: 0.9rem; color: var(--petroleo); max-width: 42ch; font-size: 1.02rem; }
   .proximos { position: relative; background: var(--petroleo); color: #fff; border-radius: 14px; padding: 1.2rem 1.3rem; box-shadow: 0 12px 30px rgba(0,59,54,0.25); z-index: 2; transition: var(--transicion); }
   .proximos:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,59,54,0.35); }
-  .proximos h2 { font-size: 0.9rem; font-weight: 600; color: var(--claro); margin-bottom: 0.6rem; }
+  .proximos h2 { font-size: 0.9rem; font-weight: 600; color: var(--claro); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
   .px { display: flex; gap: 0.8rem; align-items: center; padding: 0.6rem 0; border-top: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: var(--transicion); }
   .px:first-of-type { border-top: 0; }
   .px:hover { background: rgba(255,255,255,0.05); padding-left: 0.5rem; border-radius: 8px; }
@@ -69,7 +69,7 @@
   .barra select { padding: 0.5rem 0.8rem; border-radius: 10px; border: 1px solid var(--linea); background: #fff; font-size: 0.9rem; max-width: 230px; transition: var(--transicion); }
   .barra select:focus { border-color: var(--verde); outline: none; }
   .barra .der { margin-left: auto; display: flex; gap: 0.5rem; }
-  .btn { border: 1px solid var(--linea); background: #fff; padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); }
+  .btn { border: 1px solid var(--linea); background: #fff; padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); display: inline-flex; align-items: center; gap: 0.35rem; justify-content: center; }
   .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
   .modulos { padding: 1.6rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.9rem; }
@@ -80,6 +80,7 @@
   .mod:hover::after { transform: scale(1.2); opacity: 0.5; }
   .mod b { font-weight: 700; font-size: 0.98rem; line-height: 1.2; z-index: 1; }
   .mod span { font-size: 0.8rem; opacity: 0.85; z-index: 1; }
+  .mod .ic { font-size: 1.3rem; margin-bottom: 0.2rem; }
   .mod.on { border-color: var(--lima); background: var(--petroleo); transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,59,54,0.4); }
   .mod.cero { opacity: 0.55; }
   .mod.todos { background: var(--petroleo); }
@@ -166,7 +167,7 @@
   .gate-card input:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
 
   #admin-app { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
-  .admin-nav { background: var(--petroleo); color: #fff; padding: 1.3rem 1rem; display: flex; flex-direction: column; gap: .3rem; position: sticky; top: 0; height: 100vh; }
+  .admin-nav { background: var(--petroleo); color: #fff; padding: 1.3rem 1rem; display: flex; flex-direction: column; gap: .3rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
   .admin-nav .brand { display: flex; gap: .7rem; align-items: center; margin-bottom: 1.2rem; padding: 0 .4rem; }
   .admin-nav .brand .logo-img { height: 32px; width: auto; padding: 3px 6px; border-radius: 6px; flex: none; }
   .admin-nav .brand b { font-family: var(--display); line-height: 1.1; display: block; }
@@ -182,8 +183,6 @@
   .admin-nav a.ver:hover, .admin-nav button.logout:hover { background: rgba(197,232,108,0.1); }
   .admin-nav .sep { font-size: .72rem; opacity: .5; padding: .8rem .8rem .2rem; }
 
-  .admin-nav { overflow-y: auto; }
-  .admin-nav > * { flex-shrink: 0; }
   .admin-main { min-width: 0; }
   .admin-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: .75rem clamp(1rem,3vw,2.6rem); background: #fff; border-bottom: 1px solid var(--linea); position: sticky; top: 0; z-index: 30; }
   .saludo { font-size: 1rem; color: var(--suave); }
@@ -195,7 +194,7 @@
   .roles-leyenda { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; }
   .roles-leyenda div { font-size: .85rem; color: var(--suave); }
   #admin-panel-inner { padding: 2rem clamp(1rem,3vw,2.6rem) 4rem; max-width: 1180px; width: 100%; }
-  h1.pt { font-family: var(--display); font-size: 2rem; color: var(--petroleo); line-height: 1.1; }
+  h1.pt { font-family: var(--display); font-size: 2rem; color: var(--petroleo); line-height: 1.1; display: flex; align-items: center; gap: 0.5rem; }
   p.ps { color: var(--suave); margin: .3rem 0 1.4rem; max-width: 62ch; }
   
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .9rem; margin-bottom: 1.5rem; }
@@ -207,40 +206,38 @@
   .stat.verde span { color: rgba(255,255,255,.8); }
   .caja { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 1.2rem 1.3rem; margin-bottom: 1.2rem; transition: var(--transicion); }
   .caja:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-  .caja h2 { font-size: 1.05rem; margin-bottom: .8rem; color: var(--petroleo); }
+  .caja h2 { font-size: 1.05rem; margin-bottom: .8rem; color: var(--petroleo); display: flex; align-items: center; gap: 0.4rem; }
   
   .tools { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; align-items: center; }
   .tools input, .tools select { padding: .55rem .8rem; border: 1px solid var(--linea); border-radius: 10px; background: #fff; font-size: .9rem; transition: var(--transicion); }
   .tools input:focus, .tools select:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
   .tools input[type=search] { flex: 1 1 200px; }
   
-  .btn { border: 1px solid var(--linea); background: #fff; padding: .55rem .95rem; border-radius: 10px; font-weight: 600; font-size: .88rem; transition: var(--transicion); }
-  .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
   .btn.pri { background: var(--verde); color: #fff; border-color: var(--verde); }
   .btn.pri:hover { background: var(--petroleo); color: #fff; }
   .btn.pel { color: var(--rojo); }
   .btn.pel:hover { border-color: var(--rojo); color: var(--rojo); background: #fff5f5; }
   .btn.sm { padding: .3rem .6rem; font-size: .8rem; }
+  .btn.warn { color: #8A5A00; border-color: #e6c66b; }
+  .btn.warn:hover { background: #fff8e6; color: #6b4500; border-color: #c9a83d; }
   
   .tw { background: #fff; border: 1px solid var(--linea); border-radius: 14px; overflow: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
   table { width: 100%; border-collapse: collapse; font-size: .9rem; }
   th { background: #F7FAF8; text-align: left; font-size: .78rem; color: var(--suave); padding: .65rem .8rem; white-space: nowrap; }
   td { padding: .65rem .8rem; border-top: 1px solid var(--linea); vertical-align: middle; transition: background 0.2s; }
   tr:hover td { background: #FBFDFC; }
-  .chip { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; font-weight: 600; white-space: nowrap; }
-  .chip i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
   td .tt { font-weight: 700; }
   .est { border: 0; border-radius: 999px; padding: .2rem .7rem; font-size: .76rem; font-weight: 700; cursor: pointer; transition: var(--transicion); }
   .est.pub { background: #E1F2B8; color: #2f4a00; }
   .est.bor { background: #EEE; color: #555; }
   .est:hover { filter: brightness(0.95); }
-  .acc { display: flex; gap: .3rem; justify-content: flex-end; }
+  .acc { display: flex; gap: .3rem; justify-content: flex-end; flex-wrap: wrap; }
   
   #modal { position: fixed; inset: 0; background: rgba(0,30,27,.5); display: none; place-items: center; padding: 1rem; z-index: 100; overflow: auto; backdrop-filter: blur(2px); }
   #modal.on { display: grid; }
   .mod { background: #fff; border-radius: 16px; width: min(680px, 100%); padding: 1.5rem; margin: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: modalIn 0.3s ease-out; }
   @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  .mod h2 { font-family: var(--display); font-size: 1.5rem; margin-bottom: 1rem; color: var(--petroleo); }
+  .mod h2 { font-family: var(--display); font-size: 1.5rem; margin-bottom: 1rem; color: var(--petroleo); display: flex; align-items: center; gap: 0.4rem; }
   .fr { margin-bottom: .8rem; }
   .fr label { display: block; font-size: .8rem; font-weight: 700; color: var(--suave); margin-bottom: .25rem; }
   .fr input, .fr select, .fr textarea { width: 100%; padding: .6rem .75rem; border: 1px solid var(--linea); border-radius: 10px; background: #fff; transition: var(--transicion); }
@@ -273,7 +270,7 @@
 <body>
 
 <div id="loader"><div class="spinner"></div><p style="color:var(--suave); font-weight:600;">Cargando calendario...</p></div>
-<div id="error-box" hidden><h2>Error de conexión</h2><p id="error-msg"></p></div>
+<div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
 
 <!-- VISTA PÚBLICA -->
 <div id="public-panel">
@@ -286,7 +283,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="Buscar: matrícula, grados, nómina…">
     </div>
-    <button class="admin-link" onclick="irAdmin()">Administrar ↗</button>
+    <button class="admin-link" onclick="irAdmin()">🔐 Administrar</button>
   </header>
 
   <section class="hero">
@@ -296,21 +293,21 @@
       <h1 id="heroTit">Calendario académico</h1>
       <p class="sub" id="heroSub">Fechas de matrículas, clases, grados, posgrados y más, organizadas por semestre, facultad y área.</p>
     </div>
-    <div class="proximos"><h2>Lo que viene</h2><div id="proximos"></div></div>
+    <div class="proximos"><h2>⏰ Lo que viene</h2><div id="proximos"></div></div>
   </section>
 
   <div class="barra">
     <select id="fAnio" aria-label="Año"></select>
     <div class="seg" id="fSem">
-      <button data-v="">Todo el año</button><button data-v="1">Semestre 1</button><button data-v="2">Semestre 2</button>
+      <button data-v="">📅 Todo el año</button><button data-v="1">1er semestre</button><button data-v="2">2do semestre</button>
     </div>
     <select id="fGrupo" aria-label="Facultad o área"></select>
     <select id="fProg" aria-label="Programa" hidden></select>
     <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
     <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
     <div class="der">
-      <button class="btn" id="bIcs">Añadir a mi calendario</button>
-      <button class="btn" onclick="print()">Imprimir</button>
+      <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
+      <button class="btn" onclick="print()">🖨️ Imprimir</button>
     </div>
   </div>
 
@@ -340,9 +337,9 @@
       <h1>Administrar calendario</h1>
       <p>Ingresa tu PIN de 6 a 15 dígitos.</p>
       <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" autofocus>
-      <button class="btn pri" style="width:100%">Entrar</button>
+      <button class="btn pri" style="width:100%">🔓 Entrar</button>
       <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Si es tu primera vez, crea un PIN de administrador.</p>
-      <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">Crear PIN de Administrador</button>
+      <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">✨ Crear PIN de Administrador</button>
     </form>
   </div>
 
@@ -356,27 +353,27 @@
         <b id="userNameDisplay">Cargando...</b>
         <span id="userRoleDisplay">Rol</span>
       </div>
-      <button class="it" data-p="resumen">Resumen</button>
-      <button class="it" data-p="eventos">Eventos</button>
+      <button class="it" data-p="resumen">📊 Resumen</button>
+      <button class="it" data-p="eventos">📅 Eventos</button>
       <div class="sep admin-only">Estructura</div>
-      <button class="it admin-only" data-p="periodos">Semestres</button>
-      <button class="it admin-only" data-p="facultades">Facultades y programas</button>
-      <button class="it admin-only" data-p="areas">Áreas administrativas</button>
-      <button class="it admin-only" data-p="categorias">Categorías</button>
+      <button class="it admin-only" data-p="periodos">🗓️ Semestres</button>
+      <button class="it admin-only" data-p="facultades">🏛️ Facultades y programas</button>
+      <button class="it admin-only" data-p="areas">🗂️ Áreas administrativas</button>
+      <button class="it admin-only" data-p="categorias">🏷️ Categorías</button>
       <div class="sep admin-only">Seguridad</div>
-      <button class="it admin-only" data-p="usuarios">Usuarios y Accesos</button>
-      <button class="it admin-only" data-p="logs">Logs del Sistema</button>
+      <button class="it admin-only" data-p="usuarios">👥 Usuarios y Accesos</button>
+      <button class="it admin-only" data-p="logs">📜 Logs del Sistema</button>
       <div class="sp"></div>
-      <button class="it admin-only" data-p="publicar">Publicar y datos</button>
-      <a class="ver" href="#" onclick="irPublico(event)">Ver público ↗</a>
-      <button class="logout" onclick="cerrarSesion()">Cerrar sesión</button>
+      <button class="it admin-only" data-p="publicar">☁️ Publicar y datos</button>
+      <a class="ver" href="#" onclick="irPublico(event)">👁️ Ver público</a>
+      <button class="logout" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
     </nav>
     <div class="admin-main">
       <div class="admin-top">
         <div class="saludo">Hola, <b id="saludoNombre"></b><span class="rolchip" id="saludoRol"></span></div>
         <div class="admin-top-acc">
-          <button class="btn sm" data-a="pin">Cambiar mi PIN</button>
-          <button class="btn sm pel" onclick="cerrarSesion()">Cerrar sesión</button>
+          <button class="btn sm" data-a="pin">🔑 Cambiar mi PIN</button>
+          <button class="btn sm pel" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
         </div>
       </div>
       <section id="admin-panel-inner"></section>
@@ -440,6 +437,18 @@
   const opt = (v, t, sel) => `<option value="${esc(v)}" ${sel ? 'selected' : ''}>${esc(t)}</option>`;
   const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
+  // --- Roles permitidos (deben coincidir con el CHECK de la BD) ---
+  const ROLES_VALIDOS = ['admin', 'creador', 'editor'];
+  const normalizarRol = r => {
+    const n = String(r || '').toLowerCase().trim();
+    if (ROLES_VALIDOS.includes(n)) return n;
+    // mapear variantes comunes
+    if (n === 'administrador') return 'admin';
+    if (n === 'create' || n === 'creador') return 'creador';
+    if (n === 'edit' || n === 'editor') return 'editor';
+    return 'editor'; // fallback seguro
+  };
+
   // --- Funciones de Nube (Supabase) ---
   async function leerNube() {
     if (!dbClient) return null;
@@ -487,9 +496,12 @@
     if (error) { toast("Error de conexión al verificar PIN", true); return null; }
     return (data && data.length > 0) ? data[0] : null;
   }
-  async function crearUsuario(nombre, pin, rol = 'admin') {
+  async function crearUsuario(nombre, pin, rol = 'editor', correo = null) {
     if (!dbClient) return null;
-    const { data, error } = await dbClient.from('usuarios_admin').insert([{ nombre, pin, rol }]).select().single();
+    const rolNorm = normalizarRol(rol);
+    const payload = { nombre, pin, rol: rolNorm };
+    if (correo) payload.correo = correo;
+    const { data, error } = await dbClient.from('usuarios_admin').insert([payload]).select().single();
     if (error) throw error;
     return data;
   }
@@ -500,13 +512,12 @@
     return count > 0;
   }
 
-  function toast(m, err) { const t = $('#toast'); t.textContent = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 2400); }
-  function aviso() { /* No aplica */ }
+  function toast(m, err) { const t = $('#toast'); t.textContent = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
 
   /* ============================================================
-     LÓGICA PÚBLICA
+     LÓGICA PÚBLICA  (CORREGIDA: filtra por año y rango visible)
      ============================================================ */
-  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', vista: 'agenda', ref: new Date() };
+  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date() };
   let listaFiltradaCompleta = [];
 
   function getColores(D, e) {
@@ -573,23 +584,24 @@
   const ORD = [['general','🗓️'],['matricul','📝'],['pregrado','📚'],['posgrado','🔬'],['ceremon','🎓'],['no ceremon','📜'],['talento','👥'],['otro','✨']];
 
   function aniosDisponibles() { const set = new Set(D.periodos.map(p => +p.id.split('-')[0])); D.eventos.forEach(e => { set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
-  
+
+  // Filtro principal: SIEMPRE por año (S.anio) y opcionalmente por semestre.
+  // sinPeriodo=true solo omite el filtro de semestre, NO el de año.
   function filtrar({ sinCat = false, sinPeriodo = false } = {}) {
     const q = norm(S.q);
     return D.eventos.filter(e => {
       if (e.estado === 'borrador') return false;
-      if (!sinPeriodo) { 
-        const p1 = e.periodo.startsWith(S.anio + '-');
-        const p2 = e.periodo2 ? e.periodo2.startsWith(S.anio + '-') : false;
-        if (!p1 && !p2) return false; 
-        if (S.sem) {
-          const s1 = e.periodo.endsWith('-' + S.sem);
-          const s2 = e.periodo2 ? e.periodo2.endsWith('-' + S.sem) : false;
-          if (!s1 && !s2) return false;
-        }
+      // Filtro por año: SIEMPRE aplica según S.anio
+      const p1 = e.periodo && e.periodo.startsWith(S.anio + '-');
+      const p2 = e.periodo2 ? e.periodo2.startsWith(S.anio + '-') : false;
+      if (!p1 && !p2) return false;
+      // Filtro por semestre (opcional)
+      if (!sinPeriodo && S.sem) {
+        const s1 = e.periodo && e.periodo.endsWith('-' + S.sem);
+        const s2 = e.periodo2 ? e.periodo2.endsWith('-' + S.sem) : false;
+        if (!s1 && !s2) return false;
       }
       if (!sinCat && S.cat && e.categoria !== S.cat) return false;
-      
       const facs = e.facultad || [], areas = e.area || [], progs = e.programa || [];
       if (S.grupo) {
         const [t, id] = S.grupo.split(':');
@@ -628,7 +640,7 @@
     $('#heroTit').textContent = S.sem ? `${S.anio} · Semestre ${S.sem}` : `Año académico ${S.anio}`;
     $('#fAnio').innerHTML = aniosDisponibles().map(a => `<option ${a === S.anio ? 'selected' : ''}>${a}</option>`).join('');
     $$('#fSem button').forEach(b => b.classList.toggle('on', b.dataset.v === String(S.sem)));
-    let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${f.emoji || ''} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('') + '</optgroup>';
+    let g = '<option value="">🌐 Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${f.emoji || ''} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('') + '</optgroup>';
     $('#fGrupo').innerHTML = g;
     const f = S.grupo.startsWith('f:') ? D.facultades.find(x => x.id === S.grupo.slice(2)) : null;
     const fp = $('#fProg'); fp.hidden = !f;
@@ -637,10 +649,15 @@
     $('#fInst').parentElement.style.display = S.grupo ? '' : 'none';
   }
   
+  // PRÓXIMOS: solo del año actual y festivos del año en curso y siguiente
   function pintarProximos() {
-    const h = hoy(); const saved = S.cat; S.cat = '';
-    const ya = +h.slice(0, 4); let lista = [...filtrar({ sinPeriodo: true }), ...(S.festivos ? [...festivosAnio(ya), ...festivosAnio(ya + 1)] : [])].filter(e => finDe(e) >= h).sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 4);
-    S.cat = saved;
+    const h = hoy();
+    const ya = +h.slice(0, 4);
+    const savedCat = S.cat; S.cat = '';
+    const propios = filtrar({ sinPeriodo: true }).filter(e => finDe(e) >= h);
+    const fest = S.festivos ? [...festivosAnio(ya), ...festivosAnio(ya + 1)].filter(f => f.fecha >= h) : [];
+    const lista = [...propios, ...fest].sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 4);
+    S.cat = savedCat;
     $('#proximos').innerHTML = lista.length ? lista.map(e => {
       const en = e.inicio <= h ? 0 : diffDias(h, e.inicio);
       const inminente = esInminente(e);
@@ -670,6 +687,7 @@
     </article>`;
   }
 
+  // CALENDARIO: filtra por rango visible del mes (no por periodo del evento)
   function vistaCalendario(L) {
     const y = S.ref.getFullYear(), m = S.ref.getMonth();
     const primero = new Date(y, m, 1), offset = (primero.getDay() + 6) % 7;
@@ -677,7 +695,7 @@
     const finMes = new Date(y, m + 1, 0);
     const iniIso = iso(inicio), finIso = iso(finMes);
     const Lvis = L.filter(e => e.inicio <= finIso && finDe(e) >= iniIso);
-    let h = `<div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem;"><h2 style="font-family:var(--display); font-size:1.6rem; flex:1;">${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}">`;
+    let h = `<div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem;"><h2 style="font-family:var(--display); font-size:1.6rem; flex:1;">📅 ${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}">`;
     ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(n => h += `<div class="dh">${n}</div>`);
     const h0 = hoy();
     for (let i = 0; i < 42; i++) {
@@ -722,7 +740,8 @@
     }
     const todos = [...L, ...fest].sort((a, b) => a.inicio.localeCompare(b.inicio) || (a.titulo || '').localeCompare(b.titulo || ''));
     listaFiltradaCompleta = todos;
-    $('#vistaCalendario').innerHTML = vistaCalendario(filtrar({ sinPeriodo: true }));
+    // El calendario recibe solo eventos del año (ya filtrados); el rango del mes se aplica dentro
+    $('#vistaCalendario').innerHTML = vistaCalendario(L);
     $('#vistaLista').innerHTML = vistaLista(todos);
     $('#cuentaLista').textContent = todos.length + ' fechas';
     $('#origen').innerHTML = `Fuente: <b>Jhon Vargas</b>`;
@@ -734,24 +753,26 @@
     if (String(id).startsWith('festivo-')) {
       const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
       if (!f) return;
-      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem;">${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
+      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem;">🎉 ${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
       $('#velo').classList.add('on'); $('#cajon').classList.add('on');
       return;
     }
     const e = D.eventos.find(x => x.id === id); if (!e) return;
-    const c = catDe(D, e.categoria), st = estadoDe(e);
+    const st = estadoDe(e);
     const { facColor, catColor, emoji } = getColores(D, e);
     const gc = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.titulo)}&dates=${e.inicio.replace(/-/g, '')}/${sumaDias(finDe(e), 1).replace(/-/g, '')}&details=${encodeURIComponent(e.descripcion || '')}&location=${encodeURIComponent(e.lugar || '')}`;
     let pubStr = '';
     if (e.publico && e.publico.length) pubStr = `<dt style="color:var(--suave); font-weight:600;">Dirigido a</dt><dd>${esc(e.publico.join(', '))}</dd>`;
-    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem;">${emoji ? emoji + ' ' : ''}${esc(e.titulo)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>${pubStr}<dt style="color:var(--suave); font-weight:600;">Ámbito</dt><dd>${esc(amb(e))}</dd><dt style="color:var(--suave); font-weight:600;">Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>${e.lugar ? `<dt style="color:var(--suave); font-weight:600;">Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : ''}</dl>${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}<div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;"><a class="btn" href="${gc}" target="_blank" rel="noopener">Google Calendar</a><button class="btn" data-ics="${e.id}">Descargar (.ics)</button></div>`;
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem;">${emoji ? emoji + ' ' : ''}${esc(e.titulo)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>${pubStr}<dt style="color:var(--suave); font-weight:600;">Ámbito</dt><dd>${esc(amb(e))}</dd><dt style="color:var(--suave); font-weight:600;">Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>${e.lugar ? `<dt style="color:var(--suave); font-weight:600;">Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : ''}</dl>${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}<div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;"><a class="btn" href="${gc}" target="_blank" rel="noopener">📅 Google Calendar</a><button class="btn" data-ics="${e.id}">📥 Descargar (.ics)</button></div>`;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
   }
   function abrirDia(s) {
-    const L = filtrar({ sinPeriodo: true }).filter(e => e.inicio <= s && s <= finDe(e));
+    const anio = +s.slice(0, 4);
+    const L = D.eventos.filter(e => e.estado !== 'borrador' && e.inicio <= s && s <= finDe(e) &&
+      (e.periodo.startsWith(anio + '-') || (e.periodo2 && e.periodo2.startsWith(anio + '-'))));
     const fDelDia = festivosDia(s);
     const todos = [...fDelDia, ...L];
-    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem;">${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem;">📅 ${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
        if (e.esFestivo) return `<div class="ev festivo" style="--c-fac:var(--rojo);--c-cat:var(--rojo); cursor:default;" data-id="festivo-${e.fecha}"><div class="fecha"><b>${parse(e.fecha).getDate()}</b><span>Festivo</span></div><div><h3>${esc(e.nombre)}</h3></div></div>`;
        return filaEvento(e);
     }).join('') : '<p style="color:var(--suave); text-align:center; padding:2rem;">No hay eventos este día.</p>');
@@ -798,7 +819,7 @@
      ============================================================ */
   let P = 'resumen';
 
-  const ROLES = { admin: 'Administrador', creador: 'Creador', editor: 'Editor' };
+  const ROLES = { admin: '👑 Administrador', creador: '✍️ Creador', editor: '✏️ Editor' };
   const DESC_ROL = {
     admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.',
     creador: 'Tu perfil permite crear eventos nuevos.',
@@ -879,7 +900,7 @@
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     const user = await verificarPin(pin);
     if (user) {
-      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: String(user.rol || '').toLowerCase() };
+      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: normalizarRol(user.rol) };
       $('#pin').value = '';
       registrarLog('Inicio de sesión', 'Ingresó al sistema');
       mostrarAppAdmin();
@@ -920,33 +941,33 @@
       const segs = D.categorias.map(c => { const n = L.filter(e => e.categoria === c.id).length; return n ? `<i style="display:block; height:100%; width:${n / tot * 100}%; background:${c.color}" title="${esc(c.nombre)}: ${n}"></i>` : ''; }).join('');
       return `<div style="margin-bottom:1rem;"><div style="display:flex; justify-content:space-between; font-weight:600; font-size:.92rem; margin-bottom:.3rem;"><span>${nombrePeriodo(p.id)}</span><span>${L.length} eventos</span></div><div style="display:flex; height:14px; border-radius:999px; overflow:hidden; background:var(--fondo);">${segs}</div></div>`;
     }).join('');
-    return encabezado('Resumen', DESC_ROL[USUARIO_ACTUAL.rol] || 'Una mirada rápida a cómo está el calendario hoy.') + `
+    return encabezado('📊 Resumen', DESC_ROL[USUARIO_ACTUAL.rol] || 'Una mirada rápida a cómo está el calendario hoy.') + `
     <div class="cards">
-      <div class="stat verde"><b>${pub.length}</b><span>eventos publicados</span></div>
-      <div class="stat"><b>${bor}</b><span>borradores</span></div>
-      <div class="stat"><b>${D.periodos.length}</b><span>semestres creados</span></div>
-      <div class="stat"><b>${D.facultades.length}</b><span>facultades · ${progs} programas</span></div>
+      <div class="stat verde"><b>${pub.length}</b><span>✅ eventos publicados</span></div>
+      <div class="stat"><b>${bor}</b><span>📝 borradores</span></div>
+      <div class="stat"><b>${D.periodos.length}</b><span>🗓️ semestres creados</span></div>
+      <div class="stat"><b>${D.facultades.length}</b><span>🏛️ facultades · ${progs} programas</span></div>
     </div>
     <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1.2rem;">
-      <div class="caja"><h2>Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
+      <div class="caja"><h2>📈 Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
       <div>
-        <div class="caja"><h2>Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem;"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div>
+        <div class="caja"><h2>⏰ Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem;"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div>
       </div>
     </div>
-    ${puede('crear') ? '<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">+ Agregar evento</button>' : ''}`;
+    ${puede('crear') ? '<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">➕ Agregar evento</button>' : ''}`;
   }
 
   function pEventos() {
     const pers = [...new Set(D.eventos.map(e => e.periodo))].sort().reverse();
     let g = '<option value="">Todas las facultades y áreas</option><option value="inst">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => opt('f:' + f.id, f.nombre)).join('') + '</optgroup><optgroup label="Áreas">' + D.areas.map(a => opt('a:' + a.id, a.nombre)).join('') + '</optgroup>';
-    return encabezado('Eventos', { admin: 'Aquí agregas, editas y organizas todas las fechas.', creador: 'Aquí puedes crear eventos nuevos.', editor: 'Aquí puedes editar los eventos existentes.' }[USUARIO_ACTUAL.rol] || 'Eventos del calendario.') + `
+    return encabezado('📅 Eventos', { admin: 'Aquí agregas, editas y organizas todas las fechas.', creador: 'Aquí puedes crear eventos nuevos.', editor: 'Aquí puedes editar los eventos existentes.' }[USUARIO_ACTUAL.rol] || 'Eventos del calendario.') + `
     <div class="tools">
-      <input type="search" id="x_q" placeholder="Buscar evento…">
+      <input type="search" id="x_q" placeholder="🔍 Buscar evento…">
       <select id="x_per"><option value="">Todos los semestres</option>${pers.map(p => opt(p, nombrePeriodo(p))).join('')}</select>
       <select id="x_cat"><option value="">Todas las categorías</option>${D.categorias.map(c => opt(c.id, c.nombre)).join('')}</select>
       <select id="x_grupo">${g}</select>
-      <select id="x_est"><option value="">Todos los estados</option><option value="publicado">Publicados</option><option value="borrador">Borradores</option></select>
-      ${puede('crear') ? '<button class="btn pri" data-a="nuevo">+ Nuevo evento</button>' : ''}
+      <select id="x_est"><option value="">Todos los estados</option><option value="publicado">✅ Publicados</option><option value="borrador">📝 Borradores</option></select>
+      ${puede('crear') ? '<button class="btn pri" data-a="nuevo">➕ Nuevo evento</button>' : ''}
     </div>
     <div id="masiva"></div><div class="tw" id="tabla"></div>`;
   }
@@ -970,19 +991,19 @@
     ['q', 'per', 'cat', 'grupo', 'est'].forEach(k => { const el = $('#x_' + k); if (el) el.value = F[k]; });
     const L = eventosFiltrados();
     const pEd = puede('editar'), pEl = puede('eliminar');
-    $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">Publicar</button><button class="btn sm" data-a="m_bor">Pasar a borrador</button></div>` : '';
+    $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center;"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">✅ Publicar</button><button class="btn sm" data-a="m_bor">📝 Pasar a borrador</button></div>` : '';
 
-    $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
+    $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>📅 Fecha</th><th>Evento</th><th>👥 Dirigido a</th><th>🗓️ Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
       L.map(e => `<tr>${pEd ? `<td><input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}></td>` : ''}
         <td style="white-space:nowrap">${fmtRango(e)}</td>
         <td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td>
         <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}</td>
         <td>${pEd
-          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? 'Borrador' : 'Publicado'}</button>`
-          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? 'Borrador' : 'Publicado'}</span>`}</td>
+          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>`
+          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td>
         <td><div class="acc">
-          ${pEd ? `<button class="btn sm" data-a="editar" data-i="${e.id}">Editar</button>` : ''}
-          ${pEl ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">Eliminar</button>` : ''}
+          ${pEd ? `<button class="btn sm" data-a="editar" data-i="${e.id}">✏️ Editar</button>` : ''}
+          ${pEl ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">🗑️ Eliminar</button>` : ''}
         </div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
@@ -1001,7 +1022,7 @@
     const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
     const esLugarEspecial = lugaresConExtra.includes(e.lugar);
 
-    $('#modal').innerHTML = `<div class="mod"><h2>${id ? 'Editar evento' : 'Nuevo evento'}</h2>
+    $('#modal').innerHTML = `<div class="mod"><h2>${id ? '✏️ Editar evento' : '➕ Nuevo evento'}</h2>
       <div class="fr"><label>¿Qué pasa? *</label><input id="f_titulo" value="${esc(e.titulo)}" placeholder="Ej: Matrícula ordinaria"></div>
       <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="2">${esc(e.descripcion)}</textarea></div>
       <div class="fr2">
@@ -1066,9 +1087,9 @@
         <div class="fr"><label>Enlace (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="https://…"></div>
       </div>
 
-      <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select></div>
+      <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', '✅ Publicado', e.estado !== 'borrador')}${opt('borrador', '📝 Borrador', e.estado === 'borrador')}</select></div>
       
-      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="guardarEv" data-i="${id || ''}">Guardar</button></div></div>`;
+      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="guardarEv" data-i="${id || ''}">💾 Guardar</button></div></div>`;
     
     $('#modal').classList.add('on');
     actualizarProgsModal(arrProg);
@@ -1157,7 +1178,7 @@
         const nuevosDatos = await leerNube();
         if (nuevosDatos) D = nuevosDatos;
       }
-      toast('Evento guardado'); cerrarModal(); refrescar();
+      toast('Evento guardado ✅'); cerrarModal(); refrescar();
     } catch (e) {
       console.error(e);
       toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true);
@@ -1176,24 +1197,24 @@
       if (nuevosDatos) D = nuevosDatos;
     }
     SEL.delete(id);
-    toast('Evento eliminado');
+    toast('Evento eliminado 🗑️');
     pintarTabla();
   }
 
-  function pFacultades() { return encabezado('Facultades y programas', 'Organiza la universidad.') + `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;"><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Emoji</label><input id="n_fac_emoji" placeholder="🎨" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addFac">+ Agregar</button></div>` + D.facultades.map(f => `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};"><div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;"><input style="width:40px; text-align:center; font-size:1.2rem; border:1px solid var(--linea); border-radius:8px; padding:.3rem;" value="${esc(f.emoji || '')}" data-ch="facEmoji" data-i="${f.id}"><input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent;" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}"><input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;"><span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span><button class="btn sm pel" data-a="delFac" data-i="${f.id}">Eliminar</button></div>${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;"><input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}"><select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;">${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}</select><button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button></div>`).join('')}<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;"><input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;"><select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select><button class="btn sm" data-a="addProg" data-i="${f.id}">+ Agregar manual</button></div></div>`).join(''); }
-  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado('Semestres', 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addPer">+ Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
-  function pAreas() { return encabezado('Áreas administrativas', 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addArea">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
-  function pCategorias() { return encabezado('Categorías', 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pFacultades() { return encabezado('🏛️ Facultades y programas', 'Organiza la universidad.') + `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;"><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Emoji</label><input id="n_fac_emoji" placeholder="🎨" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addFac">➕ Agregar</button></div>` + D.facultades.map(f => `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};"><div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;"><input style="width:40px; text-align:center; font-size:1.2rem; border:1px solid var(--linea); border-radius:8px; padding:.3rem;" value="${esc(f.emoji || '')}" data-ch="facEmoji" data-i="${f.id}"><input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent;" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}"><input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;"><span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span><button class="btn sm pel" data-a="delFac" data-i="${f.id}">🗑️ Eliminar</button></div>${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;"><input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}"><select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;">${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}</select><button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button></div>`).join('')}<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;"><input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;"><select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select><button class="btn sm" data-a="addProg" data-i="${f.id}">➕ Agregar manual</button></div></div>`).join(''); }
+  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado('🗓️ Semestres', 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addPer">➕ Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}">🗑️ Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pAreas() { return encabezado('🗂️ Áreas administrativas', 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addArea">➕ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">🗑️ Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pCategorias() { return encabezado('🏷️ Categorías', 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">➕ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">🗑️ Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
 
   async function pUsuarios() {
-    const { data, error } = await dbClient.from('usuarios_admin').select('id,nombre,rol,created_at');
-    if (error) return encabezado('Usuarios y Accesos', 'No se pudieron cargar los usuarios: ' + esc(error.message));
+    const { data, error } = await dbClient.from('usuarios_admin').select('id,nombre,rol,correo,created_at');
+    if (error) return encabezado('👥 Usuarios y Accesos', 'No se pudieron cargar los usuarios: ' + esc(error.message));
     const col = { admin: ['#E1F2B8', '#2f4a00'], creador: ['#DBEAFE', '#1e3a8a'], editor: ['#F3E8FF', '#6b21a8'] };
     const badge = r => `<span class="badge" style="background:${(col[r] || ['#eee', '#333'])[0]}; color:${(col[r] || ['#eee', '#333'])[1]}">${esc(ROLES[r] || r)}</span>`;
     const U = [...(data || [])].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
-    return encabezado('Usuarios y Accesos', 'Gestiona quién puede entrar al panel y qué puede hacer. Los PINs deben tener entre 6 y 15 dígitos.') + `
+    return encabezado('👥 Usuarios y Accesos', 'Gestiona quién puede entrar al panel y qué puede hacer. Los PINs deben tener entre 6 y 15 dígitos.') + `
     <div class="caja">
-      <h2>Perfiles disponibles</h2>
+      <h2>🎭 Perfiles disponibles</h2>
       <div class="roles-leyenda">
         <div>${badge('admin')}<br>Administra todo el sistema: eventos, estructura, usuarios y logs.</div>
         <div>${badge('creador')}<br>Solo crea eventos nuevos.</div>
@@ -1201,45 +1222,85 @@
       </div>
     </div>
     <div class="caja">
-      <h2>Crear nuevo usuario</h2>
+      <h2>➕ Crear nuevo usuario</h2>
       <div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;">
         <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Nombre</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
+        <div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div>
         <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>PIN (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" autocomplete="new-password" placeholder="••••••"></div>
-        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Perfil</label><select id="n_user_rol"><option value="editor">Editor</option><option value="creador">Creador</option><option value="admin">Administrador</option></select></div>
-        <button class="btn pri" data-a="addUser">+ Crear usuario</button>
+        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Perfil</label><select id="n_user_rol"><option value="editor">✏️ Editor</option><option value="creador">✍️ Creador</option><option value="admin">👑 Administrador</option></select></div>
+        <button class="btn pri" data-a="addUser">➕ Crear usuario</button>
       </div>
     </div>
     <div class="tw">
       <table>
-        <thead><tr><th>Nombre</th><th>Perfil</th><th>Creado</th><th></th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Correo</th><th>Perfil</th><th>Creado</th><th></th></tr></thead>
         <tbody>
           ${U.map(u => `<tr>
             <td><b>${esc(u.nombre)}</b>${String(u.id) === String(USUARIO_ACTUAL.id) ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}</td>
+            <td>${u.correo ? esc(u.correo) : '<span style="color:var(--suave); font-style:italic;">sin correo</span>'}</td>
             <td>${String(u.id) === String(USUARIO_ACTUAL.id) ? badge(u.rol) : `<select class="rolsel" data-ch="userRol" data-i="${u.id}">${Object.keys(ROLES).map(r => opt(r, ROLES[r], r === u.rol)).join('')}</select>`}</td>
             <td>${u.created_at ? new Date(u.created_at).toLocaleDateString('es-CO') : '—'}</td>
-            <td><div class="acc"><button class="btn sm" data-a="userPin" data-i="${u.id}">Cambiar PIN</button>${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}">Eliminar</button>`}</div></td>
-          </tr>`).join('') || '<tr><td colspan="4" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
+            <td><div class="acc">
+              <button class="btn sm warn" data-a="resetPin" data-i="${u.id}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}>📧 Restablecer PIN</button>
+              <button class="btn sm" data-a="userPin" data-i="${u.id}">🔑 Cambiar PIN</button>
+              ${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}">🗑️ Eliminar</button>`}
+            </div></td>
+          </tr>`).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
         </tbody>
       </table>
     </div>`;
   }
 
+  // ===== Restablecer PIN (envía correo con PIN aleatorio) =====
+  async function restablecerPin(id) {
+    const { data: u } = await dbClient.from('usuarios_admin').select('id,nombre,correo').eq('id', id).maybeSingle();
+    if (!u) return toast('Usuario no encontrado', true);
+    if (!u.correo) return toast('Este usuario no tiene correo registrado', true);
+
+    const ok = confirm(`¿Enviar un PIN nuevo al correo ${u.correo}?`);
+    if (!ok) return;
+
+    try {
+      // Intentar invocar Edge Function
+      const { data, error } = await dbClient.functions.invoke('restablecer-pin', {
+        body: { usuario_id: id }
+      });
+      if (error) throw error;
+      if (data && data.ok) {
+        registrarLog('Restableció PIN', `${u.nombre} (${u.correo}) — enviado por correo`);
+        toast('📧 PIN enviado a ' + u.correo);
+      } else {
+        throw new Error((data && data.error) || 'Error desconocido');
+      }
+    } catch (e) {
+      console.warn('Edge Function no disponible, usando modo local:', e);
+      // Fallback: generar localmente y mostrar
+      const pin = String(Math.floor(10000000 + Math.random() * 90000000));
+      const { error: updErr } = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id);
+      if (updErr) return toast('Error al guardar PIN: ' + updErr.message, true);
+      registrarLog('Restableció PIN', `${u.nombre} (local, sin correo)`);
+      alert(`⚠️ No se pudo enviar el correo (función no desplegada).\n\nNuevo PIN para ${u.nombre}:\n\n${pin}\n\nCompártelo manualmente.`);
+      toast('PIN restablecido (modo local)');
+    }
+    if (P === 'usuarios') ir('usuarios', true);
+  }
+
   let LOGS = [];
   const LF = { q: '', usr: '', acc: '' };
-  const colorAccion = a => /elimin/i.test(a) ? ['#FDE8E7', '#B3261E'] : /cre[óo]/i.test(a) ? ['#E1F2B8', '#2f4a00'] : /edit|modific|cambi|public|despublic|borrador/i.test(a) ? ['#DBEAFE', '#1e3a8a'] : ['#EEE', '#444'];
+  const colorAccion = a => /elimin/i.test(a) ? ['#FDE8E7', '#B3261E'] : /cre[óo]/i.test(a) ? ['#E1F2B8', '#2f4a00'] : /edit|modific|cambi|public|despublic|borrador|restablec/i.test(a) ? ['#DBEAFE', '#1e3a8a'] : ['#EEE', '#444'];
 
   async function pLogs() {
     const { data, error } = await dbClient.from('logs').select('*').order('created_at', { ascending: false }).limit(500);
-    if (error) return encabezado('Logs del Sistema', 'No se pudieron cargar los logs: ' + esc(error.message));
+    if (error) return encabezado('📜 Logs del Sistema', 'No se pudieron cargar los logs: ' + esc(error.message));
     LOGS = data || [];
     const usrs = [...new Set(LOGS.map(l => l.usuario_nombre))].sort();
     const accs = [...new Set(LOGS.map(l => l.accion))].sort();
-    return encabezado('Logs del Sistema', 'Registro de los últimos 500 movimientos: quién hizo qué y cuándo.') + `
+    return encabezado('📜 Logs del Sistema', 'Registro de los últimos 500 movimientos: quién hizo qué y cuándo.') + `
     <div class="tools">
-      <input type="search" id="l_q" placeholder="Buscar en el detalle…" value="${esc(LF.q)}">
+      <input type="search" id="l_q" placeholder="🔍 Buscar en el detalle…" value="${esc(LF.q)}">
       <select id="l_usr"><option value="">Todos los usuarios</option>${usrs.map(u => opt(u, u, u === LF.usr)).join('')}</select>
       <select id="l_acc"><option value="">Todas las acciones</option>${accs.map(a => opt(a, a, a === LF.acc)).join('')}</select>
-      <button class="btn" data-a="logsRef">↻ Actualizar</button>
+      <button class="btn" data-a="logsRef">🔄 Actualizar</button>
     </div>
     <p id="logsCuenta" style="margin:0 0 .8rem; font-size:.85rem; color:var(--suave);"></p>
     <div class="tw" id="logsTabla"></div>`;
@@ -1260,7 +1321,7 @@
     }).join('') + '</tbody></table>' : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay movimientos con estos filtros.</div>';
   }
 
-  async function pPublicar() { return encabezado('Publicar y datos', 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio, este se envía a Supabase y se refleja al instante en la vista pública.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin">Cambiar clave</button><button class="btn" data-a="salir">Cerrar sesión</button></div></div></div></div>`; }
+  async function pPublicar() { return encabezado('☁️ Publicar y datos', 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">✨ Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio, este se envía a Supabase y se refleja al instante en la vista pública.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">🛠️ Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin">🔑 Cambiar clave</button><button class="btn" data-a="salir">🚪 Cerrar sesión</button></div></div></div></div>`; }
 
   async function recargar() { const n = await leerNube(); if (n) D = n; }
 
@@ -1287,16 +1348,17 @@
     const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
     if ((dup || []).some(x => String(x.id) !== String(id))) return toast('Ese PIN ya está en uso, elige otro', true);
     const { data: u } = await dbClient.from('usuarios_admin').select('nombre').eq('id', id).maybeSingle();
-    if (await ejecutar(() => dbClient.from('usuarios_admin').update({ pin }).eq('id', id), 'PIN actualizado', 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
+    if (await ejecutar(() => dbClient.from('usuarios_admin').update({ pin }).eq('id', id), 'PIN actualizado ✅', 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
   }
 
   async function cambiarRol(id, rol) {
+    const rolNorm = normalizarRol(rol);
     if (String(id) === String(USUARIO_ACTUAL.id)) { toast('No puedes cambiar tu propio perfil', true); return ir('usuarios', true); }
     const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol');
     const u = (data || []).find(x => String(x.id) === String(id));
-    if (!u || u.rol === rol) return;
+    if (!u || u.rol === rolNorm) return;
     if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) { toast('Debe quedar al menos un administrador', true); return ir('usuarios', true); }
-    await ejecutar(() => dbClient.from('usuarios_admin').update({ rol }).eq('id', id), 'Perfil actualizado', 'Cambió perfil', `${u.nombre}: ${ROLES[u.rol] || u.rol} → ${ROLES[rol] || rol}`);
+    await ejecutar(() => dbClient.from('usuarios_admin').update({ rol: rolNorm }).eq('id', id), 'Perfil actualizado ✅', 'Cambió perfil', `${u.nombre}: ${u.rol} → ${rolNorm}`);
     ir('usuarios', true);
   }
 
@@ -1309,10 +1371,11 @@
   const ACC = {
     nuevo: () => modalEvento(), editar: i => modalEvento(i), cerrar: cerrarModal, guardarEv: i => guardarEvento(i),
     del: i => eliminarEventoAdmin(i),
+    resetPin: i => restablecerPin(i),
     tog: async i => {
       const e = D.eventos.find(x => x.id === i); if (!e) return;
       const nuevo = e.estado === 'borrador' ? 'publicado' : 'borrador';
-      if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? 'Pasó a borrador' : 'Publicado', nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla();
+      if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? 'Pasó a borrador' : 'Publicado ✅', nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla();
     },
     m_pub: () => masivo('publicado'), m_bor: () => masivo('borrador'),
 
@@ -1322,7 +1385,7 @@
       if (fin < ini) return toast('El fin no puede ser antes del inicio', true);
       const id = anio + '-' + sem;
       if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true);
-      if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), 'Semestre creado', 'Creó semestre', nombrePeriodo(id))) refrescar();
+      if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), 'Semestre creado ✅', 'Creó semestre', nombrePeriodo(id))) refrescar();
     },
     delPer: async i => {
       const n = D.eventos.filter(e => e.periodo === i || e.periodo2 === i).length;
@@ -1334,7 +1397,7 @@
     addFac: async () => {
       const n = $('#n_fac').value.trim(); if (!n) return toast('Escribe el nombre', true);
       const emoji = $('#n_fac_emoji').value.trim(), color = $('#n_fac_color').value;
-      if (await ejecutar(() => dbClient.from('facultades').insert([{ nombre: n, emoji, color }]), 'Facultad agregada', 'Creó facultad', n)) refrescar();
+      if (await ejecutar(() => dbClient.from('facultades').insert([{ nombre: n, emoji, color }]), 'Facultad agregada ✅', 'Creó facultad', n)) refrescar();
     },
     delFac: async i => {
       const f = D.facultades.find(x => x.id === i); const n = D.eventos.filter(e => (e.facultad || []).includes(i)).length;
@@ -1343,7 +1406,7 @@
     },
     addProg: async i => {
       const f = D.facultades.find(x => x.id === i), n = $('#np_' + i).value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]), 'Programa agregado', 'Creó programa', `${n} (${f ? f.nombre : ''})`)) refrescar();
+      if (await ejecutar(() => dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]), 'Programa agregado ✅', 'Creó programa', `${n} (${f ? f.nombre : ''})`)) refrescar();
     },
     delProg: async (i, j) => {
       const f = D.facultades.find(x => x.id === i), pr = f && f.programas.find(x => x.id === j); const n = D.eventos.filter(e => (e.programa || []).includes(j)).length;
@@ -1352,7 +1415,7 @@
     },
     addArea: async () => {
       const n = $('#n_area').value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('areas').insert([{ nombre: n }]), 'Área agregada', 'Creó área', n)) refrescar();
+      if (await ejecutar(() => dbClient.from('areas').insert([{ nombre: n }]), 'Área agregada ✅', 'Creó área', n)) refrescar();
     },
     delArea: async i => {
       const a = D.areas.find(x => x.id === i); const n = D.eventos.filter(e => (e.area || []).includes(i)).length;
@@ -1361,7 +1424,7 @@
     },
     addCat: async () => {
       const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), 'Categoría agregada', 'Creó categoría', n)) refrescar();
+      if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), 'Categoría agregada ✅', 'Creó categoría', n)) refrescar();
     },
     delCat: async i => {
       const c = D.categorias.find(x => x.id === i);
@@ -1372,16 +1435,28 @@
     },
 
     addUser: async () => {
-      const nombre = $('#n_user_name').value.trim(), pin = $('#n_user_pin').value.trim(), rol = $('#n_user_rol').value;
-      if (!nombre || !pin) return toast('Completa todos los campos', true);
+      const nombre = $('#n_user_name').value.trim();
+      const correo = $('#n_user_correo').value.trim();
+      const pin = $('#n_user_pin').value.trim();
+      const rol = normalizarRol($('#n_user_rol').value);
+      if (!nombre || !pin) return toast('Completa nombre y PIN', true);
       if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
+      if (correo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Correo inválido', true);
       try {
         const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
         if (dup && dup.length) return toast('Ese PIN ya está en uso, elige otro', true);
-        await crearUsuario(nombre, pin, rol);
-        registrarLog('Creó usuario', `${nombre} (${ROLES[rol] || rol})`);
-        toast('Usuario creado'); ir('usuarios', true);
-      } catch (e) { toast('Error al crear usuario: ' + e.message, true); }
+        await crearUsuario(nombre, pin, rol, correo || null);
+        registrarLog('Creó usuario', `${nombre} (${ROLES[rol] || rol})${correo ? ' · ' + correo : ''}`);
+        toast('Usuario creado ✅'); ir('usuarios', true);
+      } catch (e) {
+        console.error(e);
+        if (String(e.message).includes('rol_check')) {
+          toast('Error de rol: revisa el CHECK de usuarios_admin (ver consola)', true);
+          console.error('Ejecuta en Supabase:\nALTER TABLE usuarios_admin DROP CONSTRAINT IF EXISTS usuarios_admin_rol_check;\nALTER TABLE usuarios_admin ADD CONSTRAINT usuarios_admin_rol_check CHECK (rol IN (\'admin\',\'creador\',\'editor\'));');
+        } else {
+          toast('Error al crear usuario: ' + e.message, true);
+        }
+      }
     },
     delUser: async i => {
       if (String(i) === String(USUARIO_ACTUAL.id)) return toast('No puedes eliminar tu propio usuario', true);
@@ -1398,7 +1473,7 @@
   };
 
   const ACC_LIBRES = new Set(['cerrar', 'salir', 'pin', 'guardarEv']);
-  const ACC_PERM = { nuevo: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar' };
+  const ACC_PERM = { nuevo: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar', resetPin: 'admin' };
   const permisoAcc = k => ACC_LIBRES.has(k) || puede(ACC_PERM[k] || 'admin');
 
   document.addEventListener('click', e => {
@@ -1438,7 +1513,7 @@
     const { error } = await dbClient.from(tabla).update(campos).eq('id', id);
     if (error) { toast('Error al guardar: ' + error.message, true); await recargar(); return refrescar(); }
     registrarLog('Modificó ' + quien, texto);
-    toast('Cambio guardado');
+    toast('Cambio guardado ✅');
   });
 
   document.addEventListener('input', e => {
@@ -1463,7 +1538,7 @@
     $('#public-panel').style.display = 'block';
     const per = periodoDe(hoy()), anios = aniosDisponibles();
     S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
-    S.sem = per.startsWith(S.anio + '-') ? +per.split('-')[1] : '';
+    S.sem = per.startsWith(S.anio + '-') ? per.split('-')[1] : '';
     if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
     pintarPublico();
     $('#loader').classList.add('hidden');
