@@ -521,6 +521,14 @@
         <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">
           ✨ Crear PIN de Administrador
         </button>
+        <button type="button" class="btn" style="width:100%; margin-top:0.5rem;" onclick="mostrarOlvido()">🔑 Olvidé mi PIN</button>
+      </div>
+
+      <!-- Olvidé mi PIN: el usuario se restablece solo -->
+      <div id="gateOlvidoFields" hidden>
+        <input id="olvido_correo" type="email" autocomplete="email" placeholder="Tu correo registrado" style="margin-bottom:0.5rem;">
+        <button type="button" id="btnOlvido" class="btn pri" style="width:100%" onclick="olvideMiPin()">📧 Enviarme un PIN temporal</button>
+        <button type="button" class="btn" style="width:100%; margin-top:0.5rem;" onclick="volverLogin()">← Volver</button>
       </div>
 
       <!-- Formulario de cambio obligatorio (cuando entra con PIN temporal) -->
@@ -768,7 +776,8 @@
   };
 
   // --- Emojis por defecto (se usan si la facultad/área no tiene uno propio) ---
-  const EMOJI_FAC = [['medicina','🩺'],['odontolog','🦷'],['enfermer','💉'],['psicolog','🧠'],['ingenier','⚙️'],['ciencias','🔬'],['educaci','🎓'],['creaci','🎨'],['comunicaci','🎨'],['juridic','⚖️'],['derecho','⚖️'],['politic','⚖️'],['economic','📈'],['administrativ','📈'],['bioetic','🧬'],['human','📚']];
+  const EMOJI_FAC = [['medicina','🩺'],['odontolog','🦷'],['enfermer','💉'],['psicolog','🧠'],['ingenier','⚙️'],['juridic','⚖️'],['derecho','⚖️'],['politic','🏛️'],['economic','📈'],['administrativ','📊'],['creaci','🎨'],['comunicaci','🎬'],['bioetic','🧬'],['human','📚'],['educaci','🎓'],['salud','🏥'],['ciencias','🔬']];
+  const EMOJI_POOL = ['🧪','🌱','🔭','📐','🧭','🎭','🌍','💡','🏫','🧩','🎯','🛠️'];
   const EMOJI_AREA = [['tesorer','💰'],['financ','💰'],['contab','🧾'],['cartera','💳'],['admision','📝'],['matricul','📝'],['registro','🗂️'],['bienestar','💛'],['biblioteca','📖'],['talento','🤝'],['humano','🤝'],['sistema','💻'],['tecnolog','💻'],['egresad','🎖️'],['investig','🔬'],['internacional','🌎'],['comunicac','📣'],['mercadeo','📣'],['jurid','⚖️'],['calidad','✅'],['planeaci','🧭'],['academ','🎓'],['admin','🏢']];
   const buscarEmoji = (lista, nombre, def) => { const n = norm(nombre); const m = lista.find(x => n.includes(x[0])); return m ? m[1] : def; };
   const emojiFac = f => (f && f.emoji) || buscarEmoji(EMOJI_FAC, f && f.nombre, '🏛️');
@@ -788,6 +797,7 @@
   };
 
   // --- Funciones de Nube (Supabase) ---
+  const porNombre = (a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { sensitivity: 'base' });
   async function leerNube() {
     if (!dbClient) return null;
     try {
@@ -801,8 +811,8 @@
         institucion: 'Universidad El Bosque',
         actualizado: new Date().toISOString(),
         categorias: cats || [],
-        facultades: facs ? facs.map(f => ({ ...f, id: f.id, programas: f.programas || [] })) : [],
-        areas: areas || [],
+        facultades: facs ? facs.map(f => ({ ...f, id: f.id, programas: [...(f.programas || [])].sort(porNombre) })).sort(porNombre) : [],
+        areas: [...(areas || [])].sort(porNombre),
         periodos: pers || [],
         eventos: evs ? evs.map(e => ({
           id: e.id, titulo: e.titulo, descripcion: e.descripcion || '', categoria: e.categoria_id,
@@ -1334,6 +1344,7 @@
         $('#gateDesc').textContent = "Ingresa tu PIN de 6 a 15 dígitos.";
         $('#gateLoginFields').hidden = false;
         $('#gateNewPassFields').hidden = true;
+        $('#gateOlvidoFields').hidden = true;
         verificarSiHayUsuarios().then(hay => {
           $('#btnCrearAdmin').style.display = hay ? 'none' : 'block';
           $('#pinAyuda').textContent = hay ? 'Ingresa tu PIN de administrador.' : 'No hay usuarios. Crea el PIN de administrador.';
@@ -1387,11 +1398,50 @@
     pintarPublico();
   }
 
+  function mostrarOlvido() {
+    $('#gateLoginFields').hidden = true; $('#gateOlvidoFields').hidden = false;
+    $('#gateTitle').textContent = 'Recuperar mi PIN';
+    $('#gateDesc').textContent = 'Escribe tu correo registrado y te enviamos un PIN temporal. Con él entras y creas uno nuevo.';
+    $('#olvido_correo').focus();
+  }
+  function volverLogin() {
+    $('#gateOlvidoFields').hidden = true; $('#gateLoginFields').hidden = false;
+    $('#gateTitle').textContent = 'Administrar calendario';
+    $('#gateDesc').textContent = 'Ingresa tu PIN de 6 a 15 dígitos.';
+  }
+  async function registrarLogAnon(accion, detalle) {
+    try { await dbClient.from('logs').insert([{ usuario_nombre: 'Sistema', accion, detalle }]); } catch (_) {}
+  }
+  async function olvideMiPin() {
+    const correo = $('#olvido_correo').value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Escribe un correo válido', true);
+    const b = $('#btnOlvido'); b.disabled = true;
+    try {
+      if (!emailjsListo()) throw new Error('EmailJS sin configurar');
+      const { data: us } = await dbClient.from('usuarios_admin').select('id,nombre,correo').ilike('correo', correo.replace(/[%_]/g, '\\$&'));
+      const u = (us || []).find(x => String(x.correo).toLowerCase() === correo.toLowerCase());
+      if (u) {
+        const r = await enviarPinPorCorreo(u);
+        if (!r.ok && !r.espera) throw new Error(r.error);
+        if (r.ok) registrarLogAnon('Restableció PIN', `${u.nombre} (autogestión)`);
+      }
+      toast('📧 Si el correo está registrado, te enviamos un PIN temporal. Revisa tu bandeja y el spam.');
+      $('#olvido_correo').value = '';
+      volverLogin();
+      $('#gateDesc').textContent = 'Ingresa el PIN temporal que te llegó al correo.';
+    } catch (e) {
+      console.error(e);
+      toast('No se pudo enviar el correo. Pídele al administrador que te restablezca el PIN.', true);
+    } finally { b.disabled = false; }
+  }
+
   async function crearAdminInicial() {
     const pin = prompt('Crea un PIN de 6 a 15 dígitos para el administrador:');
     if (!pin || !/^\d{6,15}$/.test(pin.trim())) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
+    const correoAdm = (prompt('Correo del administrador (sirve para recuperar el PIN si lo olvidas). Puedes dejarlo vacío:') || '').trim();
+    if (correoAdm && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correoAdm)) return toast('Correo inválido', true);
     try {
-      await crearUsuario({ nombre: 'Administrador Principal', pin, rol: 'admin', permisos: ['crear','editar','eliminar'], areas_asignadas: [] });
+      await crearUsuario({ nombre: 'Administrador Principal', pin, rol: 'admin', correo: correoAdm || null, permisos: ['crear','editar','eliminar'], areas_asignadas: [] });
       toast('Usuario administrador creado. Ahora inicia sesión.');
       verificarSiHayUsuarios();
     } catch (e) { toast('Error al crear usuario: ' + e.message, true); }
@@ -1400,6 +1450,7 @@
   $('#gateForm').onsubmit = async e => {
     e.preventDefault();
     if (!$('#gateNewPassFields').hidden) return guardarNuevaPassForzada();
+    if (!$('#gateOlvidoFields').hidden) return olvideMiPin();
     
     const pin = $('#pin').value;
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
@@ -1794,7 +1845,7 @@
       <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji opcional)</label><input id="n_fac_emoji" placeholder="🏛️" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff;"></div>
       <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div>
       <button class="btn pri" data-a="addFac">${FLATICONS.documento} Agregar</button>
-      <button class="btn" data-a="autoEmoji" title="Guarda un emoji sugerido en las facultades que no tienen">${FLATICONS.estrella} Asignar emojis sugeridos</button>
+      <button class="btn" data-a="autoEmoji" title="Pone un emoji distinto a cada facultad (reemplaza los actuales)">${FLATICONS.estrella} Asignar emojis sin repetir</button>
     </div>` + 
     
     D.facultades.map(f => {
@@ -1802,10 +1853,7 @@
 
       return `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};">
         <div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;">
-          <div style="width:48px; height:48px; display:grid; place-items:center; border:1px solid var(--linea); border-radius:8px; padding:.3rem; color:var(--verde);">
-            ${iconHtml}
-          </div>
-          <input data-ch="facEmoji" data-i="${f.id}" value="${esc(f.emoji || '')}" placeholder="${emojiFac(f)}" title="Cambiar emoji" style="width:56px; text-align:center; font-size:1.2rem; padding:.3rem; border:1px solid var(--linea); border-radius:8px; background:#fff;">
+          <input data-ch="facEmoji" data-i="${f.id}" value="${esc(emojiFac(f))}" title="Cambia el emoji de esta facultad" style="width:64px; text-align:center; font-size:1.5rem; padding:.3rem; border:1px solid var(--linea); border-radius:8px; background:#fff;">
           <input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent; color:var(--petroleo);" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}">
           <input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;">
           <span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span>
@@ -1911,6 +1959,41 @@
     </div>`;
   }
 
+  // ===== Configuración de EmailJS (copia estos 3 datos desde tu cuenta de emailjs.com) =====
+  const EMAILJS = {
+    serviceId: 'service_209rlca',    // Email Services > tu servicio > Service ID
+    templateId: 'template_sy5xcrg',  // Email Templates > tu plantilla > Template ID
+    publicKey: 'bKplucMMXJM3iUbfk'     // Account > General > Public Key
+  };
+  const emailjsListo = () => ![EMAILJS.serviceId, EMAILJS.templateId, EMAILJS.publicKey].some(v => !v || v.startsWith('TU_'));
+
+  // Genera un PIN temporal, lo envía por correo y SOLO si el correo salió lo guarda (nadie queda bloqueado)
+  async function enviarPinPorCorreo(u) {
+    if (!emailjsListo()) return { ok: false, error: 'Falta pegar los datos de EmailJS en el archivo (Service ID, Template ID y Public Key).' };
+    const { data: fila } = await dbClient.from('usuarios_admin').select('*').eq('id', u.id).maybeSingle();
+    if (fila && fila.pin_reset_at && Date.now() - new Date(fila.pin_reset_at).getTime() < 60000) return { ok: false, error: 'Espera un minuto antes de enviar otro PIN.', espera: true };
+    let pin;
+    for (let i = 0; i < 6; i++) {
+      pin = String(Math.floor(10000000 + Math.random() * 90000000));
+      const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
+      if (!dup || !dup.length) break;
+    }
+    try {
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: EMAILJS.serviceId, template_id: EMAILJS.templateId, user_id: EMAILJS.publicKey,
+          template_params: { to_email: u.correo, nombre: u.nombre, pin, enlace: location.origin + location.pathname + '?reset&u=' + u.id }
+        })
+      });
+      if (!res.ok) return { ok: false, error: 'EmailJS respondió: ' + (await res.text()).slice(0, 200) };
+    } catch (e) { return { ok: false, error: 'No hay conexión con EmailJS: ' + (e.message || e) }; }
+    let r = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: true, pin_reset_at: new Date().toISOString() }).eq('id', u.id);
+    if (r.error && /pin_reset_at|pin_temporal/i.test(r.error.message || '')) r = await dbClient.from('usuarios_admin').update({ pin }).eq('id', u.id);
+    if (r.error) return { ok: false, error: 'El correo salió pero no se pudo guardar el PIN: ' + r.error.message };
+    return { ok: true };
+  }
+
   async function restablecerPin(id) {
     const { data: u } = await dbClient.from('usuarios_admin').select('id,nombre,correo').eq('id', id).maybeSingle();
     if (!u) return toast('Usuario no encontrado', true);
@@ -1919,29 +2002,22 @@
     const ok = confirm(`¿Enviar un PIN temporal al correo ${u.correo}? Al entrar con ese PIN, el usuario deberá elegir su propio PIN.`);
     if (!ok) return;
 
-    try {
-      const { data, error } = await dbClient.functions.invoke('restablecer-pin', {
-        body: { usuario_id: id }
-      });
-      if (error) throw error;
-      if (data && data.ok) {
-        // Marca el PIN como temporal para obligar al usuario a personalizarlo al entrar
-        const rf = await dbClient.from('usuarios_admin').update({ pin_temporal: true }).eq('id', id);
-        registrarLog('Restableció PIN', `${u.nombre} (${u.correo}) — enviado por correo`);
-        toast(rf.error ? '📧 Correo enviado, pero falta la columna pin_temporal en Supabase (ejecuta el SQL de actualización)' : '📧 PIN temporal enviado a ' + u.correo, !!rf.error);
-      } else {
-        throw new Error((data && data.error) || 'Error desconocido');
-      }
-    } catch (e) {
-      console.warn('Edge Function no disponible, usando modo local:', e);
-      const pin = String(Math.floor(10000000 + Math.random() * 90000000));
-      let { error: updErr } = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: true }).eq('id', id);
-      if (updErr && /pin_temporal/i.test(updErr.message || '')) ({ error: updErr } = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id));
-      if (updErr) return toast('Error al guardar PIN: ' + updErr.message, true);
-      registrarLog('Restableció PIN', `${u.nombre} (local, sin correo)`);
-      alert(`⚠️ No se pudo enviar el correo. Nuevo PIN temporal para ${u.nombre}:\n\n${pin}\n\nCompártelo manualmente.`);
-      toast('PIN temporal generado');
+    const r = await enviarPinPorCorreo(u);
+    if (r.ok) {
+      registrarLog('Restableció PIN', `${u.nombre} (${u.correo}) — enviado por correo`);
+      toast('📧 PIN temporal enviado a ' + u.correo);
+      if (P === 'usuarios') ir('usuarios', true);
+      return;
     }
+    const motivo = r.error;
+    // Plan B: genera el PIN aquí y te lo muestra para que se lo entregues
+    const pin = String(Math.floor(10000000 + Math.random() * 90000000));
+    let { error: updErr } = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: true }).eq('id', id);
+    if (updErr && /pin_temporal/i.test(updErr.message || '')) ({ error: updErr } = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id));
+    if (updErr) return toast('Error al guardar PIN: ' + updErr.message, true);
+    registrarLog('Restableció PIN', `${u.nombre} (manual, el correo no se envió)`);
+    alert(`⚠️ No se pudo enviar el correo.\nMotivo: ${motivo}\n\nPIN temporal para ${u.nombre}:\n\n${pin}\n\nEntrégaselo tú; al entrar tendrá que crear su propio PIN.`);
+    toast('PIN temporal generado');
     if (P === 'usuarios') ir('usuarios', true);
   }
 
@@ -2020,12 +2096,22 @@
   const checksAreas = (id, sel = []) => {
     const ck = v => sel.includes(v) ? 'checked' : '';
     const lb = (v, t) => `<label><input type="checkbox" value="${esc(v)}" ${ck(v)}> ${t}</label>`;
+    const todos = (pref, txt, ids) => `<label><input type="checkbox" data-todos="${pref}" ${ids.length && ids.every(x => sel.includes(pref + ':' + x)) ? 'checked' : ''}> <b>✅ ${txt}</b></label>`;
+    const progs = D.facultades.flatMap(f => f.programas.map(p => p.id));
     return `<div><input type="search" data-filtro="${id}" placeholder="🔍 Buscar facultad, programa o área…" style="width:100%; margin-bottom:.4rem; padding:.5rem .7rem; border:1px solid var(--linea); border-radius:10px; color:var(--tinta); background:#fff;">` +
-      `<div id="${id}" class="chk-lista"><b class="chk-tit">Facultades</b>` +
+      `<div id="${id}" class="chk-lista"><b class="chk-tit">Facultades</b>` + todos('f', 'Todas las facultades', D.facultades.map(f => f.id)) +
       D.facultades.map(f => lb('f:' + f.id, `${emojiFac(f)} ${esc(f.nombre)}`)).join('') +
-      D.facultades.filter(f => f.programas.length).map(f => `<b class="chk-tit">Programas · ${esc(f.nombre)}</b>` + f.programas.map(p => lb('p:' + p.id, `📚 ${esc(p.nombre)}`)).join('')).join('') +
-      `<b class="chk-tit">Áreas administrativas</b>` + D.areas.map(x => lb('a:' + x.id, `${emojiArea(x)} ${esc(x.nombre)}`)).join('') + '</div></div>';
+      `<b class="chk-tit">Programas</b>` + todos('p', 'Todos los programas', progs) +
+      D.facultades.filter(f => f.programas.length).map(f => `<b class="chk-tit">${esc(f.nombre)}</b>` + f.programas.map(p => lb('p:' + p.id, `📚 ${esc(p.nombre)}`)).join('')).join('') +
+      `<b class="chk-tit">Áreas administrativas</b>` + todos('a', 'Todas las áreas', D.areas.map(x => x.id)) +
+      D.areas.map(x => lb('a:' + x.id, `${emojiArea(x)} ${esc(x.nombre)}`)).join('') + '</div></div>';
   };
+  function sincronizarTodos(lista) {
+    lista.querySelectorAll('[data-todos]').forEach(m => {
+      const it = [...lista.querySelectorAll(`input[value^="${m.dataset.todos}:"]`)];
+      m.checked = it.length > 0 && it.every(x => x.checked);
+    });
+  }
 
   async function modalUsuario(id) {
     const { data, error } = await cargarUsuarios();
@@ -2046,7 +2132,7 @@
   async function guardarUsuario(id) {
     const nombre = $('#e_nombre').value.trim(), correo = $('#e_correo').value.trim(), rol = $('#e_rol').value;
     let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#e_p_' + k).checked);
-    let areas = $$('#e_areas input:checked').map(i => i.value);
+    let areas = $$('#e_areas input[value]:checked').map(i => i.value);
     if (!nombre) return toast('El nombre no puede quedar vacío', true);
     if (correo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Correo inválido', true);
     if (rol !== 'admin' && !permisos.length) return toast('Selecciona al menos un permiso', true);
@@ -2074,9 +2160,16 @@
     del: i => eliminarEventoAdmin(i),
     resetPin: i => restablecerPin(i),
     autoEmoji: async () => {
-      const sin = D.facultades.filter(f => !f.emoji); if (!sin.length) return toast('Todas las facultades ya tienen emoji');
-      for (const f of sin) { const e = emojiFac(f); const { error } = await dbClient.from('facultades').update({ emoji: e }).eq('id', f.id); if (!error) f.emoji = e; }
-      registrarLog('Asignó emojis', `${sin.length} facultades`); toast(`${FLATICONS.check} Emojis asignados`); refrescar();
+      if (!D.facultades.length) return;
+      if (!confirm('¿Poner un emoji distinto a cada facultad? Esto reemplaza los emojis actuales.')) return;
+      const usados = new Set();
+      for (const f of D.facultades) {
+        let e = buscarEmoji(EMOJI_FAC, f.nombre, '');
+        if (!e || usados.has(e)) e = EMOJI_POOL.find(x => !usados.has(x)) || '🏛️';
+        usados.add(e);
+        const { error } = await dbClient.from('facultades').update({ emoji: e }).eq('id', f.id); if (!error) f.emoji = e;
+      }
+      registrarLog('Asignó emojis', `${D.facultades.length} facultades`); toast(`${FLATICONS.check} Emojis asignados sin repetir`); refrescar();
     },
     tog: async i => {
       const e = D.eventos.find(x => x.id === i); if (!e) return; if (!puedeEnEvento(e)) return sinArea();
@@ -2156,7 +2249,7 @@
       const rol = $('#n_user_rol').value;
 
       let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#n_user_p_' + k).checked);
-      let areas = $$('#n_user_areas input:checked').map(i => i.value);
+      let areas = $$('#n_user_areas input[value]:checked').map(i => i.value);
 
       if (!nombre || !pin) return toast('Completa nombre y PIN', true);
       if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
@@ -2204,6 +2297,12 @@
 
   document.addEventListener('change', async e => {
     const t = e.target;
+    if (t.dataset && t.dataset.todos) {
+      const lista = t.closest('.chk-lista');
+      lista.querySelectorAll(`input[value^="${t.dataset.todos}:"]`).forEach(x => { if (x.closest('label').style.display !== 'none') x.checked = t.checked; });
+      return sincronizarTodos(lista);
+    }
+    if (t.closest && t.closest('.chk-lista') && t.hasAttribute('value')) sincronizarTodos(t.closest('.chk-lista'));
     if (t.id && t.id.startsWith('x_')) { F[t.id.slice(2)] = t.value; return pintarTabla(); }
     if (t.id && t.id.startsWith('l_')) { LF[t.id.slice(2)] = t.value; return pintarLogs(); }
     const k = t.dataset.ch; if (!k) return;
