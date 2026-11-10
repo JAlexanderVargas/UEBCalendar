@@ -674,6 +674,9 @@
     const y = S.ref.getFullYear(), m = S.ref.getMonth();
     const primero = new Date(y, m, 1), offset = (primero.getDay() + 6) % 7;
     const inicio = new Date(y, m, 1 - offset);
+    const finMes = new Date(y, m + 1, 0);
+    const iniIso = iso(inicio), finIso = iso(finMes);
+    const Lvis = L.filter(e => e.inicio <= finIso && finDe(e) >= iniIso);
     let h = `<div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem;"><h2 style="font-family:var(--display); font-size:1.6rem; flex:1;">${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}">`;
     ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(n => h += `<div class="dh">${n}</div>`);
     const h0 = hoy();
@@ -681,13 +684,15 @@
       const dia = new Date(inicio); dia.setDate(inicio.getDate() + i);
       const s = iso(dia);
       const fDelDia = festivosDia(s);
-      const eDelDia = L.filter(e => e.inicio <= s && s <= finDe(e));
+      const eDelDia = Lvis.filter(e => e.inicio <= s && s <= finDe(e));
       const todosDelDia = [...fDelDia, ...eDelDia];
       h += `<div class="dia ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${fDelDia.length ? 'festivo' : ''}"><span class="n">${dia.getDate()}</span>`;
       todosDelDia.slice(0, 3).forEach(e => {
         let { facColor, catColor, emoji } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', emoji: '' } : getColores(D, e);
         let inminente = esInminente(e);
-        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id || 'festivo-'+e.fecha}" title="${esc(e.titulo || e.nombre)}">${emoji ? emoji + ' ' : ''}${esc(e.titulo || e.nombre)}</button>`;
+        const titulo = e.titulo || e.nombre || '';
+        const eid = e.id || ('festivo-' + e.fecha);
+        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${eid}" title="${esc(titulo)}">${emoji ? emoji + ' ' : ''}${esc(titulo)}</button>`;
       });
       if (todosDelDia.length > 3) h += `<button style="border:0; background:none; color:var(--verde); font-weight:700; font-size:0.72rem; padding:2px 4px;" data-dia="${s}">+${todosDelDia.length - 3} más</button>`;
       h += '</div>';
@@ -709,8 +714,13 @@
     if (!D) return;
     pintarEncabezado(); pintarProximos(); pintarModulos();
     const L = filtrar(); let fest = [];
-    if (S.festivos && !S.cat) { const m0 = S.sem == 2 ? 6 : 0, m1 = S.sem == 1 ? 5 : 11; fest = festivosAnio(S.anio).filter(f => { const m = +f.fecha.slice(5, 7) - 1; return m >= m0 && m <= m1; }); if (S.q) fest = fest.filter(f => norm(f.nombre).includes(norm(S.q))); }
-    const todos = [...L, ...fest].sort((a, b) => a.inicio.localeCompare(b.inicio) || a.titulo.localeCompare(b.titulo));
+    if (S.festivos && !S.cat) {
+      const m0 = S.sem == 2 ? 6 : 0;
+      const m1 = S.sem == 1 ? 5 : 11;
+      fest = festivosAnio(S.anio).filter(f => { const m = +f.fecha.slice(5, 7) - 1; return m >= m0 && m <= m1; });
+      if (S.q) fest = fest.filter(f => norm(f.nombre).includes(norm(S.q)));
+    }
+    const todos = [...L, ...fest].sort((a, b) => a.inicio.localeCompare(b.inicio) || (a.titulo || '').localeCompare(b.titulo || ''));
     listaFiltradaCompleta = todos;
     $('#vistaCalendario').innerHTML = vistaCalendario(filtrar({ sinPeriodo: true }));
     $('#vistaLista').innerHTML = vistaLista(todos);
@@ -721,7 +731,7 @@
   }
 
   function abrirDetalle(id) {
-    if (id.startsWith('festivo-')) {
+    if (String(id).startsWith('festivo-')) {
       const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
       if (!f) return;
       $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem;">${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
@@ -788,10 +798,6 @@
      ============================================================ */
   let P = 'resumen';
 
-  /* ===== Roles y permisos =====
-     admin   -> todo el sistema
-     creador -> solo crea eventos nuevos
-     editor  -> solo edita eventos existentes                */
   const ROLES = { admin: 'Administrador', creador: 'Creador', editor: 'Editor' };
   const DESC_ROL = {
     admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.',
@@ -1218,7 +1224,6 @@
     </div>`;
   }
 
-  /* ===== Logs ===== */
   let LOGS = [];
   const LF = { q: '', usr: '', acc: '' };
   const colorAccion = a => /elimin/i.test(a) ? ['#FDE8E7', '#B3261E'] : /cre[óo]/i.test(a) ? ['#E1F2B8', '#2f4a00'] : /edit|modific|cambi|public|despublic|borrador/i.test(a) ? ['#DBEAFE', '#1e3a8a'] : ['#EEE', '#444'];
@@ -1259,7 +1264,6 @@
 
   async function recargar() { const n = await leerNube(); if (n) D = n; }
 
-  // Ejecuta una operación en Supabase, la registra en logs y recarga los datos
   async function ejecutar(fn, ok, accion, detalle) {
     try {
       const { error } = await fn();
@@ -1393,7 +1397,6 @@
     salir: () => cerrarSesion()
   };
 
-  // Acciones que cualquier perfil con sesión puede usar; el resto exige el permiso indicado (por defecto: administrador)
   const ACC_LIBRES = new Set(['cerrar', 'salir', 'pin', 'guardarEv']);
   const ACC_PERM = { nuevo: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar' };
   const permisoAcc = k => ACC_LIBRES.has(k) || puede(ACC_PERM[k] || 'admin');
