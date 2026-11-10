@@ -6,6 +6,8 @@
 <title>Calendario Académico - Universidad El Bosque</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;500;600;700&display=swap">
+<!-- Fuente para los emojis a color (estilo Flaticon) -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
 <style>
   :root {
     --lima: #A6CE39; --verde: #007A78; --petroleo: #003B36; --claro: #C5E86C;
@@ -13,27 +15,23 @@
     --rojo: #B3261E; --rojo-fondo: #FDE8E7;
     --display: 'Fraunces', Georgia, serif; --texto: 'Figtree', 'Segoe UI', system-ui, sans-serif;
     --transicion: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --emoji-font: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--texto); background: var(--fondo); color: var(--tinta); line-height: 1.45; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+  body { font-family: var(--texto); background: var(--fondo); color: var(--tinta); line-height: 1.45; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
   button, select, input, textarea { font: inherit; color: inherit; }
   button { cursor: pointer; transition: var(--transicion); }
   [hidden] { display: none !important; }
 
-  /* ICONOS FLATICON (SVG) */
+  /* ICONOS FLATICON (SVG) y EMOJIS A COLOR */
   .flaticon { width: 1.4em; height: 1.4em; vertical-align: middle; display: inline-block; flex: none; fill: currentColor; }
+  .emoji { font-family: var(--emoji-font); font-weight: normal; font-style: normal; font-size: 1.2em; line-height: 1; }
   
-  /* ===== LAS 10 CARAS DE TITA VOLANDO ===== */
+  /* ===== CARAS DE TITA VOLANDO ===== */
   .tita-bg {
-    position: fixed;
-    z-index: 2; /* Por encima del fondo, por debajo de los paneles principales */
-    pointer-events: none;
-    opacity: 0.85; /* Resaltan más */
-    mix-blend-mode: multiply; /* Hace que los colores blancos de la imagen desaparezcan y se integre mejor */
-    transition: opacity 0.3s;
+    position: fixed; z-index: 0; pointer-events: none; opacity: 0.35;
+    mix-blend-mode: multiply; transition: opacity 0.3s;
   }
-  
-  /* Filtros para que resalten con colores */
   .tita-1 { width: 140px; top: 5%; left: 5%; animation: flotar1 25s infinite ease-in-out, gesticular 4s infinite alternate; filter: drop-shadow(0 0 12px rgba(166, 206, 57, 0.8)); }
   .tita-2 { width: 180px; top: 15%; right: 10%; animation: flotar2 30s infinite ease-in-out, gesticular 5s infinite alternate-reverse; filter: drop-shadow(0 0 15px rgba(0, 122, 120, 0.8)); }
   .tita-3 { width: 120px; top: 45%; left: 15%; animation: flotar3 22s infinite ease-in-out, gesticular 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(179, 38, 30, 0.7)); }
@@ -45,45 +43,13 @@
   .tita-9 { width: 100px; top: 80%; left: 50%; animation: flotar4 18s infinite ease-in-out, gesticular 4s infinite alternate-reverse; filter: drop-shadow(0 0 12px rgba(233, 30, 99, 0.8)); }
   .tita-10 { width: 200px; top: 40%; right: -20px; animation: flotar5 32s infinite ease-in-out, gesticular 6s infinite alternate; filter: drop-shadow(0 0 18px rgba(139, 195, 74, 0.8)); }
 
-  /* Trayectorias */
-  @keyframes flotar1 {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    33% { transform: translate(150px, 100px) rotate(15deg); }
-    66% { transform: translate(-50px, 200px) rotate(-10deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-  }
-  @keyframes flotar2 {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(-200px, 150px) rotate(-20deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-  }
-  @keyframes flotar3 {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(100px, -150px) scale(1.1) rotate(10deg); }
-    100% { transform: translate(0, 0) scale(1); }
-  }
-  @keyframes flotar4 {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    50% { transform: translate(-100px, -100px) rotate(30deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-  }
-  @keyframes flotar5 {
-    0% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(-150px, 50px) scale(0.9); }
-    66% { transform: translate(50px, -50px) scale(1.2) rotate(-15deg); }
-    100% { transform: translate(0, 0) scale(1); }
-  }
+  @keyframes flotar1 { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 33% { transform: translate(150px, 100px) rotate(15deg); } 66% { transform: translate(-50px, 200px) rotate(-10deg); } }
+  @keyframes flotar2 { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(-200px, 150px) rotate(-20deg); } }
+  @keyframes flotar3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(100px, -150px) scale(1.1) rotate(10deg); } }
+  @keyframes flotar4 { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(-100px, -100px) rotate(30deg); } }
+  @keyframes flotar5 { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(-150px, 50px) scale(0.9); } 66% { transform: translate(50px, -50px) scale(1.2) rotate(-15deg); } }
+  @keyframes gesticular { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.05) rotate(3deg); } 50% { transform: scale(0.95) rotate(-3deg); } 75% { transform: scale(1.08) rotate(2deg); } 100% { transform: scale(1) rotate(0deg); } }
 
-  /* Gesticulaciones (hace caras, asiente, etc.) */
-  @keyframes gesticular {
-    0% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.05) rotate(3deg); }
-    50% { transform: scale(0.95) rotate(-3deg); }
-    75% { transform: scale(1.08) rotate(2deg); }
-    100% { transform: scale(1) rotate(0deg); }
-  }
-
-  /* Ocultar Titas en el panel de administración */
   body.en-admin .tita-bg { display: none; }
 
   #loader { position: fixed; inset: 0; background: var(--fondo); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; transition: opacity 0.5s; }
@@ -114,20 +80,8 @@
   .hero:hover .year-bg { transform: scale(1.02) translateX(10px); }
   .hero-izq { position: relative; z-index: 2; }
   
-  .hero-izq .titulo-oficina {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--petroleo);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.6rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(255,255,255,0.4);
-    padding: 0.4rem 0.8rem;
-    border-radius: 8px;
-  }
+  .hero-izq .titulo-oficina { margin-bottom: 1rem; display: inline-block; }
+  .hero-izq .titulo-oficina img { max-height: 60px; width: auto; object-fit: contain; mix-blend-mode: multiply; filter: contrast(1.2); }
 
   .hero-izq .hoy { font-size: 0.9rem; font-weight: 600; color: var(--petroleo); opacity: 0.85; margin-bottom: 0.5rem; }
   .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.05; color: var(--petroleo); max-width: 14ch; }
@@ -152,32 +106,33 @@
   .barra select:focus { border-color: var(--verde); outline: none; }
   .barra .der { margin-left: auto; display: flex; gap: 0.5rem; }
   .barra label { color: var(--tinta); }
-  .btn { border: 1px solid var(--linea); background: #fff; color: var(--tinta); padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); display: inline-flex; align-items: center; gap: 0.35rem; justify-content: center; }
+  .btn { border: 1px solid var(--linea); background: #fff; color: var(--tinta); padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); display: inline-flex; align-items: center; gap: 0.35rem; justify-content: center; text-decoration: none;}
   .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-  /* ===== TARJETAS DE CATEGORÍAS (MODULOS) ===== */
+  /* ===== TARJETAS DE CATEGORÍAS ===== */
   .modulos { padding: 1.6rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; position: relative; z-index: 10; }
   .mod { 
     position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); 
     background: #fff; color: var(--tinta); border-radius: 14px; padding: 1.1rem 1.2rem; 
     min-height: 100px; display: flex; flex-direction: column; justify-content: space-between; 
-    transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   }
   .mod::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c, var(--lima)); transition: var(--transicion); }
   .mod::after { content: ""; position: absolute; right: -26px; bottom: -26px; width: 80px; height: 80px; border: 4px solid var(--c, var(--lima)); border-radius: 50%; opacity: 0.1; transition: var(--transicion); }
   .mod:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: var(--c, var(--verde)); }
   .mod:hover::after { transform: scale(1.4); opacity: 0.2; }
   
-  .mod .ic { margin-bottom: 0.6rem; display: inline-block; color: var(--c, var(--verde)); }
+  .mod .ic { margin-bottom: 0.6rem; display: inline-block; color: var(--c, var(--verde)); font-size: 1.6rem; }
   .mod b { font-weight: 700; font-size: 1.02rem; line-height: 1.2; z-index: 1; color: var(--tinta); margin-bottom: 0.3rem; display: block; }
   .mod .n { font-size: 0.78rem; font-weight: 700; z-index: 1; color: var(--suave); background: var(--fondo); padding: 0.2rem 0.6rem; border-radius: 99px; display: inline-block; align-self: flex-start; border: 1px solid var(--linea); }
+  
   .mod.on { border-color: var(--c, var(--lima)); box-shadow: 0 8px 25px color-mix(in srgb, var(--c, var(--lima)) 30%, transparent); transform: scale(1.02); background: color-mix(in srgb, var(--c, var(--lima)) 8%, white); }
   .mod.on b { color: var(--petroleo); }
   .mod.on .n { background: var(--c, var(--lima)); color: #fff; border-color: transparent; }
-  .mod.cero { opacity: 0.75; filter: grayscale(40%); }
-  .mod.cero:hover { opacity: 1; filter: grayscale(0%); }
-  .mod.cero b { color: var(--suave); }
-  .mod.cero .n { background: #eee; color: #777; border-color: transparent; }
+  
+  .mod.cero { opacity: 1; filter: none; }
+  .mod.cero .n { background: #eee; color: #777; }
+  
   .mod.todos { background: var(--petroleo); color: #fff; border: none; }
   .mod.todos::before { background: var(--lima); }
   .mod.todos::after { border-color: var(--lima); opacity: 0.2; }
@@ -225,45 +180,44 @@
   .lista-eventos { animation: slideUp 0.5s ease-out; }
   .mes-t { font-family: var(--display); font-size: 1.5rem; margin: 1.6rem 0 0.6rem; color: var(--petroleo); border-bottom: 2px solid var(--lima); display: inline-block; padding-bottom: 0.2rem; }
   
-  /* ===== TARJETA DE EVENTO REDISEÑADA ===== */
+  /* ===== TARJETA DE EVENTO ===== */
   .ev { 
     --c-fac: #007A78; --c-cat: #007A78; 
-    display: grid; grid-template-columns: 60px 1fr auto; gap: 1rem; align-items: center; 
+    display: grid; grid-template-columns: 65px 1fr auto; gap: 1rem; align-items: stretch; 
     border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); 
     border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; 
     cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; 
     animation: scaleIn 0.3s ease-out; background: #fff; 
   }
   .ev:hover { box-shadow: 0 8px 20px rgba(0,59,54,0.1); transform: translateY(-2px); }
-  .ev.pasado { opacity: 0.6; }
+  .ev.pasado { opacity: 0.65; }
   
-  /* Columna izquierda: Fecha */
-  .fecha { text-align: center; line-height: 1.05; display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid var(--linea); padding-right: 0.5rem;}
-  .fecha b { font-family: var(--display); font-size: 1.8rem; display: block; color: var(--petroleo); line-height: 1;}
-  .fecha span { font-size: 0.75rem; color: var(--suave); font-weight: 600; text-transform: uppercase; margin-top: 0.2rem;}
+  .fecha-block { display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid var(--linea); padding-right: 0.8rem;}
+  .fecha-block b { font-family: var(--display); font-size: 1.8rem; color: var(--petroleo); line-height: 1;}
+  .fecha-block .mes { font-size: 0.8rem; color: var(--suave); font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;}
+  .fecha-block .anio { font-size: 0.7rem; color: var(--suave); font-weight: 600;}
   
-  /* Columna central: Contenido */
-  .ev-content { display: flex; flex-direction: column; gap: 0.4rem; }
+  .ev-content { display: flex; flex-direction: column; gap: 0.4rem; justify-content: center;}
   .ev-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
   .ev h3 { font-size: 1.05rem; font-weight: 700; color: var(--tinta); margin: 0; line-height: 1.2; }
+  
   .cat-pill { font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 99px; background: color-mix(in srgb, var(--c-cat) 15%, white); color: var(--c-cat); border: 1px solid color-mix(in srgb, var(--c-cat) 30%, white); text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.2rem;}
   .cat-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--c-cat); display: inline-block;}
-  
-  .ev-bottom { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 0.82rem; color: var(--suave); }
-  .ambito-pill { 
-    display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fondo); 
-    padding: 0.2rem 0.6rem; border-radius: 6px; border: 1px solid var(--linea); font-weight: 600; color: var(--tinta); 
-  }
-  .ambito-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--verde); }
-  
-  /* Columna derecha: Estado */
+
+  .ev-bottom { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--suave); }
+  .info-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fondo); padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid var(--linea); font-weight: 600; color: var(--tinta); }
+  .info-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--verde); }
+  .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: #e0f2fe; padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid #bae6fd; font-weight: 700; color: #0369a1; text-decoration: none; transition: var(--transicion);}
+  .link-pill:hover { background: #bae6fd; color: #075985; }
+
+  .estado-block { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
   .estado { font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 999px; white-space: nowrap; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--linea); color: var(--tinta); display: flex; align-items: center; gap: 0.3rem;}
   .estado.e-curso { color: var(--verde); border-color: var(--verde); background: #e6f2f1;}
   .estado.e-pronto { color: #8A5A00; border-color: #c9a83d; background: #fff8e6;}
   .estado.e-fin { color: var(--suave); }
   
   .ev.festivo { border-left-color: var(--rojo); background-color: var(--rojo-fondo); border-color: #f3b8b4; }
-  .ev.festivo .fecha b { color: var(--rojo); }
+  .ev.festivo .fecha-block b { color: var(--rojo); }
   .ev.festivo .cat-pill { background: #fff; color: var(--rojo); border-color: #f3b8b4; }
   .ev.festivo .cat-pill::before { background: var(--rojo); }
 
@@ -291,9 +245,10 @@
   .cajon.on { transform: none; }
   .cajon .cerrar { float: right; border: 0; background: var(--fondo); color: var(--tinta); width: 34px; height: 34px; border-radius: 50%; font-size: 1.2rem; transition: var(--transicion); }
   .cajon .cerrar:hover { background: #e2e8e4; transform: rotate(90deg); }
-  .cajon dl { color: var(--tinta); }
-  .cajon dt { color: var(--suave); }
-  .cajon dd { color: var(--tinta); }
+  .cajon dl { color: var(--tinta); display: grid; grid-template-columns: 100px 1fr; gap: 0.6rem 1rem; font-size: .93rem; }
+  .cajon dt { color: var(--suave); font-weight: 600; }
+  .cajon dd { color: var(--tinta); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;}
+  .cajon .flaticon { width: 1.2em; height: 1.2em; color: var(--verde); }
 
   #btnTop { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; border-radius: 50%; background: var(--verde); color: white; border: none; box-shadow: 0 4px 15px rgba(0,122,120,0.4); opacity: 0; pointer-events: none; transition: var(--transicion); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; z-index: 80; }
   #btnTop.show { opacity: 1; pointer-events: auto; }
@@ -313,7 +268,7 @@
   .gate-card input:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
 
   #admin-app { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
-  .admin-nav { background: var(--petroleo); color: #fff; padding: 1.3rem 1rem; display: flex; flex-direction: column; gap: .3rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .admin-nav { background: var(--petroleo); color: #fff; padding: 1.3rem 1rem; display: flex; flex-direction: column; gap: .3rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; z-index: 100;}
   .admin-nav .brand { display: flex; gap: .7rem; align-items: center; margin-bottom: 1.2rem; padding: 0 .4rem; }
   .admin-nav .brand .logo-img { height: 32px; width: auto; padding: 3px 6px; border-radius: 6px; flex: none; }
   .admin-nav .brand b { font-family: var(--display); line-height: 1.1; display: block; color: #fff; }
@@ -411,8 +366,8 @@
     .hero { grid-template-columns: 1fr; }
     .search { flex-basis: 100%; order: 5; margin-top: 0.5rem; }
     .top { flex-wrap: wrap; }
-    .ev { grid-template-columns: 50px 1fr; }
-    .estado { grid-column: 2; justify-self: start; margin-top: 0.4rem;}
+    .ev { grid-template-columns: 55px 1fr; }
+    .estado-block { grid-column: 2; align-items: flex-start; margin-top: 0.4rem;}
     .cal .dia { min-height: 64px; }
     .pill { font-size: 0; padding: 4px; height: 10px; border-radius: 2px; }
     .barra { top: 120px; }
@@ -462,8 +417,7 @@
     <div class="year-bg" id="bgAnio"></div>
     <div class="hero-izq">
       <div class="titulo-oficina">
-        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11M8 14v3m4-3v3m4-3v3"/></svg>
-        Registro y Control Académico
+        <img src="tituloryc.jpg" alt="Registro y Control Académico">
       </div>
       <p class="hoy" id="hoyTxt"></p>
       <h1 id="heroTit">Calendario académico</h1>
@@ -538,18 +492,32 @@
   <div id="gate">
     <form class="gate-card" id="gateForm">
       <img src="Logo_de_la_Universidad_El_Bosque.png" alt="Logo" class="logo-img">
-      <h1>Administrar calendario</h1>
-      <p>Ingresa tu PIN de 6 a 15 dígitos.</p>
-      <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" autofocus>
-      <button class="btn pri" style="width:100%">
-        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Entrar
-      </button>
-      <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Si es tu primera vez, crea un PIN de administrador.</p>
-      <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">
-        <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        Crear PIN de Administrador
-      </button>
+      <h1 id="gateTitle">Administrar calendario</h1>
+      <p id="gateDesc">Ingresa tu PIN de 6 a 15 dígitos.</p>
+      
+      <!-- Login normal -->
+      <div id="gateLoginFields">
+        <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" autofocus>
+        <button class="btn pri" style="width:100%">
+          <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Entrar
+        </button>
+        <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Si es tu primera vez, crea un PIN de administrador.</p>
+        <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">
+          <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Crear PIN de Administrador
+        </button>
+      </div>
+
+      <!-- Formulario de cambio obligatorio (cuando entra con PIN temporal) -->
+      <div id="gateNewPassFields" hidden>
+        <input id="new_pin" type="password" inputmode="numeric" placeholder="Nuevo PIN (6-15 dígitos)" style="margin-bottom:0.5rem;">
+        <input id="new_pin_confirm" type="password" inputmode="numeric" placeholder="Confirma el PIN" style="margin-bottom:1rem;">
+        <button type="button" class="btn pri" style="width:100%" onclick="guardarNuevaPassForzada()">
+          <svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Guardar mi nuevo PIN
+        </button>
+      </div>
     </form>
   </div>
 
@@ -675,8 +643,17 @@
   const diffDias = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
   const sumaDias = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
   const finDe = e => e.fin || e.inicio;
+  
   const fmtFecha = (s, conAnio = true) => { const d = parse(s); return `${d.getDate()} ${MESES_C[d.getMonth()]}` + (conAnio ? ' ' + d.getFullYear() : ''); };
-  const fmtRango = e => { const f = finDe(e); if (f === e.inicio) return fmtFecha(e.inicio); return parse(e.inicio).getFullYear() === parse(f).getFullYear() ? `${fmtFecha(e.inicio, false)} – ${fmtFecha(f)}` : `${fmtFecha(e.inicio)} – ${fmtFecha(f)}`; };
+  const fmtRango = e => { 
+    const f = finDe(e); 
+    let rango = parse(e.inicio).getFullYear() === parse(f).getFullYear() ? `${fmtFecha(e.inicio, false)} – ${fmtFecha(f)}` : `${fmtFecha(e.inicio)} – ${fmtFecha(f)}`; 
+    if (e.inicio === f) rango = fmtFecha(e.inicio);
+    if (e.horaInicio && e.horaFin) rango += ` (${e.horaInicio} - ${e.horaFin})`;
+    else if (e.horaInicio) rango += ` (${e.horaInicio})`;
+    return rango;
+  };
+  
   const periodoDe = s => { const d = parse(s); return `${d.getFullYear()}-${d.getMonth() < 6 ? 1 : 2}`; };
   const periodoAuto = (D, fecha) => { const p = D.periodos.find(p => p.inicio <= fecha && fecha <= p.fin); return p ? p.id : periodoDe(fecha); };
   const nombrePeriodo = id => { if(!id) return ''; const [a, s] = id.split('-'); return `${a} · Semestre ${s}`; };
@@ -706,8 +683,9 @@
     guardar: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
     salir: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
     llave: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
+    link: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    reloj: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
     
-    // Facultades
     ciencias: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"/><path d="M14 9.3V2"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.58 16.5h12.85"/></svg>',
     enfermeria: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>',
     economia: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
@@ -746,6 +724,7 @@
     return 'editor';
   };
 
+  // --- Funciones de Nube (Supabase) ---
   async function leerNube() {
     if (!dbClient) return null;
     try {
@@ -765,6 +744,7 @@
         eventos: evs ? evs.map(e => ({
           id: e.id, titulo: e.titulo, descripcion: e.descripcion || '', categoria: e.categoria_id,
           periodo: e.periodo_id, periodo2: e.periodo2_id, inicio: e.fecha_inicio, fin: e.fecha_fin || e.fecha_inicio,
+          horaInicio: e.hora_inicio || '', horaFin: e.hora_fin || '',
           lugar: e.lugar || '', lugarEsp: e.lugar_especifico || '', piso: e.piso || '', enlace: e.enlace || '',
           estado: e.estado || 'publicado',
           facultad: e.evento_facultades ? e.evento_facultades.map(x => x.facultad_id) : [],
@@ -776,6 +756,7 @@
     } catch (e) { console.error("Error al leer de Supabase:", e); return null; }
   }
 
+  // --- Logs ---
   async function registrarLog(accion, detalle) {
     if (!dbClient || !USUARIO_ACTUAL) return;
     try {
@@ -784,21 +765,21 @@
     } catch (e) { console.error('Error guardando log:', e); }
   }
 
+  // --- Autenticación y Usuarios ---
   async function verificarPin(pin) {
     if (!dbClient) return null;
     const { data, error } = await dbClient.from('usuarios_admin').select('*').eq('pin', pin);
     if (error) { toast("Error de conexión al verificar PIN", true); return null; }
     return (data && data.length > 0) ? data[0] : null;
   }
-  async function crearUsuario(nombre, pin, rol = 'editor', correo = null) {
+  
+  async function crearUsuario(payload) {
     if (!dbClient) return null;
-    const rolNorm = normalizarRol(rol);
-    const payload = { nombre, pin, rol: rolNorm };
-    if (correo) payload.correo = correo;
     const { data, error } = await dbClient.from('usuarios_admin').insert([payload]).select().single();
     if (error) throw error;
     return data;
   }
+
   async function verificarSiHayUsuarios() {
     if (!dbClient) return false;
     const { count, error } = await dbClient.from('usuarios_admin').select('*', { count: 'exact', head: true });
@@ -820,7 +801,7 @@
     let facColor = cat.color, icono = '';
     if (facs.length === 1) {
       const f = D.facultades.find(x => x.id === facs[0]);
-      if (f) { facColor = f.color || cat.color; icono = f.emoji ? `<span style="font-size:1.1em">${f.emoji}</span>` : getIconoFac(f.nombre); }
+      if (f) { facColor = f.color || cat.color; icono = f.emoji ? `<span class="emoji">${f.emoji}</span>` : getIconoFac(f.nombre); }
     }
     return { facColor, catColor: cat.color, icono };
   }
@@ -959,19 +940,18 @@
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
     const card = (id, col, ic, nom, n, cls) => `
       <button class="mod ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}">
-        <span class="ic">${FLATICONS[ic] || FLATICONS.estrella}</span>
+        <span class="ic">${ic}</span>
         <b>${esc(nom)}</b>
         <span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span>
       </button>`;
       
-    $('#modulos').innerHTML = card('', 'var(--petroleo)', 'calendario', 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
+    $('#modulos').innerHTML = card('', 'var(--petroleo)', '📅', 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
       D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { 
         const n = base.filter(e => e.categoria === c.id).length; 
         return card(c.id, c.color, Number.isInteger(r) ? ORD[r][1] : 'estrella', c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); 
       }).join('');
   }
 
-  /* AQUÍ ESTÁ LA CORRECCIÓN DEL BLOQUE DE EVENTOS */
   function filaEvento(e, mostrarAmbito = true) {
     const st = estadoDe(e);
     const { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
@@ -979,14 +959,25 @@
     const d = parse(e.inicio);
     const inminente = esInminente(e);
     
-    // Aquí se usa la función ambito() o el texto directo, sin envolver el SVG en esc()
-    const ambitoHtml = mostrarAmbito && !e.esFestivo ? `<span class="ambito-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span>` : '';
+    const ambitoHtml = mostrarAmbito && !e.esFestivo ? `<span class="info-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span>` : '';
+    
+    const lugarTxt = e.lugar ? (e.lugarEsp ? `${e.lugarEsp}` : e.lugar) : '';
+    const pisoTxt = e.piso ? ` - ${e.piso}` : '';
+    const lugarHtml = lugarTxt ? `<span class="info-pill">${FLATICONS.pin} ${esc(lugarTxt + pisoTxt)}</span>` : '';
+
+    let horaHtml = '';
+    if (e.horaInicio) {
+      horaHtml = `<span class="info-pill">${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</span>`;
+    }
+
+    const linkHtml = e.enlace ? `<a href="${esc(e.enlace)}" target="_blank" rel="noopener" class="link-pill" onclick="event.stopPropagation()">${FLATICONS.link} Unirse</a>` : '';
 
     return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
       
-      <div class="fecha">
+      <div class="fecha-block">
         <b>${d.getDate()}</b>
-        <span>${MESES_C[d.getMonth()]} '${d.getFullYear().toString().slice(-2)}</span>
+        <span class="mes">${MESES_C[d.getMonth()]}</span>
+        <span class="anio">${d.getFullYear()}</span>
       </div>
 
       <div class="ev-content">
@@ -995,12 +986,16 @@
           <span class="cat-pill">${esc(c.nombre)}</span>
         </div>
         <div class="ev-bottom">
+          ${horaHtml}
           ${ambitoHtml}
-          <span>📅 ${fmtRango(e)}</span>
+          ${lugarHtml}
+          ${linkHtml}
         </div>
       </div>
 
-      <span class="estado ${st.c}">${st.t}</span>
+      <div class="estado-block">
+        <span class="estado ${st.c}">${st.t}</span>
+      </div>
 
     </article>`;
   }
@@ -1069,7 +1064,7 @@
     if (String(id).startsWith('festivo-')) {
       const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
       if (!f) return;
-      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; color:var(--petroleo);">${FLATICONS.estrella} ${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
+      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; color:var(--petroleo);">${FLATICONS.estrella} ${esc(f.nombre)}</h2><dl><dt>Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt>Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
       $('#velo').classList.add('on'); $('#cajon').classList.add('on');
       return;
     }
@@ -1078,10 +1073,31 @@
     const { facColor, catColor, icono } = getColores(D, e);
     const gc = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.titulo)}&dates=${e.inicio.replace(/-/g, '')}/${sumaDias(finDe(e), 1).replace(/-/g, '')}&details=${encodeURIComponent(e.descripcion || '')}&location=${encodeURIComponent(e.lugar || '')}`;
     let pubStr = '';
-    if (e.publico && e.publico.length) pubStr = `<dt style="color:var(--suave); font-weight:600;">Dirigido a</dt><dd>${esc(e.publico.join(', '))}</dd>`;
-    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem; color:var(--petroleo);">${icono ? icono + ' ' : ''}${esc(e.titulo)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>${pubStr}<dt style="color:var(--suave); font-weight:600;">Ámbito</dt><dd>${esc(amb(e))}</dd><dt style="color:var(--suave); font-weight:600;">Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>${e.lugar ? `<dt style="color:var(--suave); font-weight:600;">Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : ''}</dl>${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}<div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;"><a class="btn" href="${gc}" target="_blank" rel="noopener">${FLATICONS.calendario} Google Calendar</a><button class="btn" data-ics="${e.id}">${FLATICONS.documento} Descargar (.ics)</button></div>`;
+    if (e.publico && e.publico.length) pubStr = `<dt>Dirigido a</dt><dd>${esc(e.publico.join(', '))}</dd>`;
+    
+    let linkDetalle = e.enlace ? `<dt>Enlace</dt><dd><a href="${esc(e.enlace)}" target="_blank" rel="noopener" class="link-pill" style="font-size:0.9rem; padding:0.4rem 0.8rem;">${FLATICONS.link} Ir al enlace</a></dd>` : '';
+    let lugarDetalle = e.lugar ? `<dt>Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : '';
+    let horaDetalle = e.horaInicio ? `<dt>Horario</dt><dd>${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</dd>` : '';
+
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button>
+      <h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem; color:var(--petroleo);">${esc(e.titulo)}</h2>
+      <dl>
+        <dt>Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>
+        ${horaDetalle}
+        ${pubStr}
+        <dt>Ámbito</dt><dd><span class="info-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span></dd>
+        <dt>Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>
+        ${lugarDetalle}
+        ${linkDetalle}
+      </dl>
+      ${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}
+      <div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;">
+        <a class="btn" href="${gc}" target="_blank" rel="noopener">${FLATICONS.calendario} Google Calendar</a>
+        <button class="btn" data-ics="${e.id}">${FLATICONS.documento} Descargar (.ics)</button>
+      </div>`;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
   }
+  
   function abrirDia(s) {
     const anio = +s.slice(0, 4);
     const L = D.eventos.filter(e => e.estado !== 'borrador' && e.inicio <= s && s <= finDe(e) &&
@@ -1089,7 +1105,7 @@
     const fDelDia = festivosDia(s);
     const todos = [...fDelDia, ...L];
     $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem; color:var(--petroleo);">${FLATICONS.calendario} ${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
-       if (e.esFestivo) return `<div class="ev festivo" style="--c-fac:var(--rojo);--c-cat:var(--rojo); cursor:default;" data-id="festivo-${e.fecha}"><div class="fecha"><b>${parse(e.fecha).getDate()}</b><span>Festivo</span></div><div><h3>${esc(e.nombre)}</h3></div></div>`;
+       if (e.esFestivo) return `<div class="ev festivo" style="--c-fac:var(--rojo);--c-cat:var(--rojo); cursor:default;" data-id="festivo-${e.fecha}"><div class="fecha-block"><b>${parse(e.fecha).getDate()}</b><span class="mes">Festivo</span></div><div><h3>${esc(e.nombre)}</h3></div></div>`;
        return filaEvento(e);
     }).join('') : '<p style="color:var(--suave); text-align:center; padding:2rem;">No hay eventos este día.</p>');
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
@@ -1100,7 +1116,26 @@
     const t = s => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
     const stamp = new Date().toISOString().replace(/[-:]|\.\d{3}/g, '');
     const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Calendario Academico//ES', 'CALSCALE:GREGORIAN'];
-    evs.forEach(e => L.push('BEGIN:VEVENT', `UID:${e.id || uid()}@calendario`, `DTSTAMP:${stamp}`, `DTSTART;VALUE=DATE:${e.inicio.replace(/-/g, '')}`, `DTEND;VALUE=DATE:${sumaDias(finDe(e), 1).replace(/-/g, '')}`, `SUMMARY:${t(e.titulo)}`, `DESCRIPTION:${t((e.descripcion ? e.descripcion + ' · ' : '') + ambito(D, e))}`, ...(e.lugar ? [`LOCATION:${t(e.lugar)}`] : []), 'END:VEVENT'));
+    evs.forEach(e => {
+      let dtStart = `DTSTART;VALUE=DATE:${e.inicio.replace(/-/g, '')}`;
+      let dtEnd = `DTEND;VALUE=DATE:${sumaDias(finDe(e), 1).replace(/-/g, '')}`;
+      
+      // Si hay horas, usamos el formato de fecha-hora
+      if (e.horaInicio) {
+        const hIni = e.horaInicio.replace(':', '') + '00';
+        const hFin = e.horaFin ? e.horaFin.replace(':', '') + '00' : hIni;
+        dtStart = `DTSTART:${e.inicio.replace(/-/g, '')}T${hIni}`;
+        dtEnd = `DTEND:${finDe(e).replace(/-/g, '')}T${hFin}`;
+      }
+
+      L.push('BEGIN:VEVENT', `UID:${e.id || uid()}@calendario`, `DTSTAMP:${stamp}`, dtStart, dtEnd, 
+        `SUMMARY:${t(e.titulo)}`, 
+        `DESCRIPTION:${t((e.descripcion ? e.descripcion + ' · ' : '') + ambito(D, e))}`, 
+        ...(e.lugar ? [`LOCATION:${t(e.lugar)}`] : []), 
+        ...(e.enlace ? [`URL:${t(e.enlace)}`] : []),
+        'END:VEVENT'
+      );
+    });
     L.push('END:VCALENDAR');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([L.join('\r\n')], { type: 'text/calendar' }));
@@ -1135,14 +1170,14 @@
      ============================================================ */
   let P = 'resumen';
 
-  const ROLES = { admin: `${FLATICONS.estrella} Administrador`, creador: `${FLATICONS.editar} Creador`, editor: `${FLATICONS.editar} Editor` };
+  const ROLES = { admin: 'Administrador', creador: 'Creador', editor: 'Editor' };
   const DESC_ROL = {
     admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.',
     creador: 'Tu perfil permite crear eventos nuevos.',
     editor: 'Tu perfil permite editar los eventos existentes.'
   };
   const PERM = { admin: ['crear', 'editar', 'eliminar', 'admin'], creador: ['crear'], editor: ['editar'] };
-  const puede = a => !!USUARIO_ACTUAL && (PERM[USUARIO_ACTUAL.rol] || []).includes(a);
+  const puede = a => !!USUARIO_ACTUAL && ((USUARIO_ACTUAL.permisos || []).includes(a) || USUARIO_ACTUAL.rol === 'admin');
   const sinPermiso = () => toast('Tu perfil no tiene permiso para esta acción', true);
   const F = { q: '', per: '', cat: '', est: '', grupo: '' };
   const SEL = new Set();
@@ -1156,27 +1191,50 @@
     document.body.classList.add('en-admin'); // Oculta a Tita
     $('#public-panel').style.display = 'none';
     $('#admin-panel').classList.add('on');
+    
     if (USUARIO_ACTUAL) {
       mostrarAppAdmin();
     } else {
       $('#gate').style.display = 'grid';
       $('#admin-app').hidden = true;
-      verificarSiHayUsuarios().then(hay => {
-        $('#btnCrearAdmin').style.display = hay ? 'none' : 'block';
-        $('#pinAyuda').textContent = hay ? 'Ingresa tu PIN de administrador.' : 'No hay usuarios. Crea el PIN de administrador.';
-      });
+      
+      // Verificar si viene con link de restablecimiento
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('reset') && urlParams.has('u')) {
+        $('#gateTitle').textContent = "Crea tu nueva contraseña";
+        $('#gateDesc').textContent = "Por seguridad, cambia el PIN temporal que te enviamos.";
+        $('#gateLoginFields').hidden = true;
+        $('#gateNewPassFields').hidden = false;
+        window._reset_user_id = urlParams.get('u');
+      } else {
+        $('#gateTitle').textContent = "Administrar calendario";
+        $('#gateDesc').textContent = "Ingresa tu PIN de 6 a 15 dígitos.";
+        $('#gateLoginFields').hidden = false;
+        $('#gateNewPassFields').hidden = true;
+        verificarSiHayUsuarios().then(hay => {
+          $('#btnCrearAdmin').style.display = hay ? 'none' : 'block';
+          $('#pinAyuda').textContent = hay ? 'Ingresa tu PIN de administrador.' : 'No hay usuarios. Crea el PIN de administrador.';
+        });
+      }
     }
   }
 
   function mostrarAppAdmin() {
     $('#gate').style.display = 'none';
     $('#admin-app').hidden = false;
-    const rolTxt = ROLES[USUARIO_ACTUAL.rol] || USUARIO_ACTUAL.rol;
     $('#userNameDisplay').textContent = USUARIO_ACTUAL.nombre;
+    
+    // Mostrar roles y áreas
+    let rolTxt = USUARIO_ACTUAL.rol === 'admin' ? '👑 Administrador' : '';
+    if (USUARIO_ACTUAL.rol !== 'admin') {
+      const p = USUARIO_ACTUAL.permisos || [];
+      rolTxt = p.map(x => x === 'crear' ? 'Creador' : x === 'editar' ? 'Editor' : '').filter(Boolean).join(' + ') || 'Lector';
+    }
     $('#userRoleDisplay').innerHTML = rolTxt;
     $('#saludoNombre').textContent = USUARIO_ACTUAL.nombre;
     $('#saludoRol').innerHTML = rolTxt;
-    const esAdmin = puede('admin');
+    
+    const esAdmin = USUARIO_ACTUAL.rol === 'admin';
     $$('.admin-only').forEach(el => {
       el.style.display = esAdmin ? (el.classList.contains('sep') ? 'block' : 'flex') : 'none';
     });
@@ -1192,6 +1250,11 @@
     $('#admin-panel').classList.remove('on');
     $('#public-panel').style.display = 'block';
     document.body.classList.remove('en-admin'); // Muestra a Tita
+    
+    // Limpiar URL de reset si existe
+    if (window.location.search.includes('reset')) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
     pintarPublico(); scrollTo(0, 0);
   }
 
@@ -1207,7 +1270,7 @@
     const pin = prompt('Crea un PIN de 6 a 15 dígitos para el administrador:');
     if (!pin || !/^\d{6,15}$/.test(pin.trim())) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
     try {
-      await crearUsuario('Administrador Principal', pin, 'admin');
+      await crearUsuario({ nombre: 'Administrador Principal', pin, rol: 'admin', permisos: ['crear','editar','eliminar'], areas_asignadas: [] });
       toast('Usuario administrador creado. Ahora inicia sesión.');
       verificarSiHayUsuarios();
     } catch (e) { toast('Error al crear usuario: ' + e.message, true); }
@@ -1215,11 +1278,19 @@
 
   $('#gateForm').onsubmit = async e => {
     e.preventDefault();
+    if (!$('#gateNewPassFields').hidden) return; // Si está en modo reset, no hace login por submit
+    
     const pin = $('#pin').value;
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     const user = await verificarPin(pin);
     if (user) {
-      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: normalizarRol(user.rol) };
+      USUARIO_ACTUAL = { 
+        id: user.id, 
+        nombre: user.nombre, 
+        rol: normalizarRol(user.rol),
+        permisos: user.permisos || ['crear','editar'],
+        areas: user.areas_asignadas || []
+      };
       $('#pin').value = '';
       registrarLog('Inicio de sesión', 'Ingresó al sistema');
       mostrarAppAdmin();
@@ -1229,10 +1300,27 @@
     }
   };
 
+  async function guardarNuevaPassForzada() {
+    const p1 = $('#new_pin').value.trim();
+    const p2 = $('#new_pin_confirm').value.trim();
+    if (!p1 || !/^\d{6,15}$/.test(p1)) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
+    if (p1 !== p2) return toast('Los PINs no coinciden', true);
+    
+    try {
+      const { error } = await dbClient.from('usuarios_admin').update({ pin: p1 }).eq('id', window._reset_user_id);
+      if (error) throw error;
+      toast('✅ Contraseña actualizada. Inicia sesión.');
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (e) {
+      toast('Error al actualizar: ' + e.message, true);
+    }
+  }
+
   async function ir(p, conservar) {
     if (!USUARIO_ACTUAL) return;
     const PANELES = { resumen: pResumen, eventos: pEventos, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar };
-    if (!PANELES[p] || (p !== 'resumen' && p !== 'eventos' && !puede('admin'))) p = 'resumen';
+    if (!PANELES[p] || (p !== 'resumen' && p !== 'eventos' && USUARIO_ACTUAL.rol !== 'admin')) p = 'resumen';
     P = p; SEL.clear();
     $$('.admin-nav .it').forEach(b => b.classList.toggle('on', b.dataset.p === p));
     let html;
@@ -1294,6 +1382,17 @@
   function eventosFiltrados() {
     const q = norm(F.q);
     return D.eventos.filter(e => {
+      // Filtro de Áreas/Facultades del usuario (Si no es admin, solo ve lo suyo)
+      if (USUARIO_ACTUAL.rol !== 'admin') {
+        const susAreas = USUARIO_ACTUAL.areas || [];
+        if (susAreas.length > 0) {
+          const misFacs = susAreas.filter(x => x.startsWith('f:')).map(x => x.slice(2));
+          const misAreas = susAreas.filter(x => x.startsWith('a:')).map(x => x.slice(2));
+          const coincide = (e.facultad || []).some(f => misFacs.includes(f)) || (e.area || []).some(a => misAreas.includes(a));
+          if (!coincide) return false;
+        }
+      }
+
       if (F.per && e.periodo !== F.per && !(e.periodo2 && e.periodo2 === F.per)) return false;
       if (F.cat && e.categoria !== F.cat) return false;
       if (F.est && (e.estado || 'publicado') !== F.est) return false;
@@ -1318,8 +1417,8 @@
         <td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td>
         <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}</td>
         <td>${pEd
-          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? `${FLATICONS.documento} Borrador` : `${FLATICONS.check} Publicado`}</button>`
-          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? `${FLATICONS.documento} Borrador` : `${FLATICONS.check} Publicado`}</span>`}</td>
+          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>`
+          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td>
         <td><div class="acc">
           ${pEd ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}
           ${pEl ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}
@@ -1330,6 +1429,7 @@
   function modalEvento(id) {
     const e = id ? D.eventos.find(x => x.id === id) : { 
       titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto', 
+      horaInicio: '', horaFin: '',
       facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado' 
     };
     const arrFac = Array.isArray(e.facultad) ? e.facultad : (e.facultad ? [e.facultad] : []);
@@ -1348,7 +1448,15 @@
         <div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
         <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p), p === e.periodo)).join('')}</select></div>
       </div>
-      <div class="fr2"><div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div><div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div></div>
+      
+      <div class="fr2">
+        <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div>
+        <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div>
+        <div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${e.horaFin || ''}"></div>
+      </div>
       
       <div class="fr">
         <label>Dirigido a (Selección múltiple)</label>
@@ -1464,6 +1572,7 @@
     const o = { 
       id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), 
       inicio, fin, periodo, periodo2, 
+      horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'),
       facultad, programa, area, publico, 
       lugar, lugarEsp, piso: g('f_piso'), enlace: g('f_link'), estado: g('f_estado') 
     };
@@ -1473,6 +1582,7 @@
         const payload = {
           titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria,
           periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin,
+          hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null,
           lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace,
           estado: o.estado, updated_at: new Date().toISOString()
         };
@@ -1561,45 +1671,71 @@
   function pCategorias() { return encabezado(`${FLATICONS.estrella} Categorías`, 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
 
   async function pUsuarios() {
-    const { data, error } = await dbClient.from('usuarios_admin').select('id,nombre,rol,correo,created_at');
+    const { data, error } = await dbClient.from('usuarios_admin').select('id,nombre,rol,correo,created_at,areas_asignadas,permisos');
     if (error) return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'No se pudieron cargar los usuarios: ' + esc(error.message));
     const col = { admin: ['#E1F2B8', '#2f4a00'], creador: ['#DBEAFE', '#1e3a8a'], editor: ['#F3E8FF', '#6b21a8'] };
     const badge = r => `<span class="badge" style="background:${(col[r] || ['#eee', '#333'])[0]}; color:${(col[r] || ['#eee', '#333'])[1]}">${ROLES[r] || r}</span>`;
     const U = [...(data || [])].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
-    return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'Gestiona quién puede entrar al panel y qué puede hacer. Los PINs deben tener entre 6 y 15 dígitos.') + `
+
+    const optsAreas = [...D.facultades.map(f => ({ v: 'f:' + f.id, t: f.nombre })), ...D.areas.map(a => ({ v: 'a:' + a.id, t: a.nombre }))];
+
+    return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'Gestiona quién puede entrar al panel y qué puede hacer.') + `
     <div class="caja">
       <h2>${FLATICONS.personas} Perfiles disponibles</h2>
       <div class="roles-leyenda">
-        <div>${badge('admin')}<br>Administra todo el sistema: eventos, estructura, usuarios y logs.</div>
-        <div>${badge('creador')}<br>Solo crea eventos nuevos.</div>
-        <div>${badge('editor')}<br>Solo edita los eventos existentes.</div>
+        <div>${badge('admin')}<br>Administra todo el sistema sin restricciones.</div>
+        <div>${badge('creador')} / ${badge('editor')}<br>Pueden crear/editar solo los eventos de las facultades o áreas que se les asigne.</div>
       </div>
     </div>
     <div class="caja">
       <h2>${FLATICONS.documento} Crear nuevo usuario</h2>
-      <div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;">
-        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Nombre</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
-        <div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div>
-        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>PIN (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" autocomplete="new-password" placeholder="••••••"></div>
-        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Perfil</label><select id="n_user_rol"><option value="editor">Editor</option><option value="creador">Creador</option><option value="admin">Administrador</option></select></div>
-        <button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button>
+      <div style="display:flex; flex-direction:column; gap:1rem;">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <div class="fr" style="margin:0; flex:1; min-width:180px;"><label>Nombre</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
+          <div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div>
+          <div class="fr" style="margin:0; flex:1; min-width:150px;"><label>PIN (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" placeholder="••••••"></div>
+        </div>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <div class="fr" style="margin:0; flex:1; min-width:200px;">
+            <label>Permisos (Multiselección)</label>
+            <div style="display:flex; gap:1rem; padding:0.4rem 0;">
+              <label style="display:flex; align-items:center; gap:0.4rem; font-weight:normal;"><input type="checkbox" id="n_user_p_crear" value="crear"> Creador</label>
+              <label style="display:flex; align-items:center; gap:0.4rem; font-weight:normal;"><input type="checkbox" id="n_user_p_editar" value="editar" checked> Editor</label>
+            </div>
+          </div>
+          <div class="fr" style="margin:0; flex:2; min-width:250px;">
+            <label>Áreas / Facultades asignadas (Ctrl+Click para varias)</label>
+            <select id="n_user_areas" multiple class="multi-select" size="4">
+              ${optsAreas.map(o => `<option value="${o.v}">${esc(o.t)}</option>`).join('')}
+            </select>
+            <p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">Si no se selecciona ninguna, será solo un lector global.</p>
+          </div>
+        </div>
+        <div><button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button></div>
       </div>
     </div>
     <div class="tw">
       <table>
-        <thead><tr><th>Nombre</th><th>Correo</th><th>Perfil</th><th>Creado</th><th></th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Correo</th><th>Permisos</th><th>Áreas/Facultades</th><th>Acciones</th></tr></thead>
         <tbody>
-          ${U.map(u => `<tr>
-            <td><b>${esc(u.nombre)}</b>${String(u.id) === String(USUARIO_ACTUAL.id) ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}</td>
-            <td>${u.correo ? esc(u.correo) : '<span style="color:var(--suave); font-style:italic;">sin correo</span>'}</td>
-            <td>${String(u.id) === String(USUARIO_ACTUAL.id) ? badge(u.rol) : `<select class="rolsel" data-ch="userRol" data-i="${u.id}">${Object.keys(ROLES).map(r => opt(r, ROLES[r], r === u.rol)).join('')}</select>`}</td>
-            <td>${u.created_at ? new Date(u.created_at).toLocaleDateString('es-CO') : '—'}</td>
-            <td><div class="acc">
-              <button class="btn sm warn" data-a="resetPin" data-i="${u.id}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}>${FLATICONS.email} Restablecer PIN</button>
-              <button class="btn sm" data-a="userPin" data-i="${u.id}">${FLATICONS.llave} Cambiar PIN</button>
-              ${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}">${FLATICONS.basura} Eliminar</button>`}
-            </div></td>
-          </tr>`).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
+          ${U.map(u => {
+            let pTxt = u.rol === 'admin' ? 'Todo' : (u.permisos || []).map(x => x === 'crear' ? 'Crear' : 'Editar').join(', ');
+            let areasTxt = u.rol === 'admin' ? 'Todas' : (u.areas_asignadas || []).map(v => {
+              if (v.startsWith('f:')) return D.facultades.find(x => x.id === v.slice(2))?.nombre || v;
+              return D.areas.find(x => x.id === v.slice(2))?.nombre || v;
+            }).join(', ') || 'Ninguna';
+
+            return `<tr>
+              <td><b>${esc(u.nombre)}</b>${String(u.id) === String(USUARIO_ACTUAL.id) ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}</td>
+              <td>${u.correo ? esc(u.correo) : '<span style="color:var(--suave); font-style:italic;">sin correo</span>'}</td>
+              <td><span class="badge" style="background:#eee; color:#333">${pTxt}</span></td>
+              <td style="max-width:200px; font-size:0.8rem; color:var(--suave);">${areasTxt}</td>
+              <td><div class="acc">
+                <button class="btn sm warn" data-a="resetPin" data-i="${u.id}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}>${FLATICONS.email} Reset PIN</button>
+                ${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}">${FLATICONS.basura}</button>`}
+              </div></td>
+            </tr>`;
+          }).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
         </tbody>
       </table>
     </div>`;
@@ -1610,7 +1746,7 @@
     if (!u) return toast('Usuario no encontrado', true);
     if (!u.correo) return toast('Este usuario no tiene correo registrado', true);
 
-    const ok = confirm(`¿Enviar un PIN nuevo al correo ${u.correo}?`);
+    const ok = confirm(`¿Enviar un PIN temporal al correo ${u.correo}? El usuario deberá cambiarlo al entrar.`);
     if (!ok) return;
 
     try {
@@ -1620,7 +1756,7 @@
       if (error) throw error;
       if (data && data.ok) {
         registrarLog('Restableció PIN', `${u.nombre} (${u.correo}) — enviado por correo`);
-        toast('📧 PIN enviado a ' + u.correo);
+        toast('📧 PIN temporal enviado a ' + u.correo);
       } else {
         throw new Error((data && data.error) || 'Error desconocido');
       }
@@ -1630,8 +1766,8 @@
       const { error: updErr } = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id);
       if (updErr) return toast('Error al guardar PIN: ' + updErr.message, true);
       registrarLog('Restableció PIN', `${u.nombre} (local, sin correo)`);
-      alert(`⚠️ No se pudo enviar el correo (función no desplegada).\n\nNuevo PIN para ${u.nombre}:\n\n${pin}\n\nCompártelo manualmente.`);
-      toast('PIN restablecido (modo local)');
+      alert(`⚠️ No se pudo enviar el correo. Nuevo PIN temporal para ${u.nombre}:\n\n${pin}\n\nCompártelo manualmente.`);
+      toast('PIN temporal generado');
     }
     if (P === 'usuarios') ir('usuarios', true);
   }
@@ -1700,17 +1836,6 @@
     if ((dup || []).some(x => String(x.id) !== String(id))) return toast('Ese PIN ya está en uso, elige otro', true);
     const { data: u } = await dbClient.from('usuarios_admin').select('nombre').eq('id', id).maybeSingle();
     if (await ejecutar(() => dbClient.from('usuarios_admin').update({ pin }).eq('id', id), `${FLATICONS.check} PIN actualizado`, 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
-  }
-
-  async function cambiarRol(id, rol) {
-    const rolNorm = normalizarRol(rol);
-    if (String(id) === String(USUARIO_ACTUAL.id)) { toast('No puedes cambiar tu propio perfil', true); return ir('usuarios', true); }
-    const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol');
-    const u = (data || []).find(x => String(x.id) === String(id));
-    if (!u || u.rol === rolNorm) return;
-    if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) { toast('Debe quedar al menos un administrador', true); return ir('usuarios', true); }
-    await ejecutar(() => dbClient.from('usuarios_admin').update({ rol: rolNorm }).eq('id', id), `${FLATICONS.check} Perfil actualizado`, 'Cambió perfil', `${u.nombre}: ${u.rol} → ${rolNorm}`);
-    ir('usuarios', true);
   }
 
   const masivo = async estado => {
@@ -1789,24 +1914,33 @@
       const nombre = $('#n_user_name').value.trim();
       const correo = $('#n_user_correo').value.trim();
       const pin = $('#n_user_pin').value.trim();
-      const rol = normalizarRol($('#n_user_rol').value);
+      
+      const permisos = [];
+      if ($('#n_user_p_crear').checked) permisos.push('crear');
+      if ($('#n_user_p_editar').checked) permisos.push('editar');
+      
+      const areas = [...$('#n_user_areas').selectedOptions].map(o => o.value);
+
       if (!nombre || !pin) return toast('Completa nombre y PIN', true);
       if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
       if (correo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Correo inválido', true);
+      if (permisos.length === 0) return toast('Selecciona al menos un permiso (Creador o Editor)', true);
+
       try {
         const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
         if (dup && dup.length) return toast('Ese PIN ya está en uso, elige otro', true);
-        await crearUsuario(nombre, pin, rol, correo || null);
-        registrarLog('Creó usuario', `${nombre} (${ROLES[rol] || rol})${correo ? ' · ' + correo : ''}`);
+        
+        await crearUsuario({ 
+          nombre, pin, rol: 'editor', correo: correo || null,
+          permisos: permisos,
+          areas_asignadas: areas
+        });
+        
+        registrarLog('Creó usuario', `${nombre} (Permisos: ${permisos.join(',')})`);
         toast(`${FLATICONS.check} Usuario creado`); ir('usuarios', true);
       } catch (e) {
         console.error(e);
-        if (String(e.message).includes('rol_check')) {
-          toast('Error de rol: revisa el CHECK de usuarios_admin (ver consola)', true);
-          console.error('Ejecuta en Supabase:\nALTER TABLE usuarios_admin DROP CONSTRAINT IF EXISTS usuarios_admin_rol_check;\nALTER TABLE usuarios_admin ADD CONSTRAINT usuarios_admin_rol_check CHECK (rol IN (\'admin\',\'creador\',\'editor\'));');
-        } else {
-          toast('Error al crear usuario: ' + e.message, true);
-        }
+        toast('Error al crear usuario: ' + e.message, true);
       }
     },
     delUser: async i => {
