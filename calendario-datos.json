@@ -22,7 +22,7 @@
   "facultades": [
     {
       "id": "ing",
-      "nombre": "Ingeniería",
+      "nombre": "Ingenierías",
       "programas": [
         {
           "id": "sistemas",
