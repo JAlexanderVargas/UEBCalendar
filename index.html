@@ -6,14 +6,14 @@
 <title>Calendario Académico - Universidad El Bosque</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;500;600;700&display=swap">
-<!-- Fuente para los emojis a color (estilo Flaticon) -->
 <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
 <style>
   :root {
     --lima: #A6CE39; --verde: #007A78; --petroleo: #003B36; --claro: #C5E86C;
     --fondo: #F3F6F4; --tinta: #16302D; --suave: #5B6F6B; --linea: #DCE5E1; --blanco: #fff;
     --rojo: #B3261E; --rojo-fondo: #FDE8E7;
-    --granate: #800020; /* Color granate para el título */
+    --granate: #800020;
     --display: 'Fraunces', Georgia, serif; --texto: 'Figtree', 'Segoe UI', system-ui, sans-serif;
     --transicion: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --emoji-font: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
@@ -25,33 +25,31 @@
   [hidden] { display: none !important; }
 
   /* ICONOS FLATICON (SVG) y EMOJIS A COLOR */
-  .flaticon { width: 1.4em; height: 1.4em; vertical-align: middle; display: inline-block; flex: none; fill: currentColor; }
+  .flaticon { width: 1.4em; height: 1.4em; vertical-align: middle; display: inline-block; flex: none; }
   .emoji { font-family: var(--emoji-font); font-weight: normal; font-style: normal; font-size: 1.2em; line-height: 1; }
   
-  /* ===== CARAS DE TITA VOLANDO ===== */
-  .tita-bg {
-    position: fixed; z-index: 0; pointer-events: none; opacity: 0.35;
-    mix-blend-mode: multiply; transition: opacity 0.3s;
+  /* ===== CONTENEDOR DE LAS CARAS DE TITA ===== */
+  #tita-container {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 0; overflow: hidden;
   }
-  .tita-1 { width: 140px; top: 5%; left: 5%; animation: flotar1 25s infinite ease-in-out, gesticular 4s infinite alternate; filter: drop-shadow(0 0 12px rgba(166, 206, 57, 0.8)); }
-  .tita-2 { width: 180px; top: 15%; right: 10%; animation: flotar2 30s infinite ease-in-out, gesticular 5s infinite alternate-reverse; filter: drop-shadow(0 0 15px rgba(0, 122, 120, 0.8)); }
-  .tita-3 { width: 120px; top: 45%; left: 15%; animation: flotar3 22s infinite ease-in-out, gesticular 3s infinite alternate; filter: drop-shadow(0 0 10px rgba(179, 38, 30, 0.7)); }
-  .tita-4 { width: 160px; bottom: 10%; right: 5%; animation: flotar4 35s infinite ease-in-out, gesticular 6s infinite alternate; filter: drop-shadow(0 0 18px rgba(255, 193, 7, 0.8)); }
-  .tita-5 { width: 110px; bottom: 25%; left: 8%; animation: flotar5 20s infinite ease-in-out, gesticular 4.5s infinite alternate-reverse; filter: drop-shadow(0 0 12px rgba(156, 39, 176, 0.7)); }
-  .tita-6 { width: 150px; top: 30%; left: 45%; animation: flotar1 28s infinite ease-in-out reverse, gesticular 5.5s infinite alternate; filter: drop-shadow(0 0 15px rgba(33, 150, 243, 0.8)); }
-  .tita-7 { width: 130px; top: 65%; right: 25%; animation: flotar2 24s infinite ease-in-out reverse, gesticular 3.5s infinite alternate-reverse; filter: drop-shadow(0 0 10px rgba(255, 87, 34, 0.8)); }
-  .tita-8 { width: 170px; bottom: 5%; left: 35%; animation: flotar3 40s infinite ease-in-out, gesticular 7s infinite alternate; filter: drop-shadow(0 0 20px rgba(0, 150, 136, 0.8)); }
-  .tita-9 { width: 100px; top: 80%; left: 50%; animation: flotar4 18s infinite ease-in-out, gesticular 4s infinite alternate-reverse; filter: drop-shadow(0 0 12px rgba(233, 30, 99, 0.8)); }
-  .tita-10 { width: 200px; top: 40%; right: -20px; animation: flotar5 32s infinite ease-in-out, gesticular 6s infinite alternate; filter: drop-shadow(0 0 18px rgba(139, 195, 74, 0.8)); }
+  .tita-img {
+    position: absolute;
+    width: 80px; /* Tamaño solicitado */
+    opacity: 0.6;
+    mix-blend-mode: multiply;
+    animation: respirar 3s infinite alternate ease-in-out;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
+  }
 
-  @keyframes flotar1 { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 33% { transform: translate(150px, 100px) rotate(15deg); } 66% { transform: translate(-50px, 200px) rotate(-10deg); } }
-  @keyframes flotar2 { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(-200px, 150px) rotate(-20deg); } }
-  @keyframes flotar3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(100px, -150px) scale(1.1) rotate(10deg); } }
-  @keyframes flotar4 { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(-100px, -100px) rotate(30deg); } }
-  @keyframes flotar5 { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(-150px, 50px) scale(0.9); } 66% { transform: translate(50px, -50px) scale(1.2) rotate(-15deg); } }
-  @keyframes gesticular { 0% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.05) rotate(3deg); } 50% { transform: scale(0.95) rotate(-3deg); } 75% { transform: scale(1.08) rotate(2deg); } 100% { transform: scale(1) rotate(0deg); } }
+  /* Animación de gesticulación / respiración */
+  @keyframes respirar {
+    0% { transform: scale(0.9) rotate(-5deg); }
+    100% { transform: scale(1.1) rotate(5deg); }
+  }
 
-  body.en-admin .tita-bg { display: none; }
+  /* Ocultar Titas en el panel de administración */
+  body.en-admin #tita-container { display: none; }
 
   #loader { position: fixed; inset: 0; background: var(--fondo); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; transition: opacity 0.5s; }
   #loader.hidden { opacity: 0; pointer-events: none; }
@@ -87,11 +85,11 @@
   .hero-izq { position: relative; z-index: 2; }
   
   .hero-izq .titulo-oficina {
-    font-family: var(--display); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800;
-    color: var(--granate); text-transform: uppercase; letter-spacing: 1px;
-    margin-bottom: 0.8rem; display: block; line-height: 1.1;
-    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+    font-family: 'Montserrat', 'Figtree', 'Segoe UI', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800;
+    color: #007a78; text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 1rem; padding-bottom: .55rem; display: block; line-height: 1.1; position: relative;
   }
+  .hero-izq .titulo-oficina::after { content: ''; position: absolute; left: 0; bottom: 0; width: 72px; height: 4px; border-radius: 4px; background: var(--lima); }
 
   .hero-izq .hoy { font-size: 0.9rem; font-weight: 600; color: var(--petroleo); opacity: 0.85; margin-bottom: 0.5rem; }
   .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.05; color: var(--petroleo); max-width: 14ch; }
@@ -193,7 +191,7 @@
   /* ===== TARJETA DE EVENTO ===== */
   .ev { 
     --c-fac: #007A78; --c-cat: #007A78; 
-    display: grid; grid-template-columns: 70px 1fr auto; gap: 1rem; align-items: stretch; 
+    display: grid; grid-template-columns: 86px 1fr auto; gap: 1rem; align-items: stretch; 
     border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); 
     border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; 
     cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; 
@@ -205,7 +203,7 @@
   .fecha-block { display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid var(--linea); padding-right: 0.8rem;}
   .fecha-block b { font-family: var(--display); font-size: 1.8rem; color: var(--petroleo); line-height: 1;}
   .fecha-block .mes { font-size: 0.8rem; color: var(--suave); font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;}
-  .fecha-block .dia-sem { font-size: 0.75rem; color: var(--suave); font-weight: 600; text-transform: uppercase; }
+  .fecha-block .dia-sem { font-size: 0.7rem; color: var(--suave); font-weight: 600; text-transform: none; text-align: center; line-height: 1.1; margin-top: .15rem; }
   
   .ev-content { display: flex; flex-direction: column; gap: 0.4rem; justify-content: center;}
   .ev-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
@@ -216,7 +214,7 @@
 
   .ev-bottom { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--suave); }
   .info-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fondo); padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid var(--linea); font-weight: 600; color: var(--tinta); }
-  .info-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--c-fac); } /* Color heredado de la facultad */
+  .info-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--c-fac); }
   .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: #e0f2fe; padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid #bae6fd; font-weight: 700; color: #0369a1; text-decoration: none; transition: var(--transicion);}
   .link-pill:hover { background: #bae6fd; color: #075985; }
 
@@ -251,7 +249,7 @@
 
   .velo { position: fixed; inset: 0; background: rgba(0,30,27,0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 90; backdrop-filter: blur(2px); }
   .velo.on { opacity: 1; pointer-events: auto; }
-  .cajon { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: #fff; color: var(--tinta); z-index: 100; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); overflow: auto; padding: 1.6rem; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
+  .cajon { position: fixed; top: 0; right: 0; bottom: 0; width: min(540px, 100%); background: #fff; color: var(--tinta); z-index: 100; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); overflow: auto; padding: 1.6rem; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
   .cajon.on { transform: none; }
   .cajon .cerrar { float: right; border: 0; background: var(--fondo); color: var(--tinta); width: 34px; height: 34px; border-radius: 50%; font-size: 1.2rem; transition: var(--transicion); }
   .cajon .cerrar:hover { background: #e2e8e4; transform: rotate(90deg); }
@@ -376,7 +374,7 @@
     .hero { grid-template-columns: 1fr; }
     .search { flex-basis: 100%; order: 5; margin-top: 0.5rem; }
     .top { flex-wrap: wrap; }
-    .ev { grid-template-columns: 65px 1fr; }
+    .ev { grid-template-columns: 80px 1fr; }
     .estado-block { grid-column: 2; align-items: flex-start; margin-top: 0.4rem;}
     .cal .dia { min-height: 64px; }
     .pill { font-size: 0; padding: 4px; height: 10px; border-radius: 2px; }
@@ -387,21 +385,48 @@
     .dos { grid-template-columns: 1fr; }
     .fr2 { grid-template-columns: 1fr; }
   }
+  .btn.pri .flaticon { filter: brightness(0) invert(1); }
+  .mod .ic .flaticon { width: 1.7rem; height: 1.7rem; }
+  .chk-lista { max-height: 280px; overflow: auto; border: 1px solid var(--linea); border-radius: 10px; padding: .5rem .8rem; background: #fff; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: .25rem .8rem; }
+  .chk-lista label { display: flex; align-items: center; gap: .4rem; font-weight: 400; font-size: .85rem; margin: 0; }
+  .chk-lista .chk-tit { grid-column: 1 / -1; font-size: .72rem; text-transform: uppercase; color: var(--suave); margin-top: .3rem; }
+  .dt-head { position: relative; margin: -1.6rem -1.6rem 0; padding: 1.4rem 1.4rem 1.3rem; color: #fff; background: linear-gradient(135deg, var(--petroleo) 45%, var(--fc, var(--verde))); }
+  .dt-head .cerrar { position: absolute; top: .8rem; right: .8rem; float: none; background: rgba(255,255,255,.2); color: #fff; }
+  .dt-head .cerrar:hover { background: rgba(255,255,255,.35); }
+  .dt-tags { display: flex; flex-wrap: wrap; gap: .4rem; padding-right: 2.6rem; margin-bottom: .8rem; }
+  .dt-cat { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.35); color: #fff; font-size: .75rem; font-weight: 700; padding: .15rem .65rem; border-radius: 999px; }
+  .dt-head h2 { font-family: var(--display); font-size: 1.65rem; line-height: 1.15; color: #fff; margin: 0 0 .6rem; }
+  .dt-sub { display: flex; align-items: center; gap: .4rem; font-size: .9rem; opacity: .95; }
+  .dt-sub .flaticon { background: #fff; border-radius: 6px; padding: 2px; width: 1.5em; height: 1.5em; }
+  .dt-fechas { display: flex; align-items: stretch; gap: .6rem; margin-top: 1.2rem; flex-wrap: wrap; }
+  .dt-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 108px; padding: .6rem .8rem; border: 1px solid var(--linea); border-top: 4px solid var(--fc, var(--verde)); border-radius: 12px; background: var(--fondo); }
+  .dt-tile b { font-family: var(--display); font-size: 2rem; line-height: 1; color: var(--petroleo); }
+  .dt-tile span { font-size: .75rem; font-weight: 700; text-transform: uppercase; color: var(--suave); margin-top: .2rem; }
+  .dt-tile em { font-style: normal; font-size: .85rem; font-weight: 700; color: var(--verde); }
+  .dt-arrow { align-self: center; font-size: 1.4rem; color: var(--suave); }
+  .dt-meta { display: flex; flex-direction: column; justify-content: center; gap: .3rem; flex: 1; min-width: 130px; }
+  .dt-meta b { color: var(--petroleo); font-size: 1rem; }
+  .dt-meta span { display: flex; align-items: center; gap: .35rem; font-size: .88rem; color: var(--suave); }
+  .dt-sec { margin-top: 1.2rem; }
+  .dt-sec h4 { display: flex; align-items: center; gap: .4rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--suave); margin-bottom: .5rem; }
+  .dt-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .dt-chip { display: inline-flex; align-items: center; gap: .35rem; background: #fff; border: 1px solid var(--linea); border-radius: 999px; padding: .25rem .7rem; font-size: .85rem; font-weight: 600; color: var(--tinta); }
+  .dt-chip .flaticon { width: 1.1em; height: 1.1em; }
+  .dt-lugar { display: flex; flex-direction: column; gap: .15rem; padding: .7rem .9rem; background: var(--fondo); border-radius: 10px; border-left: 4px solid var(--fc, var(--verde)); }
+  .dt-lugar b { color: var(--petroleo); } .dt-lugar span { color: var(--suave); font-size: .88rem; }
+  .dt-link { border: 1px solid var(--pc); border-radius: 12px; padding: .8rem .9rem; background: color-mix(in srgb, var(--pc) 7%, #fff); }
+  .dt-link-top { display: flex; flex-direction: column; gap: .15rem; margin-bottom: .7rem; }
+  .dt-plat { font-weight: 800; color: var(--pc); }
+  .dt-host { font-size: .8rem; color: var(--suave); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dt-link-btns { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .dt-desc { padding: .9rem 1rem; background: var(--fondo); border-radius: 10px; font-size: .93rem; line-height: 1.5; }
+  .dt-acc { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.4rem; }
 </style>
 </head>
 <body>
 
-<!-- LAS 10 CARAS DE TITA VOLANDO -->
-<img class="tita-bg tita-1" src="cara tita.png" alt="">
-<img class="tita-bg tita-2" src="cara tita.png" alt="">
-<img class="tita-bg tita-3" src="cara tita.png" alt="">
-<img class="tita-bg tita-4" src="cara tita.png" alt="">
-<img class="tita-bg tita-5" src="cara tita.png" alt="">
-<img class="tita-bg tita-6" src="cara tita.png" alt="">
-<img class="tita-bg tita-7" src="cara tita.png" alt="">
-<img class="tita-bg tita-8" src="cara tita.png" alt="">
-<img class="tita-bg tita-9" src="cara tita.png" alt="">
-<img class="tita-bg tita-10" src="cara tita.png" alt="">
+<!-- CONTENEDOR DE LAS CARAS DE TITA (Generadas por JS) -->
+<div id="tita-container"></div>
 
 <div id="loader"><div class="spinner"></div><p style="color:var(--suave); font-weight:600;">Cargando calendario...</p></div>
 <div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
@@ -500,6 +525,7 @@
 
       <!-- Formulario de cambio obligatorio (cuando entra con PIN temporal) -->
       <div id="gateNewPassFields" hidden>
+        <div id="resetActualWrap" hidden><input id="reset_pin_actual" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN temporal que te llegó al correo" style="margin-bottom:0.5rem;"></div>
         <input id="new_pin" type="password" inputmode="numeric" placeholder="Nuevo PIN (6-15 dígitos)" style="margin-bottom:0.5rem;">
         <input id="new_pin_confirm" type="password" inputmode="numeric" placeholder="Confirma el PIN" style="margin-bottom:1rem;">
         <button type="button" class="btn pri" style="width:100%" onclick="guardarNuevaPassForzada()">
@@ -581,6 +607,8 @@
   const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   const DIAS_C = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const DIAS_L = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const diaSem = e => { const a = parse(e.inicio), f = finDe(e); return e.inicio === f ? DIAS_L[a.getDay()] : DIAS_C[a.getDay()] + ' – ' + DIAS_C[parse(f).getDay()]; };
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -606,11 +634,84 @@
   const periodoDe = s => { const d = parse(s); return `${d.getFullYear()}-${d.getMonth() < 6 ? 1 : 2}`; };
   const periodoAuto = (D, fecha) => { const p = D.periodos.find(p => p.inicio <= fecha && fecha <= p.fin); return p ? p.id : periodoDe(fecha); };
   const nombrePeriodo = id => { if(!id) return ''; const [a, s] = id.split('-'); return `${a} · Semestre ${s}`; };
+  // Un semestre suspendido (activo === false) oculta sus eventos en la vista pública
+  const periodoActivo = id => { const p = ((typeof D !== 'undefined' && D && D.periodos) || []).find(x => x.id === id); return !p || p.activo !== false; };
+  const eventoVisiblePublico = e => periodoActivo(e.periodo) || (!!e.periodo2 && periodoActivo(e.periodo2));
   const catDe = (D, id) => D.categorias.find(c => c.id === id) || { id, nombre: id, color: '#6b7280' };
   const slug = s => norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 24) || 'x';
   const nuevoId = (s, lista) => { const b = slug(s); let i = b, n = 2; while (lista.some(x => x.id === i)) i = b + '_' + n++; return i; };
   const opt = (v, t, sel) => `<option value="${esc(v)}" ${sel ? 'selected' : ''}>${esc(t)}</option>`;
   const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+
+  /* ============================================================
+     GENERADOR DE CARAS DE TITA DINÁMICAS
+     ============================================================ */
+  function generarTitas() {
+    const cont = document.getElementById('tita-container');
+    const numTitas = 15; // Cantidad de caritas
+    for (let i = 0; i < numTitas; i++) {
+      const img = document.createElement('img');
+      img.src = 'cara_tita.png'; // Nombre de tu imagen
+      img.className = 'tita-img';
+      
+      // Tamaño aleatorio entre 60px y 100px
+      const size = Math.floor(Math.random() * 40) + 60;
+      img.style.width = size + 'px';
+      
+      // Posición inicial aleatoria
+      img.style.left = Math.random() * 90 + 'vw';
+      img.style.top = Math.random() * 90 + 'vh';
+      
+      // Retraso aleatorio para que no respiren todas al mismo tiempo
+      img.style.animationDelay = (Math.random() * 2) + 's';
+      
+      cont.appendChild(img);
+      
+      // Animación de rebote
+      animarTita(img);
+    }
+  }
+
+  function animarTita(el) {
+    let x = parseFloat(el.style.left) * window.innerWidth / 100;
+    let y = parseFloat(el.style.top) * window.innerHeight / 100;
+    
+    // Velocidad aleatoria entre 1 y 3
+    let vx = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1.5 + 1);
+    let vy = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1.5 + 1);
+
+    function mover() {
+      // Si el panel de admin está abierto, no mover
+      if (document.body.classList.contains('en-admin')) {
+        requestAnimationFrame(mover);
+        return;
+      }
+
+      x += vx;
+      y += vy;
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const rect = el.getBoundingClientRect();
+      
+      // Rebote en los bordes
+      if (x <= 0 || x + rect.width >= w) vx *= -1;
+      if (y <= 0 || y + rect.height >= h) vy *= -1;
+
+      // Mantener dentro de los límites si cambia el tamaño de la ventana
+      x = Math.max(0, Math.min(x, w - rect.width));
+      y = Math.max(0, Math.min(y, h - rect.height));
+
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+
+      requestAnimationFrame(mover);
+    }
+    requestAnimationFrame(mover);
+  }
+
+  // Iniciar generación
+  generarTitas();
 
   /* ============================================================
      BIBLIOTECA DE ICONOS FLATICON (SVG INLINE)
@@ -649,6 +750,9 @@
     humanidades: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'
   };
 
+  const ICON_COLOR = { calendario:'#007A78', documento:'#2563EB', libro:'#7C3AED', birrete:'#F59E0B', trofeo:'#EAB308', personas:'#0EA5E9', estrella:'#F59E0B', chart:'#10B981', pin:'#EF4444', email:'#6366F1', basura:'#EF4444', editar:'#F97316', check:'#16A34A', guardar:'#0284C7', salir:'#64748B', llave:'#CA8A04', link:'#2563EB', reloj:'#7C3AED', ciencias:'#14B8A6', enfermeria:'#EC4899', economia:'#16A34A', derecho:'#92400E', creacion:'#D946EF', educacion:'#F59E0B', ingenieria:'#475569', medicina:'#DC2626', odontologia:'#06B6D4', psicologia:'#A855F7', bioetica:'#65A30D', humanidades:'#B45309' };
+  Object.keys(FLATICONS).forEach(k => { const c = ICON_COLOR[k] || '#007A78'; FLATICONS[k] = FLATICONS[k].replace('fill="none" stroke="currentColor" stroke-width="2"', `fill="${c}" fill-opacity="0.2" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"`); });
+
   const MAPA_ICONOS = {
     'ciencias': 'ciencias', 'enfermeria': 'enfermeria', 'economicas': 'economia', 'administrativas': 'economia',
     'juridicas': 'derecho', 'politicas': 'derecho', 'creacion': 'creacion', 'comunicacion': 'creacion',
@@ -662,6 +766,16 @@
     }
     return FLATICONS.birrete;
   };
+
+  // --- Emojis por defecto (se usan si la facultad/área no tiene uno propio) ---
+  const EMOJI_FAC = [['medicina','🩺'],['odontolog','🦷'],['enfermer','💉'],['psicolog','🧠'],['ingenier','⚙️'],['ciencias','🔬'],['educaci','🎓'],['creaci','🎨'],['comunicaci','🎨'],['juridic','⚖️'],['derecho','⚖️'],['politic','⚖️'],['economic','📈'],['administrativ','📈'],['bioetic','🧬'],['human','📚']];
+  const EMOJI_AREA = [['tesorer','💰'],['financ','💰'],['contab','🧾'],['cartera','💳'],['admision','📝'],['matricul','📝'],['registro','🗂️'],['bienestar','💛'],['biblioteca','📖'],['talento','🤝'],['humano','🤝'],['sistema','💻'],['tecnolog','💻'],['egresad','🎖️'],['investig','🔬'],['internacional','🌎'],['comunicac','📣'],['mercadeo','📣'],['jurid','⚖️'],['calidad','✅'],['planeaci','🧭'],['academ','🎓'],['admin','🏢']];
+  const buscarEmoji = (lista, nombre, def) => { const n = norm(nombre); const m = lista.find(x => n.includes(x[0])); return m ? m[1] : def; };
+  const emojiFac = f => (f && f.emoji) || buscarEmoji(EMOJI_FAC, f && f.nombre, '🏛️');
+  const emojiArea = a => (a && a.emoji) || buscarEmoji(EMOJI_AREA, a && a.nombre, '🏢');
+  const EMOJI_PUB = { 'Comunidad universitaria': '🏫', 'Estudiantes': '🎓', 'Administrativos': '🗂️', 'Docentes': '👩‍🏫', 'Egresados': '🎖️', 'Facultades': '🏛️', 'Programas': '📚', 'Áreas administrativas': '🏢' };
+  const emojiPub = p => EMOJI_PUB[p] || '👥';
+  const em = x => `<span class="emoji">${x}</span>`;
 
   const ROLES_VALIDOS = ['admin', 'creador', 'editor'];
   const normalizarRol = r => {
@@ -750,8 +864,9 @@
     let facColor = cat.color, icono = '';
     if (facs.length === 1) {
       const f = D.facultades.find(x => x.id === facs[0]);
-      if (f) { facColor = f.color || cat.color; icono = f.emoji ? `<span class="emoji">${f.emoji}</span>` : getIconoFac(f.nombre); }
+      if (f) { facColor = f.color || cat.color; icono = em(emojiFac(f)); }
     }
+    if (!icono && !facs.length && (e.area || []).length === 1) { const ar = D.areas.find(x => x.id === e.area[0]); if (ar) icono = em(emojiArea(ar)); }
     return { facColor, catColor: cat.color, icono };
   }
 
@@ -807,12 +922,13 @@
   function irMes() { const el = $('#m-' + S.ref.getFullYear() + '-' + S.ref.getMonth()), L = $('#vistaLista'); if (el && L) L.scrollTo({ top: el.offsetTop - 4, behavior: 'smooth' }); }
   const ORD = [['general','calendario'],['matricul','documento'],['pregrado','libro'],['posgrado','birrete'],['ceremon','trofeo'],['no ceremon','documento'],['talento','personas'],['otro','estrella']];
 
-  function aniosDisponibles() { const set = new Set(D.periodos.map(p => +p.id.split('-')[0])); D.eventos.forEach(e => { set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
+  function aniosDisponibles() { const set = new Set(D.periodos.filter(p => p.activo !== false).map(p => +p.id.split('-')[0])); D.eventos.filter(eventoVisiblePublico).forEach(e => { set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
 
   function filtrar({ sinCat = false, sinPeriodo = false } = {}) {
     const q = norm(S.q);
     return D.eventos.filter(e => {
       if (e.estado === 'borrador') return false;
+      if (!eventoVisiblePublico(e)) return false;
       const p1 = e.periodo && e.periodo.startsWith(S.anio + '-');
       const p2 = e.periodo2 ? e.periodo2.startsWith(S.anio + '-') : false;
       if (!p1 && !p2) return false;
@@ -856,11 +972,11 @@
     document.title = 'Calendario Académico · ' + D.institucion;
     const h = new Date();
     $('#hoyTxt').textContent = `Hoy, ${DIAS_C[h.getDay()]} ${h.getDate()} de ${MESES[h.getMonth()].toLowerCase()} de ${h.getFullYear()}`;
-    $('#bgAnio').textContent = S.anio;
+    const bgA = $('#bgAnio'); if (bgA) bgA.textContent = S.anio;
     $('#heroTit').textContent = S.sem ? `${S.anio} · Semestre ${S.sem}` : `Año académico ${S.anio}`;
     $('#fAnio').innerHTML = aniosDisponibles().map(a => `<option ${a === S.anio ? 'selected' : ''}>${a}</option>`).join('');
     $$('#fSem button').forEach(b => b.classList.toggle('on', b.dataset.v === String(S.sem)));
-    let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('') + '</optgroup>';
+    let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('') + '</optgroup>';
     $('#fGrupo').innerHTML = g;
     const f = S.grupo.startsWith('f:') ? D.facultades.find(x => x.id === S.grupo.slice(2)) : null;
     const fp = $('#fProg'); fp.hidden = !f;
@@ -894,14 +1010,13 @@
         <span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span>
       </button>`;
       
-    $('#modulos').innerHTML = card('', 'var(--petroleo)', '📅', 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
+    $('#modulos').innerHTML = card('', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
       D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { 
         const n = base.filter(e => e.categoria === c.id).length; 
-        return card(c.id, c.color, Number.isInteger(r) ? ORD[r][1] : 'estrella', c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); 
+        return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); 
       }).join('');
   }
 
-  /* AQUÍ ESTÁ LA CORRECCIÓN DE LA INFORMACIÓN Y EL DÍA DE LA SEMANA */
   function filaEvento(e, mostrarAmbito = true) {
     const st = estadoDe(e);
     const { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
@@ -920,18 +1035,17 @@
       horaHtml = `<span class="info-pill">${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</span>`;
     }
 
-    const linkHtml = e.enlace ? `<a href="${esc(e.enlace)}" target="_blank" rel="noopener" class="link-pill" onclick="event.stopPropagation()">${FLATICONS.link} Unirse</a>` : '';
+    const linkHtml = normalizarEnlace(e.enlace) ? `<a href="${esc(normalizarEnlace(e.enlace))}" target="_blank" rel="noopener" class="link-pill" onclick="event.stopPropagation()">${FLATICONS.link} Unirse</a>` : '';
     
-    // Nuevos datos: Dirigido a y Periodo en lugar de Ámbito redundante
     const dirigidoA = e.publico && e.publico.length ? e.publico[0] : 'Comunidad universitaria';
-    const infoExtraHtml = `<span class="info-pill">👥 ${esc(dirigidoA)}</span> <span class="info-pill">🗓️ ${nombrePeriodo(e.periodo)}</span>`;
+    const infoExtraHtml = `<span class="info-pill">${em(emojiPub(dirigidoA))} ${esc(dirigidoA)}${e.publico && e.publico.length > 1 ? ` +${e.publico.length - 1}` : ''}</span> <span class="info-pill">${FLATICONS.calendario} ${nombrePeriodo(e.periodo)}</span>`;
 
     return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
       
       <div class="fecha-block">
         <b>${d.getDate()}</b>
         <span class="mes">${MESES_C[d.getMonth()]}</span>
-        <span class="dia-sem">${DIAS_C[d.getDay()]}</span>
+        <span class="dia-sem">${diaSem(e)}</span>
       </div>
 
       <div class="ev-content">
@@ -1015,6 +1129,30 @@
     S.dir = ''; revelar();
   }
 
+  // --- Enlaces: se normalizan (https://) y se detecta la plataforma ---
+  function normalizarEnlace(u) {
+    u = String(u || '').trim(); if (!u) return '';
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(u)) u = 'https://' + u.replace(/^\/+/, '');
+    try { const x = new URL(u); return /^https?:$/.test(x.protocol) && x.hostname.includes('.') ? x.href : ''; } catch (_) { return ''; }
+  }
+  const PLATAFORMAS = [
+    [/teams\.(microsoft|live)\.com/i, 'Microsoft Teams', '#5B5FC7'],
+    [/meet\.google\.com/i, 'Google Meet', '#00897B'],
+    [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF'],
+    [/webex\.com/i, 'Webex', '#00A0D1'],
+    [/youtube\.com|youtu\.be/i, 'YouTube', '#D32F2F']
+  ];
+  function infoEnlace(raw) {
+    const url = normalizarEnlace(raw); if (!url) return null;
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    const p = PLATAFORMAS.find(x => x[0].test(host));
+    return { url, nombre: p ? p[1] : 'Página web · ' + host, color: p ? p[2] : '#007A78' };
+  }
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-copy]'); if (!b) return;
+    (navigator.clipboard ? navigator.clipboard.writeText(b.dataset.copy) : Promise.reject()).then(() => toast('Enlace copiado'), () => toast('No se pudo copiar el enlace', true));
+  });
+
   function abrirDetalle(id) {
     if (String(id).startsWith('festivo-')) {
       const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
@@ -1027,26 +1165,39 @@
     const st = estadoDe(e);
     const { facColor, catColor, icono } = getColores(D, e);
     const gc = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.titulo)}&dates=${e.inicio.replace(/-/g, '')}/${sumaDias(finDe(e), 1).replace(/-/g, '')}&details=${encodeURIComponent(e.descripcion || '')}&location=${encodeURIComponent(e.lugar || '')}`;
-    let pubStr = '';
-    if (e.publico && e.publico.length) pubStr = `<dt>Dirigido a</dt><dd>${esc(e.publico.join(', '))}</dd>`;
-    
-    let linkDetalle = e.enlace ? `<dt>Enlace</dt><dd><a href="${esc(e.enlace)}" target="_blank" rel="noopener" class="link-pill" style="font-size:0.9rem; padding:0.4rem 0.8rem;">${FLATICONS.link} Ir al enlace</a></dd>` : '';
-    let lugarDetalle = e.lugar ? `<dt>Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : '';
-    let horaDetalle = e.horaInicio ? `<dt>Horario</dt><dd>${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</dd>` : '';
+    const d0 = parse(e.inicio), d1 = parse(finDe(e)), multi = e.inicio !== finDe(e), nDias = diffDias(e.inicio, finDe(e)) + 1;
+    const cat = catDe(D, e.categoria);
+    const tile = d => `<div class="dt-tile"><b>${d.getDate()}</b><span>${MESES_C[d.getMonth()]} ${d.getFullYear()}</span><em>${DIAS_L[d.getDay()]}</em></div>`;
+    const chips = (arr, ic) => arr.map(x => `<span class="dt-chip">${ic || ''}${esc(x)}</span>`).join('');
+    const sec = (ic, t, body) => body ? `<section class="dt-sec"><h4>${ic} ${t}</h4>${body}</section>` : '';
+    const facs = (e.facultad || []).map(fid => D.facultades.find(f => f.id === fid)).filter(Boolean);
+    const progs = (e.programa || []).map(pid => { for (const f of D.facultades) { const p = f.programas.find(x => x.id === pid); if (p) return p.nombre; } return ''; }).filter(Boolean);
+    const areas = (e.area || []).map(aid => D.areas.find(x => x.id === aid)).filter(Boolean);
+    const hora = e.horaInicio ? `${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}` : '';
+    const L = infoEnlace(e.enlace);
+    const lugarBody = e.lugar ? `<div class="dt-lugar"><b>${esc(e.lugar)}</b>${e.lugarEsp ? `<span>${esc(e.lugarEsp)}</span>` : ''}${e.piso ? `<span>${esc(e.piso)}</span>` : ''}</div>` : '';
+    const linkBody = L ? `<div class="dt-link" style="--pc:${L.color}"><div class="dt-link-top"><span class="dt-plat">${esc(L.nombre)}</span><span class="dt-host" title="${esc(L.url)}">${esc(L.url.replace(/^https?:\/\//, ''))}</span></div><div class="dt-link-btns"><a class="btn pri" href="${esc(L.url)}" target="_blank" rel="noopener">${FLATICONS.link} Unirse</a><button class="btn" data-copy="${esc(L.url)}">${FLATICONS.documento} Copiar enlace</button></div></div>` : '';
+    const periodos = [e.periodo, e.periodo2].filter(Boolean).map(nombrePeriodo);
 
-    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button>
-      <h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem; color:var(--petroleo);">${esc(e.titulo)}</h2>
-      <dl>
-        <dt>Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>
-        ${horaDetalle}
-        ${pubStr}
-        <dt>Ámbito</dt><dd><span class="info-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span></dd>
-        <dt>Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>
-        ${lugarDetalle}
-        ${linkDetalle}
-      </dl>
-      ${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}
-      <div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;">
+    $('#cajon').innerHTML = `<div class="dt-head" style="--fc:${facColor}">
+        <button class="cerrar" data-cerrar>×</button>
+        <div class="dt-tags"><span class="dt-cat">${esc(cat.nombre)}</span>${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}${e.estado === 'borrador' ? '<span class="dt-cat">Borrador</span>' : ''}</div>
+        <h2>${esc(e.titulo)}</h2>
+        <p class="dt-sub">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</p>
+      </div>
+      <div class="dt-fechas" style="--fc:${facColor}">
+        ${tile(d0)}${multi ? `<div class="dt-arrow">→</div>${tile(d1)}` : ''}
+        <div class="dt-meta"><b>${multi ? nDias + ' días' : 'Un solo día'}</b><span>${FLATICONS.reloj} ${hora || 'Todo el día'}</span></div>
+      </div>
+      ${sec(FLATICONS.personas, 'Dirigido a', e.publico && e.publico.length ? `<div class="dt-chips">${e.publico.map(x => `<span class="dt-chip">${em(emojiPub(x))}${esc(x)}</span>`).join('')}</div>` : '')}
+      ${sec(FLATICONS.birrete, 'Facultades', facs.length ? `<div class="dt-chips">${facs.map(f => `<span class="dt-chip">${em(emojiFac(f))}${esc(f.nombre)}</span>`).join('')}</div>` : '')}
+      ${sec(FLATICONS.libro, 'Programas', progs.length ? `<div class="dt-chips">${chips(progs, FLATICONS.libro)}</div>` : '')}
+      ${sec(FLATICONS.personas, 'Áreas administrativas', areas.length ? `<div class="dt-chips">${areas.map(a => `<span class="dt-chip">${em(emojiArea(a))}${esc(a.nombre)}</span>`).join('')}</div>` : '')}
+      ${sec(FLATICONS.pin, 'Lugar', lugarBody)}
+      ${sec(FLATICONS.link, 'Enlace', linkBody)}
+      ${sec(FLATICONS.calendario, 'Semestre', periodos.length ? `<div class="dt-chips">${chips(periodos)}</div>` : '')}
+      ${sec(FLATICONS.documento, 'Detalles', e.descripcion ? `<div class="dt-desc">${esc(e.descripcion).replace(/\n/g, '<br>')}</div>` : '')}
+      <div class="dt-acc">
         <a class="btn" href="${gc}" target="_blank" rel="noopener">${FLATICONS.calendario} Google Calendar</a>
         <button class="btn" data-ics="${e.id}">${FLATICONS.documento} Descargar (.ics)</button>
       </div>`;
@@ -1055,7 +1206,7 @@
   
   function abrirDia(s) {
     const anio = +s.slice(0, 4);
-    const L = D.eventos.filter(e => e.estado !== 'borrador' && e.inicio <= s && s <= finDe(e) &&
+    const L = D.eventos.filter(e => e.estado !== 'borrador' && eventoVisiblePublico(e) && e.inicio <= s && s <= finDe(e) &&
       (e.periodo.startsWith(anio + '-') || (e.periodo2 && e.periodo2.startsWith(anio + '-'))));
     const fDelDia = festivosDia(s);
     const todos = [...fDelDia, ...L];
@@ -1075,7 +1226,6 @@
       let dtStart = `DTSTART;VALUE=DATE:${e.inicio.replace(/-/g, '')}`;
       let dtEnd = `DTEND;VALUE=DATE:${sumaDias(finDe(e), 1).replace(/-/g, '')}`;
       
-      // Si hay horas, usamos el formato de fecha-hora
       if (e.horaInicio) {
         const hIni = e.horaInicio.replace(':', '') + '00';
         const hFin = e.horaFin ? e.horaFin.replace(':', '') + '00' : hIni;
@@ -1134,6 +1284,23 @@
   const PERM = { admin: ['crear', 'editar', 'eliminar', 'admin'], creador: ['crear'], editor: ['editar'] };
   const puede = a => !!USUARIO_ACTUAL && ((USUARIO_ACTUAL.permisos || []).includes(a) || USUARIO_ACTUAL.rol === 'admin');
   const sinPermiso = () => toast('Tu perfil no tiene permiso para esta acción', true);
+  const sinArea = () => toast('Solo puedes gestionar eventos de tus facultades o áreas asignadas', true);
+  const esAdminAct = () => !!USUARIO_ACTUAL && USUARIO_ACTUAL.rol === 'admin';
+  const misAreas = () => (USUARIO_ACTUAL && USUARIO_ACTUAL.areas) || [];
+  const verFac = f => esAdminAct() || misAreas().includes('f:' + f.id) || f.programas.some(p => misAreas().includes('p:' + p.id));
+  const verProg = (f, p) => esAdminAct() || misAreas().includes('f:' + f.id) || misAreas().includes('p:' + p.id);
+  const verArea = a => esAdminAct() || misAreas().includes('a:' + a.id);
+  // Un evento es gestionable si todas sus facultades/áreas están entre las asignadas al usuario
+  const puedeEnEvento = e => {
+    if (esAdminAct()) return true;
+    const M = misAreas(), facs = e.facultad || [], progs = e.programa || [], areas = e.area || [];
+    if (!facs.length && !areas.length && !progs.length) return false;
+    const facDe = pid => D.facultades.find(f => f.programas.some(p => p.id === pid));
+    const progsDe = fid => progs.filter(pid => { const f = facDe(pid); return f && f.id === fid; });
+    const facOk = fid => M.includes('f:' + fid) || (progsDe(fid).length > 0 && progsDe(fid).every(pid => M.includes('p:' + pid)));
+    const progOk = pid => M.includes('p:' + pid) || (facDe(pid) && M.includes('f:' + facDe(pid).id));
+    return facs.every(facOk) && progs.every(progOk) && areas.every(x => M.includes('a:' + x));
+  };
   const F = { q: '', per: '', cat: '', est: '', grupo: '' };
   const SEL = new Set();
 
@@ -1153,13 +1320,14 @@
       $('#gate').style.display = 'grid';
       $('#admin-app').hidden = true;
       
-      // Verificar si viene con link de restablecimiento
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('reset') && urlParams.has('u')) {
         $('#gateTitle').textContent = "Crea tu nueva contraseña";
-        $('#gateDesc').textContent = "Por seguridad, cambia el PIN temporal que te enviamos.";
+        $('#gateDesc').textContent = "Escribe el PIN temporal que te llegó al correo y elige tu propio PIN (6 a 15 dígitos).";
         $('#gateLoginFields').hidden = true;
         $('#gateNewPassFields').hidden = false;
+        $('#resetActualWrap').hidden = false;
+        window._reset_verificado = false;
         window._reset_user_id = urlParams.get('u');
       } else {
         $('#gateTitle').textContent = "Administrar calendario";
@@ -1179,11 +1347,10 @@
     $('#admin-app').hidden = false;
     $('#userNameDisplay').textContent = USUARIO_ACTUAL.nombre;
     
-    // Mostrar roles y áreas
     let rolTxt = USUARIO_ACTUAL.rol === 'admin' ? '👑 Administrador' : '';
     if (USUARIO_ACTUAL.rol !== 'admin') {
       const p = USUARIO_ACTUAL.permisos || [];
-      rolTxt = p.map(x => x === 'crear' ? 'Creador' : x === 'editar' ? 'Editor' : '').filter(Boolean).join(' + ') || 'Lector';
+      rolTxt = p.map(x => ({ crear: 'Creador', editar: 'Editor', eliminar: 'Eliminador' }[x] || '')).filter(Boolean).join(' + ') || 'Lector';
     }
     $('#userRoleDisplay').innerHTML = rolTxt;
     $('#saludoNombre').textContent = USUARIO_ACTUAL.nombre;
@@ -1206,7 +1373,6 @@
     $('#public-panel').style.display = 'block';
     document.body.classList.remove('en-admin'); // Muestra a Tita
     
-    // Limpiar URL de reset si existe
     if (window.location.search.includes('reset')) {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -1233,7 +1399,7 @@
 
   $('#gateForm').onsubmit = async e => {
     e.preventDefault();
-    if (!$('#gateNewPassFields').hidden) return; // Si está en modo reset, no hace login por submit
+    if (!$('#gateNewPassFields').hidden) return guardarNuevaPassForzada();
     
     const pin = $('#pin').value;
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
@@ -1247,6 +1413,19 @@
         areas: user.areas_asignadas || []
       };
       $('#pin').value = '';
+      if (user.pin_temporal) {
+        USUARIO_ACTUAL = null;
+        window._reset_user_id = user.id;
+        window._reset_verificado = true;
+        window._reset_pin_actual = pin;
+        $('#resetActualWrap').hidden = true;
+        $('#gateTitle').textContent = 'Crea tu nuevo PIN';
+        $('#gateDesc').textContent = `Hola ${user.nombre}, entraste con un PIN temporal. Elige tu propio PIN para continuar.`;
+        $('#gateLoginFields').hidden = true;
+        $('#gateNewPassFields').hidden = false;
+        $('#new_pin').focus();
+        return;
+      }
       registrarLog('Inicio de sesión', 'Ingresó al sistema');
       mostrarAppAdmin();
     } else {
@@ -1255,16 +1434,34 @@
     }
   };
 
+  // Actualiza el PIN y apaga la marca de PIN temporal (si la columna existe)
+  async function actualizarPin(id, pin) {
+    let r = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: false }).eq('id', id);
+    if (r.error && /pin_temporal/i.test(r.error.message || '')) r = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id);
+    return r;
+  }
+
   async function guardarNuevaPassForzada() {
     const p1 = $('#new_pin').value.trim();
     const p2 = $('#new_pin_confirm').value.trim();
-    if (!p1 || !/^\d{6,15}$/.test(p1)) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
+    if (!/^\d{6,15}$/.test(p1)) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     if (p1 !== p2) return toast('Los PINs no coinciden', true);
-    
+    const p0 = (($('#reset_pin_actual') || {}).value || '').trim();
+    if (!window._reset_verificado) {
+      if (!p0) return toast('Escribe el PIN temporal que te llegó al correo', true);
+      const { data: fila } = await dbClient.from('usuarios_admin').select('*').eq('id', window._reset_user_id).eq('pin', p0).maybeSingle();
+      if (!fila) return toast('El PIN temporal no es correcto', true);
+      if (fila.pin_temporal === false) return toast('Este enlace ya fue usado. Entra con tu PIN normal.', true);
+      window._reset_pin_actual = p0;
+    }
+    if (p1 === window._reset_pin_actual) return toast('Elige un PIN diferente al temporal', true);
     try {
-      const { error } = await dbClient.from('usuarios_admin').update({ pin: p1 }).eq('id', window._reset_user_id);
+      const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', p1);
+      if ((dup || []).some(x => String(x.id) !== String(window._reset_user_id))) return toast('Ese PIN ya está en uso, elige otro', true);
+      const { error } = await actualizarPin(window._reset_user_id, p1);
       if (error) throw error;
-      toast('✅ Contraseña actualizada. Inicia sesión.');
+      toast('✅ PIN actualizado. Inicia sesión con tu nuevo PIN.');
+      window._reset_verificado = false; window._reset_pin_actual = null;
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => window.location.reload(), 1500);
     } catch (e) {
@@ -1321,7 +1518,7 @@
 
   function pEventos() {
     const pers = [...new Set(D.eventos.map(e => e.periodo))].sort().reverse();
-    let g = '<option value="">Todas las facultades y áreas</option><option value="inst">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => opt('f:' + f.id, f.nombre)).join('') + '</optgroup><optgroup label="Áreas">' + D.areas.map(a => opt('a:' + a.id, a.nombre)).join('') + '</optgroup>';
+    let g = '<option value="">Todas las facultades y áreas</option><option value="inst">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => opt('f:' + f.id, emojiFac(f) + ' ' + f.nombre)).join('') + '</optgroup><optgroup label="Áreas">' + D.areas.map(a => opt('a:' + a.id, emojiArea(a) + ' ' + a.nombre)).join('') + '</optgroup>';
     return encabezado(`${FLATICONS.calendario} Eventos`, { admin: 'Aquí agregas, editas y organizas todas las fechas.', creador: 'Aquí puedes crear eventos nuevos.', editor: 'Aquí puedes editar los eventos existentes.' }[USUARIO_ACTUAL.rol] || 'Eventos del calendario.') + `
     <div class="tools">
       <input type="search" id="x_q" placeholder="🔍 Buscar evento…">
@@ -1337,13 +1534,12 @@
   function eventosFiltrados() {
     const q = norm(F.q);
     return D.eventos.filter(e => {
-      // Filtro de Áreas/Facultades del usuario (Si no es admin, solo ve lo suyo)
       if (USUARIO_ACTUAL.rol !== 'admin') {
         const susAreas = USUARIO_ACTUAL.areas || [];
         if (susAreas.length > 0) {
           const misFacs = susAreas.filter(x => x.startsWith('f:')).map(x => x.slice(2));
           const misAreas = susAreas.filter(x => x.startsWith('a:')).map(x => x.slice(2));
-          const coincide = (e.facultad || []).some(f => misFacs.includes(f)) || (e.area || []).some(a => misAreas.includes(a));
+          const coincide = (e.facultad || []).some(f => misFacs.includes(f)) || (e.programa || []).some(pp => susAreas.includes('p:' + pp)) || (e.area || []).some(a => misAreas.includes(a));
           if (!coincide) return false;
         }
       }
@@ -1366,22 +1562,23 @@
     const pEd = puede('editar'), pEl = puede('eliminar');
     $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button></div>` : '';
 
-    $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
-      L.map(e => `<tr>${pEd ? `<td><input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}></td>` : ''}
+    $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.filter(puedeEnEvento).every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
+      L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}
         <td style="white-space:nowrap">${fmtRango(e)}</td>
         <td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td>
-        <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}</td>
-        <td>${pEd
+        <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido: no se ve en el público">⏸</span>' : ''}</td>
+        <td>${pEd && puedeEnEvento(e)
           ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>`
           : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td>
         <td><div class="acc">
-          ${pEd ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}
-          ${pEl ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}
+          ${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}
+          ${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}
         </div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
 
   function modalEvento(id) {
+    if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
     const e = id ? D.eventos.find(x => x.id === id) : { 
       titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto', 
       horaInicio: '', horaFin: '',
@@ -1401,7 +1598,7 @@
       <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="2">${esc(e.descripcion)}</textarea></div>
       <div class="fr2">
         <div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
-        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p), p === e.periodo)).join('')}</select></div>
+        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div>
       </div>
       
       <div class="fr2">
@@ -1416,14 +1613,14 @@
       <div class="fr">
         <label>Dirigido a (Selección múltiple)</label>
         <select id="f_pub" multiple class="multi-select" size="6">
-          ${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${p}</option>`).join('')}
+          ${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${p}</option>`).join('')}
         </select>
       </div>
 
       <div class="fr">
         <label>Facultades (Selección múltiple)</label>
         <select id="f_fac" multiple class="multi-select" size="4" onchange="actualizarProgsModal()">
-          ${D.facultades.map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${esc(f.nombre)}</option>`).join('')}
+          ${D.facultades.filter(verFac).map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('')}
         </select>
       </div>
       
@@ -1435,7 +1632,7 @@
       <div class="fr">
         <label>Áreas (Selección múltiple)</label>
         <select id="f_area" multiple class="multi-select" size="4">
-          ${D.areas.map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('')}
+          ${D.areas.filter(verArea).map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('')}
         </select>
       </div>
 
@@ -1466,7 +1663,7 @@
 
       <div class="fr2">
         <div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div>
-        <div class="fr"><label>Enlace (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="https://…"></div>
+        <div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="Teams, Meet, Zoom o cualquier página"></div>
       </div>
 
       <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select></div>
@@ -1483,7 +1680,7 @@
     const progsDisponibles = [];
     selectedFacs.forEach(fid => {
       const f = D.facultades.find(x => x.id === fid);
-      if (f) f.programas.forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre, fac: f.nombre }));
+      if (f) f.programas.filter(p => verProg(f, p)).forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre, fac: f.nombre }));
     });
     if (preseleccionados.length) {
       $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${preseleccionados.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
@@ -1502,6 +1699,7 @@
 
   async function guardarEvento(id) {
     if (id ? !puede('editar') : !puede('crear')) return sinPermiso();
+    if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
     const g = i => $('#' + i).value.trim();
     const titulo = g('f_titulo'), inicio = g('f_ini'), fin = g('f_fin') || inicio;
     if (!titulo) return toast('Escribe el nombre del evento', true);
@@ -1512,6 +1710,7 @@
     const facultad = [...$('#f_fac').selectedOptions].map(o => o.value);
     const programa = [...$('#f_prog').selectedOptions].map(o => o.value);
     const area = [...$('#f_area').selectedOptions].map(o => o.value);
+    if (!puedeEnEvento({ facultad, programa, area })) return toast('Asigna el evento solo a tus facultades, programas o áreas asignados (al menos una)', true);
 
     let periodo = g('f_per'), periodo2 = null;
     if (periodo === 'auto') {
@@ -1522,6 +1721,8 @@
     }
 
     const lugar = g('f_lugar');
+    const enlace = normalizarEnlace(g('f_link'));
+    if (g('f_link') && !enlace) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true);
     const lugarEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lugar) ? g('f_lugar_esp') : '';
 
     const o = { 
@@ -1529,7 +1730,7 @@
       inicio, fin, periodo, periodo2, 
       horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'),
       facultad, programa, area, publico, 
-      lugar, lugarEsp, piso: g('f_piso'), enlace: g('f_link'), estado: g('f_estado') 
+      lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') 
     };
     
     try {
@@ -1571,6 +1772,7 @@
 
   async function eliminarEventoAdmin(id) {
     if (!puede('eliminar')) return sinPermiso();
+    const ev0 = D.eventos.find(x => x.id === id); if (ev0 && !puedeEnEvento(ev0)) return sinArea();
     if (!confirm('¿Eliminar este evento?')) return;
     const e = D.eventos.find(x => x.id === id);
     if (DB_READY) {
@@ -1592,16 +1794,18 @@
       <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji opcional)</label><input id="n_fac_emoji" placeholder="🏛️" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff;"></div>
       <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div>
       <button class="btn pri" data-a="addFac">${FLATICONS.documento} Agregar</button>
+      <button class="btn" data-a="autoEmoji" title="Guarda un emoji sugerido en las facultades que no tienen">${FLATICONS.estrella} Asignar emojis sugeridos</button>
     </div>` + 
     
     D.facultades.map(f => {
-      let iconHtml = f.emoji ? `<span style="font-size:1.5rem">${f.emoji}</span>` : getIconoFac(f.nombre);
+      let iconHtml = `<span style="font-size:1.7rem">${emojiFac(f)}</span>`;
 
       return `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};">
         <div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;">
           <div style="width:48px; height:48px; display:grid; place-items:center; border:1px solid var(--linea); border-radius:8px; padding:.3rem; color:var(--verde);">
             ${iconHtml}
           </div>
+          <input data-ch="facEmoji" data-i="${f.id}" value="${esc(f.emoji || '')}" placeholder="${emojiFac(f)}" title="Cambiar emoji" style="width:56px; text-align:center; font-size:1.2rem; padding:.3rem; border:1px solid var(--linea); border-radius:8px; background:#fff;">
           <input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent; color:var(--petroleo);" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}">
           <input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;">
           <span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span>
@@ -1621,49 +1825,62 @@
     }).join(''); 
   }
 
-  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado(`${FLATICONS.calendario} Semestres`, 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addPer">${FLATICONS.documento} Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
-  function pAreas() { return encabezado(`${FLATICONS.personas} Áreas administrativas`, 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addArea">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado(`${FLATICONS.calendario} Semestres`, 'Define cuándo empieza y termina cada semestre. Si suspendes uno, sus eventos dejan de verse en el calendario público hasta que lo reactives.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addPer">${FLATICONS.documento} Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr style="${p.activo === false ? 'opacity:.65;' : ''}"><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td>${p.activo === false ? '<span class="badge" style="background:#FDE8E7; color:#B3261E">⏸ Suspendido</span>' : '<span class="badge" style="background:#E1F2B8; color:#2f4a00">✅ Activo</span>'}</td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm warn" data-a="togPer" data-i="${p.id}">${p.activo === false ? '▶ Reactivar' : '⏸ Suspender'}</button><button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pAreas() { return encabezado(`${FLATICONS.personas} Áreas administrativas`, 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addArea">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><div style="display:flex; align-items:center; gap:.5rem;"><span style="font-size:1.4rem">${emojiArea(a)}</span><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></div></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
   function pCategorias() { return encabezado(`${FLATICONS.estrella} Categorías`, 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
 
+  // Carga usuarios tolerando columnas que aún no existan (correo, pin_temporal)
+  async function cargarUsuarios() {
+    const intentos = ['id,nombre,rol,correo,permisos,areas_asignadas,pin_temporal,created_at', 'id,nombre,rol,correo,permisos,areas_asignadas,created_at', 'id,nombre,rol,permisos,areas_asignadas'];
+    let ultimo = null;
+    for (const cols of intentos) {
+      const r = await dbClient.from('usuarios_admin').select(cols);
+      if (!r.error) return { data: r.data || [] };
+      ultimo = r.error;
+    }
+    return { data: null, error: ultimo };
+  }
+
+  // Convierte "f:ID" / "p:ID" / "a:ID" en una etiqueta legible
+  function chipsAmbito(arr) {
+    const out = (arr || []).map(v => {
+      const id = String(v).slice(2);
+      if (String(v).startsWith('f:')) { const f = D.facultades.find(x => String(x.id) === id); return f ? `<span class="chip">${emojiFac(f)} ${esc(f.nombre)}</span>` : ''; }
+      if (String(v).startsWith('p:')) { for (const f of D.facultades) { const pr = f.programas.find(x => String(x.id) === id); if (pr) return `<span class="chip">📚 ${esc(pr.nombre)}</span>`; } return ''; }
+      if (String(v).startsWith('a:')) { const a = D.areas.find(x => String(x.id) === id); return a ? `<span class="chip">${emojiArea(a)} ${esc(a.nombre)}</span>` : ''; }
+      return '';
+    }).filter(Boolean);
+    return out.length ? `<div style="display:flex; flex-wrap:wrap; gap:.25rem;">${out.join('')}</div>` : '<span style="color:var(--suave); font-style:italic;">Sin ámbito (solo lectura)</span>';
+  }
+
+  const PERM_TXT = { crear: 'Crear', editar: 'Editar', eliminar: 'Eliminar' };
+  const checksPermisos = (prefix, sel = []) => ['crear', 'editar', 'eliminar'].map(k => `<label style="display:flex; align-items:center; gap:.4rem; font-weight:normal;"><input type="checkbox" id="${prefix}${k}" ${sel.includes(k) ? 'checked' : ''}> ${PERM_TXT[k]}</label>`).join('');
+
   async function pUsuarios() {
-    const { data, error } = await dbClient.from('usuarios_admin').select('id,nombre,rol,correo,created_at,areas_asignadas,permisos');
-    if (error) return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'No se pudieron cargar los usuarios: ' + esc(error.message));
-    const col = { admin: ['#E1F2B8', '#2f4a00'], creador: ['#DBEAFE', '#1e3a8a'], editor: ['#F3E8FF', '#6b21a8'] };
-    const badge = r => `<span class="badge" style="background:${(col[r] || ['#eee', '#333'])[0]}; color:${(col[r] || ['#eee', '#333'])[1]}">${ROLES[r] || r}</span>`;
-    const U = [...(data || [])].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
+    const { data, error } = await cargarUsuarios();
+    if (error) return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'No se pudieron cargar los usuarios: ' + esc(error.message) + '. Revisa que la tabla usuarios_admin exista y ejecuta el SQL de actualización.');
+    const col = { admin: ['#E1F2B8', '#2f4a00'], editor: ['#DBEAFE', '#1e3a8a'] };
+    const U = [...data].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
 
-    const optsAreas = [...D.facultades.map(f => ({ v: 'f:' + f.id, t: f.nombre })), ...D.areas.map(a => ({ v: 'a:' + a.id, t: a.nombre }))];
-
-    return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'Gestiona quién puede entrar al panel y qué puede hacer.') + `
-    <div class="caja">
-      <h2>${FLATICONS.personas} Perfiles disponibles</h2>
-      <div class="roles-leyenda">
-        <div>${badge('admin')}<br>Administra todo el sistema sin restricciones.</div>
-        <div>${badge('creador')} / ${badge('editor')}<br>Pueden crear/editar solo los eventos de las facultades o áreas que se les asigne.</div>
-      </div>
-    </div>
+    return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'Crea usuarios, define qué pueden hacer y en qué facultades, programas o áreas.') + `
     <div class="caja">
       <h2>${FLATICONS.documento} Crear nuevo usuario</h2>
       <div style="display:flex; flex-direction:column; gap:1rem;">
         <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-          <div class="fr" style="margin:0; flex:1; min-width:180px;"><label>Nombre</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
+          <div class="fr" style="margin:0; flex:1; min-width:180px;"><label>Nombre *</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
           <div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div>
-          <div class="fr" style="margin:0; flex:1; min-width:150px;"><label>PIN (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" placeholder="••••••"></div>
+          <div class="fr" style="margin:0; flex:1; min-width:150px;"><label>PIN inicial * (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" placeholder="••••••"></div>
+          <div class="fr" style="margin:0; flex:1; min-width:170px;"><label>Tipo de usuario</label><select id="n_user_rol"><option value="editor">Usuario con permisos</option><option value="admin">Administrador (todo)</option></select></div>
         </div>
         <div style="display:flex; gap:1rem; flex-wrap:wrap;">
           <div class="fr" style="margin:0; flex:1; min-width:200px;">
-            <label>Permisos (Multiselección)</label>
-            <div style="display:flex; gap:1rem; padding:0.4rem 0;">
-              <label style="display:flex; align-items:center; gap:0.4rem; font-weight:normal;"><input type="checkbox" id="n_user_p_crear" value="crear"> Creador</label>
-              <label style="display:flex; align-items:center; gap:0.4rem; font-weight:normal;"><input type="checkbox" id="n_user_p_editar" value="editar" checked> Editor</label>
-            </div>
+            <label>Permisos (puedes marcar varios)</label>
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; padding:0.4rem 0;">${checksPermisos('n_user_p_', ['editar'])}</div>
           </div>
-          <div class="fr" style="margin:0; flex:2; min-width:250px;">
-            <label>Áreas / Facultades asignadas (Ctrl+Click para varias)</label>
-            <select id="n_user_areas" multiple class="multi-select" size="4">
-              ${optsAreas.map(o => `<option value="${o.v}">${esc(o.t)}</option>`).join('')}
-            </select>
-            <p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">Si no se selecciona ninguna, será solo un lector global.</p>
+          <div class="fr" style="margin:0; flex:2; min-width:260px;">
+            <label>Facultades, programas o áreas (puedes marcar varios)</label>
+            ${checksAreas('n_user_areas')}
+            <p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">Solo podrá actuar sobre los eventos de lo que marques. Sin ninguno, solo puede ver. Un administrador no necesita esto.</p>
           </div>
         </div>
         <div><button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button></div>
@@ -1671,26 +1888,24 @@
     </div>
     <div class="tw">
       <table>
-        <thead><tr><th>Nombre</th><th>Correo</th><th>Permisos</th><th>Áreas/Facultades</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>Usuario</th><th>Permisos</th><th>Facultades · Programas · Áreas</th><th>Acciones</th></tr></thead>
         <tbody>
           ${U.map(u => {
-            let pTxt = u.rol === 'admin' ? 'Todo' : (u.permisos || []).map(x => x === 'crear' ? 'Crear' : 'Editar').join(', ');
-            let areasTxt = u.rol === 'admin' ? 'Todas' : (u.areas_asignadas || []).map(v => {
-              if (v.startsWith('f:')) return D.facultades.find(x => x.id === v.slice(2))?.nombre || v;
-              return D.areas.find(x => x.id === v.slice(2))?.nombre || v;
-            }).join(', ') || 'Ninguna';
-
+            const esAdm = u.rol === 'admin', yo = String(u.id) === String(USUARIO_ACTUAL.id);
+            const [bg, fg] = col[esAdm ? 'admin' : 'editor'];
+            const pTxt = esAdm ? '👑 Administrador' : ((u.permisos || []).map(x => PERM_TXT[x] || x).join(' + ') || 'Solo lectura');
             return `<tr>
-              <td><b>${esc(u.nombre)}</b>${String(u.id) === String(USUARIO_ACTUAL.id) ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}</td>
-              <td>${u.correo ? esc(u.correo) : '<span style="color:var(--suave); font-style:italic;">sin correo</span>'}</td>
-              <td><span class="badge" style="background:#eee; color:#333">${pTxt}</span></td>
-              <td style="max-width:200px; font-size:0.8rem; color:var(--suave);">${areasTxt}</td>
+              <td><b>${esc(u.nombre)}</b>${yo ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}${u.pin_temporal ? ' <span class="chip" title="Aún no ha personalizado su PIN">⏳ PIN temporal</span>' : ''}<br><span style="font-size:.8rem; color:var(--suave);">${u.correo ? esc(u.correo) : '<i>sin correo</i>'}</span></td>
+              <td><span class="badge" style="background:${bg}; color:${fg}">${pTxt}</span></td>
+              <td style="max-width:320px; font-size:0.8rem;">${esAdm ? '<span style="color:var(--suave);">Todas</span>' : chipsAmbito(u.areas_asignadas)}</td>
               <td><div class="acc">
-                <button class="btn sm warn" data-a="resetPin" data-i="${u.id}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}>${FLATICONS.email} Reset PIN</button>
-                ${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}">${FLATICONS.basura}</button>`}
+                <button class="btn sm" data-a="editUser" data-i="${esc(String(u.id))}">${FLATICONS.editar} Editar</button>
+                <button class="btn sm" data-a="userPin" data-i="${esc(String(u.id))}">${FLATICONS.llave} PIN</button>
+                <button class="btn sm warn" data-a="resetPin" data-i="${esc(String(u.id))}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}>${FLATICONS.email} Reset por correo</button>
+                ${yo ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${esc(String(u.id))}">${FLATICONS.basura}</button>`}
               </div></td>
             </tr>`;
-          }).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
+          }).join('') || '<tr><td colspan="4" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
         </tbody>
       </table>
     </div>`;
@@ -1701,7 +1916,7 @@
     if (!u) return toast('Usuario no encontrado', true);
     if (!u.correo) return toast('Este usuario no tiene correo registrado', true);
 
-    const ok = confirm(`¿Enviar un PIN temporal al correo ${u.correo}? El usuario deberá cambiarlo al entrar.`);
+    const ok = confirm(`¿Enviar un PIN temporal al correo ${u.correo}? Al entrar con ese PIN, el usuario deberá elegir su propio PIN.`);
     if (!ok) return;
 
     try {
@@ -1710,15 +1925,18 @@
       });
       if (error) throw error;
       if (data && data.ok) {
+        // Marca el PIN como temporal para obligar al usuario a personalizarlo al entrar
+        const rf = await dbClient.from('usuarios_admin').update({ pin_temporal: true }).eq('id', id);
         registrarLog('Restableció PIN', `${u.nombre} (${u.correo}) — enviado por correo`);
-        toast('📧 PIN temporal enviado a ' + u.correo);
+        toast(rf.error ? '📧 Correo enviado, pero falta la columna pin_temporal en Supabase (ejecuta el SQL de actualización)' : '📧 PIN temporal enviado a ' + u.correo, !!rf.error);
       } else {
         throw new Error((data && data.error) || 'Error desconocido');
       }
     } catch (e) {
       console.warn('Edge Function no disponible, usando modo local:', e);
       const pin = String(Math.floor(10000000 + Math.random() * 90000000));
-      const { error: updErr } = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id);
+      let { error: updErr } = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: true }).eq('id', id);
+      if (updErr && /pin_temporal/i.test(updErr.message || '')) ({ error: updErr } = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id));
       if (updErr) return toast('Error al guardar PIN: ' + updErr.message, true);
       registrarLog('Restableció PIN', `${u.nombre} (local, sin correo)`);
       alert(`⚠️ No se pudo enviar el correo. Nuevo PIN temporal para ${u.nombre}:\n\n${pin}\n\nCompártelo manualmente.`);
@@ -1729,7 +1947,7 @@
 
   let LOGS = [];
   const LF = { q: '', usr: '', acc: '' };
-  const colorAccion = a => /elimin/i.test(a) ? ['#FDE8E7', '#B3261E'] : /cre[óo]/i.test(a) ? ['#E1F2B8', '#2f4a00'] : /edit|modific|cambi|public|despublic|borrador|restablec/i.test(a) ? ['#DBEAFE', '#1e3a8a'] : ['#EEE', '#444'];
+  const colorAccion = a => /elimin/i.test(a) ? ['#FDE8E7', '#B3261E'] : /cre[óo]/i.test(a) ? ['#E1F2B8', '#2f4a00'] : /edit|modific|cambi|public|despublic|borrador|restablec|suspend|reactiv/i.test(a) ? ['#DBEAFE', '#1e3a8a'] : ['#EEE', '#444'];
 
   async function pLogs() {
     const { data, error } = await dbClient.from('logs').select('*').order('created_at', { ascending: false }).limit(500);
@@ -1790,21 +2008,78 @@
     const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
     if ((dup || []).some(x => String(x.id) !== String(id))) return toast('Ese PIN ya está en uso, elige otro', true);
     const { data: u } = await dbClient.from('usuarios_admin').select('nombre').eq('id', id).maybeSingle();
-    if (await ejecutar(() => dbClient.from('usuarios_admin').update({ pin }).eq('id', id), `${FLATICONS.check} PIN actualizado`, 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
+    if (await ejecutar(() => actualizarPin(id, pin), `${FLATICONS.check} PIN actualizado`, 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
   }
 
   const masivo = async estado => {
-    const ids = [...SEL]; if (!ids.length) return;
+    const ids = [...SEL].filter(i => puedeEnEvento(D.eventos.find(e => e.id === i) || {})); if (!ids.length) return sinArea();
     const titulos = ids.map(i => (D.eventos.find(e => e.id === i) || {}).titulo).filter(Boolean).join(', ').slice(0, 200);
     if (await ejecutar(() => dbClient.from('eventos').update({ estado }).in('id', ids), `${FLATICONS.check} ${ids.length} evento(s) actualizados`, estado === 'publicado' ? 'Publicó eventos' : 'Pasó eventos a borrador', titulos)) { SEL.clear(); pintarTabla(); }
   };
 
+  const checksAreas = (id, sel = []) => {
+    const ck = v => sel.includes(v) ? 'checked' : '';
+    const lb = (v, t) => `<label><input type="checkbox" value="${esc(v)}" ${ck(v)}> ${t}</label>`;
+    return `<div><input type="search" data-filtro="${id}" placeholder="🔍 Buscar facultad, programa o área…" style="width:100%; margin-bottom:.4rem; padding:.5rem .7rem; border:1px solid var(--linea); border-radius:10px; color:var(--tinta); background:#fff;">` +
+      `<div id="${id}" class="chk-lista"><b class="chk-tit">Facultades</b>` +
+      D.facultades.map(f => lb('f:' + f.id, `${emojiFac(f)} ${esc(f.nombre)}`)).join('') +
+      D.facultades.filter(f => f.programas.length).map(f => `<b class="chk-tit">Programas · ${esc(f.nombre)}</b>` + f.programas.map(p => lb('p:' + p.id, `📚 ${esc(p.nombre)}`)).join('')).join('') +
+      `<b class="chk-tit">Áreas administrativas</b>` + D.areas.map(x => lb('a:' + x.id, `${emojiArea(x)} ${esc(x.nombre)}`)).join('') + '</div></div>';
+  };
+
+  async function modalUsuario(id) {
+    const { data, error } = await cargarUsuarios();
+    const u = (data || []).find(x => String(x.id) === String(id));
+    if (error || !u) return toast('No se pudo cargar el usuario', true);
+    $('#modal').innerHTML = `<div class="mod"><h2>${FLATICONS.editar} Editar a ${esc(u.nombre)}</h2>
+      <div class="fr2">
+        <div class="fr"><label>Nombre *</label><input id="e_nombre" value="${esc(u.nombre)}"></div>
+        <div class="fr"><label>Correo electrónico</label><input id="e_correo" type="email" value="${esc(u.correo || '')}" placeholder="usuario@unbosque.edu.co"></div>
+      </div>
+      <div class="fr"><label>Tipo de usuario</label><select id="e_rol">${opt('editor', 'Usuario con permisos', u.rol !== 'admin')}${opt('admin', 'Administrador (todo el sistema)', u.rol === 'admin')}</select></div>
+      <div class="fr"><label>Permisos (puedes marcar varios)</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:.4rem 0;">${checksPermisos('e_p_', u.permisos || [])}</div></div>
+      <div class="fr"><label>Facultades, programas o áreas asignados (puedes marcar varios)</label>${checksAreas('e_areas', u.areas_asignadas || [])}<p style="font-size:.75rem; color:var(--suave); margin-top:.3rem;">Solo podrá crear, editar o eliminar eventos de lo que marques. Sin ninguno, solo puede ver. Un administrador ignora permisos y ámbito.</p></div>
+      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="saveUser" data-i="${esc(String(u.id))}">${FLATICONS.guardar} Guardar</button></div></div>`;
+    $('#modal').classList.add('on');
+  }
+
+  async function guardarUsuario(id) {
+    const nombre = $('#e_nombre').value.trim(), correo = $('#e_correo').value.trim(), rol = $('#e_rol').value;
+    let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#e_p_' + k).checked);
+    let areas = $$('#e_areas input:checked').map(i => i.value);
+    if (!nombre) return toast('El nombre no puede quedar vacío', true);
+    if (correo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Correo inválido', true);
+    if (rol !== 'admin' && !permisos.length) return toast('Selecciona al menos un permiso', true);
+
+    const { data: todos } = await cargarUsuarios();
+    const actual = (todos || []).find(x => String(x.id) === String(id));
+    if (!actual) return toast('Usuario no encontrado', true);
+    if (actual.rol === 'admin' && rol !== 'admin') {
+      if (String(id) === String(USUARIO_ACTUAL.id)) return toast('No puedes quitarte a ti mismo el rol de administrador', true);
+      if (todos.filter(x => x.rol === 'admin').length <= 1) return toast('Debe quedar al menos un administrador', true);
+    }
+    if (rol === 'admin') { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
+
+    const payload = { nombre, rol, permisos, areas_asignadas: areas, correo: correo || null };
+    const ok = await ejecutar(() => dbClient.from('usuarios_admin').update(payload).eq('id', id), `${FLATICONS.check} Usuario actualizado`, 'Editó usuario', `${nombre} (${rol === 'admin' ? 'Administrador' : 'Permisos: ' + permisos.join(',') + '; Ámbitos: ' + areas.length})`);
+    if (ok) {
+      if (String(id) === String(USUARIO_ACTUAL.id)) { USUARIO_ACTUAL.nombre = nombre; USUARIO_ACTUAL.permisos = permisos; USUARIO_ACTUAL.areas = areas; $('#userNameDisplay').textContent = nombre; }
+      cerrarModal(); ir('usuarios', true);
+    }
+  }
+
   const ACC = {
+    editUser: i => modalUsuario(i), saveUser: i => guardarUsuario(i),
     nuevo: () => modalEvento(), editar: i => modalEvento(i), cerrar: cerrarModal, guardarEv: i => guardarEvento(i),
     del: i => eliminarEventoAdmin(i),
     resetPin: i => restablecerPin(i),
+    autoEmoji: async () => {
+      const sin = D.facultades.filter(f => !f.emoji); if (!sin.length) return toast('Todas las facultades ya tienen emoji');
+      for (const f of sin) { const e = emojiFac(f); const { error } = await dbClient.from('facultades').update({ emoji: e }).eq('id', f.id); if (!error) f.emoji = e; }
+      registrarLog('Asignó emojis', `${sin.length} facultades`); toast(`${FLATICONS.check} Emojis asignados`); refrescar();
+    },
     tog: async i => {
-      const e = D.eventos.find(x => x.id === i); if (!e) return;
+      const e = D.eventos.find(x => x.id === i); if (!e) return; if (!puedeEnEvento(e)) return sinArea();
       const nuevo = e.estado === 'borrador' ? 'publicado' : 'borrador';
       if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? `${FLATICONS.documento} Pasó a borrador` : `${FLATICONS.check} Publicado`, nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla();
     },
@@ -1817,6 +2092,15 @@
       const id = anio + '-' + sem;
       if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true);
       if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), `${FLATICONS.check} Semestre creado`, 'Creó semestre', nombrePeriodo(id))) refrescar();
+    },
+    togPer: async i => {
+      const p = D.periodos.find(x => x.id === i); if (!p) return;
+      const suspender = p.activo !== false, n = usadosPeriodo(i);
+      if (suspender && !confirm(`¿Suspender ${nombrePeriodo(i)}? Sus ${n} evento(s) dejarán de verse en el calendario público. Puedes reactivarlo cuando quieras.`)) return;
+      const { error } = await dbClient.from('periodos').update({ activo: !suspender }).eq('id', i);
+      if (error) return toast(/activo/i.test(error.message || '') ? 'Falta la columna "activo" en la tabla periodos. Ejecuta el SQL de actualización en Supabase.' : 'Error: ' + error.message, true);
+      registrarLog(suspender ? 'Suspendió semestre' : 'Reactivó semestre', nombrePeriodo(i));
+      await recargar(); toast(suspender ? '⏸ Semestre suspendido' : `${FLATICONS.check} Semestre reactivado`); refrescar();
     },
     delPer: async i => {
       const n = D.eventos.filter(e => e.periodo === i || e.periodo2 === i).length;
@@ -1869,33 +2153,28 @@
       const nombre = $('#n_user_name').value.trim();
       const correo = $('#n_user_correo').value.trim();
       const pin = $('#n_user_pin').value.trim();
-      
-      const permisos = [];
-      if ($('#n_user_p_crear').checked) permisos.push('crear');
-      if ($('#n_user_p_editar').checked) permisos.push('editar');
-      
-      const areas = [...$('#n_user_areas').selectedOptions].map(o => o.value);
+      const rol = $('#n_user_rol').value;
+
+      let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#n_user_p_' + k).checked);
+      let areas = $$('#n_user_areas input:checked').map(i => i.value);
 
       if (!nombre || !pin) return toast('Completa nombre y PIN', true);
       if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
       if (correo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Correo inválido', true);
-      if (permisos.length === 0) return toast('Selecciona al menos un permiso (Creador o Editor)', true);
+      if (rol !== 'admin' && permisos.length === 0) return toast('Selecciona al menos un permiso', true);
+      if (rol === 'admin') { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
 
       try {
         const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
         if (dup && dup.length) return toast('Ese PIN ya está en uso, elige otro', true);
-        
-        await crearUsuario({ 
-          nombre, pin, rol: 'editor', correo: correo || null,
-          permisos: permisos,
-          areas_asignadas: areas
-        });
-        
-        registrarLog('Creó usuario', `${nombre} (Permisos: ${permisos.join(',')})`);
+
+        await crearUsuario({ nombre, pin, rol, correo: correo || null, permisos, areas_asignadas: areas });
+
+        registrarLog('Creó usuario', `${nombre} (${rol === 'admin' ? 'Administrador' : 'Permisos: ' + permisos.join(',') + '; Ámbitos: ' + areas.length})`);
         toast(`${FLATICONS.check} Usuario creado`); ir('usuarios', true);
       } catch (e) {
         console.error(e);
-        toast('Error al crear usuario: ' + e.message, true);
+        toast('Error al crear usuario: ' + (/correo/i.test(e.message || '') ? 'falta la columna correo, ejecuta el SQL de actualización' : e.message), true);
       }
     },
     delUser: async i => {
@@ -1929,7 +2208,7 @@
     if (t.id && t.id.startsWith('l_')) { LF[t.id.slice(2)] = t.value; return pintarLogs(); }
     const k = t.dataset.ch; if (!k) return;
     const i = t.dataset.i, j = t.dataset.j, v = t.value.trim();
-    if (k === 'todos') { if (!puede('editar')) return; eventosFiltrados().forEach(e => t.checked ? SEL.add(e.id) : SEL.delete(e.id)); return pintarTabla(); }
+    if (k === 'todos') { if (!puede('editar')) return; eventosFiltrados().filter(puedeEnEvento).forEach(e => t.checked ? SEL.add(e.id) : SEL.delete(e.id)); return pintarTabla(); }
     if (k === 'sel') { if (!puede('editar')) return; t.checked ? SEL.add(i) : SEL.delete(i); return pintarTabla(); }
     if (!puede('admin')) return sinPermiso();
     if (k === 'userRol') return cambiarRol(i, t.value);
@@ -1957,6 +2236,11 @@
   });
 
   document.addEventListener('input', e => {
+    if (e.target.dataset && e.target.dataset.filtro) {
+      const q = norm(e.target.value);
+      $$('#' + e.target.dataset.filtro + ' label').forEach(l => { l.style.display = !q || norm(l.textContent).includes(q) ? '' : 'none'; });
+      return;
+    }
     if (e.target.id === 'x_q') { F.q = e.target.value; pintarTabla(); }
     if (e.target.id === 'l_q') { LF.q = e.target.value; pintarLogs(); }
   });
@@ -1980,7 +2264,7 @@
     S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
     S.sem = per.startsWith(S.anio + '-') ? per.split('-')[1] : '';
     if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
-    pintarPublico();
+    try { pintarPublico(); } catch (err) { console.error('Error al pintar el calendario:', err); }
     $('#loader').classList.add('hidden');
   }
 
