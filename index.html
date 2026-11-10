@@ -153,6 +153,7 @@
   #btnTop.show { opacity: 1; pointer-events: auto; }
   #btnTop:hover { background: var(--petroleo); transform: translateY(-3px); }
 
+  /* Admin */
   #admin-panel { display: none; }
   #admin-panel.on { display: block; }
   
@@ -170,16 +171,29 @@
   .admin-nav .brand .logo-img { height: 32px; width: auto; padding: 3px 6px; border-radius: 6px; flex: none; }
   .admin-nav .brand b { font-family: var(--display); line-height: 1.1; display: block; }
   .admin-nav .brand small { opacity: .65; font-size: .75rem; }
+  .admin-nav .user-info { font-size: .8rem; background: rgba(255,255,255,0.05); padding: 0.5rem 0.8rem; border-radius: 8px; margin-bottom: 1rem; border-left: 3px solid var(--lima); }
+  .admin-nav .user-info b { display: block; font-size: 0.9rem; }
+  .admin-nav .user-info span { font-size: 0.7rem; opacity: 0.7; text-transform: uppercase; }
   .admin-nav button.it { display: flex; align-items: center; gap: .7rem; text-align: left; border: 0; background: transparent; color: rgba(255,255,255,.78); padding: .65rem .8rem; border-radius: 10px; font-weight: 600; font-size: .93rem; transition: var(--transicion); }
   .admin-nav button.it:hover { background: rgba(255,255,255,.08); color: #fff; }
   .admin-nav button.it.on { background: var(--lima); color: var(--petroleo); box-shadow: 0 4px 10px rgba(166,206,57,0.3); }
   .admin-nav .sp { flex: 1; }
-  .admin-nav a.ver { display: block; text-align: center; color: var(--claro); border: 1px solid rgba(197,232,108,.4); border-radius: 10px; padding: .6rem; text-decoration: none; font-size: .88rem; font-weight: 600; transition: var(--transicion); }
-  .admin-nav a.ver:hover { background: rgba(197,232,108,0.1); }
-  .admin-nav .aviso { background: #F5A623; color: #3a2600; border-radius: 10px; padding: .6rem .7rem; font-size: .8rem; font-weight: 600; margin-bottom: .5rem; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.7 } }
+  .admin-nav a.ver, .admin-nav button.logout { display: block; text-align: center; color: var(--claro); border: 1px solid rgba(197,232,108,.4); border-radius: 10px; padding: .6rem; text-decoration: none; font-size: .88rem; font-weight: 600; transition: var(--transicion); background: transparent; width: 100%; margin-top: 0.5rem; }
+  .admin-nav a.ver:hover, .admin-nav button.logout:hover { background: rgba(197,232,108,0.1); }
   .admin-nav .sep { font-size: .72rem; opacity: .5; padding: .8rem .8rem .2rem; }
 
+  .admin-nav { overflow-y: auto; }
+  .admin-nav > * { flex-shrink: 0; }
+  .admin-main { min-width: 0; }
+  .admin-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: .75rem clamp(1rem,3vw,2.6rem); background: #fff; border-bottom: 1px solid var(--linea); position: sticky; top: 0; z-index: 30; }
+  .saludo { font-size: 1rem; color: var(--suave); }
+  .saludo b { font-family: var(--display); color: var(--petroleo); font-size: 1.2rem; }
+  .rolchip { margin-left: .5rem; background: #E1F2B8; color: #2f4a00; border-radius: 999px; padding: .15rem .7rem; font-size: .74rem; font-weight: 700; }
+  .admin-top-acc { display: flex; gap: .5rem; }
+  .badge { display: inline-block; border-radius: 999px; padding: .2rem .7rem; font-size: .76rem; font-weight: 700; white-space: nowrap; }
+  .rolsel { padding: .3rem .5rem; border: 1px solid var(--linea); border-radius: 8px; background: #fff; }
+  .roles-leyenda { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; }
+  .roles-leyenda div { font-size: .85rem; color: var(--suave); }
   #admin-panel-inner { padding: 2rem clamp(1rem,3vw,2.6rem) 4rem; max-width: 1180px; width: 100%; }
   h1.pt { font-family: var(--display); font-size: 2rem; color: var(--petroleo); line-height: 1.1; }
   p.ps { color: var(--suave); margin: .3rem 0 1.4rem; max-width: 62ch; }
@@ -254,40 +268,6 @@
     .dos { grid-template-columns: 1fr; }
     .fr2 { grid-template-columns: 1fr; }
   }
-
-  main{max-width:1600px}
-  .panelwrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:1.4rem;align-items:start}
-  .panel{background:#fff;border:1px solid var(--linea);border-radius:16px;box-shadow:0 6px 20px rgba(0,59,54,.08);padding:1.1rem 1.2rem;animation:slideUp .5s both}
-  .panel.pl{position:sticky;top:130px;animation-delay:.12s}
-  .phead{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}
-  .phead h2{font-family:var(--display);font-size:1.5rem;color:var(--petroleo);flex:1}
-  .phead span{font-size:.8rem;font-weight:700;background:var(--fondo);border-radius:999px;padding:.2rem .7rem;color:var(--suave)}
-  .lista-eventos{position:relative;max-height:calc(100vh - 250px);overflow:auto;padding-right:.4rem;scroll-behavior:smooth}
-  .lista-eventos .mes-t{margin-top:.8rem;position:sticky;top:0;background:#fff;z-index:2;display:block}
-  .cal{box-shadow:none}.cal.izq{animation:desdeIzq .4s both}.cal.der{animation:desdeDer .4s both}
-  .cal .dia.festivo{background:var(--rojo-fondo);box-shadow:inset 0 0 0 1px #f3b8b4}
-  .cal .dia.festivo .n{background:var(--rojo);color:#fff}
-  .cal .dia:hover{background:#eef7f2}
-  .leyenda{font-size:.8rem;color:var(--suave);margin-top:.6rem}.leyenda i{display:inline-block;width:10px;height:10px;background:var(--rojo);border-radius:3px;margin-right:.4rem}
-  .ev.festivo{background:var(--rojo-fondo)}
-  .modulos{grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:.7rem}
-  .mod{background:#fff;color:var(--tinta);border:1px solid var(--linea);min-height:84px;justify-content:flex-start;gap:.15rem;padding:.8rem .8rem .8rem 1.1rem;animation:scaleIn .45s both;animation-delay:calc(var(--i,0)*45ms)}
-  .mod::after{display:none}.mod .ic{font-size:1.25rem;line-height:1;transition:var(--transicion)}
-  .mod:hover .ic{transform:scale(1.25) rotate(-8deg)}.mod:hover{box-shadow:0 10px 22px rgba(0,59,54,.14)}
-  .mod b{font-size:.88rem}.mod .n{font-size:.76rem;color:var(--suave);margin-top:auto}
-  .mod.on{background:var(--petroleo);color:#fff;border-color:var(--petroleo)}.mod.on .n{color:var(--claro)}
-  .mod.todos{background:var(--lima);color:var(--petroleo)}.mod.todos .n{color:var(--petroleo)}.mod.todos.on{background:var(--petroleo);color:#fff}.mod.todos.on .n{color:var(--claro)}
-  .rev{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,box-shadow .3s}.rev.vis{opacity:1;transform:none}
-  .ev.rev{animation:none}.ev.rev.vis:hover{transform:translateX(4px)}
-  .cal .dia.hoy .n{animation:latido 2s infinite}
-  .pill.festivo{animation:fadeIn .4s,brillo 3s infinite}
-  @keyframes latido{0%,100%{box-shadow:0 0 0 0 rgba(166,206,57,.7)}70%{box-shadow:0 0 0 8px rgba(166,206,57,0)}}
-  @keyframes brillo{50%{filter:brightness(1.15)}}
-  @keyframes desdeIzq{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:none}}
-  @keyframes desdeDer{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
-  @media(max-width:1100px){.panelwrap{grid-template-columns:1fr}.panel.pl{position:static}.lista-eventos{max-height:70vh}}
-  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rev{opacity:1;transform:none}}
-  @media print{.barra,.top,#btnTop,.modulos{display:none}.lista-eventos{max-height:none;overflow:visible}.panelwrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -372,20 +352,35 @@
         <img src="Logo_de_la_Universidad_El_Bosque.png" alt="Logo" class="logo-img">
         <div><b>Calendario</b><small>Administración</small></div>
       </div>
+      <div class="user-info" id="userInfo">
+        <b id="userNameDisplay">Cargando...</b>
+        <span id="userRoleDisplay">Rol</span>
+      </div>
       <button class="it" data-p="resumen">Resumen</button>
       <button class="it" data-p="eventos">Eventos</button>
-      <div class="sep">Estructura</div>
-      <button class="it" data-p="periodos">Semestres</button>
-      <button class="it" data-p="facultades">Facultades y programas</button>
-      <button class="it" data-p="areas">Áreas administrativas</button>
-      <button class="it" data-p="categorias">Categorías</button>
-      <div class="sep">Seguridad</div>
-      <button class="it" data-p="usuarios">Usuarios y Accesos</button>
+      <div class="sep admin-only">Estructura</div>
+      <button class="it admin-only" data-p="periodos">Semestres</button>
+      <button class="it admin-only" data-p="facultades">Facultades y programas</button>
+      <button class="it admin-only" data-p="areas">Áreas administrativas</button>
+      <button class="it admin-only" data-p="categorias">Categorías</button>
+      <div class="sep admin-only">Seguridad</div>
+      <button class="it admin-only" data-p="usuarios">Usuarios y Accesos</button>
+      <button class="it admin-only" data-p="logs">Logs del Sistema</button>
       <div class="sp"></div>
-      <button class="it" data-p="publicar">Publicar y datos</button>
+      <button class="it admin-only" data-p="publicar">Publicar y datos</button>
       <a class="ver" href="#" onclick="irPublico(event)">Ver público ↗</a>
+      <button class="logout" onclick="cerrarSesion()">Cerrar sesión</button>
     </nav>
-    <section id="admin-panel-inner"></section>
+    <div class="admin-main">
+      <div class="admin-top">
+        <div class="saludo">Hola, <b id="saludoNombre"></b><span class="rolchip" id="saludoRol"></span></div>
+        <div class="admin-top-acc">
+          <button class="btn sm" data-a="pin">Cambiar mi PIN</button>
+          <button class="btn sm pel" onclick="cerrarSesion()">Cerrar sesión</button>
+        </div>
+      </div>
+      <section id="admin-panel-inner"></section>
+    </div>
   </div>
   <div id="modal"></div>
   <div id="toast"></div>
@@ -396,7 +391,7 @@
 
 <script>
   /* ============================================================
-     CONFIGURACIÓN DE SUPABASE (CON TUS CREDENCIALES)
+     CONFIGURACIÓN DE SUPABASE
      ============================================================ */
   const SUPABASE_URL = 'https://zsgavixppceijbpevgoc.supabase.co'; 
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzZ2F2aXhwcGNlaWpicGV2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTU4NjEsImV4cCI6MjEwOTgzMTg2MX0.YKJAQVRwtm1qofYtQYku2BhO0V_2A5gbaAPniA8aIM8'; 
@@ -406,15 +401,13 @@
   let DB_READY = false;
   let USUARIO_ACTUAL = null;
 
-  // Inicialización blindada
   try {
-    if (!window.supabase) throw new Error("El SDK de Supabase no se cargó. Revisa tu conexión.");
+    if (!window.supabase) throw new Error("El SDK de Supabase no se cargó.");
     dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     DB_READY = true;
-    console.log("✅ Supabase conectado correctamente.");
   } catch (e) {
-    console.error("❌ Error inicializando Supabase:", e);
-    document.getElementById('error-msg').textContent = "Error crítico de conexión:\n\n" + e.message;
+    console.error("Error inicializando Supabase:", e);
+    document.getElementById('error-msg').textContent = "Error de conexión: " + e.message;
     document.getElementById('error-box').hidden = false;
     document.getElementById('loader').classList.add('hidden');
   }
@@ -455,14 +448,7 @@
       const { data: facs } = await dbClient.from('facultades').select('*, programas(*)');
       const { data: areas } = await dbClient.from('areas').select('*');
       const { data: pers } = await dbClient.from('periodos').select('*');
-      
-      const { data: evs } = await dbClient.from('eventos').select(`
-        *,
-        evento_facultades(facultad_id),
-        evento_programas(programa_id),
-        evento_areas(area_id),
-        evento_publicos(publico)
-      `);
+      const { data: evs } = await dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`);
 
       return {
         institucion: 'Universidad El Bosque',
@@ -482,31 +468,31 @@
           publico: e.evento_publicos ? e.evento_publicos.map(x => x.publico) : []
         })) : []
       };
-    } catch (e) {
-      console.error("Error al leer de Supabase:", e);
-      return null;
-    }
+    } catch (e) { console.error("Error al leer de Supabase:", e); return null; }
   }
 
-  // --- Funciones de Autenticación (Usuarios) ---
+  // --- Logs ---
+  async function registrarLog(accion, detalle) {
+    if (!dbClient || !USUARIO_ACTUAL) return;
+    try {
+      const { error } = await dbClient.from('logs').insert([{ usuario_nombre: USUARIO_ACTUAL.nombre, accion, detalle: detalle || '' }]);
+      if (error) console.error('Error guardando log:', error.message);
+    } catch (e) { console.error('Error guardando log:', e); }
+  }
+
+  // --- Autenticación ---
   async function verificarPin(pin) {
     if (!dbClient) return null;
     const { data, error } = await dbClient.from('usuarios_admin').select('*').eq('pin', pin);
-    if (error) {
-      console.error("Error al verificar PIN:", error);
-      toast("Error de conexión al verificar PIN", true);
-      return null;
-    }
+    if (error) { toast("Error de conexión al verificar PIN", true); return null; }
     return (data && data.length > 0) ? data[0] : null;
   }
-
   async function crearUsuario(nombre, pin, rol = 'admin') {
     if (!dbClient) return null;
     const { data, error } = await dbClient.from('usuarios_admin').insert([{ nombre, pin, rol }]).select().single();
     if (error) throw error;
     return data;
   }
-
   async function verificarSiHayUsuarios() {
     if (!dbClient) return false;
     const { count, error } = await dbClient.from('usuarios_admin').select('*', { count: 'exact', head: true });
@@ -515,6 +501,7 @@
   }
 
   function toast(m, err) { const t = $('#toast'); t.textContent = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 2400); }
+  function aviso() { /* No aplica */ }
 
   /* ============================================================
      LÓGICA PÚBLICA
@@ -525,8 +512,7 @@
   function getColores(D, e) {
     const facs = e.facultad || [];
     const cat = catDe(D, e.categoria);
-    let facColor = cat.color;
-    let emoji = '';
+    let facColor = cat.color, emoji = '';
     if (facs.length === 1) {
       const f = D.facultades.find(x => x.id === facs[0]);
       if (f) { facColor = f.color || cat.color; emoji = f.emoji || ''; }
@@ -535,9 +521,7 @@
   }
 
   function ambito(D, e) {
-    const facs = e.facultad || [];
-    const areas = e.area || [];
-    const progs = e.programa || [];
+    const facs = e.facultad || [], areas = e.area || [], progs = e.programa || [];
     let nombres = [];
     facs.forEach(fid => { const f = D.facultades.find(x => x.id === fid); if (f) nombres.push(`${f.emoji || ''} ${f.nombre}`); });
     if (progs.length) progs.forEach(pid => { const f = D.facultades.find(x => x.programas.some(p => p.id === pid)); const p = f && f.programas.find(x => x.id === pid); if (p) nombres.push(p.nombre); });
@@ -606,10 +590,7 @@
       }
       if (!sinCat && S.cat && e.categoria !== S.cat) return false;
       
-      const facs = e.facultad || [];
-      const areas = e.area || [];
-      const progs = e.programa || [];
-
+      const facs = e.facultad || [], areas = e.area || [], progs = e.programa || [];
       if (S.grupo) {
         const [t, id] = S.grupo.split(':');
         const coincide = t === 'f' ? facs.includes(id) && (!S.prog || !progs.length || progs.includes(S.prog)) : areas.includes(id);
@@ -635,8 +616,7 @@
     const h = hoy(), f = finDe(e);
     if (f < h) return false;
     if (e.inicio <= h) return true;
-    const d = diffDias(h, e.inicio);
-    return d <= 3;
+    return diffDias(h, e.inicio) <= 3;
   }
 
   function pintarEncabezado() {
@@ -683,7 +663,6 @@
     const d = parse(e.inicio);
     const tituloEmoji = emoji ? `${emoji} ` : '';
     const inminente = esInminente(e);
-    
     return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
       <div class="fecha"><b>${d.getDate()}</b><span>${MESES_C[d.getMonth()]} · ${DIAS_C[d.getDay()]}</span></div>
       <div><h3>${tituloEmoji}${esc(e.titulo)}</h3><div class="meta"><span class="chip"><i></i>${esc(c.nombre)}</span>${mostrarAmbito ? `<span>${esc(amb(e))}</span>` : ''}<span>${fmtRango(e)}</span></div></div>
@@ -704,7 +683,6 @@
       const fDelDia = festivosDia(s);
       const eDelDia = L.filter(e => e.inicio <= s && s <= finDe(e));
       const todosDelDia = [...fDelDia, ...eDelDia];
-      
       h += `<div class="dia ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${fDelDia.length ? 'festivo' : ''}"><span class="n">${dia.getDate()}</span>`;
       todosDelDia.slice(0, 3).forEach(e => {
         let { facColor, catColor, emoji } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', emoji: '' } : getColores(D, e);
@@ -737,7 +715,7 @@
     $('#vistaCalendario').innerHTML = vistaCalendario(filtrar({ sinPeriodo: true }));
     $('#vistaLista').innerHTML = vistaLista(todos);
     $('#cuentaLista').textContent = todos.length + ' fechas';
-    $('#origen').innerHTML = `Fuente: <b>Supabase (Nube)</b>`;
+    $('#origen').innerHTML = `Fuente: <b>Jhon Vargas</b>`;
     $('#actual').textContent = D.actualizado ? 'Actualizado: ' + new Date(D.actualizado).toLocaleDateString('es-CO') : '';
     S.dir = ''; revelar();
   }
@@ -746,7 +724,7 @@
     if (id.startsWith('festivo-')) {
       const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
       if (!f) return;
-      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem;">${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia. No hay actividades académicas programadas.</dd></dl>`;
+      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem;">${esc(f.nombre)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt style="color:var(--suave); font-weight:600;">Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
       $('#velo').classList.add('on'); $('#cajon').classList.add('on');
       return;
     }
@@ -756,7 +734,6 @@
     const gc = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.titulo)}&dates=${e.inicio.replace(/-/g, '')}/${sumaDias(finDe(e), 1).replace(/-/g, '')}&details=${encodeURIComponent(e.descripcion || '')}&location=${encodeURIComponent(e.lugar || '')}`;
     let pubStr = '';
     if (e.publico && e.publico.length) pubStr = `<dt style="color:var(--suave); font-weight:600;">Dirigido a</dt><dd>${esc(e.publico.join(', '))}</dd>`;
-
     $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; border-left:4px solid ${facColor}; padding-left:0.5rem;">${emoji ? emoji + ' ' : ''}${esc(e.titulo)}</h2><dl style="display:grid; grid-template-columns:90px 1fr; gap:.6rem 1rem; font-size:.93rem;"><dt style="color:var(--suave); font-weight:600;">Fecha</dt><dd>${fmtRango(e)} ${st.t ? `<span class="estado ${st.c}">${st.t}</span>` : ''}</dd>${pubStr}<dt style="color:var(--suave); font-weight:600;">Ámbito</dt><dd>${esc(amb(e))}</dd><dt style="color:var(--suave); font-weight:600;">Periodo</dt><dd>${nombrePeriodo(e.periodo)} ${e.periodo2 ? ' / ' + nombrePeriodo(e.periodo2) : ''}</dd>${e.lugar ? `<dt style="color:var(--suave); font-weight:600;">Lugar</dt><dd>${esc(e.lugar)} ${e.lugarEsp ? '('+esc(e.lugarEsp)+')' : ''} ${e.piso ? ' - ' + esc(e.piso) : ''}</dd>` : ''}</dl>${e.descripcion ? `<div style="margin-top:1rem; padding:.9rem; background:var(--fondo); border-radius:10px; font-size:.93rem;">${esc(e.descripcion)}</div>` : ''}<div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.4rem;"><a class="btn" href="${gc}" target="_blank" rel="noopener">Google Calendar</a><button class="btn" data-ics="${e.id}">Descargar (.ics)</button></div>`;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
   }
@@ -810,21 +787,33 @@
      LÓGICA ADMINISTRADOR
      ============================================================ */
   let P = 'resumen';
+
+  /* ===== Roles y permisos =====
+     admin   -> todo el sistema
+     creador -> solo crea eventos nuevos
+     editor  -> solo edita eventos existentes                */
+  const ROLES = { admin: 'Administrador', creador: 'Creador', editor: 'Editor' };
+  const DESC_ROL = {
+    admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.',
+    creador: 'Tu perfil permite crear eventos nuevos.',
+    editor: 'Tu perfil permite editar los eventos existentes.'
+  };
+  const PERM = { admin: ['crear', 'editar', 'eliminar', 'admin'], creador: ['crear'], editor: ['editar'] };
+  const puede = a => !!USUARIO_ACTUAL && (PERM[USUARIO_ACTUAL.rol] || []).includes(a);
+  const sinPermiso = () => toast('Tu perfil no tiene permiso para esta acción', true);
   const F = { q: '', per: '', cat: '', est: '', grupo: '' };
   const SEL = new Set();
 
   function irAdmin() {
     if (!DB_READY) {
-      document.getElementById('error-msg').textContent = "No hay conexión con la base de datos. Revisa tus credenciales en el código.";
+      document.getElementById('error-msg').textContent = "No hay conexión con la base de datos.";
       document.getElementById('error-box').hidden = false;
       return;
     }
     $('#public-panel').style.display = 'none';
     $('#admin-panel').classList.add('on');
     if (USUARIO_ACTUAL) {
-      $('#gate').style.display = 'none';
-      $('#admin-app').hidden = false;
-      ir(P);
+      mostrarAppAdmin();
     } else {
       $('#gate').style.display = 'grid';
       $('#admin-app').hidden = true;
@@ -833,6 +822,32 @@
         $('#pinAyuda').textContent = hay ? 'Ingresa tu PIN de administrador.' : 'No hay usuarios. Crea el PIN de administrador.';
       });
     }
+  }
+
+  function mostrarAppAdmin() {
+    $('#gate').style.display = 'none';
+    $('#admin-app').hidden = false;
+    const rolTxt = ROLES[USUARIO_ACTUAL.rol] || USUARIO_ACTUAL.rol;
+    $('#userNameDisplay').textContent = USUARIO_ACTUAL.nombre;
+    $('#userRoleDisplay').textContent = rolTxt;
+    $('#saludoNombre').textContent = USUARIO_ACTUAL.nombre;
+    $('#saludoRol').textContent = rolTxt;
+    const esAdmin = puede('admin');
+    $$('.admin-only').forEach(el => {
+      el.style.display = esAdmin ? (el.classList.contains('sep') ? 'block' : 'flex') : 'none';
+    });
+    ir('resumen');
+  }
+
+  function cerrarSesion() {
+    if (USUARIO_ACTUAL) registrarLog('Cierre de sesión', 'Salió del sistema');
+    USUARIO_ACTUAL = null; SEL.clear(); cerrarModal();
+    $('#admin-panel-inner').innerHTML = '';
+    $('#pin').value = '';
+    $('#admin-app').hidden = true;
+    $('#admin-panel').classList.remove('on');
+    $('#public-panel').style.display = 'block';
+    pintarPublico(); scrollTo(0, 0);
   }
 
   function irPublico(e) {
@@ -844,14 +859,12 @@
 
   async function crearAdminInicial() {
     const pin = prompt('Crea un PIN de 6 a 15 dígitos para el administrador:');
-    if (!pin || pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
+    if (!pin || !/^\d{6,15}$/.test(pin.trim())) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
     try {
       await crearUsuario('Administrador Principal', pin, 'admin');
       toast('Usuario administrador creado. Ahora inicia sesión.');
       verificarSiHayUsuarios();
-    } catch (e) {
-      toast('Error al crear usuario: ' + e.message, true);
-    }
+    } catch (e) { toast('Error al crear usuario: ' + e.message, true); }
   }
 
   $('#gateForm').onsubmit = async e => {
@@ -860,25 +873,32 @@
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     const user = await verificarPin(pin);
     if (user) {
-      USUARIO_ACTUAL = user;
-      $('#gate').style.display = 'none';
-      $('#admin-app').hidden = false;
-      toast(`Bienvenido, ${user.nombre}`);
-      ir('resumen');
+      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: String(user.rol || '').toLowerCase() };
+      $('#pin').value = '';
+      registrarLog('Inicio de sesión', 'Ingresó al sistema');
+      mostrarAppAdmin();
     } else {
       $('#pin').value = '';
       toast('PIN incorrecto', true);
     }
   };
 
-  function ir(p) {
+  async function ir(p, conservar) {
+    if (!USUARIO_ACTUAL) return;
+    const PANELES = { resumen: pResumen, eventos: pEventos, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar };
+    if (!PANELES[p] || (p !== 'resumen' && p !== 'eventos' && !puede('admin'))) p = 'resumen';
     P = p; SEL.clear();
     $$('.admin-nav .it').forEach(b => b.classList.toggle('on', b.dataset.p === p));
-    $('#admin-panel-inner').innerHTML = ({ resumen: pResumen, eventos: pEventos, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, publicar: pPublicar })[p]();
+    let html;
+    try { html = await PANELES[p](); }
+    catch (e) { console.error(e); html = encabezado('Error', esc(e.message || String(e))); }
+    if (P !== p || !USUARIO_ACTUAL) return;
+    $('#admin-panel-inner').innerHTML = html;
     if (p === 'eventos') pintarTabla();
-    scrollTo(0, 0);
+    if (p === 'logs') pintarLogs();
+    if (!conservar) scrollTo(0, 0);
   }
-  const refrescar = () => { const y = scrollY; ir(P); scrollTo(0, y); };
+  const refrescar = async () => { const y = scrollY; await ir(P, true); scrollTo(0, y); };
   const encabezado = (t, s) => `<h1 class="pt">${t}</h1><p class="ps">${s}</p>`;
   const chipCatAdmin = id => { const c = catDe(D, id); return `<span class="chip"><i style="background:${c.color}"></i>${esc(c.nombre)}</span>`; };
   const usadosPeriodo = id => D.eventos.filter(e => e.periodo === id).length;
@@ -889,14 +909,12 @@
     const h = hoy();
     const prox = pub.filter(e => finDe(e) >= h).sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 5);
     const per = [...D.periodos].sort((a, b) => a.id.localeCompare(b.id));
-    
     const barras = per.map(p => {
       const L = D.eventos.filter(e => e.periodo === p.id), tot = L.length || 1;
       const segs = D.categorias.map(c => { const n = L.filter(e => e.categoria === c.id).length; return n ? `<i style="display:block; height:100%; width:${n / tot * 100}%; background:${c.color}" title="${esc(c.nombre)}: ${n}"></i>` : ''; }).join('');
       return `<div style="margin-bottom:1rem;"><div style="display:flex; justify-content:space-between; font-weight:600; font-size:.92rem; margin-bottom:.3rem;"><span>${nombrePeriodo(p.id)}</span><span>${L.length} eventos</span></div><div style="display:flex; height:14px; border-radius:999px; overflow:hidden; background:var(--fondo);">${segs}</div></div>`;
     }).join('');
-    
-    return encabezado('Resumen', 'Una mirada rápida a cómo está el calendario hoy.') + `
+    return encabezado('Resumen', DESC_ROL[USUARIO_ACTUAL.rol] || 'Una mirada rápida a cómo está el calendario hoy.') + `
     <div class="cards">
       <div class="stat verde"><b>${pub.length}</b><span>eventos publicados</span></div>
       <div class="stat"><b>${bor}</b><span>borradores</span></div>
@@ -909,20 +927,20 @@
         <div class="caja"><h2>Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem;"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div>
       </div>
     </div>
-    <button class="btn pri" data-a="nuevo" style="margin-top:1rem;">+ Agregar evento</button>`;
+    ${puede('crear') ? '<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">+ Agregar evento</button>' : ''}`;
   }
 
   function pEventos() {
     const pers = [...new Set(D.eventos.map(e => e.periodo))].sort().reverse();
     let g = '<option value="">Todas las facultades y áreas</option><option value="inst">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => opt('f:' + f.id, f.nombre)).join('') + '</optgroup><optgroup label="Áreas">' + D.areas.map(a => opt('a:' + a.id, a.nombre)).join('') + '</optgroup>';
-    return encabezado('Eventos', 'Aquí agregas, editas y organizas todas las fechas.') + `
+    return encabezado('Eventos', { admin: 'Aquí agregas, editas y organizas todas las fechas.', creador: 'Aquí puedes crear eventos nuevos.', editor: 'Aquí puedes editar los eventos existentes.' }[USUARIO_ACTUAL.rol] || 'Eventos del calendario.') + `
     <div class="tools">
       <input type="search" id="x_q" placeholder="Buscar evento…">
       <select id="x_per"><option value="">Todos los semestres</option>${pers.map(p => opt(p, nombrePeriodo(p))).join('')}</select>
       <select id="x_cat"><option value="">Todas las categorías</option>${D.categorias.map(c => opt(c.id, c.nombre)).join('')}</select>
       <select id="x_grupo">${g}</select>
       <select id="x_est"><option value="">Todos los estados</option><option value="publicado">Publicados</option><option value="borrador">Borradores</option></select>
-      <button class="btn pri" data-a="nuevo">+ Nuevo evento</button>
+      ${puede('crear') ? '<button class="btn pri" data-a="nuevo">+ Nuevo evento</button>' : ''}
     </div>
     <div id="masiva"></div><div class="tw" id="tabla"></div>`;
   }
@@ -934,10 +952,7 @@
       if (F.cat && e.categoria !== F.cat) return false;
       if (F.est && (e.estado || 'publicado') !== F.est) return false;
       if (F.grupo === 'inst' && !esInstitucional(e)) return false;
-      
-      const facs = e.facultad || [];
-      const areas = e.area || [];
-
+      const facs = e.facultad || [], areas = e.area || [];
       if (F.grupo.startsWith('f:') && !facs.includes(F.grupo.slice(2))) return false;
       if (F.grupo.startsWith('a:') && !areas.includes(F.grupo.slice(2))) return false;
       if (q && !norm(e.titulo + ' ' + e.descripcion + ' ' + ambito(D, e)).includes(q)) return false;
@@ -948,14 +963,21 @@
   function pintarTabla() {
     ['q', 'per', 'cat', 'grupo', 'est'].forEach(k => { const el = $('#x_' + k); if (el) el.value = F[k]; });
     const L = eventosFiltrados();
-    $('#masiva').innerHTML = SEL.size ? `<div class="masiva"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">Publicar</button><button class="btn sm" data-a="m_bor">Pasar a borrador</button><button class="btn sm" data-a="m_copiar">Copiar año…</button><button class="btn sm" data-a="m_del">Eliminar</button></div>` : '';
-    $('#tabla').innerHTML = L.length ? `<table><thead><tr><th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th><th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
-      L.map(e => `<tr><td><input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}></td>
+    const pEd = puede('editar'), pEl = puede('eliminar');
+    $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">Publicar</button><button class="btn sm" data-a="m_bor">Pasar a borrador</button></div>` : '';
+
+    $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
+      L.map(e => `<tr>${pEd ? `<td><input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}></td>` : ''}
         <td style="white-space:nowrap">${fmtRango(e)}</td>
         <td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td>
         <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}</td>
-        <td><button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}" title="Clic para cambiar">${e.estado === 'borrador' ? 'Borrador' : 'Publicado'}</button></td>
-        <td><div class="acc"><button class="btn sm" data-a="editar" data-i="${e.id}">Editar</button><button class="btn sm" data-a="dup" data-i="${e.id}">Duplicar</button><button class="btn sm pel" data-a="del" data-i="${e.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table>'
+        <td>${pEd
+          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? 'Borrador' : 'Publicado'}</button>`
+          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? 'Borrador' : 'Publicado'}</span>`}</td>
+        <td><div class="acc">
+          ${pEd ? `<button class="btn sm" data-a="editar" data-i="${e.id}">Editar</button>` : ''}
+          ${pEl ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">Eliminar</button>` : ''}
+        </div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
 
@@ -1052,11 +1074,8 @@
     const progsDisponibles = [];
     selectedFacs.forEach(fid => {
       const f = D.facultades.find(x => x.id === fid);
-      if (f) {
-        f.programas.forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre, fac: f.nombre }));
-      }
+      if (f) f.programas.forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre, fac: f.nombre }));
     });
-    
     if (preseleccionados.length) {
       $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${preseleccionados.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
     } else {
@@ -1073,6 +1092,7 @@
   const cerrarModal = () => { $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
 
   async function guardarEvento(id) {
+    if (id ? !puede('editar') : !puede('crear')) return sinPermiso();
     const g = i => $('#' + i).value.trim();
     const titulo = g('f_titulo'), inicio = g('f_ini'), fin = g('f_fin') || inicio;
     if (!titulo) return toast('Escribe el nombre del evento', true);
@@ -1125,284 +1145,303 @@
         if (area.length) await dbClient.from('evento_areas').insert(area.map(a => ({ evento_id: ev.id, area_id: a })));
         if (publico.length) await dbClient.from('evento_publicos').insert(publico.map(p => ({ evento_id: ev.id, publico: p })));
 
+        const accion = id ? 'Editó evento' : 'Creó evento';
+        registrarLog(accion, titulo);
+        
         const nuevosDatos = await leerNube();
         if (nuevosDatos) D = nuevosDatos;
-      } else {
-        const i = D.eventos.findIndex(x => x.id === id);
-        if (i >= 0) D.eventos[i] = o; else D.eventos.push(o);
       }
       toast('Evento guardado'); cerrarModal(); refrescar();
     } catch (e) {
       console.error(e);
-      toast('Error al guardar en Supabase', true);
+      toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true);
     }
   }
 
   async function eliminarEventoAdmin(id) {
+    if (!puede('eliminar')) return sinPermiso();
     if (!confirm('¿Eliminar este evento?')) return;
+    const e = D.eventos.find(x => x.id === id);
     if (DB_READY) {
       const { error } = await dbClient.from('eventos').delete().eq('id', id);
       if (error) return toast('Error al eliminar', true);
+      registrarLog('Eliminó evento', e ? e.titulo : id);
       const nuevosDatos = await leerNube();
       if (nuevosDatos) D = nuevosDatos;
-    } else {
-      D.eventos = D.eventos.filter(e => e.id !== id);
     }
     SEL.delete(id);
     toast('Evento eliminado');
     pintarTabla();
   }
 
-  function pFacultades() {
-    return encabezado('Facultades y programas', 'Organiza la universidad.') + `
-    <div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;">
-      <div>
-        <label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label>
-        <input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem;">
-      </div>
-      <div>
-        <label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Emoji</label>
-        <input id="n_fac_emoji" placeholder="🎨" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center;">
-      </div>
-      <div>
-        <label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label>
-        <input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;">
-      </div>
-      <button class="btn pri" data-a="addFac">+ Agregar</button>
-    </div>
-    ` + D.facultades.map(f => `
-    <div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};">
-      <div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;">
-        <input style="width:40px; text-align:center; font-size:1.2rem; border:1px solid var(--linea); border-radius:8px; padding:.3rem;" value="${esc(f.emoji || '')}" data-ch="facEmoji" data-i="${f.id}" title="Emoji">
-        <input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent;" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}">
-        <input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;">
-        <span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span>
-        <button class="btn sm pel" data-a="delFac" data-i="${f.id}">Eliminar</button>
-      </div>
-      ${f.programas.map(p => `
-        <div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;">
-          <input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}">
-          <select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;">
-            ${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}
-          </select>
-          <button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button>
-        </div>
-      `).join('')}
-      <div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;">
-        <input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;">
-        <select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;">
-          <option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option>
-        </select>
-        <button class="btn sm" data-a="addProg" data-i="${f.id}">+ Agregar manual</button>
-      </div>
-    </div>
-    `).join('');
-  }
-
-  function pPeriodos() {
-    const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id));
-    return encabezado('Semestres', 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addPer">+ Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>';
-  }
-
-  function pAreas() {
-    return encabezado('Áreas administrativas', 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addArea">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>';
-  }
-
-  function pCategorias() {
-    return encabezado('Categorías', 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>';
-  }
+  function pFacultades() { return encabezado('Facultades y programas', 'Organiza la universidad.') + `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;"><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Emoji</label><input id="n_fac_emoji" placeholder="🎨" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addFac">+ Agregar</button></div>` + D.facultades.map(f => `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};"><div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;"><input style="width:40px; text-align:center; font-size:1.2rem; border:1px solid var(--linea); border-radius:8px; padding:.3rem;" value="${esc(f.emoji || '')}" data-ch="facEmoji" data-i="${f.id}"><input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent;" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}"><input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;"><span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span><button class="btn sm pel" data-a="delFac" data-i="${f.id}">Eliminar</button></div>${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;"><input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}"><select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;">${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}</select><button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button></div>`).join('')}<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;"><input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px;"><select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select><button class="btn sm" data-a="addProg" data-i="${f.id}">+ Agregar manual</button></div></div>`).join(''); }
+  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado('Semestres', 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addPer">+ Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}"></td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm pel" data-a="delPer" data-i="${p.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pAreas() { return encabezado('Áreas administrativas', 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><button class="btn pri" data-a="addArea">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pCategorias() { return encabezado('Categorías', 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">+ Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
 
   async function pUsuarios() {
-    if (!dbClient) return encabezado('Usuarios', 'No hay conexión a la base de datos.');
-    const { data, error } = await dbClient.from('usuarios_admin').select('*');
-    if (error) return encabezado('Usuarios', 'Error al cargar usuarios: ' + error.message);
-
-    return encabezado('Usuarios y Accesos', 'Gestiona quién puede entrar al panel. Los PINs deben tener entre 6 y 15 dígitos.') + `
+    const { data, error } = await dbClient.from('usuarios_admin').select('id,nombre,rol,created_at');
+    if (error) return encabezado('Usuarios y Accesos', 'No se pudieron cargar los usuarios: ' + esc(error.message));
+    const col = { admin: ['#E1F2B8', '#2f4a00'], creador: ['#DBEAFE', '#1e3a8a'], editor: ['#F3E8FF', '#6b21a8'] };
+    const badge = r => `<span class="badge" style="background:${(col[r] || ['#eee', '#333'])[0]}; color:${(col[r] || ['#eee', '#333'])[1]}">${esc(ROLES[r] || r)}</span>`;
+    const U = [...(data || [])].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
+    return encabezado('Usuarios y Accesos', 'Gestiona quién puede entrar al panel y qué puede hacer. Los PINs deben tener entre 6 y 15 dígitos.') + `
+    <div class="caja">
+      <h2>Perfiles disponibles</h2>
+      <div class="roles-leyenda">
+        <div>${badge('admin')}<br>Administra todo el sistema: eventos, estructura, usuarios y logs.</div>
+        <div>${badge('creador')}<br>Solo crea eventos nuevos.</div>
+        <div>${badge('editor')}<br>Solo edita los eventos existentes.</div>
+      </div>
+    </div>
     <div class="caja">
       <h2>Crear nuevo usuario</h2>
       <div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;">
-        <div class="fr" style="margin:0; flex:1;"><label>Nombre</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
-        <div class="fr" style="margin:0; flex:1;"><label>PIN (6-15 dígitos)</label><input id="n_user_pin" type="password" placeholder="••••••"></div>
-        <div class="fr" style="margin:0; flex:1;"><label>Rol</label><select id="n_user_rol"><option value="editor">Editor</option><option value="admin">Administrador</option></select></div>
-        <button class="btn pri" data-a="addUser">+ Crear Usuario</button>
+        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Nombre</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
+        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>PIN (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" autocomplete="new-password" placeholder="••••••"></div>
+        <div class="fr" style="margin:0; flex:1; min-width:160px;"><label>Perfil</label><select id="n_user_rol"><option value="editor">Editor</option><option value="creador">Creador</option><option value="admin">Administrador</option></select></div>
+        <button class="btn pri" data-a="addUser">+ Crear usuario</button>
       </div>
     </div>
     <div class="tw">
       <table>
-        <thead><tr><th>Nombre</th><th>PIN</th><th>Rol</th><th>Creado</th><th></th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Perfil</th><th>Creado</th><th></th></tr></thead>
         <tbody>
-          ${data.map(u => `<tr>
-            <td>${esc(u.nombre)}</td>
-            <td><code>${'•'.repeat(u.pin.length)}</code></td>
-            <td><span class="badge" style="background:${u.rol === 'admin' ? '#E1F2B8' : '#eff6ff'}; color:${u.rol === 'admin' ? '#2f4a00' : '#1e3a8a'}">${u.rol}</span></td>
-            <td>${new Date(u.created_at).toLocaleDateString('es-CO')}</td>
-            <td><div class="acc"><button class="btn sm pel" data-a="delUser" data-i="${u.id}">Eliminar</button></div></td>
-          </tr>`).join('')}
+          ${U.map(u => `<tr>
+            <td><b>${esc(u.nombre)}</b>${String(u.id) === String(USUARIO_ACTUAL.id) ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}</td>
+            <td>${String(u.id) === String(USUARIO_ACTUAL.id) ? badge(u.rol) : `<select class="rolsel" data-ch="userRol" data-i="${u.id}">${Object.keys(ROLES).map(r => opt(r, ROLES[r], r === u.rol)).join('')}</select>`}</td>
+            <td>${u.created_at ? new Date(u.created_at).toLocaleDateString('es-CO') : '—'}</td>
+            <td><div class="acc"><button class="btn sm" data-a="userPin" data-i="${u.id}">Cambiar PIN</button>${String(u.id) === String(USUARIO_ACTUAL.id) ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${u.id}">Eliminar</button>`}</div></td>
+          </tr>`).join('') || '<tr><td colspan="4" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
         </tbody>
       </table>
     </div>`;
   }
 
-  async function pPublicar() {
-    return encabezado('Publicar y datos', 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio en el administrador, este se envía a Supabase y se refleja al instante en la vista pública.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin">Cambiar clave</button><button class="btn" data-a="salir">Cerrar sesión</button><button class="btn pel" data-a="reset">Volver a datos de ejemplo</button></div></div></div></div>`;
+  /* ===== Logs ===== */
+  let LOGS = [];
+  const LF = { q: '', usr: '', acc: '' };
+  const colorAccion = a => /elimin/i.test(a) ? ['#FDE8E7', '#B3261E'] : /cre[óo]/i.test(a) ? ['#E1F2B8', '#2f4a00'] : /edit|modific|cambi|public|despublic|borrador/i.test(a) ? ['#DBEAFE', '#1e3a8a'] : ['#EEE', '#444'];
+
+  async function pLogs() {
+    const { data, error } = await dbClient.from('logs').select('*').order('created_at', { ascending: false }).limit(500);
+    if (error) return encabezado('Logs del Sistema', 'No se pudieron cargar los logs: ' + esc(error.message));
+    LOGS = data || [];
+    const usrs = [...new Set(LOGS.map(l => l.usuario_nombre))].sort();
+    const accs = [...new Set(LOGS.map(l => l.accion))].sort();
+    return encabezado('Logs del Sistema', 'Registro de los últimos 500 movimientos: quién hizo qué y cuándo.') + `
+    <div class="tools">
+      <input type="search" id="l_q" placeholder="Buscar en el detalle…" value="${esc(LF.q)}">
+      <select id="l_usr"><option value="">Todos los usuarios</option>${usrs.map(u => opt(u, u, u === LF.usr)).join('')}</select>
+      <select id="l_acc"><option value="">Todas las acciones</option>${accs.map(a => opt(a, a, a === LF.acc)).join('')}</select>
+      <button class="btn" data-a="logsRef">↻ Actualizar</button>
+    </div>
+    <p id="logsCuenta" style="margin:0 0 .8rem; font-size:.85rem; color:var(--suave);"></p>
+    <div class="tw" id="logsTabla"></div>`;
   }
+
+  function pintarLogs() {
+    if (!$('#logsTabla')) return;
+    const q = norm(LF.q);
+    const L = LOGS.filter(l => (!LF.usr || l.usuario_nombre === LF.usr) && (!LF.acc || l.accion === LF.acc) && (!q || norm(`${l.detalle || ''} ${l.accion} ${l.usuario_nombre}`).includes(q)));
+    $('#logsCuenta').textContent = `${L.length} de ${LOGS.length} movimientos`;
+    $('#logsTabla').innerHTML = L.length ? `<table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>` + L.map(l => {
+      const c = colorAccion(l.accion);
+      return `<tr>
+        <td style="white-space:nowrap; font-size:.8rem; color:var(--suave);">${new Date(l.created_at).toLocaleString('es-CO')}</td>
+        <td><b>${esc(l.usuario_nombre)}</b></td>
+        <td><span class="badge" style="background:${c[0]}; color:${c[1]}">${esc(l.accion)}</span></td>
+        <td>${esc(l.detalle)}</td></tr>`;
+    }).join('') + '</tbody></table>' : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay movimientos con estos filtros.</div>';
+  }
+
+  async function pPublicar() { return encabezado('Publicar y datos', 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio, este se envía a Supabase y se refleja al instante en la vista pública.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem;">Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin">Cambiar clave</button><button class="btn" data-a="salir">Cerrar sesión</button></div></div></div></div>`; }
+
+  async function recargar() { const n = await leerNube(); if (n) D = n; }
+
+  // Ejecuta una operación en Supabase, la registra en logs y recarga los datos
+  async function ejecutar(fn, ok, accion, detalle) {
+    try {
+      const { error } = await fn();
+      if (error) throw error;
+      registrarLog(accion, detalle);
+      await recargar();
+      toast(ok);
+      return true;
+    } catch (e) { console.error(e); toast('Error: ' + (e.message || e), true); return false; }
+  }
+
+  const PIN_OK = p => /^\d{6,15}$/.test(p);
+
+  async function cambiarPin(id) {
+    const propio = String(id) === String(USUARIO_ACTUAL.id);
+    if (!propio && !puede('admin')) return sinPermiso();
+    const p = prompt(propio ? 'Escribe tu nuevo PIN (6 a 15 dígitos):' : 'Nuevo PIN para este usuario (6 a 15 dígitos):');
+    if (p === null) return;
+    const pin = p.trim();
+    if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
+    const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
+    if ((dup || []).some(x => String(x.id) !== String(id))) return toast('Ese PIN ya está en uso, elige otro', true);
+    const { data: u } = await dbClient.from('usuarios_admin').select('nombre').eq('id', id).maybeSingle();
+    if (await ejecutar(() => dbClient.from('usuarios_admin').update({ pin }).eq('id', id), 'PIN actualizado', 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
+  }
+
+  async function cambiarRol(id, rol) {
+    if (String(id) === String(USUARIO_ACTUAL.id)) { toast('No puedes cambiar tu propio perfil', true); return ir('usuarios', true); }
+    const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol');
+    const u = (data || []).find(x => String(x.id) === String(id));
+    if (!u || u.rol === rol) return;
+    if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) { toast('Debe quedar al menos un administrador', true); return ir('usuarios', true); }
+    await ejecutar(() => dbClient.from('usuarios_admin').update({ rol }).eq('id', id), 'Perfil actualizado', 'Cambió perfil', `${u.nombre}: ${ROLES[u.rol] || u.rol} → ${ROLES[rol] || rol}`);
+    ir('usuarios', true);
+  }
+
+  const masivo = async estado => {
+    const ids = [...SEL]; if (!ids.length) return;
+    const titulos = ids.map(i => (D.eventos.find(e => e.id === i) || {}).titulo).filter(Boolean).join(', ').slice(0, 200);
+    if (await ejecutar(() => dbClient.from('eventos').update({ estado }).in('id', ids), `${ids.length} evento(s) actualizados`, estado === 'publicado' ? 'Publicó eventos' : 'Pasó eventos a borrador', titulos)) { SEL.clear(); pintarTabla(); }
+  };
 
   const ACC = {
     nuevo: () => modalEvento(), editar: i => modalEvento(i), cerrar: cerrarModal, guardarEv: i => guardarEvento(i),
-    dup: i => { const e = D.eventos.find(x => x.id === i); const newEv = { ...e, id: uid(), titulo: e.titulo + ' (copia)', estado: 'borrador' }; D.eventos.push(newEv); pintarTabla(); toast('Duplicado (recuerda guardar en la nube)'); },
     del: i => eliminarEventoAdmin(i),
-    tog: async i => { 
-      const e = D.eventos.find(x => x.id === i); 
-      const nuevoEstado = e.estado === 'borrador' ? 'publicado' : 'borrador';
-      if (DB_READY) {
-        await dbClient.from('eventos').update({ estado: nuevoEstado }).eq('id', i);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        e.estado = nuevoEstado;
-      }
-      toast(nuevoEstado === 'borrador' ? 'Borrador' : 'Publicado');
-      pintarTabla();
+    tog: async i => {
+      const e = D.eventos.find(x => x.id === i); if (!e) return;
+      const nuevo = e.estado === 'borrador' ? 'publicado' : 'borrador';
+      if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? 'Pasó a borrador' : 'Publicado', nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla();
     },
-    m_pub: () => { SEL.forEach(i => { const e = D.eventos.find(x => x.id === i); e.estado = 'publicado'; }); toast('Publicados'); pintarTabla(); },
-    m_bor: () => { SEL.forEach(i => { const e = D.eventos.find(x => x.id === i); e.estado = 'borrador'; }); toast('Borradores'); pintarTabla(); },
-    m_del: () => { if (!confirm(`¿Eliminar ${SEL.size} eventos?`)) return; D.eventos = D.eventos.filter(e => !SEL.has(e.id)); SEL.clear(); toast('Eliminados'); pintarTabla(); },
-    addFac: async () => { 
-      const n = $('#n_fac').value.trim(); if (!n) return toast('Escribe el nombre', true); 
-      const emoji = $('#n_fac_emoji').value.trim();
-      const color = $('#n_fac_color').value;
-      if (DB_READY) {
-        const { error } = await dbClient.from('facultades').insert([{ nombre: n, emoji, color }]);
-        if (error) return toast('Error: ' + error.message, true);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        D.facultades.push({ id: uid(), nombre: n, emoji, color, programas: [] }); 
-      }
-      toast('Facultad agregada'); refrescar(); 
+    m_pub: () => masivo('publicado'), m_bor: () => masivo('borrador'),
+
+    addPer: async () => {
+      const anio = +$('#n_anio').value, sem = $('#n_sem').value, ini = $('#n_ini').value, fin = $('#n_fin').value;
+      if (!anio || !ini || !fin) return toast('Completa año, inicio y fin', true);
+      if (fin < ini) return toast('El fin no puede ser antes del inicio', true);
+      const id = anio + '-' + sem;
+      if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true);
+      if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), 'Semestre creado', 'Creó semestre', nombrePeriodo(id))) refrescar();
     },
-    delFac: async i => { 
-      const n = D.eventos.filter(e => (e.facultad||[]).includes(i)).length; 
-      if (!confirm('¿Eliminar esta facultad?') || !confirm(`Hay ${n} eventos. ¿Seguro?`)) return; 
-      if (DB_READY) {
-        await dbClient.from('facultades').delete().eq('id', i);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        D.facultades = D.facultades.filter(f => f.id !== i); 
-      }
-      toast('Facultad eliminada'); refrescar(); 
+    delPer: async i => {
+      const n = D.eventos.filter(e => e.periodo === i || e.periodo2 === i).length;
+      if (n) return toast(`Hay ${n} eventos en ese semestre`, true);
+      if (!confirm('¿Eliminar este semestre?')) return;
+      if (await ejecutar(() => dbClient.from('periodos').delete().eq('id', i), 'Semestre eliminado', 'Eliminó semestre', nombrePeriodo(i))) refrescar();
     },
-    addProg: async i => { 
-      const f = D.facultades.find(x => x.id === i), n = $('#np_' + i).value.trim(); 
-      if (!n) return toast('Escribe el nombre', true); 
-      if (DB_READY) {
-        await dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        f.programas.push({ id: uid(), nombre: n, nivel: $('#nn_' + i).value });
-      }
-      toast('Programa agregado'); refrescar(); 
+
+    addFac: async () => {
+      const n = $('#n_fac').value.trim(); if (!n) return toast('Escribe el nombre', true);
+      const emoji = $('#n_fac_emoji').value.trim(), color = $('#n_fac_color').value;
+      if (await ejecutar(() => dbClient.from('facultades').insert([{ nombre: n, emoji, color }]), 'Facultad agregada', 'Creó facultad', n)) refrescar();
     },
-    delProg: async (i, j) => { 
-      const n = D.eventos.filter(e => (e.programa||[]).includes(j)).length; 
-      if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return; 
-      if (DB_READY) {
-        await dbClient.from('programas').delete().eq('id', j);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        const f = D.facultades.find(x => x.id === i); f.programas = f.programas.filter(p => p.id !== j); 
-      }
-      toast('Programa quitado'); refrescar(); 
+    delFac: async i => {
+      const f = D.facultades.find(x => x.id === i); const n = D.eventos.filter(e => (e.facultad || []).includes(i)).length;
+      if (!confirm('¿Eliminar esta facultad?') || !confirm(`Hay ${n} eventos. ¿Seguro?`)) return;
+      if (await ejecutar(() => dbClient.from('facultades').delete().eq('id', i), 'Facultad eliminada', 'Eliminó facultad', f ? f.nombre : i)) refrescar();
     },
-    addArea: async () => { 
-      const n = $('#n_area').value.trim(); if (!n) return toast('Escribe el nombre', true); 
-      if (DB_READY) {
-        await dbClient.from('areas').insert([{ nombre: n }]);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        D.areas.push({ id: uid(), nombre: n });
-      }
-      toast('Área agregada'); refrescar(); 
+    addProg: async i => {
+      const f = D.facultades.find(x => x.id === i), n = $('#np_' + i).value.trim(); if (!n) return toast('Escribe el nombre', true);
+      if (await ejecutar(() => dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]), 'Programa agregado', 'Creó programa', `${n} (${f ? f.nombre : ''})`)) refrescar();
     },
-    delArea: async i => { 
-      const n = D.eventos.filter(e => (e.area||[]).includes(i)).length; 
-      if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return; 
-      if (DB_READY) {
-        await dbClient.from('areas').delete().eq('id', i);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        D.areas = D.areas.filter(a => a.id !== i);
-      }
-      toast('Área eliminada'); refrescar(); 
+    delProg: async (i, j) => {
+      const f = D.facultades.find(x => x.id === i), pr = f && f.programas.find(x => x.id === j); const n = D.eventos.filter(e => (e.programa || []).includes(j)).length;
+      if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return;
+      if (await ejecutar(() => dbClient.from('programas').delete().eq('id', j), 'Programa quitado', 'Eliminó programa', pr ? pr.nombre : j)) refrescar();
     },
-    addCat: async () => { 
-      const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true); 
-      if (DB_READY) {
-        await dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]);
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
-      } else {
-        D.categorias.push({ id: uid(), nombre: n, color: $('#n_col').value });
-      }
-      toast('Categoría agregada'); refrescar(); 
+    addArea: async () => {
+      const n = $('#n_area').value.trim(); if (!n) return toast('Escribe el nombre', true);
+      if (await ejecutar(() => dbClient.from('areas').insert([{ nombre: n }]), 'Área agregada', 'Creó área', n)) refrescar();
     },
-    delCat: i => { if (D.eventos.some(e => e.categoria === i)) return toast('Hay eventos en esa categoría', true); if (D.categorias.length === 1) return toast('Debe quedar al menos una', true); D.categorias = D.categorias.filter(c => c.id !== i); toast('Categoría eliminada'); refrescar(); },
+    delArea: async i => {
+      const a = D.areas.find(x => x.id === i); const n = D.eventos.filter(e => (e.area || []).includes(i)).length;
+      if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return;
+      if (await ejecutar(() => dbClient.from('areas').delete().eq('id', i), 'Área eliminada', 'Eliminó área', a ? a.nombre : i)) refrescar();
+    },
+    addCat: async () => {
+      const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true);
+      if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), 'Categoría agregada', 'Creó categoría', n)) refrescar();
+    },
+    delCat: async i => {
+      const c = D.categorias.find(x => x.id === i);
+      if (D.eventos.some(e => e.categoria === i)) return toast('Hay eventos en esa categoría', true);
+      if (D.categorias.length === 1) return toast('Debe quedar al menos una', true);
+      if (!confirm('¿Eliminar esta categoría?')) return;
+      if (await ejecutar(() => dbClient.from('categorias').delete().eq('id', i), 'Categoría eliminada', 'Eliminó categoría', c ? c.nombre : i)) refrescar();
+    },
+
     addUser: async () => {
-      const nombre = $('#n_user_name').value.trim();
-      const pin = $('#n_user_pin').value.trim();
-      const rol = $('#n_user_rol').value;
+      const nombre = $('#n_user_name').value.trim(), pin = $('#n_user_pin').value.trim(), rol = $('#n_user_rol').value;
       if (!nombre || !pin) return toast('Completa todos los campos', true);
-      if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
+      if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
       try {
+        const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
+        if (dup && dup.length) return toast('Ese PIN ya está en uso, elige otro', true);
         await crearUsuario(nombre, pin, rol);
-        toast('Usuario creado');
-        ir('usuarios');
-      } catch (e) {
-        toast('Error al crear usuario: ' + e.message, true);
-      }
+        registrarLog('Creó usuario', `${nombre} (${ROLES[rol] || rol})`);
+        toast('Usuario creado'); ir('usuarios', true);
+      } catch (e) { toast('Error al crear usuario: ' + e.message, true); }
     },
     delUser: async i => {
-      if (!confirm('¿Eliminar este usuario?')) return;
-      await dbClient.from('usuarios_admin').delete().eq('id', i);
-      toast('Usuario eliminado');
-      ir('usuarios');
+      if (String(i) === String(USUARIO_ACTUAL.id)) return toast('No puedes eliminar tu propio usuario', true);
+      const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol');
+      const u = (data || []).find(x => String(x.id) === String(i)); if (!u) return;
+      if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) return toast('Debe quedar al menos un administrador', true);
+      if (!confirm(`¿Eliminar a ${u.nombre}?`)) return;
+      if (await ejecutar(() => dbClient.from('usuarios_admin').delete().eq('id', i), 'Usuario eliminado', 'Eliminó usuario', u.nombre)) ir('usuarios', true);
     },
-    salir: () => { USUARIO_ACTUAL = null; irPublico(); },
-    pin: () => { const p = prompt('Nueva clave (mínimo 4):'); if (p && p.length >= 4) { toast('Usa la pestaña de Usuarios para cambiar PINs'); } },
-    reset: () => { if (!confirm('Se borrarán tus datos. ¿Continuar?')) return; toast('Función no disponible en modo Nube'); }
+    userPin: i => cambiarPin(i),
+    pin: () => cambiarPin(USUARIO_ACTUAL.id),
+    logsRef: () => ir('logs', true),
+    salir: () => cerrarSesion()
   };
+
+  // Acciones que cualquier perfil con sesión puede usar; el resto exige el permiso indicado (por defecto: administrador)
+  const ACC_LIBRES = new Set(['cerrar', 'salir', 'pin', 'guardarEv']);
+  const ACC_PERM = { nuevo: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar' };
+  const permisoAcc = k => ACC_LIBRES.has(k) || puede(ACC_PERM[k] || 'admin');
 
   document.addEventListener('click', e => {
     const n = e.target.closest('.admin-nav .it'); if (n) return ir(n.dataset.p);
     if (e.target.id === 'modal') return cerrarModal();
-    const a = e.target.closest('[data-a]'); if (a && ACC[a.dataset.a]) ACC[a.dataset.a](a.dataset.i, a.dataset.j);
+    const a = e.target.closest('[data-a]');
+    if (a && ACC[a.dataset.a]) { if (!permisoAcc(a.dataset.a)) return sinPermiso(); ACC[a.dataset.a](a.dataset.i, a.dataset.j); }
   });
-  document.addEventListener('change', e => {
+
+  document.addEventListener('change', async e => {
     const t = e.target;
     if (t.id && t.id.startsWith('x_')) { F[t.id.slice(2)] = t.value; return pintarTabla(); }
-    
+    if (t.id && t.id.startsWith('l_')) { LF[t.id.slice(2)] = t.value; return pintarLogs(); }
     const k = t.dataset.ch; if (!k) return;
     const i = t.dataset.i, j = t.dataset.j, v = t.value.trim();
-    if (k === 'todos') { eventosFiltrados().forEach(e => t.checked ? SEL.add(e.id) : SEL.delete(e.id)); return pintarTabla(); }
-    if (k === 'sel') { t.checked ? SEL.add(i) : SEL.delete(i); return pintarTabla(); }
-    if (k === 'perIni') D.periodos.find(p => p.id === i).inicio = t.value;
-    if (k === 'perFin') D.periodos.find(p => p.id === i).fin = t.value;
-    if (k === 'facNom') { if (!v) return refrescar(); D.facultades.find(f => f.id === i).nombre = v; }
-    if (k === 'facEmoji') { D.facultades.find(f => f.id === i).emoji = v; }
-    if (k === 'facColor') { D.facultades.find(f => f.id === i).color = t.value; toast('Color actualizado'); return; }
-    if (k === 'progNom') { if (!v) return refrescar(); D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nombre = v; }
-    if (k === 'progNivel') D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nivel = t.value;
-    if (k === 'areaNom') { if (!v) return refrescar(); D.areas.find(a => a.id === i).nombre = v; }
-    if (k === 'catNom') { if (!v) return refrescar(); D.categorias.find(c => c.id === i).nombre = v; }
-    if (k === 'catCol') D.categorias.find(c => c.id === i).color = t.value;
-    toast('Cambio guardado (recuerda guardar en la nube)');
+    if (k === 'todos') { if (!puede('editar')) return; eventosFiltrados().forEach(e => t.checked ? SEL.add(e.id) : SEL.delete(e.id)); return pintarTabla(); }
+    if (k === 'sel') { if (!puede('editar')) return; t.checked ? SEL.add(i) : SEL.delete(i); return pintarTabla(); }
+    if (!puede('admin')) return sinPermiso();
+    if (k === 'userRol') return cambiarRol(i, t.value);
+    if (['facNom', 'progNom', 'areaNom', 'catNom'].includes(k) && !v) return refrescar();
+    if (['perIni', 'perFin'].includes(k) && !t.value) return refrescar();
+
+    let tabla, campos, texto, quien;
+    if (k === 'perIni') { D.periodos.find(p => p.id === i).inicio = t.value; tabla = 'periodos'; campos = { inicio: t.value }; quien = 'semestre'; texto = `${nombrePeriodo(i)}: inicio ${t.value}`; }
+    else if (k === 'perFin') { D.periodos.find(p => p.id === i).fin = t.value; tabla = 'periodos'; campos = { fin: t.value }; quien = 'semestre'; texto = `${nombrePeriodo(i)}: fin ${t.value}`; }
+    else if (k === 'facNom') { D.facultades.find(f => f.id === i).nombre = v; tabla = 'facultades'; campos = { nombre: v }; quien = 'facultad'; texto = v; }
+    else if (k === 'facEmoji') { D.facultades.find(f => f.id === i).emoji = v; tabla = 'facultades'; campos = { emoji: v }; quien = 'facultad'; texto = `${D.facultades.find(f => f.id === i).nombre}: emoji ${v}`; }
+    else if (k === 'facColor') { D.facultades.find(f => f.id === i).color = t.value; tabla = 'facultades'; campos = { color: t.value }; quien = 'facultad'; texto = `${D.facultades.find(f => f.id === i).nombre}: color ${t.value}`; }
+    else if (k === 'progNom') { D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nombre = v; tabla = 'programas'; campos = { nombre: v }; quien = 'programa'; texto = v; }
+    else if (k === 'progNivel') { D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nivel = t.value; tabla = 'programas'; campos = { nivel: t.value }; quien = 'programa'; texto = `${D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nombre}: ${t.value}`; }
+    else if (k === 'areaNom') { D.areas.find(a => a.id === i).nombre = v; tabla = 'areas'; campos = { nombre: v }; quien = 'área'; texto = v; }
+    else if (k === 'catNom') { D.categorias.find(c => c.id === i).nombre = v; tabla = 'categorias'; campos = { nombre: v }; quien = 'categoría'; texto = v; }
+    else if (k === 'catCol') { D.categorias.find(c => c.id === i).color = t.value; tabla = 'categorias'; campos = { color: t.value }; quien = 'categoría'; texto = `${D.categorias.find(c => c.id === i).nombre}: color ${t.value}`; }
+    if (!tabla) return;
+
+    const id = (k === 'progNom' || k === 'progNivel') ? j : i;
+    const { error } = await dbClient.from(tabla).update(campos).eq('id', id);
+    if (error) { toast('Error al guardar: ' + error.message, true); await recargar(); return refrescar(); }
+    registrarLog('Modificó ' + quien, texto);
+    toast('Cambio guardado');
   });
-  document.addEventListener('input', e => { if (e.target.id === 'x_q') { F.q = e.target.value; pintarTabla(); } });
+
+  document.addEventListener('input', e => {
+    if (e.target.id === 'x_q') { F.q = e.target.value; pintarTabla(); }
+    if (e.target.id === 'l_q') { LF.q = e.target.value; pintarLogs(); }
+  });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
   /* ============================================================
@@ -1415,14 +1454,12 @@
     }
     
     if (!D) {
-      // Si no hay base de datos o falla, usar semilla
-      const arch = await (async () => { try { const r = await fetch('calendario-datos.json', { cache: 'no-store' }); if (r.ok) return await r.json(); } catch(e) {} return null; })();
-      D = arch || { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
+      D = { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
     }
     
     $('#public-panel').style.display = 'block';
     const per = periodoDe(hoy()), anios = aniosDisponibles();
-    S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1];
+    S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
     S.sem = per.startsWith(S.anio + '-') ? +per.split('-')[1] : '';
     if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
     pintarPublico();
@@ -1432,7 +1469,7 @@
   if (dbClient) {
     iniciar();
   } else {
-    $('#loader').innerHTML = `<p style="color:var(--rojo); font-weight:600; text-align:center; padding:2rem;">Faltan las credenciales de Supabase.<br><small style="color:var(--suave); font-weight:normal;">Abre el archivo index.html y reemplaza SUPABASE_URL y SUPABASE_KEY.</small></p>`;
+    $('#loader').innerHTML = `<p style="color:var(--rojo); font-weight:600; text-align:center; padding:2rem;">Faltan las credenciales de Supabase.</p>`;
   }
 </script>
 </body>
