@@ -481,29 +481,43 @@
   }
 
   // --- Funciones de Autenticación (Usuarios) ---
+    // --- Funciones de Autenticación (Usuarios) ---
   async function verificarPin(pin) {
-    if (!supabase) return null;
-    const { data, error } = await supabase.from('usuarios_admin').select('*').eq('pin', pin).single();
-    if (error || !data) return null;
-    return data;
+    if (!dbClient) return null;
+    
+    // Usamos .select() y revisamos si el array tiene datos, sin usar .single() que rompe si falla
+    const { data, error } = await dbClient.from('usuarios_admin').select('*').eq('pin', pin);
+    
+    if (error) {
+      console.error("Error al verificar PIN:", error);
+      toast("Error de conexión con la base de datos. Revisa la consola.", true);
+      return null;
+    }
+    
+    // Si encontró al menos un usuario con ese PIN, lo devolvemos
+    if (data && data.length > 0) {
+      return data[0];
+    }
+    
+    return null;
   }
 
   async function crearUsuario(nombre, pin, rol = 'admin') {
-    if (!supabase) return null;
-    const { data, error } = await supabase.from('usuarios_admin').insert([{ nombre, pin, rol }]).select().single();
+    if (!dbClient) return null;
+    const { data, error } = await dbClient.from('usuarios_admin').insert([{ nombre, pin, rol }]).select().single();
     if (error) throw error;
     return data;
   }
 
   async function verificarSiHayUsuarios() {
-    if (!supabase) return false;
-    const { count, error } = await supabase.from('usuarios_admin').select('*', { count: 'exact', head: true });
-    if (error) return false;
+    if (!dbClient) return false;
+    const { count, error } = await dbClient.from('usuarios_admin').select('*', { count: 'exact', head: true });
+    if (error) {
+      console.error("Error al contar usuarios:", error);
+      return false;
+    }
     return count > 0;
   }
-
-  function toast(m, err) { const t = $('#toast'); t.textContent = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 2400); }
-  function aviso() { /* No aplica en esta versión */ }
 
   /* ============================================================
      LÓGICA PÚBLICA
