@@ -24,31 +24,12 @@
   button { cursor: pointer; transition: var(--transicion); }
   [hidden] { display: none !important; }
 
-  /* ICONOS FLATICON (SVG) y EMOJIS A COLOR */
   .flaticon { width: 1.4em; height: 1.4em; vertical-align: middle; display: inline-block; flex: none; }
   .emoji { font-family: var(--emoji-font); font-weight: normal; font-style: normal; font-size: 1.2em; line-height: 1; }
   
-  /* ===== CONTENEDOR DE LAS CARAS DE TITA ===== */
-  #tita-container {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    pointer-events: none; z-index: 0; overflow: hidden;
-  }
-  .tita-img {
-    position: absolute;
-    width: 80px; /* Tamaño solicitado */
-    opacity: 0.6;
-    mix-blend-mode: multiply;
-    animation: respirar 3s infinite alternate ease-in-out;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
-  }
-
-  /* Animación de gesticulación / respiración */
-  @keyframes respirar {
-    0% { transform: scale(0.9) rotate(-5deg); }
-    100% { transform: scale(1.1) rotate(5deg); }
-  }
-
-  /* Ocultar Titas en el panel de administración */
+  #tita-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; overflow: hidden; }
+  .tita-img { position: absolute; width: 80px; opacity: 0.6; mix-blend-mode: multiply; animation: respirar 3s infinite alternate ease-in-out; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15)); }
+  @keyframes respirar { 0% { transform: scale(0.9) rotate(-5deg); } 100% { transform: scale(1.1) rotate(5deg); } }
   body.en-admin #tita-container { display: none; }
 
   #loader { position: fixed; inset: 0; background: var(--fondo); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; transition: opacity 0.5s; }
@@ -60,7 +41,7 @@
   #error-box h2 { color: var(--rojo); font-family: var(--display); }
   #error-box p { color: var(--suave); max-width: 500px; font-family: monospace; background: #fff; padding: 1rem; border-radius: 8px; border: 1px solid var(--linea); text-align: left; white-space: pre-wrap; }
 
-  .top { background: var(--petroleo); color: #fff; display: flex; align-items: center; gap: 1.2rem; padding: 0.8rem clamp(1rem, 4vw, 3rem); position: sticky; top: 0; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .top { background: linear-gradient(90deg, var(--petroleo), #00524b 60%, #00635d); color: #fff; display: flex; align-items: center; gap: 1.2rem; padding: 0.8rem clamp(1rem, 4vw, 3rem); position: sticky; top: 0; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .brand { display: flex; align-items: center; gap: 0.8rem; }
   .logo-img { height: 34px; width: auto; object-fit: contain; background: #fff; padding: 4px 8px; border-radius: 6px; flex: none; transition: var(--transicion); }
   .brand:hover .logo-img { transform: scale(1.05); }
@@ -74,22 +55,25 @@
   .admin-link { color: var(--claro); font-size: 0.85rem; text-decoration: none; border: 1px solid rgba(197,232,108,0.4); padding: 0.45rem 0.9rem; border-radius: 999px; white-space: nowrap; transition: var(--transicion); background: transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
   .admin-link:hover { background: rgba(197,232,108,0.15); transform: translateY(-1px); }
 
-  /* ===== FONDO VERDE CON DECORACIÓN DE HOJAS Y TÍTULO GRANATE ===== */
-  .hero { 
-    background-color: var(--lima); 
-    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M20 80 Q40 80 50 60 Q60 40 40 20 Q20 40 20 80 Z" fill="rgba(255,255,255,0.15)"/><path d="M80 30 Q60 30 50 50 Q40 70 60 90 Q80 70 80 30 Z" fill="rgba(255,255,255,0.15)"/></svg>');
-    background-size: 150px 150px;
-    position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem; 
-    display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; z-index: 10; 
+  /* ===== FONDO VERDE LIMA SIN HOJAS ===== */
+  .hero {
+    background-color: var(--lima);
+    background-image: none;
+    position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem;
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; z-index: 10;
   }
   .hero-izq { position: relative; z-index: 2; }
   
   .hero-izq .titulo-oficina {
-    font-family: 'Montserrat', 'Figtree', 'Segoe UI', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800;
-    color: #007a78; text-transform: uppercase; letter-spacing: 2px;
-    margin-bottom: 1rem; padding-bottom: .55rem; display: block; line-height: 1.1; position: relative;
+    display: inline-flex; align-items: center; gap: .75rem;
+    font-size: clamp(.95rem, 2.1vw, 1.45rem); letter-spacing: .16em;
+    color: var(--petroleo); padding: .5rem 1.3rem .5rem .5rem; margin-bottom: 1.2rem;
+    background: rgba(255,255,255,0.62); border: 1px solid rgba(255,255,255,0.9); border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(0,59,54,0.16);
   }
-  .hero-izq .titulo-oficina::after { content: ''; position: absolute; left: 0; bottom: 0; width: 72px; height: 4px; border-radius: 4px; background: var(--lima); }
+  .titulo-oficina .to-ic { width: 2.5rem; height: 2.5rem; display: grid; place-items: center; flex: none; border-radius: 50%; background: #fff; border: 1px solid rgba(0,122,120,0.25); box-shadow: 0 4px 10px rgba(0,59,54,0.18); overflow: hidden; animation: flotar 3.2s ease-in-out infinite; }
+  .titulo-oficina .to-ic img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
+  .titulo-oficina .txt { background: linear-gradient(90deg, var(--petroleo), var(--verde)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-family: 'Montserrat', 'Figtree', sans-serif; font-weight: 800; }
 
   .hero-izq .hoy { font-size: 0.9rem; font-weight: 600; color: var(--petroleo); opacity: 0.85; margin-bottom: 0.5rem; }
   .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.05; color: var(--petroleo); max-width: 14ch; }
@@ -117,43 +101,44 @@
   .btn { border: 1px solid var(--linea); background: #fff; color: var(--tinta); padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); display: inline-flex; align-items: center; gap: 0.35rem; justify-content: center; text-decoration: none;}
   .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-  /* ===== TARJETAS DE CATEGORÍAS ===== */
-  .modulos { padding: 1.6rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; position: relative; z-index: 10; }
-  .mod { 
-    position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); 
-    background: #fff; color: var(--tinta); border-radius: 14px; padding: 1.1rem 1.2rem; 
-    min-height: 100px; display: flex; flex-direction: column; justify-content: space-between; 
-    transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-  .mod::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c, var(--lima)); transition: var(--transicion); }
-  .mod::after { content: ""; position: absolute; right: -26px; bottom: -26px; width: 80px; height: 80px; border: 4px solid var(--c, var(--lima)); border-radius: 50%; opacity: 0.1; transition: var(--transicion); }
-  .mod:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: var(--c, var(--verde)); }
-  .mod:hover::after { transform: scale(1.4); opacity: 0.2; }
-  
-  .mod .ic { margin-bottom: 0.6rem; display: inline-block; color: var(--c, var(--verde)); font-size: 1.6rem; }
-  .mod b { font-weight: 700; font-size: 1.02rem; line-height: 1.2; z-index: 1; color: var(--tinta); margin-bottom: 0.3rem; display: block; }
-  .mod .n { font-size: 0.78rem; font-weight: 700; z-index: 1; color: var(--suave); background: var(--fondo); padding: 0.2rem 0.6rem; border-radius: 99px; display: inline-block; align-self: flex-start; border: 1px solid var(--linea); }
-  
-  .mod.on { border-color: var(--c, var(--lima)); box-shadow: 0 8px 25px color-mix(in srgb, var(--c, var(--lima)) 30%, transparent); transform: scale(1.02); background: color-mix(in srgb, var(--c, var(--lima)) 8%, white); }
+  /* ===== NOVEDADES ===== */
+  .novedades { padding: 1rem clamp(1rem, 4vw, 3rem) 0.4rem; position: relative; z-index: 10; }
+  .novedades-head { display: flex; align-items: center; gap: .6rem; margin-bottom: .6rem; }
+  .novedades-head h2 { font-family: var(--display); font-size: 1.3rem; color: var(--petroleo); }
+  .novedades-head .badge-nov { background: var(--rojo); color: #fff; font-size: .7rem; font-weight: 700; padding: .1rem .5rem; border-radius: 999px; }
+  .nov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .7rem; }
+  .nov-card { background: #fff; border: 1px solid var(--linea); border-left: 4px solid var(--c, var(--verde)); border-radius: 10px; padding: .7rem .9rem; box-shadow: 0 2px 6px rgba(0,0,0,.03); }
+  .nov-card .nov-top { display: flex; justify-content: space-between; gap: .5rem; font-size: .72rem; color: var(--suave); font-weight: 700; margin-bottom: .25rem; }
+  .nov-card .nov-tag { background: color-mix(in srgb, var(--c, var(--verde)) 15%, white); color: var(--c, var(--verde)); padding: .05rem .45rem; border-radius: 999px; }
+  .nov-card h3 { font-size: .95rem; color: var(--tinta); margin-bottom: .2rem; }
+  .nov-card p { font-size: .82rem; color: var(--suave); }
+  .nov-card .nov-meta { margin-top: .35rem; font-size: .75rem; color: var(--petroleo); font-weight: 600; display: flex; gap: .6rem; flex-wrap: wrap; }
+  .nov-empty { color: var(--suave); font-size: .88rem; padding: .5rem 0; }
+
+  .modulos { padding: 1rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.8rem; position: relative; z-index: 10; }
+  .mod { position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); background: #fff; color: var(--tinta); border-radius: 10px; padding: 0.7rem 0.9rem; min-height: 70px; display: flex; flex-direction: row; align-items: center; gap: 0.8rem; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+  .mod::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c, var(--lima)); transition: var(--transicion); }
+  .mod:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: var(--c, var(--verde)); }
+  .mod .ic { flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: color-mix(in srgb, var(--c) 12%, white); color: var(--c); }
+  .mod .ic .flaticon { width: 1.2rem; height: 1.2rem; }
+  .mod .txt { display: flex; flex-direction: column; gap: 0.1rem; z-index: 1; }
+  .mod b { font-weight: 700; font-size: 0.88rem; line-height: 1.1; color: var(--tinta); display: block; }
+  .mod .n { font-size: 0.7rem; font-weight: 600; color: var(--suave); display: block; }
+  .mod.on { border-color: var(--c, var(--lima)); box-shadow: 0 6px 20px color-mix(in srgb, var(--c, var(--lima)) 30%, transparent); background: color-mix(in srgb, var(--c, var(--lima)) 6%, white); }
   .mod.on b { color: var(--petroleo); }
-  .mod.on .n { background: var(--c, var(--lima)); color: #fff; border-color: transparent; }
-  
-  .mod.cero { opacity: 1; filter: none; }
-  .mod.cero .n { background: #eee; color: #777; }
-  
+  .mod.on .n { color: var(--petroleo); opacity: 0.8; }
+  .mod.cero { opacity: 0.8; }
+  .mod.cero .n { color: #999; }
   .mod.todos { background: var(--petroleo); color: #fff; border: none; }
   .mod.todos::before { background: var(--lima); }
-  .mod.todos::after { border-color: var(--lima); opacity: 0.2; }
+  .mod.todos .ic { background: rgba(255,255,255,0.15); color: var(--lima); }
   .mod.todos b { color: #fff; }
-  .mod.todos .n { background: rgba(255,255,255,0.15); color: #fff; border-color: transparent; }
+  .mod.todos .n { color: rgba(255,255,255,0.7); }
   .mod.todos.on { background: var(--verde); box-shadow: 0 8px 25px rgba(0,122,120,0.4); }
-  .mod.todos.on b { color: #fff; }
-  .mod.todos.on .n { background: #fff; color: var(--verde); }
-  .mod.todos .ic { color: var(--lima); }
+  .mod.todos.on .ic { background: #fff; color: var(--verde); }
 
   main { flex: 1; padding: 1rem clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; width: 100%; margin: 0 auto; position: relative; z-index: 10; }
 
-  /* ===== Calendario y lista en paralelo ===== */
   .panelwrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; align-items: start; }
   .panel { min-width: 0; }
   .panel.pl { position: sticky; top: 130px; max-height: calc(100vh - 150px); display: flex; flex-direction: column; background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 1rem 1rem 0.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
@@ -163,19 +148,19 @@
   .panel.pl .lista-eventos { overflow-y: auto; padding-right: 0.4rem; flex: 1; min-height: 0; }
   .panel.pl .mes-t { font-size: 1.1rem; margin: 1rem 0 0.4rem; color: var(--petroleo); }
 
-  .cal { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid var(--linea); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); animation: slideUp 0.4s ease-out; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid var(--linea); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.03); animation: slideUp 0.4s ease-out; position: relative; }
+  .cal::before { content: ""; position: absolute; inset: 0; background-image: var(--mes-img); background-repeat: no-repeat; background-position: center center; background-size: 42% auto; opacity: 0.12; pointer-events: none; z-index: 0; }
+  .cal > * { position: relative; z-index: 1; }
   .cal .dh { background: var(--petroleo); color: #fff; font-size: 0.78rem; font-weight: 600; padding: 0.5rem; text-align: center; }
   .cal .dia { min-height: 96px; border-top: 1px solid var(--linea); border-left: 1px solid var(--linea); padding: 0.3rem; font-size: 0.75rem; overflow: hidden; transition: background 0.2s; color: var(--tinta); }
   .cal .dia:hover { background: #f8fbf9; }
   .cal .dia:nth-child(7n+8) { border-left: 0; }
   .cal .dia.fuera { background: #F7F9F8; color: #A3B2AE; }
-  .cal .dia.hoy .n { background: var(--lima); color: var(--petroleo); }
+  .cal .dia.hoy .n { background: var(--lima); color: var(--petroleo); min-width: 30px; height: 30px; line-height: 30px; font-size: 0.95rem; box-shadow: 0 0 0 3px color-mix(in srgb, var(--lima) 45%, transparent); }
   .cal .dia.festivo { background: var(--rojo-fondo); }
   .cal .dia.festivo .n { color: var(--rojo); font-weight: 800; }
   .cal .n { display: inline-block; min-width: 22px; text-align: center; border-radius: 999px; font-weight: 700; margin-bottom: 0.2rem; color: var(--tinta); }
   .cal .dia.fuera .n { color: #A3B2AE; }
-  .cal .dia.hoy .n { color: var(--petroleo); }
-  .cal .dia.festivo .n { color: var(--rojo); }
 
   .pill { --c-fac: #007A78; --c-cat: #007A78; display: block; width: 100%; text-align: left; border: 0; background: color-mix(in srgb, var(--c-fac) 12%, white); border-left: 3px solid var(--c-fac); border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transicion); cursor: pointer; position: relative; color: var(--tinta); }
   .pill::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c-cat); opacity: 0.8; }
@@ -188,15 +173,7 @@
   .lista-eventos { animation: slideUp 0.5s ease-out; }
   .mes-t { font-family: var(--display); font-size: 1.5rem; margin: 1.6rem 0 0.6rem; color: var(--petroleo); border-bottom: 2px solid var(--lima); display: inline-block; padding-bottom: 0.2rem; }
   
-  /* ===== TARJETA DE EVENTO ===== */
-  .ev { 
-    --c-fac: #007A78; --c-cat: #007A78; 
-    display: grid; grid-template-columns: 86px 1fr auto; gap: 1rem; align-items: stretch; 
-    border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); 
-    border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; 
-    cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; 
-    animation: scaleIn 0.3s ease-out; background: #fff; 
-  }
+  .ev { --c-fac: #007A78; --c-cat: #007A78; display: grid; grid-template-columns: 86px 1fr auto; gap: 1rem; align-items: stretch; border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; animation: scaleIn 0.3s ease-out; background: #fff; }
   .ev:hover { box-shadow: 0 8px 20px rgba(0,59,54,0.1); transform: translateY(-2px); }
   .ev.pasado { opacity: 0.65; }
   
@@ -217,6 +194,8 @@
   .info-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--c-fac); }
   .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: #e0f2fe; padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid #bae6fd; font-weight: 700; color: #0369a1; text-decoration: none; transition: var(--transicion);}
   .link-pill:hover { background: #bae6fd; color: #075985; }
+  .link-pill.ms { background: #e8eafd; border-color: #c7ccf9; color: #4b53bc; }
+  .link-pill.ms:hover { background: #c7ccf9; color: #2f3579; }
 
   .estado-block { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
   .estado { font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 999px; white-space: nowrap; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--linea); color: var(--tinta); display: flex; align-items: center; gap: 0.3rem;}
@@ -229,20 +208,11 @@
   .ev.festivo .cat-pill { background: #fff; color: var(--rojo); border-color: #f3b8b4; }
   .ev.festivo .cat-pill::before { background: var(--rojo); }
 
-  @keyframes breathe-mix {
-    0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 6%, white); border-left-color: var(--c-fac); }
-    50% { background-color: color-mix(in srgb, var(--c-cat) 10%, white); border-left-color: var(--c-cat); }
-  }
+  @keyframes breathe-mix { 0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 6%, white); border-left-color: var(--c-fac); } 50% { background-color: color-mix(in srgb, var(--c-cat) 10%, white); border-left-color: var(--c-cat); } }
   .ev.destacado { animation: breathe-mix 4s ease-in-out infinite; }
-  @keyframes breathe-mix-pill {
-    0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 12%, white); border-left-color: var(--c-fac); }
-    50% { background-color: color-mix(in srgb, var(--c-cat) 25%, white); border-left-color: var(--c-cat); }
-  }
+  @keyframes breathe-mix-pill { 0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 12%, white); border-left-color: var(--c-fac); } 50% { background-color: color-mix(in srgb, var(--c-cat) 25%, white); border-left-color: var(--c-cat); } }
   .pill.destacado { animation: breathe-mix-pill 4s ease-in-out infinite; }
-  @keyframes pulse-next {
-    0%, 100% { opacity: 1; box-shadow: none; }
-    50% { opacity: 0.85; box-shadow: inset 0 0 10px color-mix(in srgb, var(--claro) 30%, transparent); }
-  }
+  @keyframes pulse-next { 0%, 100% { opacity: 1; box-shadow: none; } 50% { opacity: 0.85; box-shadow: inset 0 0 10px color-mix(in srgb, var(--claro) 30%, transparent); } }
   .px.destacado { animation: pulse-next 3s infinite; }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -262,7 +232,6 @@
   #btnTop.show { opacity: 1; pointer-events: auto; }
   #btnTop:hover { background: var(--petroleo); transform: translateY(-3px); }
 
-  /* Admin */
   #admin-panel { display: none; }
   #admin-panel.on { display: block; }
   
@@ -276,7 +245,7 @@
   .gate-card input:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
 
   #admin-app { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
-  .admin-nav { background: var(--petroleo); color: #fff; padding: 1.3rem 1rem; display: flex; flex-direction: column; gap: .3rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; z-index: 100;}
+  .admin-nav { background: linear-gradient(180deg, var(--petroleo), #002e2a); color: #fff; padding: 1.3rem 1rem; display: flex; flex-direction: column; gap: .3rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; z-index: 100;}
   .admin-nav .brand { display: flex; gap: .7rem; align-items: center; margin-bottom: 1.2rem; padding: 0 .4rem; }
   .admin-nav .brand .logo-img { height: 32px; width: auto; padding: 3px 6px; border-radius: 6px; flex: none; }
   .admin-nav .brand b { font-family: var(--display); line-height: 1.1; display: block; color: #fff; }
@@ -421,17 +390,39 @@
   .dt-link-btns { display: flex; flex-wrap: wrap; gap: .5rem; }
   .dt-desc { padding: .9rem 1rem; background: var(--fondo); border-radius: 10px; font-size: .93rem; line-height: 1.5; }
   .dt-acc { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.4rem; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes flotar { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  .hero-izq, .proximos { animation: fadeUp .7s ease both; }
+  .proximos { animation-delay: .12s; }
+  .prog { margin-top: 1.2rem; max-width: 460px; background: rgba(255,255,255,0.72); border: 1px solid rgba(255,255,255,0.95); border-radius: 14px; padding: .85rem 1.05rem; box-shadow: 0 8px 20px rgba(0,59,54,0.12); }
+  .prog-top { display: flex; justify-content: space-between; gap: .6rem; font-size: .85rem; color: var(--petroleo); }
+  .prog-top span { font-weight: 700; color: var(--verde); }
+  .prog-bar { height: 10px; border-radius: 99px; background: rgba(0,59,54,0.12); margin: .55rem 0 .4rem; overflow: hidden; }
+  .prog-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--verde), var(--petroleo)); transition: width .9s ease; }
+  .prog-foot { font-size: .78rem; color: var(--petroleo); opacity: .85; }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .85rem; }
+  .hero-chips span { background: var(--petroleo); color: #fff; border-radius: 999px; padding: .32rem .85rem; font-size: .78rem; box-shadow: 0 4px 10px rgba(0,59,54,0.2); }
+  .hero-chips b { color: var(--claro); font-size: .98rem; margin-right: .25rem; }
+  .panel { box-shadow: 0 6px 22px rgba(0,59,54,0.06); }
+  .chk-lista { display: flex; flex-direction: column; gap: .6rem; max-height: 340px; overflow: auto; padding: .6rem; border: 1px solid var(--linea); border-radius: 12px; background: #fff; }
+  .chk-grp { flex: none; border: 1px solid var(--linea); border-radius: 10px; }
+  .chk-grp > .chk-tit { display: block; margin: 0; padding: .45rem .8rem; background: var(--fondo); border-radius: 10px 10px 0 0; border-bottom: 1px solid var(--linea); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--petroleo); font-weight: 800; }
+  .chk-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: .3rem .5rem; padding: .5rem; }
+  .chk-lista label { display: flex; align-items: center; gap: .5rem; min-height: 2.2rem; padding: .35rem .6rem; border: 1px solid transparent; border-radius: 8px; font-size: .85rem; line-height: 1.2; font-weight: 400; cursor: pointer; margin: 0; }
+  .chk-lista label:hover { background: var(--fondo); }
+  .chk-lista label:has(input:checked) { background: color-mix(in srgb, var(--lima) 22%, white); border-color: var(--lima); }
+  .chk-lista label.chk-todos { grid-column: 1 / -1; border: 1px dashed var(--verde); color: var(--petroleo); }
+  .chk-lista input[type=checkbox] { width: 1rem; height: 1rem; flex: none; accent-color: var(--verde); }
 </style>
 </head>
 <body>
 
-<!-- CONTENEDOR DE LAS CARAS DE TITA (Generadas por JS) -->
 <div id="tita-container"></div>
 
 <div id="loader"><div class="spinner"></div><p style="color:var(--suave); font-weight:600;">Cargando calendario...</p></div>
 <div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
 
-<!-- VISTA PÚBLICA -->
 <div id="public-panel" style="position:relative; z-index:10;">
   <header class="top">
     <div class="brand">
@@ -442,16 +433,18 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="🔍 Buscar: matrícula, grados, nómina…">
     </div>
-    <button class="admin-link" onclick="irAdmin()">
-      🔐 Administrar
-    </button>
+    <button class="admin-link" onclick="irAdmin()">🔐 Administrar</button>
   </header>
 
   <section class="hero">
     <div class="hero-izq">
-      <div class="titulo-oficina">Registro y Control Académico</div>
+      <div class="titulo-oficina">
+        <span class="to-ic"><img src="Logo_RyC1.png" alt="Logo R&C"></span>
+        <span class="txt">Registro y Control Académico</span>
+      </div>
       <p class="hoy" id="hoyTxt"></p>
       <h1 id="heroTit">Calendario académico</h1>
+      <div id="heroProg"></div>
       <p class="sub" id="heroSub">Fechas de matrículas, clases, grados, posgrados y más, organizadas por semestre, facultad y área.</p>
     </div>
     <div class="proximos">
@@ -472,10 +465,19 @@
     <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
     <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
     <div class="der">
+      <button class="btn" onclick="irHoy()">📍 Hoy</button>
       <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
       <button class="btn" onclick="print()">🖨️ Imprimir</button>
     </div>
   </div>
+
+  <section class="novedades" id="novedades">
+    <div class="novedades-head">
+      <h2>📣 Novedades de clases</h2>
+      <span class="badge-nov" id="novCount">0</span>
+    </div>
+    <div class="nov-grid" id="novGrid"></div>
+  </section>
 
   <div class="modulos" id="modulos"></div>
 
@@ -503,7 +505,6 @@
   <aside class="cajon" id="cajon" aria-live="polite"></aside>
 </div>
 
-<!-- VISTA ADMIN -->
 <div id="admin-panel">
   <div id="gate">
     <form class="gate-card" id="gateForm">
@@ -511,34 +512,25 @@
       <h1 id="gateTitle">Administrar calendario</h1>
       <p id="gateDesc">Ingresa tu PIN de 6 a 15 dígitos.</p>
       
-      <!-- Login normal -->
       <div id="gateLoginFields">
         <input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="••••••" autofocus>
-        <button class="btn pri" style="width:100%">
-          🔓 Entrar
-        </button>
+        <button class="btn pri" style="width:100%">🔓 Entrar</button>
         <p id="pinAyuda" style="margin:1rem 0 0;font-size:.78rem">Si es tu primera vez, crea un PIN de administrador.</p>
-        <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">
-          ✨ Crear PIN de Administrador
-        </button>
+        <button type="button" id="btnCrearAdmin" class="btn" style="width:100%; margin-top:0.5rem; display:none;" onclick="crearAdminInicial()">✨ Crear PIN de Administrador</button>
         <button type="button" class="btn" style="width:100%; margin-top:0.5rem;" onclick="mostrarOlvido()">🔑 Olvidé mi PIN</button>
       </div>
 
-      <!-- Olvidé mi PIN: el usuario se restablece solo -->
       <div id="gateOlvidoFields" hidden>
         <input id="olvido_correo" type="email" autocomplete="email" placeholder="Tu correo registrado" style="margin-bottom:0.5rem;">
         <button type="button" id="btnOlvido" class="btn pri" style="width:100%" onclick="olvideMiPin()">📧 Enviarme un PIN temporal</button>
         <button type="button" class="btn" style="width:100%; margin-top:0.5rem;" onclick="volverLogin()">← Volver</button>
       </div>
 
-      <!-- Formulario de cambio obligatorio (cuando entra con PIN temporal) -->
       <div id="gateNewPassFields" hidden>
         <div id="resetActualWrap" hidden><input id="reset_pin_actual" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN temporal que te llegó al correo" style="margin-bottom:0.5rem;"></div>
         <input id="new_pin" type="password" inputmode="numeric" placeholder="Nuevo PIN (6-15 dígitos)" style="margin-bottom:0.5rem;">
         <input id="new_pin_confirm" type="password" inputmode="numeric" placeholder="Confirma el PIN" style="margin-bottom:1rem;">
-        <button type="button" class="btn pri" style="width:100%" onclick="guardarNuevaPassForzada()">
-          💾 Guardar mi nuevo PIN
-        </button>
+        <button type="button" class="btn pri" style="width:100%" onclick="guardarNuevaPassForzada()">💾 Guardar mi nuevo PIN</button>
       </div>
     </form>
   </div>
@@ -555,6 +547,7 @@
       </div>
       <button class="it" data-p="resumen">📊 Resumen</button>
       <button class="it" data-p="eventos">📅 Eventos</button>
+      <button class="it" data-p="novedades">📣 Novedades</button>
       <div class="sep admin-only">Estructura</div>
       <button class="it admin-only" data-p="periodos">🗓️ Semestres</button>
       <button class="it admin-only" data-p="facultades">🏛️ Facultades y programas</button>
@@ -583,13 +576,8 @@
   <div id="toast"></div>
 </div>
 
-<!-- SDK SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-  /* ============================================================
-     CONFIGURACIÓN DE SUPABASE
-     ============================================================ */
   const SUPABASE_URL = 'https://zsgavixppceijbpevgoc.supabase.co'; 
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzZ2F2aXhwcGNlaWpicGV2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTU4NjEsImV4cCI6MjEwOTgzMTg2MX0.YKJAQVRwtm1qofYtQYku2BhO0V_2A5gbaAPniA8aIM8'; 
 
@@ -597,6 +585,7 @@
   let D = null;
   let DB_READY = false;
   let USUARIO_ACTUAL = null;
+  let NOVEDADES = [];
 
   try {
     if (!window.supabase) throw new Error("El SDK de Supabase no se cargó.");
@@ -609,9 +598,6 @@
     document.getElementById('loader').classList.add('hidden');
   }
 
-  /* ============================================================
-     LÓGICA GLOBAL
-     ============================================================ */
   const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
   const DIAS_C = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -642,7 +628,6 @@
   const periodoDe = s => { const d = parse(s); return `${d.getFullYear()}-${d.getMonth() < 6 ? 1 : 2}`; };
   const periodoAuto = (D, fecha) => { const p = D.periodos.find(p => p.inicio <= fecha && fecha <= p.fin); return p ? p.id : periodoDe(fecha); };
   const nombrePeriodo = id => { if(!id) return ''; const [a, s] = id.split('-'); return `${a} · Semestre ${s}`; };
-  // Un semestre suspendido (activo === false) oculta sus eventos en la vista pública
   const periodoActivo = id => { const p = ((typeof D !== 'undefined' && D && D.periodos) || []).find(x => x.id === id); return !p || p.activo !== false; };
   const eventoVisiblePublico = e => periodoActivo(e.periodo) || (!!e.periodo2 && periodoActivo(e.periodo2));
   const catDe = (D, id) => D.categorias.find(c => c.id === id) || { id, nombre: id, color: '#6b7280' };
@@ -652,77 +637,47 @@
   const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
   /* ============================================================
-     GENERADOR DE CARAS DE TITA DINÁMICAS
+     TITA
      ============================================================ */
   function generarTitas() {
     const cont = document.getElementById('tita-container');
-    const numTitas = 15; // Cantidad de caritas
+    const numTitas = 15;
     for (let i = 0; i < numTitas; i++) {
       const img = document.createElement('img');
-      img.src = 'cara_tita.png'; // Nombre de tu imagen
+      img.src = 'cara_tita.png';
       img.className = 'tita-img';
-      
-      // Tamaño aleatorio entre 60px y 100px
       const size = Math.floor(Math.random() * 40) + 60;
       img.style.width = size + 'px';
-      
-      // Posición inicial aleatoria
       img.style.left = Math.random() * 90 + 'vw';
       img.style.top = Math.random() * 90 + 'vh';
-      
-      // Retraso aleatorio para que no respiren todas al mismo tiempo
       img.style.animationDelay = (Math.random() * 2) + 's';
-      
       cont.appendChild(img);
-      
-      // Animación de rebote
       animarTita(img);
     }
   }
-
   function animarTita(el) {
     let x = parseFloat(el.style.left) * window.innerWidth / 100;
     let y = parseFloat(el.style.top) * window.innerHeight / 100;
-    
-    // Velocidad aleatoria entre 1 y 3
     let vx = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1.5 + 1);
     let vy = (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 1.5 + 1);
-
     function mover() {
-      // Si el panel de admin está abierto, no mover
-      if (document.body.classList.contains('en-admin')) {
-        requestAnimationFrame(mover);
-        return;
-      }
-
-      x += vx;
-      y += vy;
-
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      if (document.body.classList.contains('en-admin')) { requestAnimationFrame(mover); return; }
+      x += vx; y += vy;
+      const w = window.innerWidth, h = window.innerHeight;
       const rect = el.getBoundingClientRect();
-      
-      // Rebote en los bordes
       if (x <= 0 || x + rect.width >= w) vx *= -1;
       if (y <= 0 || y + rect.height >= h) vy *= -1;
-
-      // Mantener dentro de los límites si cambia el tamaño de la ventana
       x = Math.max(0, Math.min(x, w - rect.width));
       y = Math.max(0, Math.min(y, h - rect.height));
-
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-
+      el.style.left = x + 'px'; el.style.top = y + 'px';
       requestAnimationFrame(mover);
     }
     requestAnimationFrame(mover);
   }
-
-  // Iniciar generación
   generarTitas();
 
   /* ============================================================
-     BIBLIOTECA DE ICONOS FLATICON (SVG INLINE)
+     ICONOS
      ============================================================ */
   const FLATICONS = {
     calendario: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
@@ -743,7 +698,6 @@
     llave: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>',
     link: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
     reloj: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-    
     ciencias: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"/><path d="M14 9.3V2"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.58 16.5h12.85"/></svg>',
     enfermeria: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>',
     economia: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
@@ -769,13 +723,10 @@
   };
   const getIconoFac = nombre => {
     const n = norm(nombre);
-    for (const key in MAPA_ICONOS) {
-      if (n.includes(key)) return FLATICONS[MAPA_ICONOS[key]];
-    }
+    for (const key in MAPA_ICONOS) { if (n.includes(key)) return FLATICONS[MAPA_ICONOS[key]]; }
     return FLATICONS.birrete;
   };
 
-  // --- Emojis por defecto (se usan si la facultad/área no tiene uno propio) ---
   const EMOJI_FAC = [['medicina','🩺'],['odontolog','🦷'],['enfermer','💉'],['psicolog','🧠'],['ingenier','⚙️'],['juridic','⚖️'],['derecho','⚖️'],['politic','🏛️'],['economic','📈'],['administrativ','📊'],['creaci','🎨'],['comunicaci','🎬'],['bioetic','🧬'],['human','📚'],['educaci','🎓'],['salud','🏥'],['ciencias','🔬']];
   const EMOJI_POOL = ['🧪','🌱','🔭','📐','🧭','🎭','🌍','💡','🏫','🧩','🎯','🛠️'];
   const EMOJI_AREA = [['tesorer','💰'],['financ','💰'],['contab','🧾'],['cartera','💳'],['admision','📝'],['matricul','📝'],['registro','🗂️'],['bienestar','💛'],['biblioteca','📖'],['talento','🤝'],['humano','🤝'],['sistema','💻'],['tecnolog','💻'],['egresad','🎖️'],['investig','🔬'],['internacional','🌎'],['comunicac','📣'],['mercadeo','📣'],['jurid','⚖️'],['calidad','✅'],['planeaci','🧭'],['academ','🎓'],['admin','🏢']];
@@ -796,7 +747,6 @@
     return 'editor';
   };
 
-  // --- Funciones de Nube (Supabase) ---
   const porNombre = (a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { sensitivity: 'base' });
   async function leerNube() {
     if (!dbClient) return null;
@@ -806,6 +756,8 @@
       const { data: areas } = await dbClient.from('areas').select('*');
       const { data: pers } = await dbClient.from('periodos').select('*');
       const { data: evs } = await dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`);
+      const { data: novs } = await dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(30);
+      NOVEDADES = novs || [];
 
       return {
         institucion: 'Universidad El Bosque',
@@ -829,7 +781,6 @@
     } catch (e) { console.error("Error al leer de Supabase:", e); return null; }
   }
 
-  // --- Logs ---
   async function registrarLog(accion, detalle) {
     if (!dbClient || !USUARIO_ACTUAL) return;
     try {
@@ -838,31 +789,26 @@
     } catch (e) { console.error('Error guardando log:', e); }
   }
 
-  // --- Autenticación y Usuarios ---
   async function verificarPin(pin) {
     if (!dbClient) return null;
     const { data, error } = await dbClient.from('usuarios_admin').select('*').eq('pin', pin);
     if (error) { toast("Error de conexión al verificar PIN", true); return null; }
     return (data && data.length > 0) ? data[0] : null;
   }
-  
   async function crearUsuario(payload) {
     if (!dbClient) return null;
     const { data, error } = await dbClient.from('usuarios_admin').insert([payload]).select().single();
     if (error) throw error;
     return data;
   }
-
   async function verificarSiHayUsuarios() {
     if (!dbClient) return false;
     const { count, error } = await dbClient.from('usuarios_admin').select('*', { count: 'exact', head: true });
     if (error) return false;
     return count > 0;
   }
-
   function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
-
-  /* ============================================================
+    /* ============================================================
      LÓGICA PÚBLICA
      ============================================================ */
   const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date() };
@@ -897,27 +843,16 @@
     const add = (m, d, n) => festivos.push({ fecha: `${anio}-${pad(m)}-${pad(d)}`, nombre: n, esFestivo: true });
     add(1, 1, 'Año Nuevo'); add(5, 1, 'Día del Trabajo'); add(7, 20, 'Día de la Independencia');
     add(8, 7, 'Batalla de Boyacá'); add(12, 8, 'Inmaculada Concepción'); add(12, 25, 'Navidad');
-    const emiliani = (m, d, n) => {
-      let date = new Date(anio, m - 1, d);
-      if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7));
-      add(date.getMonth() + 1, date.getDate(), n);
-    };
+    const emiliani = (m, d, n) => { let date = new Date(anio, m - 1, d); if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7)); add(date.getMonth() + 1, date.getDate(), n); };
     emiliani(1, 6, 'Reyes Magos'); emiliani(3, 19, 'San José'); emiliani(6, 29, 'San Pedro y San Pablo');
     emiliani(8, 15, 'Asunción de la Virgen'); emiliani(10, 12, 'Día de la Raza');
     emiliani(11, 1, 'Todos los Santos'); emiliani(11, 11, 'Independencia de Cartagena');
-    const getPascua = (y) => {
-      const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1;
-      return new Date(y, month - 1, day);
-    };
+    const getPascua = (y) => { const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1; return new Date(y, month - 1, day); };
     const pascua = getPascua(anio);
     const restarDias = (date, n) => { const d = new Date(date); d.setDate(d.getDate() - n); return d; };
     const jv = restarDias(pascua, 3); add(jv.getMonth() + 1, jv.getDate(), 'Jueves Santo');
     const vv = restarDias(pascua, 2); add(vv.getMonth() + 1, vv.getDate(), 'Viernes Santo');
-    const addEmiliani = (dateObj, n) => {
-      let date = new Date(dateObj);
-      if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7));
-      add(date.getMonth() + 1, date.getDate(), n);
-    };
+    const addEmiliani = (dateObj, n) => { let date = new Date(dateObj); if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7)); add(date.getMonth() + 1, date.getDate(), n); };
     addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 43), 'Ascensión del Señor');
     addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 64), 'Corpus Christi');
     addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 71), 'Sagrado Corazón');
@@ -942,18 +877,10 @@
       const p1 = e.periodo && e.periodo.startsWith(S.anio + '-');
       const p2 = e.periodo2 ? e.periodo2.startsWith(S.anio + '-') : false;
       if (!p1 && !p2) return false;
-      if (!sinPeriodo && S.sem) {
-        const s1 = e.periodo && e.periodo.endsWith('-' + S.sem);
-        const s2 = e.periodo2 ? e.periodo2.endsWith('-' + S.sem) : false;
-        if (!s1 && !s2) return false;
-      }
+      if (!sinPeriodo && S.sem) { const s1 = e.periodo && e.periodo.endsWith('-' + S.sem); const s2 = e.periodo2 ? e.periodo2.endsWith('-' + S.sem) : false; if (!s1 && !s2) return false; }
       if (!sinCat && S.cat && e.categoria !== S.cat) return false;
       const facs = e.facultad || [], areas = e.area || [], progs = e.programa || [];
-      if (S.grupo) {
-        const [t, id] = S.grupo.split(':');
-        const coincide = t === 'f' ? facs.includes(id) && (!S.prog || !progs.length || progs.includes(S.prog)) : areas.includes(id);
-        if (!coincide && !(S.inst && esInstitucional(e))) return false;
-      }
+      if (S.grupo) { const [t, id] = S.grupo.split(':'); const coincide = t === 'f' ? facs.includes(id) && (!S.prog || !progs.length || progs.includes(S.prog)) : areas.includes(id); if (!coincide && !(S.inst && esInstitucional(e))) return false; }
       if (q && !norm(`${e.titulo} ${e.descripcion} ${ambito(D, e)} ${catDe(D, e.categoria).nombre}`).includes(q)) return false;
       return true;
     }).sort((a, b) => a.inicio.localeCompare(b.inicio) || a.titulo.localeCompare(b.titulo));
@@ -982,7 +909,6 @@
     document.title = 'Calendario Académico · ' + D.institucion;
     const h = new Date();
     $('#hoyTxt').textContent = `Hoy, ${DIAS_C[h.getDay()]} ${h.getDate()} de ${MESES[h.getMonth()].toLowerCase()} de ${h.getFullYear()}`;
-    const bgA = $('#bgAnio'); if (bgA) bgA.textContent = S.anio;
     $('#heroTit').textContent = S.sem ? `${S.anio} · Semestre ${S.sem}` : `Año académico ${S.anio}`;
     $('#fAnio').innerHTML = aniosDisponibles().map(a => `<option ${a === S.anio ? 'selected' : ''}>${a}</option>`).join('');
     $$('#fSem button').forEach(b => b.classList.toggle('on', b.dataset.v === String(S.sem)));
@@ -995,6 +921,30 @@
     $('#fInst').parentElement.style.display = S.grupo ? '' : 'none';
   }
   
+  function pintarProgreso() {
+    const el = $('#heroProg'); if (!el) return;
+    const h = hoy();
+    const activos = D.periodos.filter(x => x.activo !== false);
+    const act = activos.find(x => x.inicio <= h && h <= x.fin);
+    let tarjeta = '';
+    if (act) {
+      const total = diffDias(act.inicio, act.fin) + 1, trans = diffDias(act.inicio, h) + 1;
+      const pct = Math.max(0, Math.min(100, Math.round(trans / total * 100)));
+      const sem = Math.ceil(trans / 7), semTot = Math.ceil(total / 7), faltan = diffDias(h, act.fin);
+      tarjeta = `<div class="prog"><div class="prog-top"><b>${nombrePeriodo(act.id)}</b><span>Semana ${sem} de ${semTot}</span></div><div class="prog-bar"><i style="width:${pct}%"></i></div><div class="prog-foot">${pct}% del semestre · ${faltan === 0 ? 'termina hoy' : `faltan ${faltan} día${faltan === 1 ? '' : 's'} para terminar`}</div></div>`;
+    } else {
+      const sig = activos.filter(x => x.inicio > h).sort((a, b) => a.inicio.localeCompare(b.inicio))[0];
+      if (sig) { const d = diffDias(h, sig.inicio); tarjeta = `<div class="prog"><div class="prog-top"><b>${nombrePeriodo(sig.id)}</b><span>Próximo semestre</span></div><div class="prog-foot" style="margin-top:.4rem">Inicia en ${d} día${d === 1 ? '' : 's'}</div></div>`; }
+    }
+    const savedCat = S.cat; S.cat = '';
+    const L = filtrar({ sinPeriodo: true }); S.cat = savedCat;
+    const enCurso = L.filter(e => e.inicio <= h && h <= finDe(e)).length;
+    const prox7 = L.filter(e => e.inicio > h && diffDias(h, e.inicio) <= 7).length;
+    el.innerHTML = tarjeta + `<div class="hero-chips"><span><b>${enCurso}</b>en curso hoy</span><span><b>${prox7}</b>en los próximos 7 días</span><span><b>${L.length}</b>fechas publicadas</span></div>`;
+  }
+
+  function irHoy() { const h = new Date(); S.anio = h.getFullYear(); S.ref = h; S.q = ''; const q = $('#q'); if (q) q.value = ''; pintarPublico(); irMes(); }
+
   function pintarProximos() {
     const h = hoy();
     const ya = +h.slice(0, 4);
@@ -1013,19 +963,61 @@
   function pintarModulos() {
     const base = filtrar({ sinCat: true }); let i = 0;
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
-    const card = (id, col, ic, nom, n, cls) => `
-      <button class="mod ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}">
-        <span class="ic">${ic}</span>
-        <b>${esc(nom)}</b>
-        <span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span>
-      </button>`;
-      
+    const card = (id, col, ic, nom, n, cls) => `<button class="mod ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>`;
     $('#modulos').innerHTML = card('', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
-      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { 
-        const n = base.filter(e => e.categoria === c.id).length; 
-        return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); 
-      }).join('');
+      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
   }
+
+  /* Novedades públicas */
+  const NOV_COLOR = { cambio_salon: '#007A78', cancelacion: '#B3261E', modalidad: '#8A5A00', otro: '#5B6F6B' };
+  const NOV_TAG = { cambio_salon: 'Cambio de salón', cancelacion: 'Cancelación', modalidad: 'Cambio de modalidad', otro: 'Aviso' };
+  function pintarNovedades() {
+    const cont = $('#novGrid'); if (!cont) return;
+    const hoyIso = hoy();
+    const lista = NOVEDADES.filter(n => n.fecha >= hoyIso).slice(0, 8);
+    $('#novCount').textContent = lista.length;
+    cont.innerHTML = lista.length
+      ? lista.map(n => {
+          const c = NOV_COLOR[n.tipo] || NOV_COLOR.otro;
+          const d = parse(n.fecha);
+          const hora = n.hora_inicio ? `${String(n.hora_inicio).slice(0,5)}${n.hora_fin ? '–' + String(n.hora_fin).slice(0,5) : ''}` : '';
+          return `<article class="nov-card" style="--c:${c}"><div class="nov-top"><span class="nov-tag">${NOV_TAG[n.tipo] || 'Aviso'}</span><span>${d.getDate()} ${MESES_C[d.getMonth()]}</span></div><h3>${esc(n.titulo)}</h3>${n.detalle ? `<p>${esc(n.detalle)}</p>` : ''}<div class="nov-meta">${n.materia ? `<span>📚 ${esc(n.materia)}</span>` : ''}${n.salon ? `<span>📍 ${esc(n.salon)}</span>` : ''}${hora ? `<span>🕒 ${hora}</span>` : ''}${n.modalidad ? `<span>💻 ${esc(n.modalidad)}</span>` : ''}</div></article>`;
+        }).join('')
+      : '<p class="nov-empty">No hay novedades vigentes.</p>';
+  }
+
+  /* Enlaces: normalización + Outlook/Teams */
+  function normalizarEnlace(u) { u = String(u || '').trim(); if (!u) return ''; if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(u)) u = 'https://' + u.replace(/^\/+/, ''); try { const x = new URL(u); return /^https?:$/.test(x.protocol) && x.hostname.includes('.') ? x.href : ''; } catch (_) { return ''; } }
+  function enlaceOutlook(e) {
+    const dd = s => s.replace(/-/g, '');
+    let start, end;
+    if (e.horaInicio) {
+      start = `${dd(e.inicio)}T${e.horaInicio.replace(':', '')}00`;
+      end = `${dd(finDe(e))}T${(e.horaFin || e.horaInicio).replace(':', '')}00`;
+    } else {
+      start = `${dd(e.inicio)}T080000`;
+      end = `${dd(sumaDias(finDe(e), 1))}T080000`;
+    }
+    const q = new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: e.titulo || '', startdt: start, enddt: end, body: [e.descripcion, ambito(D, e)].filter(Boolean).join(' · '), location: [e.lugar, e.lugarEsp, e.piso].filter(Boolean).join(' - ') });
+    return 'https://outlook.office.com/calendar/0/deeplink/compose?' + q.toString();
+  }
+  const PLATAFORMAS = [
+    [/teams\.(microsoft|live)\.com/i, 'Microsoft Teams', '#5B5FC7'],
+    [/meet\.google\.com/i, 'Google Meet', '#00897B'],
+    [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF'],
+    [/webex\.com/i, 'Webex', '#00A0D1'],
+    [/youtube\.com|youtu\.be/i, 'YouTube', '#D32F2F']
+  ];
+  function infoEnlace(raw) {
+    const url = normalizarEnlace(raw); if (!url) return null;
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    const p = PLATAFORMAS.find(x => x[0].test(host));
+    return { url, nombre: p ? p[1] : 'Página web · ' + host, color: p ? p[2] : '#007A78' };
+  }
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-copy]'); if (!b) return;
+    (navigator.clipboard ? navigator.clipboard.writeText(b.dataset.copy) : Promise.reject()).then(() => toast('Enlace copiado'), () => toast('No se pudo copiar el enlace', true));
+  });
 
   function filaEvento(e, mostrarAmbito = true) {
     const st = estadoDe(e);
@@ -1033,60 +1025,33 @@
     const c = e.esFestivo ? { nombre: 'Festivo Nacional' } : catDe(D, e.categoria);
     const d = parse(e.inicio);
     const inminente = esInminente(e);
-    
     const ambitoHtml = mostrarAmbito && !e.esFestivo ? `<span class="info-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span>` : '';
-    
     const lugarTxt = e.lugar ? (e.lugarEsp ? `${e.lugarEsp}` : e.lugar) : '';
     const pisoTxt = e.piso ? ` - ${e.piso}` : '';
     const lugarHtml = lugarTxt ? `<span class="info-pill">${FLATICONS.pin} ${esc(lugarTxt + pisoTxt)}</span>` : '';
-
     let horaHtml = '';
-    if (e.horaInicio) {
-      horaHtml = `<span class="info-pill">${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</span>`;
-    }
-
+    if (e.horaInicio) horaHtml = `<span class="info-pill">${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</span>`;
     const linkHtml = normalizarEnlace(e.enlace) ? `<a href="${esc(normalizarEnlace(e.enlace))}" target="_blank" rel="noopener" class="link-pill" onclick="event.stopPropagation()">${FLATICONS.link} Unirse</a>` : '';
-    
+    const msHtml = !e.esFestivo ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" onclick="event.stopPropagation()">📅 Teams</a>` : '';
     const dirigidoA = e.publico && e.publico.length ? e.publico[0] : 'Comunidad universitaria';
     const infoExtraHtml = `<span class="info-pill">${em(emojiPub(dirigidoA))} ${esc(dirigidoA)}${e.publico && e.publico.length > 1 ? ` +${e.publico.length - 1}` : ''}</span> <span class="info-pill">${FLATICONS.calendario} ${nombrePeriodo(e.periodo)}</span>`;
 
     return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
-      
-      <div class="fecha-block">
-        <b>${d.getDate()}</b>
-        <span class="mes">${MESES_C[d.getMonth()]}</span>
-        <span class="dia-sem">${diaSem(e)}</span>
-      </div>
-
-      <div class="ev-content">
-        <div class="ev-top">
-          <h3>${esc(e.titulo)}</h3>
-          <span class="cat-pill">${esc(c.nombre)}</span>
-        </div>
-        <div class="ev-bottom">
-          ${horaHtml}
-          ${ambitoHtml}
-          ${lugarHtml}
-          ${infoExtraHtml}
-          ${linkHtml}
-        </div>
-      </div>
-
-      <div class="estado-block">
-        <span class="estado ${st.c}">${st.t}</span>
-      </div>
-
+      <div class="fecha-block"><b>${d.getDate()}</b><span class="mes">${MESES_C[d.getMonth()]}</span><span class="dia-sem">${diaSem(e)}</span></div>
+      <div class="ev-content"><div class="ev-top"><h3>${esc(e.titulo)}</h3><span class="cat-pill">${esc(c.nombre)}</span></div><div class="ev-bottom">${horaHtml}${ambitoHtml}${lugarHtml}${infoExtraHtml}${linkHtml}${msHtml}</div></div>
+      <div class="estado-block"><span class="estado ${st.c}">${st.t}</span></div>
     </article>`;
   }
 
   function vistaCalendario(L) {
     const y = S.ref.getFullYear(), m = S.ref.getMonth();
+    const imgMes = `${MESES_C[m]}.png`;
     const primero = new Date(y, m, 1), offset = (primero.getDay() + 6) % 7;
     const inicio = new Date(y, m, 1 - offset);
     const finMes = new Date(y, m + 1, 0);
     const iniIso = iso(inicio), finIso = iso(finMes);
     const Lvis = L.filter(e => e.inicio <= finIso && finDe(e) >= iniIso);
-    let h = `<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.8rem; flex-wrap:wrap;"><h2 style="font-family:var(--display); font-size:1.5rem; flex:1; color:var(--petroleo);">${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}">`;
+    let h = `<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.8rem; flex-wrap:wrap;"><h2 style="font-family:var(--display); font-size:1.5rem; flex:1; color:var(--petroleo);">${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}" style="--mes-img:url('${imgMes}')">`;
     ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(n => h += `<div class="dh">${n}</div>`);
     const h0 = hoy();
     for (let i = 0; i < 42; i++) {
@@ -1111,17 +1076,13 @@
 
   function vistaLista(L) {
     let out = '', mes = '';
-    L.forEach(e => { 
-      const d = parse(e.inicio), k = `${d.getFullYear()}-${d.getMonth()}`; 
-      if (k !== mes) { mes = k; out += `<h2 class="mes-t rev" id="m-${d.getFullYear()}-${d.getMonth()}">${MESES[d.getMonth()]} ${d.getFullYear()}</h2>`; } 
-      out += filaEvento(e); 
-    });
+    L.forEach(e => { const d = parse(e.inicio), k = `${d.getFullYear()}-${d.getMonth()}`; if (k !== mes) { mes = k; out += `<h2 class="mes-t rev" id="m-${d.getFullYear()}-${d.getMonth()}">${MESES[d.getMonth()]} ${d.getFullYear()}</h2>`; } out += filaEvento(e); });
     return out || `<div style="text-align:center; padding:3rem 1rem; color:var(--suave);"><b style="display:block; font-family:var(--display); font-size:1.3rem; color:var(--tinta); margin-bottom:0.3rem;">No encontramos fechas</b>Prueba con otro semestre, facultad o categoría.</div>`;
   }
 
   function pintarPublico() {
     if (!D) return;
-    pintarEncabezado(); pintarProximos(); pintarModulos();
+    pintarEncabezado(); pintarProximos(); pintarProgreso(); pintarModulos(); pintarNovedades();
     const L = filtrar(); let fest = [];
     if (S.festivos && !S.cat) {
       const m0 = S.sem == 2 ? 6 : 0;
@@ -1138,30 +1099,6 @@
     $('#actual').textContent = D.actualizado ? 'Actualizado: ' + new Date(D.actualizado).toLocaleDateString('es-CO') : '';
     S.dir = ''; revelar();
   }
-
-  // --- Enlaces: se normalizan (https://) y se detecta la plataforma ---
-  function normalizarEnlace(u) {
-    u = String(u || '').trim(); if (!u) return '';
-    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(u)) u = 'https://' + u.replace(/^\/+/, '');
-    try { const x = new URL(u); return /^https?:$/.test(x.protocol) && x.hostname.includes('.') ? x.href : ''; } catch (_) { return ''; }
-  }
-  const PLATAFORMAS = [
-    [/teams\.(microsoft|live)\.com/i, 'Microsoft Teams', '#5B5FC7'],
-    [/meet\.google\.com/i, 'Google Meet', '#00897B'],
-    [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF'],
-    [/webex\.com/i, 'Webex', '#00A0D1'],
-    [/youtube\.com|youtu\.be/i, 'YouTube', '#D32F2F']
-  ];
-  function infoEnlace(raw) {
-    const url = normalizarEnlace(raw); if (!url) return null;
-    const host = new URL(url).hostname.replace(/^www\./, '');
-    const p = PLATAFORMAS.find(x => x[0].test(host));
-    return { url, nombre: p ? p[1] : 'Página web · ' + host, color: p ? p[2] : '#007A78' };
-  }
-  document.addEventListener('click', ev => {
-    const b = ev.target.closest('[data-copy]'); if (!b) return;
-    (navigator.clipboard ? navigator.clipboard.writeText(b.dataset.copy) : Promise.reject()).then(() => toast('Enlace copiado'), () => toast('No se pudo copiar el enlace', true));
-  });
 
   function abrirDetalle(id) {
     if (String(id).startsWith('festivo-')) {
@@ -1195,10 +1132,7 @@
         <h2>${esc(e.titulo)}</h2>
         <p class="dt-sub">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</p>
       </div>
-      <div class="dt-fechas" style="--fc:${facColor}">
-        ${tile(d0)}${multi ? `<div class="dt-arrow">→</div>${tile(d1)}` : ''}
-        <div class="dt-meta"><b>${multi ? nDias + ' días' : 'Un solo día'}</b><span>${FLATICONS.reloj} ${hora || 'Todo el día'}</span></div>
-      </div>
+      <div class="dt-fechas" style="--fc:${facColor}">${tile(d0)}${multi ? `<div class="dt-arrow">→</div>${tile(d1)}` : ''}<div class="dt-meta"><b>${multi ? nDias + ' días' : 'Un solo día'}</b><span>${FLATICONS.reloj} ${hora || 'Todo el día'}</span></div></div>
       ${sec(FLATICONS.personas, 'Dirigido a', e.publico && e.publico.length ? `<div class="dt-chips">${e.publico.map(x => `<span class="dt-chip">${em(emojiPub(x))}${esc(x)}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.birrete, 'Facultades', facs.length ? `<div class="dt-chips">${facs.map(f => `<span class="dt-chip">${em(emojiFac(f))}${esc(f.nombre)}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.libro, 'Programas', progs.length ? `<div class="dt-chips">${chips(progs, FLATICONS.libro)}</div>` : '')}
@@ -1209,6 +1143,7 @@
       ${sec(FLATICONS.documento, 'Detalles', e.descripcion ? `<div class="dt-desc">${esc(e.descripcion).replace(/\n/g, '<br>')}</div>` : '')}
       <div class="dt-acc">
         <a class="btn" href="${gc}" target="_blank" rel="noopener">${FLATICONS.calendario} Google Calendar</a>
+        <a class="btn" href="${enlaceOutlook(e)}" target="_blank" rel="noopener" style="border-color:#4b53bc;color:#4b53bc;">📅 Microsoft / Teams</a>
         <button class="btn" data-ics="${e.id}">${FLATICONS.documento} Descargar (.ics)</button>
       </div>`;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
@@ -1216,8 +1151,7 @@
   
   function abrirDia(s) {
     const anio = +s.slice(0, 4);
-    const L = D.eventos.filter(e => e.estado !== 'borrador' && eventoVisiblePublico(e) && e.inicio <= s && s <= finDe(e) &&
-      (e.periodo.startsWith(anio + '-') || (e.periodo2 && e.periodo2.startsWith(anio + '-'))));
+    const L = D.eventos.filter(e => e.estado !== 'borrador' && eventoVisiblePublico(e) && e.inicio <= s && s <= finDe(e) && (e.periodo.startsWith(anio + '-') || (e.periodo2 && e.periodo2.startsWith(anio + '-'))));
     const fDelDia = festivosDia(s);
     const todos = [...fDelDia, ...L];
     $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem; color:var(--petroleo);">${FLATICONS.calendario} ${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
@@ -1235,21 +1169,13 @@
     evs.forEach(e => {
       let dtStart = `DTSTART;VALUE=DATE:${e.inicio.replace(/-/g, '')}`;
       let dtEnd = `DTEND;VALUE=DATE:${sumaDias(finDe(e), 1).replace(/-/g, '')}`;
-      
       if (e.horaInicio) {
         const hIni = e.horaInicio.replace(':', '') + '00';
         const hFin = e.horaFin ? e.horaFin.replace(':', '') + '00' : hIni;
         dtStart = `DTSTART:${e.inicio.replace(/-/g, '')}T${hIni}`;
         dtEnd = `DTEND:${finDe(e).replace(/-/g, '')}T${hFin}`;
       }
-
-      L.push('BEGIN:VEVENT', `UID:${e.id || uid()}@calendario`, `DTSTAMP:${stamp}`, dtStart, dtEnd, 
-        `SUMMARY:${t(e.titulo)}`, 
-        `DESCRIPTION:${t((e.descripcion ? e.descripcion + ' · ' : '') + ambito(D, e))}`, 
-        ...(e.lugar ? [`LOCATION:${t(e.lugar)}`] : []), 
-        ...(e.enlace ? [`URL:${t(e.enlace)}`] : []),
-        'END:VEVENT'
-      );
+      L.push('BEGIN:VEVENT', `UID:${e.id || uid()}@calendario`, `DTSTAMP:${stamp}`, dtStart, dtEnd, `SUMMARY:${t(e.titulo)}`, `DESCRIPTION:${t((e.descripcion ? e.descripcion + ' · ' : '') + ambito(D, e))}`, ...(e.lugar ? [`LOCATION:${t(e.lugar)}`] : []), ...(e.enlace ? [`URL:${t(e.enlace)}`] : []), 'END:VEVENT');
     });
     L.push('END:VCALENDAR');
     const a = document.createElement('a');
@@ -1281,16 +1207,11 @@
   $('#btnTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   /* ============================================================
-     LÓGICA ADMINISTRADOR
+     ADMIN
      ============================================================ */
   let P = 'resumen';
-
   const ROLES = { admin: 'Administrador', creador: 'Creador', editor: 'Editor' };
-  const DESC_ROL = {
-    admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.',
-    creador: 'Tu perfil permite crear eventos nuevos.',
-    editor: 'Tu perfil permite editar los eventos existentes.'
-  };
+  const DESC_ROL = { admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.', creador: 'Tu perfil permite crear eventos nuevos.', editor: 'Tu perfil permite editar los eventos existentes.' };
   const PERM = { admin: ['crear', 'editar', 'eliminar', 'admin'], creador: ['crear'], editor: ['editar'] };
   const puede = a => !!USUARIO_ACTUAL && ((USUARIO_ACTUAL.permisos || []).includes(a) || USUARIO_ACTUAL.rol === 'admin');
   const sinPermiso = () => toast('Tu perfil no tiene permiso para esta acción', true);
@@ -1300,7 +1221,6 @@
   const verFac = f => esAdminAct() || misAreas().includes('f:' + f.id) || f.programas.some(p => misAreas().includes('p:' + p.id));
   const verProg = (f, p) => esAdminAct() || misAreas().includes('f:' + f.id) || misAreas().includes('p:' + p.id);
   const verArea = a => esAdminAct() || misAreas().includes('a:' + a.id);
-  // Un evento es gestionable si todas sus facultades/áreas están entre las asignadas al usuario
   const puedeEnEvento = e => {
     if (esAdminAct()) return true;
     const M = misAreas(), facs = e.facultad || [], progs = e.programa || [], areas = e.area || [];
@@ -1315,40 +1235,24 @@
   const SEL = new Set();
 
   function irAdmin() {
-    if (!DB_READY) {
-      document.getElementById('error-msg').textContent = "No hay conexión con la base de datos.";
-      document.getElementById('error-box').hidden = false;
-      return;
-    }
-    document.body.classList.add('en-admin'); // Oculta a Tita
+    if (!DB_READY) { document.getElementById('error-msg').textContent = "No hay conexión con la base de datos."; document.getElementById('error-box').hidden = false; return; }
+    document.body.classList.add('en-admin');
     $('#public-panel').style.display = 'none';
     $('#admin-panel').classList.add('on');
-    
-    if (USUARIO_ACTUAL) {
-      mostrarAppAdmin();
-    } else {
+    if (USUARIO_ACTUAL) { mostrarAppAdmin(); } else {
       $('#gate').style.display = 'grid';
       $('#admin-app').hidden = true;
-      
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('reset') && urlParams.has('u')) {
         $('#gateTitle').textContent = "Crea tu nueva contraseña";
         $('#gateDesc').textContent = "Escribe el PIN temporal que te llegó al correo y elige tu propio PIN (6 a 15 dígitos).";
-        $('#gateLoginFields').hidden = true;
-        $('#gateNewPassFields').hidden = false;
-        $('#resetActualWrap').hidden = false;
-        window._reset_verificado = false;
-        window._reset_user_id = urlParams.get('u');
+        $('#gateLoginFields').hidden = true; $('#gateNewPassFields').hidden = false; $('#resetActualWrap').hidden = false;
+        window._reset_verificado = false; window._reset_user_id = urlParams.get('u');
       } else {
         $('#gateTitle').textContent = "Administrar calendario";
         $('#gateDesc').textContent = "Ingresa tu PIN de 6 a 15 dígitos.";
-        $('#gateLoginFields').hidden = false;
-        $('#gateNewPassFields').hidden = true;
-        $('#gateOlvidoFields').hidden = true;
-        verificarSiHayUsuarios().then(hay => {
-          $('#btnCrearAdmin').style.display = hay ? 'none' : 'block';
-          $('#pinAyuda').textContent = hay ? 'Ingresa tu PIN de administrador.' : 'No hay usuarios. Crea el PIN de administrador.';
-        });
+        $('#gateLoginFields').hidden = false; $('#gateNewPassFields').hidden = true; $('#gateOlvidoFields').hidden = true;
+        verificarSiHayUsuarios().then(hay => { $('#btnCrearAdmin').style.display = hay ? 'none' : 'block'; $('#pinAyuda').textContent = hay ? 'Ingresa tu PIN de administrador.' : 'No hay usuarios. Crea el PIN de administrador.'; });
       }
     }
   }
@@ -1357,20 +1261,13 @@
     $('#gate').style.display = 'none';
     $('#admin-app').hidden = false;
     $('#userNameDisplay').textContent = USUARIO_ACTUAL.nombre;
-    
     let rolTxt = USUARIO_ACTUAL.rol === 'admin' ? '👑 Administrador' : '';
-    if (USUARIO_ACTUAL.rol !== 'admin') {
-      const p = USUARIO_ACTUAL.permisos || [];
-      rolTxt = p.map(x => ({ crear: 'Creador', editar: 'Editor', eliminar: 'Eliminador' }[x] || '')).filter(Boolean).join(' + ') || 'Lector';
-    }
+    if (USUARIO_ACTUAL.rol !== 'admin') { const p = USUARIO_ACTUAL.permisos || []; rolTxt = p.map(x => ({ crear: 'Creador', editar: 'Editor', eliminar: 'Eliminador' }[x] || '')).filter(Boolean).join(' + ') || 'Lector'; }
     $('#userRoleDisplay').innerHTML = rolTxt;
     $('#saludoNombre').textContent = USUARIO_ACTUAL.nombre;
     $('#saludoRol').innerHTML = rolTxt;
-    
     const esAdmin = USUARIO_ACTUAL.rol === 'admin';
-    $$('.admin-only').forEach(el => {
-      el.style.display = esAdmin ? (el.classList.contains('sep') ? 'block' : 'flex') : 'none';
-    });
+    $$('.admin-only').forEach(el => { el.style.display = esAdmin ? (el.classList.contains('sep') ? 'block' : 'flex') : 'none'; });
     ir('resumen');
   }
 
@@ -1382,36 +1279,16 @@
     $('#admin-app').hidden = true;
     $('#admin-panel').classList.remove('on');
     $('#public-panel').style.display = 'block';
-    document.body.classList.remove('en-admin'); // Muestra a Tita
-    
-    if (window.location.search.includes('reset')) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    document.body.classList.remove('en-admin');
+    if (window.location.search.includes('reset')) window.history.replaceState({}, document.title, window.location.pathname);
     pintarPublico(); scrollTo(0, 0);
   }
 
-  function irPublico(e) {
-    if(e) e.preventDefault();
-    $('#admin-panel').classList.remove('on');
-    $('#public-panel').style.display = 'block';
-    document.body.classList.remove('en-admin'); // Muestra a Tita
-    pintarPublico();
-  }
+  function irPublico(e) { if(e) e.preventDefault(); $('#admin-panel').classList.remove('on'); $('#public-panel').style.display = 'block'; document.body.classList.remove('en-admin'); pintarPublico(); }
 
-  function mostrarOlvido() {
-    $('#gateLoginFields').hidden = true; $('#gateOlvidoFields').hidden = false;
-    $('#gateTitle').textContent = 'Recuperar mi PIN';
-    $('#gateDesc').textContent = 'Escribe tu correo registrado y te enviamos un PIN temporal. Con él entras y creas uno nuevo.';
-    $('#olvido_correo').focus();
-  }
-  function volverLogin() {
-    $('#gateOlvidoFields').hidden = true; $('#gateLoginFields').hidden = false;
-    $('#gateTitle').textContent = 'Administrar calendario';
-    $('#gateDesc').textContent = 'Ingresa tu PIN de 6 a 15 dígitos.';
-  }
-  async function registrarLogAnon(accion, detalle) {
-    try { await dbClient.from('logs').insert([{ usuario_nombre: 'Sistema', accion, detalle }]); } catch (_) {}
-  }
+  function mostrarOlvido() { $('#gateLoginFields').hidden = true; $('#gateOlvidoFields').hidden = false; $('#gateTitle').textContent = 'Recuperar mi PIN'; $('#gateDesc').textContent = 'Escribe tu correo registrado y te enviamos un PIN temporal. Con él entras y creas uno nuevo.'; $('#olvido_correo').focus(); }
+  function volverLogin() { $('#gateOlvidoFields').hidden = true; $('#gateLoginFields').hidden = false; $('#gateTitle').textContent = 'Administrar calendario'; $('#gateDesc').textContent = 'Ingresa tu PIN de 6 a 15 dígitos.'; }
+  async function registrarLogAnon(accion, detalle) { try { await dbClient.from('logs').insert([{ usuario_nombre: 'Sistema', accion, detalle }]); } catch (_) {} }
   async function olvideMiPin() {
     const correo = $('#olvido_correo').value.trim();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Escribe un correo válido', true);
@@ -1420,19 +1297,11 @@
       if (!emailjsListo()) throw new Error('EmailJS sin configurar');
       const { data: us } = await dbClient.from('usuarios_admin').select('id,nombre,correo').ilike('correo', correo.replace(/[%_]/g, '\\$&'));
       const u = (us || []).find(x => String(x.correo).toLowerCase() === correo.toLowerCase());
-      if (u) {
-        const r = await enviarPinPorCorreo(u);
-        if (!r.ok && !r.espera) throw new Error(r.error);
-        if (r.ok) registrarLogAnon('Restableció PIN', `${u.nombre} (autogestión)`);
-      }
+      if (u) { const r = await enviarPinPorCorreo(u); if (!r.ok && !r.espera) throw new Error(r.error); if (r.ok) registrarLogAnon('Restableció PIN', `${u.nombre} (autogestión)`); }
       toast('📧 Si el correo está registrado, te enviamos un PIN temporal. Revisa tu bandeja y el spam.');
-      $('#olvido_correo').value = '';
-      volverLogin();
-      $('#gateDesc').textContent = 'Ingresa el PIN temporal que te llegó al correo.';
-    } catch (e) {
-      console.error(e);
-      toast('No se pudo enviar el correo. Pídele al administrador que te restablezca el PIN.', true);
-    } finally { b.disabled = false; }
+      $('#olvido_correo').value = ''; volverLogin(); $('#gateDesc').textContent = 'Ingresa el PIN temporal que te llegó al correo.';
+    } catch (e) { console.error(e); toast('No se pudo enviar el correo. Pídele al administrador que te restablezca el PIN.', true); }
+    finally { b.disabled = false; }
   }
 
   async function crearAdminInicial() {
@@ -1451,50 +1320,30 @@
     e.preventDefault();
     if (!$('#gateNewPassFields').hidden) return guardarNuevaPassForzada();
     if (!$('#gateOlvidoFields').hidden) return olvideMiPin();
-    
     const pin = $('#pin').value;
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     const user = await verificarPin(pin);
     if (user) {
-      USUARIO_ACTUAL = { 
-        id: user.id, 
-        nombre: user.nombre, 
-        rol: normalizarRol(user.rol),
-        permisos: user.permisos || ['crear','editar'],
-        areas: user.areas_asignadas || []
-      };
+      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: normalizarRol(user.rol), permisos: user.permisos || ['crear','editar'], areas: user.areas_asignadas || [] };
       $('#pin').value = '';
       if (user.pin_temporal) {
-        USUARIO_ACTUAL = null;
-        window._reset_user_id = user.id;
-        window._reset_verificado = true;
-        window._reset_pin_actual = pin;
-        $('#resetActualWrap').hidden = true;
-        $('#gateTitle').textContent = 'Crea tu nuevo PIN';
+        USUARIO_ACTUAL = null; window._reset_user_id = user.id; window._reset_verificado = true; window._reset_pin_actual = pin;
+        $('#resetActualWrap').hidden = true; $('#gateTitle').textContent = 'Crea tu nuevo PIN';
         $('#gateDesc').textContent = `Hola ${user.nombre}, entraste con un PIN temporal. Elige tu propio PIN para continuar.`;
-        $('#gateLoginFields').hidden = true;
-        $('#gateNewPassFields').hidden = false;
-        $('#new_pin').focus();
+        $('#gateLoginFields').hidden = true; $('#gateNewPassFields').hidden = false; $('#new_pin').focus();
         return;
       }
-      registrarLog('Inicio de sesión', 'Ingresó al sistema');
-      mostrarAppAdmin();
-    } else {
-      $('#pin').value = '';
-      toast('PIN incorrecto', true);
-    }
+      registrarLog('Inicio de sesión', 'Ingresó al sistema'); mostrarAppAdmin();
+    } else { $('#pin').value = ''; toast('PIN incorrecto', true); }
   };
 
-  // Actualiza el PIN y apaga la marca de PIN temporal (si la columna existe)
   async function actualizarPin(id, pin) {
     let r = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: false }).eq('id', id);
     if (r.error && /pin_temporal/i.test(r.error.message || '')) r = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id);
     return r;
   }
-
   async function guardarNuevaPassForzada() {
-    const p1 = $('#new_pin').value.trim();
-    const p2 = $('#new_pin_confirm').value.trim();
+    const p1 = $('#new_pin').value.trim(), p2 = $('#new_pin_confirm').value.trim();
     if (!/^\d{6,15}$/.test(p1)) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     if (p1 !== p2) return toast('Los PINs no coinciden', true);
     const p0 = (($('#reset_pin_actual') || {}).value || '').trim();
@@ -1515,20 +1364,16 @@
       window._reset_verificado = false; window._reset_pin_actual = null;
       window.history.replaceState({}, document.title, window.location.pathname);
       setTimeout(() => window.location.reload(), 1500);
-    } catch (e) {
-      toast('Error al actualizar: ' + e.message, true);
-    }
+    } catch (e) { toast('Error al actualizar: ' + e.message, true); }
   }
 
   async function ir(p, conservar) {
     if (!USUARIO_ACTUAL) return;
-    const PANELES = { resumen: pResumen, eventos: pEventos, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar };
-    if (!PANELES[p] || (p !== 'resumen' && p !== 'eventos' && USUARIO_ACTUAL.rol !== 'admin')) p = 'resumen';
+    const PANELES = { resumen: pResumen, eventos: pEventos, novedades: pNovedades, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar };
+    if (!PANELES[p] || (p !== 'resumen' && p !== 'eventos' && p !== 'novedades' && USUARIO_ACTUAL.rol !== 'admin')) p = 'resumen';
     P = p; SEL.clear();
     $$('.admin-nav .it').forEach(b => b.classList.toggle('on', b.dataset.p === p));
-    let html;
-    try { html = await PANELES[p](); }
-    catch (e) { console.error(e); html = encabezado('Error', esc(e.message || String(e))); }
+    let html; try { html = await PANELES[p](); } catch (e) { console.error(e); html = encabezado('Error', esc(e.message || String(e))); }
     if (P !== p || !USUARIO_ACTUAL) return;
     $('#admin-panel-inner').innerHTML = html;
     if (p === 'eventos') pintarTabla();
@@ -1594,7 +1439,6 @@
           if (!coincide) return false;
         }
       }
-
       if (F.per && e.periodo !== F.per && !(e.periodo2 && e.periodo2 === F.per)) return false;
       if (F.cat && e.categoria !== F.cat) return false;
       if (F.est && (e.estado || 'publicado') !== F.est) return false;
@@ -1612,34 +1456,20 @@
     const L = eventosFiltrados();
     const pEd = puede('editar'), pEl = puede('eliminar');
     $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button></div>` : '';
-
     $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.filter(puedeEnEvento).every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
-      L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}
-        <td style="white-space:nowrap">${fmtRango(e)}</td>
-        <td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td>
-        <td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido: no se ve en el público">⏸</span>' : ''}</td>
-        <td>${pEd && puedeEnEvento(e)
-          ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>`
-          : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td>
-        <td><div class="acc">
-          ${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}
-          ${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}
-        </div></td></tr>`).join('') + '</tbody></table>'
+      L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}<td style="white-space:nowrap">${fmtRango(e)}</td><td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td><td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido: no se ve en el público">⏸</span>' : ''}</td><td>${pEd && puedeEnEvento(e) ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>` : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td><td><div class="acc">${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}${puede('crear') && puedeEnEvento(e) ? `<button class="btn sm" data-a="dup" data-i="${e.id}" title="Crear una copia como borrador">📄 Duplicar</button>` : ''}${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}</div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
 
+  let DUP = null;
+  const tomarDup = () => { const d = DUP; DUP = null; return d; };
   function modalEvento(id) {
     if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
-    const e = id ? D.eventos.find(x => x.id === id) : { 
-      titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto', 
-      horaInicio: '', horaFin: '',
-      facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado' 
-    };
+    const e = id ? D.eventos.find(x => x.id === id) : DUP ? tomarDup() : { titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto', horaInicio: '', horaFin: '', facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado' };
     const arrFac = Array.isArray(e.facultad) ? e.facultad : (e.facultad ? [e.facultad] : []);
     const arrProg = Array.isArray(e.programa) ? e.programa : (e.programa ? [e.programa] : []);
     const arrArea = Array.isArray(e.area) ? e.area : (e.area ? [e.area] : []);
     const arrPub = Array.isArray(e.publico) ? e.publico : (e.publico ? [e.publico] : ['Comunidad universitaria']);
-    
     const pers = D.periodos.map(p => p.id); if (e.periodo !== 'auto' && !pers.includes(e.periodo)) pers.push(e.periodo);
     const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
     const esLugarEspecial = lugaresConExtra.includes(e.lugar);
@@ -1647,80 +1477,17 @@
     $('#modal').innerHTML = `<div class="mod"><h2>${id ? `${FLATICONS.editar} Editar evento` : `${FLATICONS.documento} Nuevo evento`}</h2>
       <div class="fr"><label>¿Qué pasa? *</label><input id="f_titulo" value="${esc(e.titulo)}" placeholder="Ej: Matrícula ordinaria"></div>
       <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="2">${esc(e.descripcion)}</textarea></div>
-      <div class="fr2">
-        <div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
-        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div>
-      </div>
-      
-      <div class="fr2">
-        <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div>
-        <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div>
-      </div>
-      <div class="fr2">
-        <div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div>
-        <div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${e.horaFin || ''}"></div>
-      </div>
-      
-      <div class="fr">
-        <label>Dirigido a (Selección múltiple)</label>
-        <select id="f_pub" multiple class="multi-select" size="6">
-          ${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${p}</option>`).join('')}
-        </select>
-      </div>
-
-      <div class="fr">
-        <label>Facultades (Selección múltiple)</label>
-        <select id="f_fac" multiple class="multi-select" size="4" onchange="actualizarProgsModal()">
-          ${D.facultades.filter(verFac).map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('')}
-        </select>
-      </div>
-      
-      <div class="fr">
-        <label>Programas (Selección múltiple)</label>
-        <select id="f_prog" multiple class="multi-select" size="4"></select>
-      </div>
-
-      <div class="fr">
-        <label>Áreas (Selección múltiple)</label>
-        <select id="f_area" multiple class="multi-select" size="4">
-          ${D.areas.filter(verArea).map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('')}
-        </select>
-      </div>
-
-      <div class="fr2">
-        <div class="fr">
-          <label>Bloque / Ubicación</label>
-          <select id="f_lugar" onchange="toggleLugarEsp()">
-            <option value="">-- Seleccionar --</option>
-            <optgroup label="Bloques">
-              ${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}" ${e.lugar === 'Bloque ' + l ? 'selected' : ''}>Bloque ${l}</option>`).join('')}
-            </optgroup>
-            <optgroup label="Especiales">
-              <option value="Auditorio Principal o Central" ${e.lugar === 'Auditorio Principal o Central' ? 'selected' : ''}>Auditorio Principal o Central</option>
-              <option value="Auditorio Fundadores" ${e.lugar === 'Auditorio Fundadores' ? 'selected' : ''}>Auditorio Fundadores</option>
-              <option value="Clínicas Odontológicas" ${e.lugar === 'Clínicas Odontológicas' ? 'selected' : ''}>Clínicas Odontológicas</option>
-              <option value="Sistema Académico en Línea (SALA)" ${e.lugar === 'Sistema Académico en Línea (SALA)' ? 'selected' : ''}>Sistema Académico en Línea (SALA)</option>
-              <option value="SAUCE" ${e.lugar === 'SAUCE' ? 'selected' : ''}>SAUCE</option>
-              <option value="Sede Chía" ${e.lugar === 'Sede Chía' ? 'selected' : ''}>Sede Chía</option>
-              <option value="Otro" ${e.lugar === 'Otro' ? 'selected' : ''}>Otro</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="fr" id="f_lugar_esp_wrap" ${esLugarEspecial ? '' : 'hidden'}>
-          <label>Especifique ubicación</label>
-          <input id="f_lugar_esp" value="${esc(e.lugarEsp || '')}" placeholder="Escriba el lugar...">
-        </div>
-      </div>
-
-      <div class="fr2">
-        <div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div>
-        <div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="Teams, Meet, Zoom o cualquier página"></div>
-      </div>
-
+      <div class="fr2"><div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div><div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div></div>
+      <div class="fr2"><div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div><div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div></div>
+      <div class="fr2"><div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div><div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${e.horaFin || ''}"></div></div>
+      <div class="fr"><label>Dirigido a (Selección múltiple)</label><select id="f_pub" multiple class="multi-select" size="6">${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${p}</option>`).join('')}</select></div>
+      <div class="fr"><label>Facultades (Selección múltiple)</label><select id="f_fac" multiple class="multi-select" size="4" onchange="actualizarProgsModal()">${D.facultades.filter(verFac).map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('')}</select></div>
+      <div class="fr"><label>Programas (Selección múltiple)</label><select id="f_prog" multiple class="multi-select" size="4"></select></div>
+      <div class="fr"><label>Áreas (Selección múltiple)</label><select id="f_area" multiple class="multi-select" size="4">${D.areas.filter(verArea).map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('')}</select></div>
+      <div class="fr2"><div class="fr"><label>Bloque / Ubicación</label><select id="f_lugar" onchange="toggleLugarEsp()"><option value="">-- Seleccionar --</option><optgroup label="Bloques">${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}" ${e.lugar === 'Bloque ' + l ? 'selected' : ''}>Bloque ${l}</option>`).join('')}</optgroup><optgroup label="Especiales"><option value="Auditorio Principal o Central" ${e.lugar === 'Auditorio Principal o Central' ? 'selected' : ''}>Auditorio Principal o Central</option><option value="Auditorio Fundadores" ${e.lugar === 'Auditorio Fundadores' ? 'selected' : ''}>Auditorio Fundadores</option><option value="Clínicas Odontológicas" ${e.lugar === 'Clínicas Odontológicas' ? 'selected' : ''}>Clínicas Odontológicas</option><option value="Sistema Académico en Línea (SALA)" ${e.lugar === 'Sistema Académico en Línea (SALA)' ? 'selected' : ''}>Sistema Académico en Línea (SALA)</option><option value="SAUCE" ${e.lugar === 'SAUCE' ? 'selected' : ''}>SAUCE</option><option value="Sede Chía" ${e.lugar === 'Sede Chía' ? 'selected' : ''}>Sede Chía</option><option value="Otro" ${e.lugar === 'Otro' ? 'selected' : ''}>Otro</option></optgroup></select></div><div class="fr" id="f_lugar_esp_wrap" ${esLugarEspecial ? '' : 'hidden'}><label>Especifique ubicación</label><input id="f_lugar_esp" value="${esc(e.lugarEsp || '')}" placeholder="Escriba el lugar..."></div></div>
+      <div class="fr2"><div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div><div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="Teams, Meet, Zoom o cualquier página"></div></div>
       <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select></div>
-      
       <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} Guardar</button></div></div>`;
-    
     $('#modal').classList.add('on');
     actualizarProgsModal(arrProg);
     setTimeout(() => $('#f_titulo').focus(), 50);
@@ -1729,23 +1496,11 @@
   window.actualizarProgsModal = function(preseleccionados = []) {
     const selectedFacs = [...$('#f_fac').selectedOptions].map(o => o.value);
     const progsDisponibles = [];
-    selectedFacs.forEach(fid => {
-      const f = D.facultades.find(x => x.id === fid);
-      if (f) f.programas.filter(p => verProg(f, p)).forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre, fac: f.nombre }));
-    });
-    if (preseleccionados.length) {
-      $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${preseleccionados.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
-    } else {
-      const currentProgs = [...$('#f_prog').selectedOptions].map(o => o.value);
-      $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${currentProgs.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
-    }
+    selectedFacs.forEach(fid => { const f = D.facultades.find(x => x.id === fid); if (f) f.programas.filter(p => verProg(f, p)).forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre })); });
+    if (preseleccionados.length) { $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${preseleccionados.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join(''); }
+    else { const cur = [...$('#f_prog').selectedOptions].map(o => o.value); $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${cur.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join(''); }
   }
-
-  window.toggleLugarEsp = function() {
-    const val = $('#f_lugar').value;
-    $('#f_lugar_esp_wrap').hidden = !['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(val);
-  }
-
+  window.toggleLugarEsp = function() { const val = $('#f_lugar').value; $('#f_lugar_esp_wrap').hidden = !['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(val); }
   const cerrarModal = () => { $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
 
   async function guardarEvento(id) {
@@ -1756,69 +1511,45 @@
     if (!titulo) return toast('Escribe el nombre del evento', true);
     if (!inicio) return toast('Falta la fecha de inicio', true);
     if (fin < inicio) return toast('La fecha final no puede ser antes', true);
-    
     const publico = [...$('#f_pub').selectedOptions].map(o => o.value);
     const facultad = [...$('#f_fac').selectedOptions].map(o => o.value);
     const programa = [...$('#f_prog').selectedOptions].map(o => o.value);
     const area = [...$('#f_area').selectedOptions].map(o => o.value);
     if (!puedeEnEvento({ facultad, programa, area })) return toast('Asigna el evento solo a tus facultades, programas o áreas asignados (al menos una)', true);
-
     let periodo = g('f_per'), periodo2 = null;
-    if (periodo === 'auto') {
-      const per1 = periodoAuto(D, inicio);
-      const per2 = periodoAuto(D, fin);
-      periodo = per1;
-      if (per1 !== per2) periodo2 = per2;
-    }
-
+    if (periodo === 'auto') { const per1 = periodoAuto(D, inicio); const per2 = periodoAuto(D, fin); periodo = per1; if (per1 !== per2) periodo2 = per2; }
     const lugar = g('f_lugar');
     const enlace = normalizarEnlace(g('f_link'));
     if (g('f_link') && !enlace) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true);
     const lugarEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lugar) ? g('f_lugar_esp') : '';
-
-    const o = { 
-      id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), 
-      inicio, fin, periodo, periodo2, 
-      horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'),
-      facultad, programa, area, publico, 
-      lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') 
-    };
-    
+    const o = { id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), inicio, fin, periodo, periodo2, horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), facultad, programa, area, publico, lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') };
+    let avisoCols = [];
     try {
       if (DB_READY) {
-        const payload = {
-          titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria,
-          periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin,
-          hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null,
-          lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace,
-          estado: o.estado, updated_at: new Date().toISOString()
-        };
+        const payload = { titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, estado: o.estado, updated_at: new Date().toISOString() };
         if (id) payload.id = id;
-
-        const { data: ev, error } = await dbClient.from('eventos').upsert([payload]).select().single();
-        if (error) throw error;
-
+        let ev = null;
+        for (let intento = 0; intento < 5 && !ev; intento++) {
+          const r = await dbClient.from('eventos').upsert([payload]).select().single();
+          if (!r.error) { ev = r.data; break; }
+          const m = /Could not find the '([^']+)' column of 'eventos'/.exec(r.error.message || '');
+          if (!m || !(m[1] in payload)) throw r.error;
+          delete payload[m[1]]; avisoCols.push(m[1]);
+        }
+        if (!ev) throw new Error('No se pudo guardar el evento');
         await dbClient.from('evento_facultades').delete().eq('evento_id', ev.id);
         await dbClient.from('evento_programas').delete().eq('evento_id', ev.id);
         await dbClient.from('evento_areas').delete().eq('evento_id', ev.id);
         await dbClient.from('evento_publicos').delete().eq('evento_id', ev.id);
-
         if (facultad.length) await dbClient.from('evento_facultades').insert(facultad.map(f => ({ evento_id: ev.id, facultad_id: f })));
         if (programa.length) await dbClient.from('evento_programas').insert(programa.map(p => ({ evento_id: ev.id, programa_id: p })));
         if (area.length) await dbClient.from('evento_areas').insert(area.map(a => ({ evento_id: ev.id, area_id: a })));
         if (publico.length) await dbClient.from('evento_publicos').insert(publico.map(p => ({ evento_id: ev.id, publico: p })));
-
-        const accion = id ? 'Editó evento' : 'Creó evento';
-        registrarLog(accion, titulo);
-        
-        const nuevosDatos = await leerNube();
-        if (nuevosDatos) D = nuevosDatos;
+        registrarLog(id ? 'Editó evento' : 'Creó evento', titulo);
+        const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos;
       }
-      toast(`${FLATICONS.check} Evento guardado`); cerrarModal(); refrescar();
-    } catch (e) {
-      console.error(e);
-      toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true);
-    }
+      toast(avisoCols.length ? `Evento guardado, pero sin: ${avisoCols.join(', ')}. Ejecuta el SQL de actualización en Supabase.` : `${FLATICONS.check} Evento guardado`, !!avisoCols.length); cerrarModal(); refrescar();
+    } catch (e) { console.error(e); toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true); }
   }
 
   async function eliminarEventoAdmin(id) {
@@ -1826,166 +1557,77 @@
     const ev0 = D.eventos.find(x => x.id === id); if (ev0 && !puedeEnEvento(ev0)) return sinArea();
     if (!confirm('¿Eliminar este evento?')) return;
     const e = D.eventos.find(x => x.id === id);
-    if (DB_READY) {
-      const { error } = await dbClient.from('eventos').delete().eq('id', id);
-      if (error) return toast('Error al eliminar', true);
-      registrarLog('Eliminó evento', e ? e.titulo : id);
-      const nuevosDatos = await leerNube();
-      if (nuevosDatos) D = nuevosDatos;
-    }
-    SEL.delete(id);
-    toast(`${FLATICONS.basura} Evento eliminado`);
-    pintarTabla();
+    if (DB_READY) { const { error } = await dbClient.from('eventos').delete().eq('id', id); if (error) return toast('Error al eliminar', true); registrarLog('Eliminó evento', e ? e.titulo : id); const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos; }
+    SEL.delete(id); toast(`${FLATICONS.basura} Evento eliminado`); pintarTabla();
   }
 
-  function pFacultades() { 
+  /* ========== NOVEDADES ADMIN ========== */
+  async function pNovedades() {
+    const { data } = await dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(200);
+    NOVEDADES = data || [];
+    const tipos = [['cambio_salon','Cambio de salón'],['cancelacion','Cancelación de clase'],['modalidad','Cambio de modalidad'],['otro','Otro aviso']];
+    return encabezado('📣 Novedades de clases', 'Publica cambios de salón, cancelaciones, cambios de modalidad u otros avisos para docentes y estudiantes.') + `
+    <div class="caja">
+      <h2>➕ Nueva novedad</h2>
+      <div class="fr2"><div class="fr"><label>Título *</label><input id="nv_titulo" placeholder="Ej: Cambio de salón Cálculo II"></div><div class="fr"><label>Tipo</label><select id="nv_tipo">${tipos.map(t => `<option value="${t[0]}">${t[1]}</option>`).join('')}</select></div></div>
+      <div class="fr2"><div class="fr"><label>Fecha *</label><input type="date" id="nv_fecha" value="${hoy()}"></div><div class="fr"><label>Materia / Curso</label><input id="nv_materia" placeholder="Ej: Cálculo II - Grupo 3"></div></div>
+      <div class="fr2"><div class="fr"><label>Docente</label><input id="nv_docente" placeholder="Nombre del docente"></div><div class="fr"><label>Salón</label><input id="nv_salon" placeholder="Ej: Bloque B - 204"></div></div>
+      <div class="fr2"><div class="fr"><label>Hora inicio</label><input type="time" id="nv_hi"></div><div class="fr"><label>Hora fin</label><input type="time" id="nv_hf"></div></div>
+      <div class="fr2"><div class="fr"><label>Modalidad</label><select id="nv_modal"><option value="">—</option><option>presencial</option><option>virtual</option><option>híbrida</option></select></div><div class="fr"><label>Detalle</label><input id="nv_detalle" placeholder="Descripción breve del cambio"></div></div>
+      <button class="btn pri" data-a="addNov">💾 Publicar novedad</button>
+    </div>
+    <div class="tw"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Título</th><th>Materia</th><th>Salón</th><th></th></tr></thead><tbody>
+      ${NOVEDADES.map(n => `<tr><td>${fmtFecha(n.fecha)}</td><td><span class="chip">${NOV_TAG[n.tipo] || 'Aviso'}</span></td><td><b>${esc(n.titulo)}</b></td><td>${esc(n.materia || '')}</td><td>${esc(n.salon || '')}</td><td><button class="btn sm pel" data-a="delNov" data-i="${n.id}">🗑️</button></td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--suave);padding:1.5rem;">Sin novedades.</td></tr>'}
+    </tbody></table></div>`;
+  }
+
+  /* Otros paneles admin (resumidos para respetar longitud) */
+  function pFacultades() {
     return encabezado(`${FLATICONS.birrete} Facultades y programas`, 'Organiza la universidad.') + 
-    `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;">
-      <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; color:var(--tinta); background:#fff;"></div>
-      <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji opcional)</label><input id="n_fac_emoji" placeholder="🏛️" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff;"></div>
-      <div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div>
-      <button class="btn pri" data-a="addFac">${FLATICONS.documento} Agregar</button>
-      <button class="btn" data-a="autoEmoji" title="Pone un emoji distinto a cada facultad (reemplaza los actuales)">${FLATICONS.estrella} Asignar emojis sin repetir</button>
-    </div>` + 
-    
-    D.facultades.map(f => {
-      let iconHtml = `<span style="font-size:1.7rem">${emojiFac(f)}</span>`;
-
-      return `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};">
-        <div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;">
-          <input data-ch="facEmoji" data-i="${f.id}" value="${esc(emojiFac(f))}" title="Cambia el emoji de esta facultad" style="width:64px; text-align:center; font-size:1.5rem; padding:.3rem; border:1px solid var(--linea); border-radius:8px; background:#fff;">
-          <input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent; color:var(--petroleo);" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}">
-          <input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;">
-          <span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span>
-          <button class="btn sm pel" data-a="delFac" data-i="${f.id}">${FLATICONS.basura} Eliminar</button>
-        </div>
-        ${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;">
-          <input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}">
-          <select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;">${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}</select>
-          <button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button>
-        </div>`).join('')}
-        <div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;">
-          <input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;">
-          <select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select>
-          <button class="btn sm" data-a="addProg" data-i="${f.id}">${FLATICONS.documento} Agregar manual</button>
-        </div>
-      </div>`;
-    }).join(''); 
+    `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;"><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji opcional)</label><input id="n_fac_emoji" placeholder="🏛️" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addFac">${FLATICONS.documento} Agregar</button><button class="btn" data-a="autoEmoji" title="Pone un emoji distinto a cada facultad">${FLATICONS.estrella} Asignar emojis sin repetir</button></div>` + 
+    D.facultades.map(f => `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};"><div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;"><input data-ch="facEmoji" data-i="${f.id}" value="${esc(emojiFac(f))}" title="Cambia el emoji de esta facultad" style="width:64px; text-align:center; font-size:1.5rem; padding:.3rem; border:1px solid var(--linea); border-radius:8px; background:#fff;"><input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent; color:var(--petroleo);" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}"><input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;"><span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span><button class="btn sm pel" data-a="delFac" data-i="${f.id}">${FLATICONS.basura} Eliminar</button></div>${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;"><input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}"><select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;">${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}</select><button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button></div>`).join('')}<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;"><input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select><button class="btn sm" data-a="addProg" data-i="${f.id}">${FLATICONS.documento} Agregar manual</button></div></div>`).join(''); 
   }
 
-  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado(`${FLATICONS.calendario} Semestres`, 'Define cuándo empieza y termina cada semestre. Si suspendes uno, sus eventos dejan de verse en el calendario público hasta que lo reactives.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addPer">${FLATICONS.documento} Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr style="${p.activo === false ? 'opacity:.65;' : ''}"><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td>${p.activo === false ? '<span class="badge" style="background:#FDE8E7; color:#B3261E">⏸ Suspendido</span>' : '<span class="badge" style="background:#E1F2B8; color:#2f4a00">✅ Activo</span>'}</td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm warn" data-a="togPer" data-i="${p.id}">${p.activo === false ? '▶ Reactivar' : '⏸ Suspender'}</button><button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
+  function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado(`${FLATICONS.calendario} Semestres`, 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addPer">${FLATICONS.documento} Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr style="${p.activo === false ? 'opacity:.65;' : ''}"><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td>${p.activo === false ? '<span class="badge" style="background:#FDE8E7; color:#B3261E">⏸ Suspendido</span>' : '<span class="badge" style="background:#E1F2B8; color:#2f4a00">✅ Activo</span>'}</td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm warn" data-a="togPer" data-i="${p.id}">${p.activo === false ? '▶ Reactivar' : '⏸ Suspender'}</button><button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
   function pAreas() { return encabezado(`${FLATICONS.personas} Áreas administrativas`, 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addArea">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><div style="display:flex; align-items:center; gap:.5rem;"><span style="font-size:1.4rem">${emojiArea(a)}</span><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></div></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
   function pCategorias() { return encabezado(`${FLATICONS.estrella} Categorías`, 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
 
-  // Carga usuarios tolerando columnas que aún no existan (correo, pin_temporal)
   async function cargarUsuarios() {
     const intentos = ['id,nombre,rol,correo,permisos,areas_asignadas,pin_temporal,created_at', 'id,nombre,rol,correo,permisos,areas_asignadas,created_at', 'id,nombre,rol,permisos,areas_asignadas'];
     let ultimo = null;
-    for (const cols of intentos) {
-      const r = await dbClient.from('usuarios_admin').select(cols);
-      if (!r.error) return { data: r.data || [] };
-      ultimo = r.error;
-    }
+    for (const cols of intentos) { const r = await dbClient.from('usuarios_admin').select(cols); if (!r.error) return { data: r.data || [] }; ultimo = r.error; }
     return { data: null, error: ultimo };
   }
-
-  // Convierte "f:ID" / "p:ID" / "a:ID" en una etiqueta legible
   function chipsAmbito(arr) {
-    const out = (arr || []).map(v => {
-      const id = String(v).slice(2);
-      if (String(v).startsWith('f:')) { const f = D.facultades.find(x => String(x.id) === id); return f ? `<span class="chip">${emojiFac(f)} ${esc(f.nombre)}</span>` : ''; }
-      if (String(v).startsWith('p:')) { for (const f of D.facultades) { const pr = f.programas.find(x => String(x.id) === id); if (pr) return `<span class="chip">📚 ${esc(pr.nombre)}</span>`; } return ''; }
-      if (String(v).startsWith('a:')) { const a = D.areas.find(x => String(x.id) === id); return a ? `<span class="chip">${emojiArea(a)} ${esc(a.nombre)}</span>` : ''; }
-      return '';
-    }).filter(Boolean);
+    const out = (arr || []).map(v => { const id = String(v).slice(2); if (String(v).startsWith('f:')) { const f = D.facultades.find(x => String(x.id) === id); return f ? `<span class="chip">${emojiFac(f)} ${esc(f.nombre)}</span>` : ''; } if (String(v).startsWith('p:')) { for (const f of D.facultades) { const pr = f.programas.find(x => String(x.id) === id); if (pr) return `<span class="chip">📚 ${esc(pr.nombre)}</span>`; } return ''; } if (String(v).startsWith('a:')) { const a = D.areas.find(x => String(x.id) === id); return a ? `<span class="chip">${emojiArea(a)} ${esc(a.nombre)}</span>` : ''; } return ''; }).filter(Boolean);
     return out.length ? `<div style="display:flex; flex-wrap:wrap; gap:.25rem;">${out.join('')}</div>` : '<span style="color:var(--suave); font-style:italic;">Sin ámbito (solo lectura)</span>';
   }
-
   const PERM_TXT = { crear: 'Crear', editar: 'Editar', eliminar: 'Eliminar' };
   const checksPermisos = (prefix, sel = []) => ['crear', 'editar', 'eliminar'].map(k => `<label style="display:flex; align-items:center; gap:.4rem; font-weight:normal;"><input type="checkbox" id="${prefix}${k}" ${sel.includes(k) ? 'checked' : ''}> ${PERM_TXT[k]}</label>`).join('');
 
   async function pUsuarios() {
     const { data, error } = await cargarUsuarios();
-    if (error) return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'No se pudieron cargar los usuarios: ' + esc(error.message) + '. Revisa que la tabla usuarios_admin exista y ejecuta el SQL de actualización.');
+    if (error) return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'No se pudieron cargar: ' + esc(error.message));
     const col = { admin: ['#E1F2B8', '#2f4a00'], editor: ['#DBEAFE', '#1e3a8a'] };
     const U = [...data].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
-
     return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'Crea usuarios, define qué pueden hacer y en qué facultades, programas o áreas.') + `
-    <div class="caja">
-      <h2>${FLATICONS.documento} Crear nuevo usuario</h2>
-      <div style="display:flex; flex-direction:column; gap:1rem;">
-        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-          <div class="fr" style="margin:0; flex:1; min-width:180px;"><label>Nombre *</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div>
-          <div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div>
-          <div class="fr" style="margin:0; flex:1; min-width:150px;"><label>PIN inicial * (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" placeholder="••••••"></div>
-          <div class="fr" style="margin:0; flex:1; min-width:170px;"><label>Tipo de usuario</label><select id="n_user_rol"><option value="editor">Usuario con permisos</option><option value="admin">Administrador (todo)</option></select></div>
-        </div>
-        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-          <div class="fr" style="margin:0; flex:1; min-width:200px;">
-            <label>Permisos (puedes marcar varios)</label>
-            <div style="display:flex; gap:1rem; flex-wrap:wrap; padding:0.4rem 0;">${checksPermisos('n_user_p_', ['editar'])}</div>
-          </div>
-          <div class="fr" style="margin:0; flex:2; min-width:260px;">
-            <label>Facultades, programas o áreas (puedes marcar varios)</label>
-            ${checksAreas('n_user_areas')}
-            <p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">Solo podrá actuar sobre los eventos de lo que marques. Sin ninguno, solo puede ver. Un administrador no necesita esto.</p>
-          </div>
-        </div>
-        <div><button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button></div>
-      </div>
-    </div>
-    <div class="tw">
-      <table>
-        <thead><tr><th>Usuario</th><th>Permisos</th><th>Facultades · Programas · Áreas</th><th>Acciones</th></tr></thead>
-        <tbody>
-          ${U.map(u => {
-            const esAdm = u.rol === 'admin', yo = String(u.id) === String(USUARIO_ACTUAL.id);
-            const [bg, fg] = col[esAdm ? 'admin' : 'editor'];
-            const pTxt = esAdm ? '👑 Administrador' : ((u.permisos || []).map(x => PERM_TXT[x] || x).join(' + ') || 'Solo lectura');
-            return `<tr>
-              <td><b>${esc(u.nombre)}</b>${yo ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}${u.pin_temporal ? ' <span class="chip" title="Aún no ha personalizado su PIN">⏳ PIN temporal</span>' : ''}<br><span style="font-size:.8rem; color:var(--suave);">${u.correo ? esc(u.correo) : '<i>sin correo</i>'}</span></td>
-              <td><span class="badge" style="background:${bg}; color:${fg}">${pTxt}</span></td>
-              <td style="max-width:320px; font-size:0.8rem;">${esAdm ? '<span style="color:var(--suave);">Todas</span>' : chipsAmbito(u.areas_asignadas)}</td>
-              <td><div class="acc">
-                <button class="btn sm" data-a="editUser" data-i="${esc(String(u.id))}">${FLATICONS.editar} Editar</button>
-                <button class="btn sm" data-a="userPin" data-i="${esc(String(u.id))}">${FLATICONS.llave} PIN</button>
-                <button class="btn sm warn" data-a="resetPin" data-i="${esc(String(u.id))}" ${u.correo ? '' : 'disabled title="Sin correo registrado"'}>${FLATICONS.email} Reset por correo</button>
-                ${yo ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${esc(String(u.id))}">${FLATICONS.basura}</button>`}
-              </div></td>
-            </tr>`;
-          }).join('') || '<tr><td colspan="4" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}
-        </tbody>
-      </table>
-    </div>`;
+    <div class="caja"><h2>${FLATICONS.documento} Crear nuevo usuario</h2><div style="display:flex; flex-direction:column; gap:1rem;"><div style="display:flex; gap:1rem; flex-wrap:wrap;"><div class="fr" style="margin:0; flex:1; min-width:180px;"><label>Nombre *</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div><div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div><div class="fr" style="margin:0; flex:1; min-width:150px;"><label>PIN inicial * (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" placeholder="••••••"></div><div class="fr" style="margin:0; flex:1; min-width:170px;"><label>Tipo de usuario</label><select id="n_user_rol"><option value="editor">Usuario con permisos</option><option value="admin">Administrador (todo)</option></select></div></div><div style="display:flex; gap:1rem; flex-wrap:wrap;"><div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Permisos (puedes marcar varios)</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:0.4rem 0;">${checksPermisos('n_user_p_', ['editar'])}</div></div><div class="fr" style="margin:0; flex:2; min-width:260px;"><label>Facultades, programas o áreas (puedes marcar varios)</label>${checksAreas('n_user_areas')}<p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">Solo podrá actuar sobre los eventos de lo que marques.</p></div></div><div><button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button></div></div></div>
+    <div class="tw"><table><thead><tr><th>Usuario</th><th>Permisos</th><th>Facultades · Programas · Áreas</th><th>Acciones</th></tr></thead><tbody>${U.map(u => {
+      const esAdm = u.rol === 'admin', yo = String(u.id) === String(USUARIO_ACTUAL.id);
+      const [bg, fg] = col[esAdm ? 'admin' : 'editor'];
+      const pTxt = esAdm ? '👑 Administrador' : ((u.permisos || []).map(x => PERM_TXT[x] || x).join(' + ') || 'Solo lectura');
+      return `<tr><td><b>${esc(u.nombre)}</b>${yo ? ' <span class="chip" style="color:var(--verde)">(tú)</span>' : ''}<br><span style="font-size:.8rem; color:var(--suave);">${u.correo ? esc(u.correo) : '<i>sin correo</i>'}</span></td><td><span class="badge" style="background:${bg}; color:${fg}">${pTxt}</span></td><td style="max-width:320px; font-size:0.8rem;">${esAdm ? '<span style="color:var(--suave);">Todas</span>' : chipsAmbito(u.areas_asignadas)}</td><td><div class="acc"><button class="btn sm" data-a="editUser" data-i="${esc(String(u.id))}">${FLATICONS.editar} Editar</button><button class="btn sm" data-a="userPin" data-i="${esc(String(u.id))}">${FLATICONS.llave} PIN</button>${yo ? '' : `<button class="btn sm pel" data-a="delUser" data-i="${esc(String(u.id))}">${FLATICONS.basura}</button>`}</div></td></tr>`;
+    }).join('') || '<tr><td colspan="4" style="text-align:center; color:var(--suave); padding:1.5rem;">Aún no hay usuarios.</td></tr>'}</tbody></table></div>`;
   }
 
-  // ===== Configuración de EmailJS (copia estos 3 datos desde tu cuenta de emailjs.com) =====
-  const EMAILJS = {
-    serviceId: 'service_209rlca',    // Email Services > tu servicio > Service ID
-    templateId: 'template_sy5xcrg',  // Email Templates > tu plantilla > Template ID
-    publicKey: 'bKplucMMXJM3iUbfk'     // Account > General > Public Key
-  };
+  const EMAILJS = { serviceId: 'TU_SERVICE_ID', templateId: 'TU_TEMPLATE_ID', publicKey: 'TU_PUBLIC_KEY' };
   const emailjsListo = () => ![EMAILJS.serviceId, EMAILJS.templateId, EMAILJS.publicKey].some(v => !v || v.startsWith('TU_'));
-
-  // Genera un PIN temporal, lo envía por correo y SOLO si el correo salió lo guarda (nadie queda bloqueado)
   async function enviarPinPorCorreo(u) {
-    if (!emailjsListo()) return { ok: false, error: 'Falta pegar los datos de EmailJS en el archivo (Service ID, Template ID y Public Key).' };
-    const { data: fila } = await dbClient.from('usuarios_admin').select('*').eq('id', u.id).maybeSingle();
-    if (fila && fila.pin_reset_at && Date.now() - new Date(fila.pin_reset_at).getTime() < 60000) return { ok: false, error: 'Espera un minuto antes de enviar otro PIN.', espera: true };
+    if (!emailjsListo()) return { ok: false, error: 'Falta pegar los datos de EmailJS.' };
     let pin;
-    for (let i = 0; i < 6; i++) {
-      pin = String(Math.floor(10000000 + Math.random() * 90000000));
-      const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
-      if (!dup || !dup.length) break;
-    }
+    for (let i = 0; i < 6; i++) { pin = String(Math.floor(10000000 + Math.random() * 90000000)); const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin); if (!dup || !dup.length) break; }
     try {
-      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: EMAILJS.serviceId, template_id: EMAILJS.templateId, user_id: EMAILJS.publicKey,
-          template_params: { to_email: u.correo, nombre: u.nombre, pin, enlace: location.origin + location.pathname + '?reset&u=' + u.id }
-        })
-      });
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ service_id: EMAILJS.serviceId, template_id: EMAILJS.templateId, user_id: EMAILJS.publicKey, template_params: { to_email: u.correo, email: u.correo, correo: u.correo, user_email: u.correo, reply_to: u.correo, to_name: u.nombre, name: u.nombre, nombre: u.nombre, pin, enlace: location.origin + location.pathname + '?reset&u=' + u.id } }) });
       if (!res.ok) return { ok: false, error: 'EmailJS respondió: ' + (await res.text()).slice(0, 200) };
     } catch (e) { return { ok: false, error: 'No hay conexión con EmailJS: ' + (e.message || e) }; }
     let r = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: true, pin_reset_at: new Date().toISOString() }).eq('id', u.id);
@@ -1993,299 +1635,140 @@
     if (r.error) return { ok: false, error: 'El correo salió pero no se pudo guardar el PIN: ' + r.error.message };
     return { ok: true };
   }
-
   async function restablecerPin(id) {
     const { data: u } = await dbClient.from('usuarios_admin').select('id,nombre,correo').eq('id', id).maybeSingle();
     if (!u) return toast('Usuario no encontrado', true);
     if (!u.correo) return toast('Este usuario no tiene correo registrado', true);
-
-    const ok = confirm(`¿Enviar un PIN temporal al correo ${u.correo}? Al entrar con ese PIN, el usuario deberá elegir su propio PIN.`);
-    if (!ok) return;
-
+    if (!confirm(`¿Enviar un PIN temporal al correo ${u.correo}?`)) return;
     const r = await enviarPinPorCorreo(u);
-    if (r.ok) {
-      registrarLog('Restableció PIN', `${u.nombre} (${u.correo}) — enviado por correo`);
-      toast('📧 PIN temporal enviado a ' + u.correo);
-      if (P === 'usuarios') ir('usuarios', true);
-      return;
-    }
-    const motivo = r.error;
-    // Plan B: genera el PIN aquí y te lo muestra para que se lo entregues
+    if (r.ok) { registrarLog('Restableció PIN', `${u.nombre} (${u.correo}) — correo`); toast('📧 PIN temporal enviado a ' + u.correo); if (P === 'usuarios') ir('usuarios', true); return; }
     const pin = String(Math.floor(10000000 + Math.random() * 90000000));
     let { error: updErr } = await dbClient.from('usuarios_admin').update({ pin, pin_temporal: true }).eq('id', id);
     if (updErr && /pin_temporal/i.test(updErr.message || '')) ({ error: updErr } = await dbClient.from('usuarios_admin').update({ pin }).eq('id', id));
     if (updErr) return toast('Error al guardar PIN: ' + updErr.message, true);
-    registrarLog('Restableció PIN', `${u.nombre} (manual, el correo no se envió)`);
-    alert(`⚠️ No se pudo enviar el correo.\nMotivo: ${motivo}\n\nPIN temporal para ${u.nombre}:\n\n${pin}\n\nEntrégaselo tú; al entrar tendrá que crear su propio PIN.`);
-    toast('PIN temporal generado');
+    alert(`⚠️ No se pudo enviar el correo.\nMotivo: ${r.error}\n\nPIN temporal para ${u.nombre}:\n\n${pin}\n\nEntrégaselo tú.`);
     if (P === 'usuarios') ir('usuarios', true);
   }
 
   let LOGS = [];
   const LF = { q: '', usr: '', acc: '' };
   const colorAccion = a => /elimin/i.test(a) ? ['#FDE8E7', '#B3261E'] : /cre[óo]/i.test(a) ? ['#E1F2B8', '#2f4a00'] : /edit|modific|cambi|public|despublic|borrador|restablec|suspend|reactiv/i.test(a) ? ['#DBEAFE', '#1e3a8a'] : ['#EEE', '#444'];
-
   async function pLogs() {
     const { data, error } = await dbClient.from('logs').select('*').order('created_at', { ascending: false }).limit(500);
-    if (error) return encabezado(`${FLATICONS.documento} Logs del Sistema`, 'No se pudieron cargar los logs: ' + esc(error.message));
+    if (error) return encabezado(`${FLATICONS.documento} Logs del Sistema`, 'No se pudieron cargar: ' + esc(error.message));
     LOGS = data || [];
     const usrs = [...new Set(LOGS.map(l => l.usuario_nombre))].sort();
     const accs = [...new Set(LOGS.map(l => l.accion))].sort();
-    return encabezado(`${FLATICONS.documento} Logs del Sistema`, 'Registro de los últimos 500 movimientos: quién hizo qué y cuándo.') + `
-    <div class="tools">
-      <input type="search" id="l_q" placeholder="🔍 Buscar en el detalle…" value="${esc(LF.q)}">
-      <select id="l_usr"><option value="">Todos los usuarios</option>${usrs.map(u => opt(u, u, u === LF.usr)).join('')}</select>
-      <select id="l_acc"><option value="">Todas las acciones</option>${accs.map(a => opt(a, a, a === LF.acc)).join('')}</select>
-      <button class="btn" data-a="logsRef">${FLATICONS.editar} Actualizar</button>
-    </div>
-    <p id="logsCuenta" style="margin:0 0 .8rem; font-size:.85rem; color:var(--suave);"></p>
-    <div class="tw" id="logsTabla"></div>`;
+    return encabezado(`${FLATICONS.documento} Logs del Sistema`, 'Registro de los últimos 500 movimientos.') + `<div class="tools"><input type="search" id="l_q" placeholder="🔍 Buscar en el detalle…" value="${esc(LF.q)}"><select id="l_usr"><option value="">Todos los usuarios</option>${usrs.map(u => opt(u, u, u === LF.usr)).join('')}</select><select id="l_acc"><option value="">Todas las acciones</option>${accs.map(a => opt(a, a, a === LF.acc)).join('')}</select><button class="btn" data-a="logsRef">${FLATICONS.editar} Actualizar</button></div><p id="logsCuenta" style="margin:0 0 .8rem; font-size:.85rem; color:var(--suave);"></p><div class="tw" id="logsTabla"></div>`;
   }
-
   function pintarLogs() {
     if (!$('#logsTabla')) return;
     const q = norm(LF.q);
     const L = LOGS.filter(l => (!LF.usr || l.usuario_nombre === LF.usr) && (!LF.acc || l.accion === LF.acc) && (!q || norm(`${l.detalle || ''} ${l.accion} ${l.usuario_nombre}`).includes(q)));
     $('#logsCuenta').textContent = `${L.length} de ${LOGS.length} movimientos`;
-    $('#logsTabla').innerHTML = L.length ? `<table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>` + L.map(l => {
-      const c = colorAccion(l.accion);
-      return `<tr>
-        <td style="white-space:nowrap; font-size:.8rem; color:var(--suave);">${new Date(l.created_at).toLocaleString('es-CO')}</td>
-        <td><b>${esc(l.usuario_nombre)}</b></td>
-        <td><span class="badge" style="background:${c[0]}; color:${c[1]}">${esc(l.accion)}</span></td>
-        <td>${esc(l.detalle)}</td></tr>`;
-    }).join('') + '</tbody></table>' : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay movimientos con estos filtros.</div>';
+    $('#logsTabla').innerHTML = L.length ? `<table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>` + L.map(l => { const c = colorAccion(l.accion); return `<tr><td style="white-space:nowrap; font-size:.8rem; color:var(--suave);">${new Date(l.created_at).toLocaleString('es-CO')}</td><td><b>${esc(l.usuario_nombre)}</b></td><td><span class="badge" style="background:${c[0]}; color:${c[1]}">${esc(l.accion)}</span></td><td>${esc(l.detalle)}</td></tr>`; }).join('') + '</tbody></table>' : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay movimientos con estos filtros.</div>';
   }
-
-  async function pPublicar() { return encabezado(`${FLATICONS.documento} Publicar y datos`, 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);">${FLATICONS.estrella} Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio, este se envía a Supabase y se refleja al instante en la vista pública.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);">${FLATICONS.llave} Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin">${FLATICONS.llave} Cambiar clave</button><button class="btn" data-a="salir">${FLATICONS.salir} Cerrar sesión</button></div></div></div></div>`; }
-
+  async function pPublicar() { return encabezado(`${FLATICONS.documento} Publicar y datos`, 'Cómo hacer que los cambios lleguen a la vista pública.') + `<div class="caja"><div style="margin-bottom:1.5rem; display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">1</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);">${FLATICONS.estrella} Todo automático</h3><p style="color:var(--suave); font-size:0.9rem;">Al guardar un cambio, este se envía a Supabase y se refleja al instante.</p></div></div><div style="display:flex; gap:1rem;"><div style="width:44px; height:44px; border-radius:50%; background:var(--lima); color:var(--petroleo); font-family:var(--display); font-weight:800; display:grid; place-items:center; flex:none;">2</div><div><h3 style="font-size:1rem; margin-bottom:0.2rem; color:var(--petroleo);">${FLATICONS.llave} Otras opciones</h3><div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.6rem;"><button class="btn" data-a="pin">${FLATICONS.llave} Cambiar clave</button><button class="btn" data-a="salir">${FLATICONS.salir} Cerrar sesión</button></div></div></div></div>`; }
   async function recargar() { const n = await leerNube(); if (n) D = n; }
-
-  async function ejecutar(fn, ok, accion, detalle) {
-    try {
-      const { error } = await fn();
-      if (error) throw error;
-      registrarLog(accion, detalle);
-      await recargar();
-      toast(ok);
-      return true;
-    } catch (e) { console.error(e); toast('Error: ' + (e.message || e), true); return false; }
-  }
-
+  async function ejecutar(fn, ok, accion, detalle) { try { const { error } = await fn(); if (error) throw error; registrarLog(accion, detalle); await recargar(); toast(ok); return true; } catch (e) { console.error(e); toast('Error: ' + (e.message || e), true); return false; } }
   const PIN_OK = p => /^\d{6,15}$/.test(p);
-
   async function cambiarPin(id) {
     const propio = String(id) === String(USUARIO_ACTUAL.id);
     if (!propio && !puede('admin')) return sinPermiso();
     const p = prompt(propio ? 'Escribe tu nuevo PIN (6 a 15 dígitos):' : 'Nuevo PIN para este usuario (6 a 15 dígitos):');
     if (p === null) return;
     const pin = p.trim();
-    if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
+    if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
     if ((dup || []).some(x => String(x.id) !== String(id))) return toast('Ese PIN ya está en uso, elige otro', true);
     const { data: u } = await dbClient.from('usuarios_admin').select('nombre').eq('id', id).maybeSingle();
     if (await ejecutar(() => actualizarPin(id, pin), `${FLATICONS.check} PIN actualizado`, 'Cambió PIN', propio ? 'Cambió su propio PIN' : 'PIN de ' + (u ? u.nombre : id))) { if (P === 'usuarios') ir('usuarios', true); }
   }
-
   const masivo = async estado => {
     const ids = [...SEL].filter(i => puedeEnEvento(D.eventos.find(e => e.id === i) || {})); if (!ids.length) return sinArea();
     const titulos = ids.map(i => (D.eventos.find(e => e.id === i) || {}).titulo).filter(Boolean).join(', ').slice(0, 200);
     if (await ejecutar(() => dbClient.from('eventos').update({ estado }).in('id', ids), `${FLATICONS.check} ${ids.length} evento(s) actualizados`, estado === 'publicado' ? 'Publicó eventos' : 'Pasó eventos a borrador', titulos)) { SEL.clear(); pintarTabla(); }
   };
-
   const checksAreas = (id, sel = []) => {
-    const ck = v => sel.includes(v) ? 'checked' : '';
-    const lb = (v, t) => `<label><input type="checkbox" value="${esc(v)}" ${ck(v)}> ${t}</label>`;
-    const todos = (pref, txt, ids) => `<label><input type="checkbox" data-todos="${pref}" ${ids.length && ids.every(x => sel.includes(pref + ':' + x)) ? 'checked' : ''}> <b>✅ ${txt}</b></label>`;
+    const lb = (v, t) => `<label><input type="checkbox" value="${esc(v)}" ${sel.includes(v) ? 'checked' : ''}> <span>${t}</span></label>`;
+    const todos = (pref, txt, ids) => `<label class="chk-todos"><input type="checkbox" data-todos="${pref}" ${ids.length && ids.every(x => sel.includes(pref + ':' + x)) ? 'checked' : ''}> <b>✅ ${txt}</b></label>`;
+    const grp = (titulo, cuerpo) => `<section class="chk-grp"><div class="chk-tit">${titulo}</div><div class="chk-items">${cuerpo}</div></section>`;
     const progs = D.facultades.flatMap(f => f.programas.map(p => p.id));
-    return `<div><input type="search" data-filtro="${id}" placeholder="🔍 Buscar facultad, programa o área…" style="width:100%; margin-bottom:.4rem; padding:.5rem .7rem; border:1px solid var(--linea); border-radius:10px; color:var(--tinta); background:#fff;">` +
-      `<div id="${id}" class="chk-lista"><b class="chk-tit">Facultades</b>` + todos('f', 'Todas las facultades', D.facultades.map(f => f.id)) +
-      D.facultades.map(f => lb('f:' + f.id, `${emojiFac(f)} ${esc(f.nombre)}`)).join('') +
-      `<b class="chk-tit">Programas</b>` + todos('p', 'Todos los programas', progs) +
-      D.facultades.filter(f => f.programas.length).map(f => `<b class="chk-tit">${esc(f.nombre)}</b>` + f.programas.map(p => lb('p:' + p.id, `📚 ${esc(p.nombre)}`)).join('')).join('') +
-      `<b class="chk-tit">Áreas administrativas</b>` + todos('a', 'Todas las áreas', D.areas.map(x => x.id)) +
-      D.areas.map(x => lb('a:' + x.id, `${emojiArea(x)} ${esc(x.nombre)}`)).join('') + '</div></div>';
+    return `<div><input type="search" data-filtro="${id}" placeholder="🔍 Buscar facultad, programa o área…" style="width:100%; margin-bottom:.4rem; padding:.5rem .7rem; border:1px solid var(--linea); border-radius:10px; color:var(--tinta); background:#fff;"><div id="${id}" class="chk-lista">${grp('🏛️ Facultades', todos('f', 'Todas las facultades', D.facultades.map(f => f.id)) + D.facultades.map(f => lb('f:' + f.id, `${emojiFac(f)} ${esc(f.nombre)}`)).join(''))}${(progs.length ? grp('📚 Programas', todos('p', 'Todos los programas', progs)) : '')}${D.facultades.filter(f => f.programas.length).map(f => grp(`${emojiFac(f)} ${esc(f.nombre)}`, f.programas.map(p => lb('p:' + p.id, `${esc(p.nombre)}${p.nivel === 'posgrado' ? ' <small>(posgrado)</small>' : ''}`)).join(''))).join('')}${grp('🏢 Áreas administrativas', todos('a', 'Todas las áreas', D.areas.map(x => x.id)) + D.areas.map(x => lb('a:' + x.id, `${emojiArea(x)} ${esc(x.nombre)}`)).join(''))}</div></div>`;
   };
-  function sincronizarTodos(lista) {
-    lista.querySelectorAll('[data-todos]').forEach(m => {
-      const it = [...lista.querySelectorAll(`input[value^="${m.dataset.todos}:"]`)];
-      m.checked = it.length > 0 && it.every(x => x.checked);
-    });
-  }
-
+  function sincronizarTodos(lista) { lista.querySelectorAll('[data-todos]').forEach(m => { const it = [...lista.querySelectorAll(`input[value^="${m.dataset.todos}:"]`)]; m.checked = it.length > 0 && it.every(x => x.checked); }); }
   async function modalUsuario(id) {
     const { data, error } = await cargarUsuarios();
     const u = (data || []).find(x => String(x.id) === String(id));
     if (error || !u) return toast('No se pudo cargar el usuario', true);
-    $('#modal').innerHTML = `<div class="mod"><h2>${FLATICONS.editar} Editar a ${esc(u.nombre)}</h2>
-      <div class="fr2">
-        <div class="fr"><label>Nombre *</label><input id="e_nombre" value="${esc(u.nombre)}"></div>
-        <div class="fr"><label>Correo electrónico</label><input id="e_correo" type="email" value="${esc(u.correo || '')}" placeholder="usuario@unbosque.edu.co"></div>
-      </div>
-      <div class="fr"><label>Tipo de usuario</label><select id="e_rol">${opt('editor', 'Usuario con permisos', u.rol !== 'admin')}${opt('admin', 'Administrador (todo el sistema)', u.rol === 'admin')}</select></div>
-      <div class="fr"><label>Permisos (puedes marcar varios)</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:.4rem 0;">${checksPermisos('e_p_', u.permisos || [])}</div></div>
-      <div class="fr"><label>Facultades, programas o áreas asignados (puedes marcar varios)</label>${checksAreas('e_areas', u.areas_asignadas || [])}<p style="font-size:.75rem; color:var(--suave); margin-top:.3rem;">Solo podrá crear, editar o eliminar eventos de lo que marques. Sin ninguno, solo puede ver. Un administrador ignora permisos y ámbito.</p></div>
-      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="saveUser" data-i="${esc(String(u.id))}">${FLATICONS.guardar} Guardar</button></div></div>`;
+    $('#modal').innerHTML = `<div class="mod"><h2>${FLATICONS.editar} Editar a ${esc(u.nombre)}</h2><div class="fr2"><div class="fr"><label>Nombre *</label><input id="e_nombre" value="${esc(u.nombre)}"></div><div class="fr"><label>Correo electrónico</label><input id="e_correo" type="email" value="${esc(u.correo || '')}"></div></div><div class="fr"><label>Tipo de usuario</label><select id="e_rol">${opt('editor', 'Usuario con permisos', u.rol !== 'admin')}${opt('admin', 'Administrador (todo el sistema)', u.rol === 'admin')}</select></div><div class="fr"><label>Permisos</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:.4rem 0;">${checksPermisos('e_p_', u.permisos || [])}</div></div><div class="fr"><label>Facultades, programas o áreas</label>${checksAreas('e_areas', u.areas_asignadas || [])}</div><div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="saveUser" data-i="${esc(String(u.id))}">${FLATICONS.guardar} Guardar</button></div></div>`;
     $('#modal').classList.add('on');
   }
-
   async function guardarUsuario(id) {
     const nombre = $('#e_nombre').value.trim(), correo = $('#e_correo').value.trim(), rol = $('#e_rol').value;
     let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#e_p_' + k).checked);
     let areas = $$('#e_areas input[value]:checked').map(i => i.value);
     if (!nombre) return toast('El nombre no puede quedar vacío', true);
-    if (correo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Correo inválido', true);
     if (rol !== 'admin' && !permisos.length) return toast('Selecciona al menos un permiso', true);
-
-    const { data: todos } = await cargarUsuarios();
-    const actual = (todos || []).find(x => String(x.id) === String(id));
-    if (!actual) return toast('Usuario no encontrado', true);
-    if (actual.rol === 'admin' && rol !== 'admin') {
-      if (String(id) === String(USUARIO_ACTUAL.id)) return toast('No puedes quitarte a ti mismo el rol de administrador', true);
-      if (todos.filter(x => x.rol === 'admin').length <= 1) return toast('Debe quedar al menos un administrador', true);
-    }
     if (rol === 'admin') { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
-
     const payload = { nombre, rol, permisos, areas_asignadas: areas, correo: correo || null };
-    const ok = await ejecutar(() => dbClient.from('usuarios_admin').update(payload).eq('id', id), `${FLATICONS.check} Usuario actualizado`, 'Editó usuario', `${nombre} (${rol === 'admin' ? 'Administrador' : 'Permisos: ' + permisos.join(',') + '; Ámbitos: ' + areas.length})`);
-    if (ok) {
-      if (String(id) === String(USUARIO_ACTUAL.id)) { USUARIO_ACTUAL.nombre = nombre; USUARIO_ACTUAL.permisos = permisos; USUARIO_ACTUAL.areas = areas; $('#userNameDisplay').textContent = nombre; }
-      cerrarModal(); ir('usuarios', true);
-    }
+    const ok = await ejecutar(() => dbClient.from('usuarios_admin').update(payload).eq('id', id), `${FLATICONS.check} Usuario actualizado`, 'Editó usuario', nombre);
+    if (ok) { if (String(id) === String(USUARIO_ACTUAL.id)) { USUARIO_ACTUAL.nombre = nombre; USUARIO_ACTUAL.permisos = permisos; USUARIO_ACTUAL.areas = areas; $('#userNameDisplay').textContent = nombre; } cerrarModal(); ir('usuarios', true); }
   }
 
   const ACC = {
     editUser: i => modalUsuario(i), saveUser: i => guardarUsuario(i),
-    nuevo: () => modalEvento(), editar: i => modalEvento(i), cerrar: cerrarModal, guardarEv: i => guardarEvento(i),
+    nuevo: () => modalEvento(), editar: i => modalEvento(i),
+    dup: i => { const o = D.eventos.find(x => x.id === i); if (!o) return; DUP = { ...o, id: '', titulo: o.titulo + ' (copia)', estado: 'borrador' }; modalEvento(); toast('📄 Copia lista'); }, cerrar: cerrarModal, guardarEv: i => guardarEvento(i),
     del: i => eliminarEventoAdmin(i),
     resetPin: i => restablecerPin(i),
-    autoEmoji: async () => {
-      if (!D.facultades.length) return;
-      if (!confirm('¿Poner un emoji distinto a cada facultad? Esto reemplaza los emojis actuales.')) return;
-      const usados = new Set();
-      for (const f of D.facultades) {
-        let e = buscarEmoji(EMOJI_FAC, f.nombre, '');
-        if (!e || usados.has(e)) e = EMOJI_POOL.find(x => !usados.has(x)) || '🏛️';
-        usados.add(e);
-        const { error } = await dbClient.from('facultades').update({ emoji: e }).eq('id', f.id); if (!error) f.emoji = e;
-      }
-      registrarLog('Asignó emojis', `${D.facultades.length} facultades`); toast(`${FLATICONS.check} Emojis asignados sin repetir`); refrescar();
-    },
-    tog: async i => {
-      const e = D.eventos.find(x => x.id === i); if (!e) return; if (!puedeEnEvento(e)) return sinArea();
-      const nuevo = e.estado === 'borrador' ? 'publicado' : 'borrador';
-      if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? `${FLATICONS.documento} Pasó a borrador` : `${FLATICONS.check} Publicado`, nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla();
-    },
+    autoEmoji: async () => { if (!D.facultades.length) return; if (!confirm('¿Poner un emoji distinto a cada facultad?')) return; const usados = new Set(); for (const f of D.facultades) { let e = buscarEmoji(EMOJI_FAC, f.nombre, ''); if (!e || usados.has(e)) e = EMOJI_POOL.find(x => !usados.has(x)) || '🏛️'; usados.add(e); const { error } = await dbClient.from('facultades').update({ emoji: e }).eq('id', f.id); if (!error) f.emoji = e; } registrarLog('Asignó emojis', `${D.facultades.length} facultades`); toast(`${FLATICONS.check} Emojis asignados`); refrescar(); },
+    tog: async i => { const e = D.eventos.find(x => x.id === i); if (!e) return; if (!puedeEnEvento(e)) return sinArea(); const nuevo = e.estado === 'borrador' ? 'publicado' : 'borrador'; if (await ejecutar(() => dbClient.from('eventos').update({ estado: nuevo }).eq('id', i), nuevo === 'borrador' ? `${FLATICONS.documento} Pasó a borrador` : `${FLATICONS.check} Publicado`, nuevo === 'borrador' ? 'Despublicó evento' : 'Publicó evento', e.titulo)) pintarTabla(); },
     m_pub: () => masivo('publicado'), m_bor: () => masivo('borrador'),
-
-    addPer: async () => {
-      const anio = +$('#n_anio').value, sem = $('#n_sem').value, ini = $('#n_ini').value, fin = $('#n_fin').value;
-      if (!anio || !ini || !fin) return toast('Completa año, inicio y fin', true);
-      if (fin < ini) return toast('El fin no puede ser antes del inicio', true);
-      const id = anio + '-' + sem;
-      if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true);
-      if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), `${FLATICONS.check} Semestre creado`, 'Creó semestre', nombrePeriodo(id))) refrescar();
-    },
-    togPer: async i => {
-      const p = D.periodos.find(x => x.id === i); if (!p) return;
-      const suspender = p.activo !== false, n = usadosPeriodo(i);
-      if (suspender && !confirm(`¿Suspender ${nombrePeriodo(i)}? Sus ${n} evento(s) dejarán de verse en el calendario público. Puedes reactivarlo cuando quieras.`)) return;
-      const { error } = await dbClient.from('periodos').update({ activo: !suspender }).eq('id', i);
-      if (error) return toast(/activo/i.test(error.message || '') ? 'Falta la columna "activo" en la tabla periodos. Ejecuta el SQL de actualización en Supabase.' : 'Error: ' + error.message, true);
-      registrarLog(suspender ? 'Suspendió semestre' : 'Reactivó semestre', nombrePeriodo(i));
-      await recargar(); toast(suspender ? '⏸ Semestre suspendido' : `${FLATICONS.check} Semestre reactivado`); refrescar();
-    },
-    delPer: async i => {
-      const n = D.eventos.filter(e => e.periodo === i || e.periodo2 === i).length;
-      if (n) return toast(`Hay ${n} eventos en ese semestre`, true);
-      if (!confirm('¿Eliminar este semestre?')) return;
-      if (await ejecutar(() => dbClient.from('periodos').delete().eq('id', i), 'Semestre eliminado', 'Eliminó semestre', nombrePeriodo(i))) refrescar();
-    },
-
-    addFac: async () => {
-      const n = $('#n_fac').value.trim(); if (!n) return toast('Escribe el nombre', true);
-      const emoji = $('#n_fac_emoji').value.trim(), color = $('#n_fac_color').value;
-      if (await ejecutar(() => dbClient.from('facultades').insert([{ nombre: n, emoji, color }]), `${FLATICONS.check} Facultad agregada`, 'Creó facultad', n)) refrescar();
-    },
-    delFac: async i => {
-      const f = D.facultades.find(x => x.id === i); const n = D.eventos.filter(e => (e.facultad || []).includes(i)).length;
-      if (!confirm('¿Eliminar esta facultad?') || !confirm(`Hay ${n} eventos. ¿Seguro?`)) return;
-      if (await ejecutar(() => dbClient.from('facultades').delete().eq('id', i), 'Facultad eliminada', 'Eliminó facultad', f ? f.nombre : i)) refrescar();
-    },
-    addProg: async i => {
-      const f = D.facultades.find(x => x.id === i), n = $('#np_' + i).value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]), `${FLATICONS.check} Programa agregado`, 'Creó programa', `${n} (${f ? f.nombre : ''})`)) refrescar();
-    },
-    delProg: async (i, j) => {
-      const f = D.facultades.find(x => x.id === i), pr = f && f.programas.find(x => x.id === j); const n = D.eventos.filter(e => (e.programa || []).includes(j)).length;
-      if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return;
-      if (await ejecutar(() => dbClient.from('programas').delete().eq('id', j), 'Programa quitado', 'Eliminó programa', pr ? pr.nombre : j)) refrescar();
-    },
-    addArea: async () => {
-      const n = $('#n_area').value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('areas').insert([{ nombre: n }]), `${FLATICONS.check} Área agregada`, 'Creó área', n)) refrescar();
-    },
-    delArea: async i => {
-      const a = D.areas.find(x => x.id === i); const n = D.eventos.filter(e => (e.area || []).includes(i)).length;
-      if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return;
-      if (await ejecutar(() => dbClient.from('areas').delete().eq('id', i), 'Área eliminada', 'Eliminó área', a ? a.nombre : i)) refrescar();
-    },
-    addCat: async () => {
-      const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true);
-      if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), `${FLATICONS.check} Categoría agregada`, 'Creó categoría', n)) refrescar();
-    },
-    delCat: async i => {
-      const c = D.categorias.find(x => x.id === i);
-      if (D.eventos.some(e => e.categoria === i)) return toast('Hay eventos en esa categoría', true);
-      if (D.categorias.length === 1) return toast('Debe quedar al menos una', true);
-      if (!confirm('¿Eliminar esta categoría?')) return;
-      if (await ejecutar(() => dbClient.from('categorias').delete().eq('id', i), 'Categoría eliminada', 'Eliminó categoría', c ? c.nombre : i)) refrescar();
-    },
-
+    addPer: async () => { const anio = +$('#n_anio').value, sem = $('#n_sem').value, ini = $('#n_ini').value, fin = $('#n_fin').value; if (!anio || !ini || !fin) return toast('Completa año, inicio y fin', true); if (fin < ini) return toast('El fin no puede ser antes', true); const id = anio + '-' + sem; if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true); if (await ejecutar(() => dbClient.from('periodos').insert([{ id, inicio: ini, fin }]), `${FLATICONS.check} Semestre creado`, 'Creó semestre', nombrePeriodo(id))) refrescar(); },
+    togPer: async i => { const p = D.periodos.find(x => x.id === i); if (!p) return; const suspender = p.activo !== false, n = usadosPeriodo(i); if (suspender && !confirm(`¿Suspender ${nombrePeriodo(i)}? Sus ${n} evento(s) dejarán de verse.`)) return; const { error } = await dbClient.from('periodos').update({ activo: !suspender }).eq('id', i); if (error) return toast(/activo/i.test(error.message || '') ? 'Falta la columna "activo" en periodos.' : 'Error: ' + error.message, true); registrarLog(suspender ? 'Suspendió semestre' : 'Reactivó semestre', nombrePeriodo(i)); await recargar(); toast(suspender ? '⏸ Semestre suspendido' : `${FLATICONS.check} Semestre reactivado`); refrescar(); },
+    delPer: async i => { const n = D.eventos.filter(e => e.periodo === i || e.periodo2 === i).length; if (n) return toast(`Hay ${n} eventos en ese semestre`, true); if (!confirm('¿Eliminar este semestre?')) return; if (await ejecutar(() => dbClient.from('periodos').delete().eq('id', i), 'Semestre eliminado', 'Eliminó semestre', nombrePeriodo(i))) refrescar(); },
+    addFac: async () => { const n = $('#n_fac').value.trim(); if (!n) return toast('Escribe el nombre', true); const emoji = $('#n_fac_emoji').value.trim(), color = $('#n_fac_color').value; if (await ejecutar(() => dbClient.from('facultades').insert([{ nombre: n, emoji, color }]), `${FLATICONS.check} Facultad agregada`, 'Creó facultad', n)) refrescar(); },
+    delFac: async i => { const f = D.facultades.find(x => x.id === i); const n = D.eventos.filter(e => (e.facultad || []).includes(i)).length; if (!confirm('¿Eliminar esta facultad?') || !confirm(`Hay ${n} eventos. ¿Seguro?`)) return; if (await ejecutar(() => dbClient.from('facultades').delete().eq('id', i), 'Facultad eliminada', 'Eliminó facultad', f ? f.nombre : i)) refrescar(); },
+    addProg: async i => { const f = D.facultades.find(x => x.id === i), n = $('#np_' + i).value.trim(); if (!n) return toast('Escribe el nombre', true); if (await ejecutar(() => dbClient.from('programas').insert([{ facultad_id: i, nombre: n, nivel: $('#nn_' + i).value }]), `${FLATICONS.check} Programa agregado`, 'Creó programa', `${n} (${f ? f.nombre : ''})`)) refrescar(); },
+    delProg: async (i, j) => { const f = D.facultades.find(x => x.id === i), pr = f && f.programas.find(x => x.id === j); const n = D.eventos.filter(e => (e.programa || []).includes(j)).length; if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return; if (await ejecutar(() => dbClient.from('programas').delete().eq('id', j), 'Programa quitado', 'Eliminó programa', pr ? pr.nombre : j)) refrescar(); },
+    addArea: async () => { const n = $('#n_area').value.trim(); if (!n) return toast('Escribe el nombre', true); if (await ejecutar(() => dbClient.from('areas').insert([{ nombre: n }]), `${FLATICONS.check} Área agregada`, 'Creó área', n)) refrescar(); },
+    delArea: async i => { const a = D.areas.find(x => x.id === i); const n = D.eventos.filter(e => (e.area || []).includes(i)).length; if (!confirm(`Hay ${n} eventos. ¿Seguro?`)) return; if (await ejecutar(() => dbClient.from('areas').delete().eq('id', i), 'Área eliminada', 'Eliminó área', a ? a.nombre : i)) refrescar(); },
+    addCat: async () => { const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true); if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), `${FLATICONS.check} Categoría agregada`, 'Creó categoría', n)) refrescar(); },
+    delCat: async i => { const c = D.categorias.find(x => x.id === i); if (D.eventos.some(e => e.categoria === i)) return toast('Hay eventos en esa categoría', true); if (D.categorias.length === 1) return toast('Debe quedar al menos una', true); if (!confirm('¿Eliminar esta categoría?')) return; if (await ejecutar(() => dbClient.from('categorias').delete().eq('id', i), 'Categoría eliminada', 'Eliminó categoría', c ? c.nombre : i)) refrescar(); },
     addUser: async () => {
-      const nombre = $('#n_user_name').value.trim();
-      const correo = $('#n_user_correo').value.trim();
-      const pin = $('#n_user_pin').value.trim();
-      const rol = $('#n_user_rol').value;
-
+      const nombre = $('#n_user_name').value.trim(), correo = $('#n_user_correo').value.trim(), pin = $('#n_user_pin').value.trim(), rol = $('#n_user_rol').value;
       let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#n_user_p_' + k).checked);
       let areas = $$('#n_user_areas input[value]:checked').map(i => i.value);
-
       if (!nombre || !pin) return toast('Completa nombre y PIN', true);
-      if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos (solo números)', true);
-      if (correo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) return toast('Correo inválido', true);
+      if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
       if (rol !== 'admin' && permisos.length === 0) return toast('Selecciona al menos un permiso', true);
       if (rol === 'admin') { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
-
       try {
         const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
-        if (dup && dup.length) return toast('Ese PIN ya está en uso, elige otro', true);
-
+        if (dup && dup.length) return toast('Ese PIN ya está en uso', true);
         await crearUsuario({ nombre, pin, rol, correo: correo || null, permisos, areas_asignadas: areas });
-
-        registrarLog('Creó usuario', `${nombre} (${rol === 'admin' ? 'Administrador' : 'Permisos: ' + permisos.join(',') + '; Ámbitos: ' + areas.length})`);
-        toast(`${FLATICONS.check} Usuario creado`); ir('usuarios', true);
-      } catch (e) {
-        console.error(e);
-        toast('Error al crear usuario: ' + (/correo/i.test(e.message || '') ? 'falta la columna correo, ejecuta el SQL de actualización' : e.message), true);
-      }
+        registrarLog('Creó usuario', nombre); toast(`${FLATICONS.check} Usuario creado`); ir('usuarios', true);
+      } catch (e) { console.error(e); toast('Error al crear usuario: ' + e.message, true); }
     },
-    delUser: async i => {
-      if (String(i) === String(USUARIO_ACTUAL.id)) return toast('No puedes eliminar tu propio usuario', true);
-      const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol');
-      const u = (data || []).find(x => String(x.id) === String(i)); if (!u) return;
-      if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) return toast('Debe quedar al menos un administrador', true);
-      if (!confirm(`¿Eliminar a ${u.nombre}?`)) return;
-      if (await ejecutar(() => dbClient.from('usuarios_admin').delete().eq('id', i), 'Usuario eliminado', 'Eliminó usuario', u.nombre)) ir('usuarios', true);
-    },
+    delUser: async i => { if (String(i) === String(USUARIO_ACTUAL.id)) return toast('No puedes eliminar tu propio usuario', true); const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol'); const u = (data || []).find(x => String(x.id) === String(i)); if (!u) return; if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) return toast('Debe quedar al menos un administrador', true); if (!confirm(`¿Eliminar a ${u.nombre}?`)) return; if (await ejecutar(() => dbClient.from('usuarios_admin').delete().eq('id', i), 'Usuario eliminado', 'Eliminó usuario', u.nombre)) ir('usuarios', true); },
     userPin: i => cambiarPin(i),
     pin: () => cambiarPin(USUARIO_ACTUAL.id),
     logsRef: () => ir('logs', true),
-    salir: () => cerrarSesion()
+    salir: () => cerrarSesion(),
+    addNov: async () => {
+      const titulo = $('#nv_titulo').value.trim(), fecha = $('#nv_fecha').value;
+      if (!titulo || !fecha) return toast('Completa título y fecha', true);
+      const payload = { titulo, fecha, tipo: $('#nv_tipo').value, materia: $('#nv_materia').value.trim() || null, docente: $('#nv_docente').value.trim() || null, salon: $('#nv_salon').value.trim() || null, hora_inicio: $('#nv_hi').value || null, hora_fin: $('#nv_hf').value || null, modalidad: $('#nv_modal').value || null, detalle: $('#nv_detalle').value.trim() || null, creado_por: USUARIO_ACTUAL ? USUARIO_ACTUAL.nombre : null };
+      const { error } = await dbClient.from('novedades').insert([payload]);
+      if (error) return toast('Error: ' + error.message, true);
+      registrarLog('Publicó novedad', titulo); toast('✅ Novedad publicada'); ir('novedades', true);
+    },
+    delNov: async i => { if (!confirm('¿Eliminar esta novedad?')) return; const { error } = await dbClient.from('novedades').delete().eq('id', i); if (error) return toast('Error al eliminar', true); registrarLog('Eliminó novedad', i); toast('Novedad eliminada'); ir('novedades', true); }
   };
 
   const ACC_LIBRES = new Set(['cerrar', 'salir', 'pin', 'guardarEv']);
-  const ACC_PERM = { nuevo: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar', resetPin: 'admin' };
+  const ACC_PERM = { nuevo: 'crear', dup: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar', resetPin: 'admin', addNov: 'crear', delNov: 'eliminar' };
   const permisoAcc = k => ACC_LIBRES.has(k) || puede(ACC_PERM[k] || 'admin');
 
   document.addEventListener('click', e => {
@@ -2297,11 +1780,7 @@
 
   document.addEventListener('change', async e => {
     const t = e.target;
-    if (t.dataset && t.dataset.todos) {
-      const lista = t.closest('.chk-lista');
-      lista.querySelectorAll(`input[value^="${t.dataset.todos}:"]`).forEach(x => { if (x.closest('label').style.display !== 'none') x.checked = t.checked; });
-      return sincronizarTodos(lista);
-    }
+    if (t.dataset && t.dataset.todos) { const lista = t.closest('.chk-lista'); lista.querySelectorAll(`input[value^="${t.dataset.todos}:"]`).forEach(x => { if (x.closest('label').style.display !== 'none') x.checked = t.checked; }); return sincronizarTodos(lista); }
     if (t.closest && t.closest('.chk-lista') && t.hasAttribute('value')) sincronizarTodos(t.closest('.chk-lista'));
     if (t.id && t.id.startsWith('x_')) { F[t.id.slice(2)] = t.value; return pintarTabla(); }
     if (t.id && t.id.startsWith('l_')) { LF[t.id.slice(2)] = t.value; return pintarLogs(); }
@@ -2310,34 +1789,31 @@
     if (k === 'todos') { if (!puede('editar')) return; eventosFiltrados().filter(puedeEnEvento).forEach(e => t.checked ? SEL.add(e.id) : SEL.delete(e.id)); return pintarTabla(); }
     if (k === 'sel') { if (!puede('editar')) return; t.checked ? SEL.add(i) : SEL.delete(i); return pintarTabla(); }
     if (!puede('admin')) return sinPermiso();
-    if (k === 'userRol') return cambiarRol(i, t.value);
     if (['facNom', 'progNom', 'areaNom', 'catNom'].includes(k) && !v) return refrescar();
     if (['perIni', 'perFin'].includes(k) && !t.value) return refrescar();
-
     let tabla, campos, texto, quien;
     if (k === 'perIni') { D.periodos.find(p => p.id === i).inicio = t.value; tabla = 'periodos'; campos = { inicio: t.value }; quien = 'semestre'; texto = `${nombrePeriodo(i)}: inicio ${t.value}`; }
     else if (k === 'perFin') { D.periodos.find(p => p.id === i).fin = t.value; tabla = 'periodos'; campos = { fin: t.value }; quien = 'semestre'; texto = `${nombrePeriodo(i)}: fin ${t.value}`; }
     else if (k === 'facNom') { D.facultades.find(f => f.id === i).nombre = v; tabla = 'facultades'; campos = { nombre: v }; quien = 'facultad'; texto = v; }
-    else if (k === 'facEmoji') { D.facultades.find(f => f.id === i).emoji = v; tabla = 'facultades'; campos = { emoji: v }; quien = 'facultad'; texto = `${D.facultades.find(f => f.id === i).nombre}: emoji ${v}`; }
-    else if (k === 'facColor') { D.facultades.find(f => f.id === i).color = t.value; tabla = 'facultades'; campos = { color: t.value }; quien = 'facultad'; texto = `${D.facultades.find(f => f.id === i).nombre}: color ${t.value}`; }
+    else if (k === 'facEmoji') { D.facultades.find(f => f.id === i).emoji = v; tabla = 'facultades'; campos = { emoji: v }; quien = 'facultad'; texto = v; }
+    else if (k === 'facColor') { D.facultades.find(f => f.id === i).color = t.value; tabla = 'facultades'; campos = { color: t.value }; quien = 'facultad'; texto = t.value; }
     else if (k === 'progNom') { D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nombre = v; tabla = 'programas'; campos = { nombre: v }; quien = 'programa'; texto = v; }
-    else if (k === 'progNivel') { D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nivel = t.value; tabla = 'programas'; campos = { nivel: t.value }; quien = 'programa'; texto = `${D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nombre}: ${t.value}`; }
+    else if (k === 'progNivel') { D.facultades.find(f => f.id === i).programas.find(p => p.id === j).nivel = t.value; tabla = 'programas'; campos = { nivel: t.value }; quien = 'programa'; texto = t.value; }
     else if (k === 'areaNom') { D.areas.find(a => a.id === i).nombre = v; tabla = 'areas'; campos = { nombre: v }; quien = 'área'; texto = v; }
     else if (k === 'catNom') { D.categorias.find(c => c.id === i).nombre = v; tabla = 'categorias'; campos = { nombre: v }; quien = 'categoría'; texto = v; }
-    else if (k === 'catCol') { D.categorias.find(c => c.id === i).color = t.value; tabla = 'categorias'; campos = { color: t.value }; quien = 'categoría'; texto = `${D.categorias.find(c => c.id === i).nombre}: color ${t.value}`; }
+    else if (k === 'catCol') { D.categorias.find(c => c.id === i).color = t.value; tabla = 'categorias'; campos = { color: t.value }; quien = 'categoría'; texto = t.value; }
     if (!tabla) return;
-
     const id = (k === 'progNom' || k === 'progNivel') ? j : i;
     const { error } = await dbClient.from(tabla).update(campos).eq('id', id);
     if (error) { toast('Error al guardar: ' + error.message, true); await recargar(); return refrescar(); }
-    registrarLog('Modificó ' + quien, texto);
-    toast(`${FLATICONS.check} Cambio guardado`);
+    registrarLog('Modificó ' + quien, texto); toast(`${FLATICONS.check} Cambio guardado`);
   });
 
   document.addEventListener('input', e => {
     if (e.target.dataset && e.target.dataset.filtro) {
-      const q = norm(e.target.value);
-      $$('#' + e.target.dataset.filtro + ' label').forEach(l => { l.style.display = !q || norm(l.textContent).includes(q) ? '' : 'none'; });
+      const q = norm(e.target.value); const lista = '#' + e.target.dataset.filtro;
+      $$(lista + ' label').forEach(l => { l.style.display = !q || l.classList.contains('chk-todos') || norm(l.textContent).includes(q) ? '' : 'none'; });
+      $$(lista + ' .chk-grp').forEach(g => { g.style.display = !q || [...g.querySelectorAll('label:not(.chk-todos)')].some(l => l.style.display !== 'none') ? '' : 'none'; });
       return;
     }
     if (e.target.id === 'x_q') { F.q = e.target.value; pintarTabla(); }
@@ -2345,19 +1821,9 @@
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
-  /* ============================================================
-     INICIALIZACIÓN
-     ============================================================ */
   async function iniciar() {
-    if (DB_READY) {
-      const datos = await leerNube();
-      if (datos) D = datos;
-    }
-    
-    if (!D) {
-      D = { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
-    }
-    
+    if (DB_READY) { const datos = await leerNube(); if (datos) D = datos; }
+    if (!D) D = { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
     $('#public-panel').style.display = 'block';
     const per = periodoDe(hoy()), anios = aniosDisponibles();
     S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
@@ -2367,11 +1833,8 @@
     $('#loader').classList.add('hidden');
   }
 
-  if (dbClient) {
-    iniciar();
-  } else {
-    $('#loader').innerHTML = `<p style="color:var(--rojo); font-weight:600; text-align:center; padding:2rem;">Faltan las credenciales de Supabase.</p>`;
-  }
+  if (dbClient) iniciar();
+  else $('#loader').innerHTML = `<p style="color:var(--rojo); font-weight:600; text-align:center; padding:2rem;">Faltan las credenciales de Supabase.</p>`;
 </script>
 </body>
 </html>
