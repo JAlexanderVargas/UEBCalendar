@@ -106,26 +106,28 @@
   .nov-actions { display:flex; gap:.4rem; justify-content:flex-end; margin-top:.6rem; }
 
   .modulos { padding: 1rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.8rem; position: relative; z-index: 10; }
-  .mod { position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); background: #fff; color: var(--tinta); border-radius: 10px; padding: 0.7rem 0.9rem; min-height: 70px; display: flex; flex-direction: row; align-items: center; gap: 0.8rem; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
-  .mod::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c, var(--lima)); transition: var(--transicion); }
-  .mod:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: var(--c, var(--verde)); }
-  .mod .ic { flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: color-mix(in srgb, var(--c) 12%, white); color: var(--c); }
-  .mod .ic .flaticon { width: 1.2rem; height: 1.2rem; }
-  .mod .txt { display: flex; flex-direction: column; gap: 0.1rem; z-index: 1; }
-  .mod b { font-weight: 700; font-size: 0.88rem; line-height: 1.1; color: var(--tinta); display: block; }
-  .mod .n { font-size: 0.7rem; font-weight: 600; color: var(--suave); display: block; }
-  .mod.on { border-color: var(--c, var(--lima)); box-shadow: 0 6px 20px color-mix(in srgb, var(--c, var(--lima)) 30%, transparent); background: color-mix(in srgb, var(--c, var(--lima)) 6%, white); }
-  .mod.on b { color: var(--petroleo); }
-  .mod.on .n { color: var(--petroleo); opacity: 0.8; }
-  .mod.cero { opacity: 0.8; }
-  .mod.cero .n { color: #999; }
-  .mod.todos { background: var(--petroleo); color: #fff; border: none; }
-  .mod.todos::before { background: var(--lima); }
-  .mod.todos .ic { background: rgba(255,255,255,0.15); color: var(--lima); }
-  .mod.todos b { color: #fff; }
-  .mod.todos .n { color: rgba(255,255,255,0.7); }
-  .mod.todos.on { background: var(--verde); box-shadow: 0 8px 25px rgba(0,122,120,0.4); }
-  .mod.todos.on .ic { background: #fff; color: var(--verde); }
+  
+  /* Módulos públicos renombrados a .mod-card para evitar conflicto con el modal */
+  .mod-card { position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); background: #fff; color: var(--tinta); border-radius: 10px; padding: 0.7rem 0.9rem; min-height: 70px; display: flex; flex-direction: row; align-items: center; gap: 0.8rem; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+  .mod-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c, var(--lima)); transition: var(--transicion); }
+  .mod-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: var(--c, var(--verde)); }
+  .mod-card .ic { flex: none; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: color-mix(in srgb, var(--c) 12%, white); color: var(--c); }
+  .mod-card .ic .flaticon { width: 1.2rem; height: 1.2rem; }
+  .mod-card .txt { display: flex; flex-direction: column; gap: 0.1rem; z-index: 1; }
+  .mod-card b { font-weight: 700; font-size: 0.88rem; line-height: 1.1; color: var(--tinta); display: block; }
+  .mod-card .n { font-size: 0.7rem; font-weight: 600; color: var(--suave); display: block; }
+  .mod-card.on { border-color: var(--c, var(--lima)); box-shadow: 0 6px 20px color-mix(in srgb, var(--c, var(--lima)) 30%, transparent); background: color-mix(in srgb, var(--c, var(--lima)) 6%, white); }
+  .mod-card.on b { color: var(--petroleo); }
+  .mod-card.on .n { color: var(--petroleo); opacity: 0.8; }
+  .mod-card.cero { opacity: 0.8; }
+  .mod-card.cero .n { color: #999; }
+  .mod-card.todos { background: var(--petroleo); color: #fff; border: none; }
+  .mod-card.todos::before { background: var(--lima); }
+  .mod-card.todos .ic { background: rgba(255,255,255,0.15); color: var(--lima); }
+  .mod-card.todos b { color: #fff; }
+  .mod-card.todos .n { color: rgba(255,255,255,0.7); }
+  .mod-card.todos.on { background: var(--verde); box-shadow: 0 8px 25px rgba(0,122,120,0.4); }
+  .mod-card.todos.on .ic { background: #fff; color: var(--verde); }
 
   main { flex: 1; padding: 1rem clamp(1rem, 4vw, 3rem) 3rem; max-width: 1400px; width: 100%; margin: 0 auto; position: relative; z-index: 10; }
 
@@ -309,6 +311,7 @@
   #modal { position: fixed; inset: 0; background: rgba(0,30,27,.5); display: none; place-items: center; padding: 1.5rem; z-index: 100; overflow: auto; backdrop-filter: blur(3px); }
   #modal.on { display: grid; }
   
+  /* Corrección: asegurar que el modal no herede propiedades de flexbox de los módulos */
   .mod { 
     background: #fff; 
     border-radius: 16px; 
@@ -320,6 +323,7 @@
     color: var(--tinta); 
     max-height: 90vh; 
     overflow-y: auto; 
+    display: block; /* Asegura que no herede flexbox */
   }
   @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
   .mod h2 { font-family: var(--display); font-size: 1.6rem; margin-bottom: 1.5rem; color: var(--petroleo); display: flex; align-items: center; gap: 0.5rem; }
@@ -349,18 +353,19 @@
   
   .multi-select { 
     width: 100%; 
-    padding: .6rem; 
+    padding: .4rem; 
     border: 1px solid var(--linea); 
     border-radius: 10px; 
     font-size: .9rem; 
     background: #fff; 
     color: var(--tinta); 
-    min-height: 120px;
+    min-height: 110px;
+    max-height: 150px;
   }
   .multi-select option { 
-    padding: .5rem .6rem; 
+    padding: .4rem .6rem; 
     border-radius: 6px; 
-    margin-bottom: 2px;
+    margin-bottom: 1px;
   }
   .multi-select option:checked {
     background: color-mix(in srgb, var(--verde) 15%, white) !important;
@@ -983,7 +988,7 @@
   function pintarModulos() {
     const base = filtrar({ sinCat: true }); let i = 0;
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
-    const card = (id, col, ic, nom, n, cls) => `<button class="mod ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>`;
+    const card = (id, col, ic, nom, n, cls) => `<button class="mod-card ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>`;
     $('#modulos').innerHTML = card('', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
       D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
   }
