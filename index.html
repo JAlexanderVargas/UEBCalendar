@@ -55,7 +55,6 @@
   .admin-link { color: var(--claro); font-size: 0.85rem; text-decoration: none; border: 1px solid rgba(197,232,108,0.4); padding: 0.45rem 0.9rem; border-radius: 999px; white-space: nowrap; transition: var(--transicion); background: transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
   .admin-link:hover { background: rgba(197,232,108,0.15); transform: translateY(-1px); }
 
-  /* ===== FONDO VERDE LIMA SIN HOJAS ===== */
   .hero { background-color: var(--lima); background-image: none; position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; z-index: 10; }
   .hero-izq { position: relative; z-index: 2; }
   
@@ -90,7 +89,6 @@
   .btn { border: 1px solid var(--linea); background: #fff; color: var(--tinta); padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); display: inline-flex; align-items: center; gap: 0.35rem; justify-content: center; text-decoration: none;}
   .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-  /* ===== NOVEDADES ===== */
   .novedades { padding: 1rem clamp(1rem, 4vw, 3rem) 0.4rem; position: relative; z-index: 10; }
   .novedades-head { display: flex; align-items: center; gap: .6rem; margin-bottom: .6rem; }
   .novedades-head h2 { font-family: var(--display); font-size: 1.3rem; color: var(--petroleo); }
@@ -307,19 +305,67 @@
   .est:hover { filter: brightness(0.95); }
   .acc { display: flex; gap: .3rem; justify-content: flex-end; flex-wrap: wrap; }
   
-  #modal { position: fixed; inset: 0; background: rgba(0,30,27,.5); display: none; place-items: center; padding: 1rem; z-index: 100; overflow: auto; backdrop-filter: blur(2px); }
+  /* ===== MODAL Y FORMULARIOS CORREGIDOS ===== */
+  #modal { position: fixed; inset: 0; background: rgba(0,30,27,.5); display: none; place-items: center; padding: 1.5rem; z-index: 100; overflow: auto; backdrop-filter: blur(3px); }
   #modal.on { display: grid; }
-  .mod { background: #fff; border-radius: 16px; width: min(680px, 100%); padding: 1.5rem; margin: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: modalIn 0.3s ease-out; color: var(--tinta); }
+  
+  .mod { 
+    background: #fff; 
+    border-radius: 16px; 
+    width: min(800px, 100%); 
+    padding: 2rem 2.2rem; 
+    margin: auto; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15); 
+    animation: modalIn 0.3s ease-out; 
+    color: var(--tinta); 
+    max-height: 90vh; 
+    overflow-y: auto; 
+  }
   @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  .mod h2 { font-family: var(--display); font-size: 1.5rem; margin-bottom: 1rem; color: var(--petroleo); display: flex; align-items: center; gap: 0.4rem; }
-  .fr { margin-bottom: .8rem; }
-  .fr label { display: block; font-size: .8rem; font-weight: 700; color: var(--suave); margin-bottom: .25rem; }
-  .fr input, .fr select, .fr textarea { width: 100%; padding: .6rem .75rem; border: 1px solid var(--linea); border-radius: 10px; background: #fff; transition: var(--transicion); color: var(--tinta); }
-  .fr input::placeholder { color: #9aa8a4; }
-  .fr input:focus, .fr select:focus, .fr textarea:focus { outline: none; border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,0.1); }
-  .fr2 { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
-  .multi-select { width: 100%; padding: .6rem; border: 1px solid var(--linea); border-radius: 10px; font-size: .85rem; background: #fff; color: var(--tinta); }
-  .multi-select option { padding: 0.3rem; }
+  .mod h2 { font-family: var(--display); font-size: 1.6rem; margin-bottom: 1.5rem; color: var(--petroleo); display: flex; align-items: center; gap: 0.5rem; }
+  
+  .fr { margin-bottom: 1.2rem; width: 100%; }
+  .fr label { display: block; font-size: .85rem; font-weight: 700; color: var(--suave); margin-bottom: .35rem; }
+  
+  .fr input, .fr select, .fr textarea { 
+    width: 100%; 
+    padding: .7rem .9rem; 
+    border: 1px solid var(--linea); 
+    border-radius: 10px; 
+    background: #fff; 
+    transition: var(--transicion); 
+    color: var(--tinta); 
+    font-size: 0.95rem;
+  }
+  .fr input::placeholder, .fr textarea::placeholder { color: #9aa8a4; }
+  .fr input:focus, .fr select:focus, .fr textarea:focus { 
+    outline: none; 
+    border-color: var(--verde); 
+    box-shadow: 0 0 0 3px rgba(0,122,120,0.15); 
+  }
+  
+  .fr2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+  .fr2 .fr { margin-bottom: 0; }
+  
+  .multi-select { 
+    width: 100%; 
+    padding: .6rem; 
+    border: 1px solid var(--linea); 
+    border-radius: 10px; 
+    font-size: .9rem; 
+    background: #fff; 
+    color: var(--tinta); 
+    min-height: 120px;
+  }
+  .multi-select option { 
+    padding: .5rem .6rem; 
+    border-radius: 6px; 
+    margin-bottom: 2px;
+  }
+  .multi-select option:checked {
+    background: color-mix(in srgb, var(--verde) 15%, white) !important;
+    color: var(--petroleo);
+  }
 
   #toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--petroleo); color: #fff; padding: .7rem 1.2rem; border-radius: 999px; font-weight: 600; transition: transform .25s; z-index: 200; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 0.4rem; }
   #toast.on { transform: translateX(-50%) translateY(0); }
@@ -570,7 +616,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = 'https://zsgavixppceijbpevgoc.supabase.co'; 
+    const SUPABASE_URL = 'https://zsgavixppceijbpevgoc.supabase.co'; 
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzZ2F2aXhwcGNlaWpicGV2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTU4NjEsImV4cCI6MjEwOTgzMTg2MX0.YKJAQVRwtm1qofYtQYku2BhO0V_2A5gbaAPniA8aIM8'; 
 
   let dbClient = null;
@@ -628,9 +674,6 @@
   const opt = (v, t, sel) => `<option value="${esc(v)}" ${sel ? 'selected' : ''}>${esc(t)}</option>`;
   const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
-  /* ============================================================
-     TITA
-     ============================================================ */
   function generarTitas() {
     const cont = document.getElementById('tita-container');
     const numTitas = 15;
@@ -668,9 +711,6 @@
   }
   generarTitas();
 
-  /* ============================================================
-     ICONOS
-     ============================================================ */
   const FLATICONS = {
     calendario: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
     documento: '<svg class="flaticon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
@@ -791,9 +831,7 @@
     return count > 0;
   }
   function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
-    /* ============================================================
-     LÓGICA PÚBLICA
-     ============================================================ */
+
   const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date() };
   let listaFiltradaCompleta = [];
 
@@ -886,8 +924,7 @@
     if (e.inicio <= h) return true;
     return diffDias(h, e.inicio) <= 3;
   }
-
-  function pintarEncabezado() {
+    function pintarEncabezado() {
     $('#inst').textContent = D.institucion;
     document.title = 'Calendario Académico · ' + D.institucion;
     const h = new Date();
@@ -951,7 +988,6 @@
       D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
   }
 
-  /* Novedades públicas */
   const NOV_COLOR = { cambio_salon: '#007A78', cancelacion: '#B3261E', modalidad: '#8A5A00', otro: '#5B6F6B' };
   const NOV_TAG = { cambio_salon: 'Cambio de salón', cancelacion: 'Cancelación', modalidad: 'Cambio de modalidad', otro: 'Aviso' };
   function pintarNovedades() {
@@ -985,7 +1021,6 @@
       : '<p class="nov-empty">No hay novedades vigentes.</p>';
   }
 
-  /* Enlaces: normalización + Outlook/Teams */
   function normalizarEnlace(u) { u = String(u || '').trim(); if (!u) return ''; if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(u)) u = 'https://' + u.replace(/^\/+/, ''); try { const x = new URL(u); return /^https?:$/.test(x.protocol) && x.hostname.includes('.') ? x.href : ''; } catch (_) { return ''; } }
   function enlaceOutlook(e) {
     const dd = s => s.replace(/-/g, '');
@@ -1204,10 +1239,7 @@
 
   window.onscroll = () => { $('#btnTop').classList.toggle('show', window.scrollY > 300); };
   $('#btnTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-    /* ============================================================
-     ADMIN
-     ============================================================ */
-  let P = 'resumen';
+    let P = 'resumen';
   const ROLES = { admin: 'Administrador', creador: 'Creador', editor: 'Editor' };
   const DESC_ROL = { admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.', creador: 'Tu perfil permite crear eventos nuevos.', editor: 'Tu perfil permite editar los eventos existentes.' };
   const PERM = { admin: ['crear', 'editar', 'eliminar', 'admin'], creador: ['crear'], editor: ['editar'] };
@@ -1457,7 +1489,6 @@
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
 
-  /* ===== Formulario de evento COMPLETO restaurado ===== */
   let DUP = null;
   const tomarDup = () => { const d = DUP; DUP = null; return d; };
 
@@ -1477,43 +1508,54 @@
     const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
     const esLugarEspecial = lugaresConExtra.includes(e.lugar);
 
-    $('#modal').innerHTML = `<div class="mod"><h2>${id ? `${FLATICONS.editar} Editar evento` : `${FLATICONS.documento} Nuevo evento`}</h2>
+    $('#modal').innerHTML = `<div class="mod">
+      <h2>${id ? `${FLATICONS.editar} Editar evento` : `${FLATICONS.documento} Nuevo evento`}</h2>
+      
       <div class="fr"><label>¿Qué pasa? *</label><input id="f_titulo" value="${esc(e.titulo)}" placeholder="Ej: Matrícula ordinaria"></div>
-      <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="2">${esc(e.descripcion)}</textarea></div>
+      
+      <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="3">${esc(e.descripcion)}</textarea></div>
+      
       <div class="fr2">
         <div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
         <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div>
       </div>
+      
       <div class="fr2">
         <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div>
         <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div>
       </div>
+      
       <div class="fr2">
         <div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div>
         <div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${e.horaFin || ''}"></div>
       </div>
+      
       <div class="fr">
         <label>Dirigido a (Selección múltiple)</label>
-        <select id="f_pub" multiple class="multi-select" size="6">
+        <select id="f_pub" multiple class="multi-select" size="5">
           ${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${p}</option>`).join('')}
         </select>
       </div>
+      
       <div class="fr">
         <label>Facultades (Selección múltiple)</label>
         <select id="f_fac" multiple class="multi-select" size="5" onchange="actualizarProgsModal()">
           ${D.facultades.filter(verFac).map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('')}
         </select>
       </div>
+      
       <div class="fr">
         <label>Programas (Selección múltiple)</label>
         <select id="f_prog" multiple class="multi-select" size="5"></select>
       </div>
+      
       <div class="fr">
         <label>Áreas (Selección múltiple)</label>
         <select id="f_area" multiple class="multi-select" size="5">
           ${D.areas.filter(verArea).map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('')}
         </select>
       </div>
+      
       <div class="fr2">
         <div class="fr">
           <label>Bloque / Ubicación</label>
@@ -1538,14 +1580,20 @@
           <input id="f_lugar_esp" value="${esc(e.lugarEsp || '')}" placeholder="Escriba el lugar...">
         </div>
       </div>
+      
       <div class="fr2">
         <div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div>
-        <div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="Teams, Meet, Zoom o cualquier página"></div>
+        <div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="https://..."></div>
       </div>
-      <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select></div>
-      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;">
+      
+      <div class="fr">
+        <label>Estado</label>
+        <select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select>
+      </div>
+      
+      <div style="display:flex; justify-content:flex-end; gap:.8rem; margin-top:1.5rem;">
         <button class="btn" data-a="cerrar">Cancelar</button>
-        <button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} Guardar</button>
+        <button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} Guardar evento</button>
       </div>
     </div>`;
 
@@ -1634,7 +1682,6 @@
     SEL.delete(id); toast(`${FLATICONS.basura} Evento eliminado`); pintarTabla();
   }
 
-  /* ========== NOVEDADES ADMIN (con facultades/programas/ubicaciones + edición) ========== */
   async function pNovedades() {
     const { data } = await dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(200);
     NOVEDADES = data || [];
@@ -1643,7 +1690,6 @@
       ...['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => 'Bloque ' + l)];
 
     return encabezado('📣 Novedades de clases', 'Publica cambios de salón, cancelaciones, cambios de modalidad u otros avisos para docentes y estudiantes.') + `
-
     <div class="caja" id="nov-form">
       <h2>➕ Nueva novedad</h2>
       <div class="fr2">
@@ -1729,7 +1775,6 @@
     $('#nv_ubic_esp_wrap').hidden = !['Sede Chía','Otro','Sistema Académico en Línea (SALA)','SAUCE'].includes(v);
   }
 
-  /* ========== Otros paneles admin ========== */
   function pFacultades() {
     return encabezado(`${FLATICONS.birrete} Facultades y programas`, 'Organiza la universidad.') + 
     `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;"><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji opcional)</label><input id="n_fac_emoji" placeholder="🏛️" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addFac">${FLATICONS.documento} Agregar</button><button class="btn" data-a="autoEmoji" title="Pone un emoji distinto a cada facultad">${FLATICONS.estrella} Asignar emojis sin repetir</button></div>` + 
