@@ -801,12 +801,10 @@
   const puedeEnEvento = e => {
     if (esAdminAct()) return true;
     
-    // Si el usuario no tiene permisos de calendario, no puede gestionar eventos.
+    if (!e || !e.facultad) return true; // Evento nuevo (vacío)
     if (!tienePermisoCalendario()) return false;
     
     const M = misAreas(), facs = e.facultad || [], progs = e.programa || [], areas = e.area || [];
-    
-    // Si el evento es institucional, cualquiera con permisos de calendario puede gestionarlo.
     if (!facs.length && !areas.length && !progs.length) return true;
     
     const facDe = pid => D.facultades.find(f => f.programas.some(p => p.id === pid));
@@ -816,11 +814,7 @@
     const progOk = pid => M.includes('p:' + pid) || (facDe(pid) && M.includes('f:' + facDe(pid).id));
     const areaOk = aid => M.includes('a:' + aid);
 
-    const okFacs = facs.every(facOk);
-    const okProgs = progs.every(progOk);
-    const okAreas = areas.every(areaOk);
-
-    return okFacs && okProgs && okAreas;
+    return facs.every(facOk) && progs.every(progOk) && areas.every(areaOk);
   };
 
   const porNombre = (a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { sensitivity: 'base' });
@@ -1462,8 +1456,6 @@
     if (!USUARIO_ACTUAL) return;
     const PANELES = { resumen: pResumen, eventos: pEventos, novedades: pNovedades, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar };
     const isDocenteOAdmin = esDocenteOAdmin();
-    
-    // Si es solo Docente o Administrativo (sin roles de calendario), limitar vistas
     const tieneCalendario = tienePermisoCalendario();
     
     if (!PANELES[p] || (p !== 'resumen' && p !== 'novedades' && isDocenteOAdmin && !tieneCalendario && p !== 'eventos') || (p !== 'resumen' && p !== 'eventos' && p !== 'novedades' && !tieneRol(USUARIO_ACTUAL, 'admin') && !isDocenteOAdmin)) p = (isDocenteOAdmin && !tieneCalendario) ? 'novedades' : 'resumen';
