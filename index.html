@@ -56,21 +56,10 @@
   .admin-link:hover { background: rgba(197,232,108,0.15); transform: translateY(-1px); }
 
   /* ===== FONDO VERDE LIMA SIN HOJAS ===== */
-  .hero {
-    background-color: var(--lima);
-    background-image: none;
-    position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem;
-    display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; z-index: 10;
-  }
+  .hero { background-color: var(--lima); background-image: none; position: relative; overflow: hidden; padding: 2.2rem clamp(1rem, 4vw, 3rem) 2.6rem; display: grid; grid-template-columns: 1.15fr 1fr; gap: 2rem; align-items: center; z-index: 10; }
   .hero-izq { position: relative; z-index: 2; }
   
-  .hero-izq .titulo-oficina {
-    display: inline-flex; align-items: center; gap: .75rem;
-    font-size: clamp(.95rem, 2.1vw, 1.45rem); letter-spacing: .16em;
-    color: var(--petroleo); padding: .5rem 1.3rem .5rem .5rem; margin-bottom: 1.2rem;
-    background: rgba(255,255,255,0.62); border: 1px solid rgba(255,255,255,0.9); border-radius: 999px;
-    box-shadow: 0 8px 22px rgba(0,59,54,0.16);
-  }
+  .hero-izq .titulo-oficina { display: inline-flex; align-items: center; gap: .75rem; font-size: clamp(.95rem, 2.1vw, 1.45rem); letter-spacing: .16em; color: var(--petroleo); padding: .5rem 1.3rem .5rem .5rem; margin-bottom: 1.2rem; background: rgba(255,255,255,0.62); border: 1px solid rgba(255,255,255,0.9); border-radius: 999px; box-shadow: 0 8px 22px rgba(0,59,54,0.16); }
   .titulo-oficina .to-ic { width: 2.5rem; height: 2.5rem; display: grid; place-items: center; flex: none; border-radius: 50%; background: #fff; border: 1px solid rgba(0,122,120,0.25); box-shadow: 0 4px 10px rgba(0,59,54,0.18); overflow: hidden; animation: flotar 3.2s ease-in-out infinite; }
   .titulo-oficina .to-ic img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
   .titulo-oficina .txt { background: linear-gradient(90deg, var(--petroleo), var(--verde)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; font-family: 'Montserrat', 'Figtree', sans-serif; font-weight: 800; }
@@ -112,8 +101,11 @@
   .nov-card .nov-tag { background: color-mix(in srgb, var(--c, var(--verde)) 15%, white); color: var(--c, var(--verde)); padding: .05rem .45rem; border-radius: 999px; }
   .nov-card h3 { font-size: .95rem; color: var(--tinta); margin-bottom: .2rem; }
   .nov-card p { font-size: .82rem; color: var(--suave); }
-  .nov-card .nov-meta { margin-top: .35rem; font-size: .75rem; color: var(--petroleo); font-weight: 600; display: flex; gap: .6rem; flex-wrap: wrap; }
+  .nov-card .nov-meta { margin-top: .35rem; font-size: .75rem; color: var(--petroleo); font-weight: 600; display: flex; gap: .6rem; flex-wrap: wrap; align-items:center; }
   .nov-empty { color: var(--suave); font-size: .88rem; padding: .5rem 0; }
+  .nov-chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.5rem; }
+  .nov-chip { display:inline-flex; align-items:center; gap:.3rem; background:var(--fondo); border:1px solid var(--linea); border-radius:999px; padding:.15rem .55rem; font-size:.75rem; font-weight:600; color:var(--tinta); }
+  .nov-actions { display:flex; gap:.4rem; justify-content:flex-end; margin-top:.6rem; }
 
   .modulos { padding: 1rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.8rem; position: relative; z-index: 10; }
   .mod { position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); background: #fff; color: var(--tinta); border-radius: 10px; padding: 0.7rem 0.9rem; min-height: 70px; display: flex; flex-direction: row; align-items: center; gap: 0.8rem; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
@@ -715,17 +707,8 @@
   const ICON_COLOR = { calendario:'#007A78', documento:'#2563EB', libro:'#7C3AED', birrete:'#F59E0B', trofeo:'#EAB308', personas:'#0EA5E9', estrella:'#F59E0B', chart:'#10B981', pin:'#EF4444', email:'#6366F1', basura:'#EF4444', editar:'#F97316', check:'#16A34A', guardar:'#0284C7', salir:'#64748B', llave:'#CA8A04', link:'#2563EB', reloj:'#7C3AED', ciencias:'#14B8A6', enfermeria:'#EC4899', economia:'#16A34A', derecho:'#92400E', creacion:'#D946EF', educacion:'#F59E0B', ingenieria:'#475569', medicina:'#DC2626', odontologia:'#06B6D4', psicologia:'#A855F7', bioetica:'#65A30D', humanidades:'#B45309' };
   Object.keys(FLATICONS).forEach(k => { const c = ICON_COLOR[k] || '#007A78'; FLATICONS[k] = FLATICONS[k].replace('fill="none" stroke="currentColor" stroke-width="2"', `fill="${c}" fill-opacity="0.2" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"`); });
 
-  const MAPA_ICONOS = {
-    'ciencias': 'ciencias', 'enfermeria': 'enfermeria', 'economicas': 'economia', 'administrativas': 'economia',
-    'juridicas': 'derecho', 'politicas': 'derecho', 'creacion': 'creacion', 'comunicacion': 'creacion',
-    'educacion': 'educacion', 'ingenieria': 'ingenieria', 'medicina': 'medicina', 'odontologia': 'odontologia',
-    'psicologia': 'psicologia', 'bioetica': 'bioetica', 'humanidades': 'humanidades'
-  };
-  const getIconoFac = nombre => {
-    const n = norm(nombre);
-    for (const key in MAPA_ICONOS) { if (n.includes(key)) return FLATICONS[MAPA_ICONOS[key]]; }
-    return FLATICONS.birrete;
-  };
+  const MAPA_ICONOS = { 'ciencias': 'ciencias', 'enfermeria': 'enfermeria', 'economicas': 'economia', 'administrativas': 'economia', 'juridicas': 'derecho', 'politicas': 'derecho', 'creacion': 'creacion', 'comunicacion': 'creacion', 'educacion': 'educacion', 'ingenieria': 'ingenieria', 'medicina': 'medicina', 'odontologia': 'odontologia', 'psicologia': 'psicologia', 'bioetica': 'bioetica', 'humanidades': 'humanidades' };
+  const getIconoFac = nombre => { const n = norm(nombre); for (const key in MAPA_ICONOS) { if (n.includes(key)) return FLATICONS[MAPA_ICONOS[key]]; } return FLATICONS.birrete; };
 
   const EMOJI_FAC = [['medicina','🩺'],['odontolog','🦷'],['enfermer','💉'],['psicolog','🧠'],['ingenier','⚙️'],['juridic','⚖️'],['derecho','⚖️'],['politic','🏛️'],['economic','📈'],['administrativ','📊'],['creaci','🎨'],['comunicaci','🎬'],['bioetic','🧬'],['human','📚'],['educaci','🎓'],['salud','🏥'],['ciencias','🔬']];
   const EMOJI_POOL = ['🧪','🌱','🔭','📐','🧭','🎭','🌍','💡','🏫','🧩','🎯','🛠️'];
@@ -981,7 +964,23 @@
           const c = NOV_COLOR[n.tipo] || NOV_COLOR.otro;
           const d = parse(n.fecha);
           const hora = n.hora_inicio ? `${String(n.hora_inicio).slice(0,5)}${n.hora_fin ? '–' + String(n.hora_fin).slice(0,5) : ''}` : '';
-          return `<article class="nov-card" style="--c:${c}"><div class="nov-top"><span class="nov-tag">${NOV_TAG[n.tipo] || 'Aviso'}</span><span>${d.getDate()} ${MESES_C[d.getMonth()]}</span></div><h3>${esc(n.titulo)}</h3>${n.detalle ? `<p>${esc(n.detalle)}</p>` : ''}<div class="nov-meta">${n.materia ? `<span>📚 ${esc(n.materia)}</span>` : ''}${n.salon ? `<span>📍 ${esc(n.salon)}</span>` : ''}${hora ? `<span>🕒 ${hora}</span>` : ''}${n.modalidad ? `<span>💻 ${esc(n.modalidad)}</span>` : ''}</div></article>`;
+          const facs = (n.facultad_ids || []).map(id => D.facultades.find(f => String(f.id) === String(id))).filter(Boolean);
+          const progs = [];
+          (n.programa_ids || []).forEach(id => { for (const f of D.facultades) { const p = f.programas.find(x => String(x.id) === String(id)); if (p) progs.push(p.nombre); } });
+          const L = infoEnlace(n.enlace);
+          return `<article class="nov-card" style="--c:${c}">
+            <div class="nov-top"><span class="nov-tag">${NOV_TAG[n.tipo] || 'Aviso'}</span><span>${d.getDate()} ${MESES_C[d.getMonth()]}</span></div>
+            <h3>${esc(n.titulo)}</h3>
+            ${n.detalle ? `<p>${esc(n.detalle)}</p>` : ''}
+            <div class="nov-meta">
+              ${n.materia ? `<span>📚 ${esc(n.materia)}</span>` : ''}
+              ${hora ? `<span>🕒 ${hora}</span>` : ''}
+              ${n.modalidad ? `<span>💻 ${esc(n.modalidad)}</span>` : ''}
+              ${(n.salon || n.piso) ? `<span>📍 ${esc([n.salon, n.ubicacion, n.piso].filter(Boolean).join(' · '))}</span>` : ''}
+              ${L ? `<a class="link-pill" href="${esc(L.url)}" target="_blank" rel="noopener">${FLATICONS.link} Unirse</a>` : ''}
+            </div>
+            ${(facs.length || progs.length) ? `<div class="nov-chips">${facs.map(f => `<span class="nov-chip">${emojiFac(f)} ${esc(f.nombre)}</span>`).join('')}${progs.map(p => `<span class="nov-chip">📚 ${esc(p)}</span>`).join('')}</div>` : ''}
+          </article>`;
         }).join('')
       : '<p class="nov-empty">No hay novedades vigentes.</p>';
   }
@@ -1205,8 +1204,7 @@
 
   window.onscroll = () => { $('#btnTop').classList.toggle('show', window.scrollY > 300); };
   $('#btnTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  /* ============================================================
+    /* ============================================================
      ADMIN
      ============================================================ */
   let P = 'resumen';
@@ -1405,9 +1403,7 @@
     </div>
     <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:1.2rem;">
       <div class="caja"><h2>${FLATICONS.chart} Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
-      <div>
-        <div class="caja"><h2>${FLATICONS.calendario} Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem; color:var(--tinta);"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div>
-      </div>
+      <div><div class="caja"><h2>${FLATICONS.calendario} Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem; color:var(--tinta);"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div></div>
     </div>
     ${puede('crear') ? `<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">${FLATICONS.documento} Agregar evento</button>` : ''}`;
   }
@@ -1434,8 +1430,8 @@
         const susAreas = USUARIO_ACTUAL.areas || [];
         if (susAreas.length > 0) {
           const misFacs = susAreas.filter(x => x.startsWith('f:')).map(x => x.slice(2));
-          const misAreas = susAreas.filter(x => x.startsWith('a:')).map(x => x.slice(2));
-          const coincide = (e.facultad || []).some(f => misFacs.includes(f)) || (e.programa || []).some(pp => susAreas.includes('p:' + pp)) || (e.area || []).some(a => misAreas.includes(a));
+          const misAreasL = susAreas.filter(x => x.startsWith('a:')).map(x => x.slice(2));
+          const coincide = (e.facultad || []).some(f => misFacs.includes(f)) || (e.programa || []).some(pp => susAreas.includes('p:' + pp)) || (e.area || []).some(a => misAreasL.includes(a));
           if (!coincide) return false;
         }
       }
@@ -1457,37 +1453,102 @@
     const pEd = puede('editar'), pEl = puede('eliminar');
     $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button></div>` : '';
     $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.filter(puedeEnEvento).every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
-      L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}<td style="white-space:nowrap">${fmtRango(e)}</td><td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td><td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido: no se ve en el público">⏸</span>' : ''}</td><td>${pEd && puedeEnEvento(e) ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>` : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td><td><div class="acc">${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}${puede('crear') && puedeEnEvento(e) ? `<button class="btn sm" data-a="dup" data-i="${e.id}" title="Crear una copia como borrador">📄 Duplicar</button>` : ''}${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}</div></td></tr>`).join('') + '</tbody></table>'
+      L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}<td style="white-space:nowrap">${fmtRango(e)}</td><td><div class="tt">${esc(e.titulo)}</div>${chipCatAdmin(e.categoria)}</td><td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido">⏸</span>' : ''}</td><td>${pEd && puedeEnEvento(e) ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>` : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td><td><div class="acc">${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}${puede('crear') && puedeEnEvento(e) ? `<button class="btn sm" data-a="dup" data-i="${e.id}" title="Crear copia">📄 Duplicar</button>` : ''}${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}</div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
 
+  /* ===== Formulario de evento COMPLETO restaurado ===== */
   let DUP = null;
   const tomarDup = () => { const d = DUP; DUP = null; return d; };
+
   function modalEvento(id) {
     if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
-    const e = id ? D.eventos.find(x => x.id === id) : DUP ? tomarDup() : { titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto', horaInicio: '', horaFin: '', facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado' };
+    const e = id ? D.eventos.find(x => x.id === id) : DUP ? tomarDup() : {
+      titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto',
+      horaInicio: '', horaFin: '',
+      facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado'
+    };
     const arrFac = Array.isArray(e.facultad) ? e.facultad : (e.facultad ? [e.facultad] : []);
     const arrProg = Array.isArray(e.programa) ? e.programa : (e.programa ? [e.programa] : []);
     const arrArea = Array.isArray(e.area) ? e.area : (e.area ? [e.area] : []);
     const arrPub = Array.isArray(e.publico) ? e.publico : (e.publico ? [e.publico] : ['Comunidad universitaria']);
-    const pers = D.periodos.map(p => p.id); if (e.periodo !== 'auto' && !pers.includes(e.periodo)) pers.push(e.periodo);
+    const pers = D.periodos.map(p => p.id);
+    if (e.periodo !== 'auto' && !pers.includes(e.periodo)) pers.push(e.periodo);
     const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
     const esLugarEspecial = lugaresConExtra.includes(e.lugar);
 
     $('#modal').innerHTML = `<div class="mod"><h2>${id ? `${FLATICONS.editar} Editar evento` : `${FLATICONS.documento} Nuevo evento`}</h2>
       <div class="fr"><label>¿Qué pasa? *</label><input id="f_titulo" value="${esc(e.titulo)}" placeholder="Ej: Matrícula ordinaria"></div>
       <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="2">${esc(e.descripcion)}</textarea></div>
-      <div class="fr2"><div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div><div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div></div>
-      <div class="fr2"><div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div><div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div></div>
-      <div class="fr2"><div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div><div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${e.horaFin || ''}"></div></div>
-      <div class="fr"><label>Dirigido a (Selección múltiple)</label><select id="f_pub" multiple class="multi-select" size="6">${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${p}</option>`).join('')}</select></div>
-      <div class="fr"><label>Facultades (Selección múltiple)</label><select id="f_fac" multiple class="multi-select" size="4" onchange="actualizarProgsModal()">${D.facultades.filter(verFac).map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('')}</select></div>
-      <div class="fr"><label>Programas (Selección múltiple)</label><select id="f_prog" multiple class="multi-select" size="4"></select></div>
-      <div class="fr"><label>Áreas (Selección múltiple)</label><select id="f_area" multiple class="multi-select" size="4">${D.areas.filter(verArea).map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('')}</select></div>
-      <div class="fr2"><div class="fr"><label>Bloque / Ubicación</label><select id="f_lugar" onchange="toggleLugarEsp()"><option value="">-- Seleccionar --</option><optgroup label="Bloques">${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}" ${e.lugar === 'Bloque ' + l ? 'selected' : ''}>Bloque ${l}</option>`).join('')}</optgroup><optgroup label="Especiales"><option value="Auditorio Principal o Central" ${e.lugar === 'Auditorio Principal o Central' ? 'selected' : ''}>Auditorio Principal o Central</option><option value="Auditorio Fundadores" ${e.lugar === 'Auditorio Fundadores' ? 'selected' : ''}>Auditorio Fundadores</option><option value="Clínicas Odontológicas" ${e.lugar === 'Clínicas Odontológicas' ? 'selected' : ''}>Clínicas Odontológicas</option><option value="Sistema Académico en Línea (SALA)" ${e.lugar === 'Sistema Académico en Línea (SALA)' ? 'selected' : ''}>Sistema Académico en Línea (SALA)</option><option value="SAUCE" ${e.lugar === 'SAUCE' ? 'selected' : ''}>SAUCE</option><option value="Sede Chía" ${e.lugar === 'Sede Chía' ? 'selected' : ''}>Sede Chía</option><option value="Otro" ${e.lugar === 'Otro' ? 'selected' : ''}>Otro</option></optgroup></select></div><div class="fr" id="f_lugar_esp_wrap" ${esLugarEspecial ? '' : 'hidden'}><label>Especifique ubicación</label><input id="f_lugar_esp" value="${esc(e.lugarEsp || '')}" placeholder="Escriba el lugar..."></div></div>
-      <div class="fr2"><div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div><div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="Teams, Meet, Zoom o cualquier página"></div></div>
+      <div class="fr2">
+        <div class="fr"><label>Categoría</label><select id="f_cat">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
+        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div>
+        <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div>
+        <div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${e.horaFin || ''}"></div>
+      </div>
+      <div class="fr">
+        <label>Dirigido a (Selección múltiple)</label>
+        <select id="f_pub" multiple class="multi-select" size="6">
+          ${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fr">
+        <label>Facultades (Selección múltiple)</label>
+        <select id="f_fac" multiple class="multi-select" size="5" onchange="actualizarProgsModal()">
+          ${D.facultades.filter(verFac).map(f => `<option value="${f.id}" ${arrFac.includes(f.id) ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fr">
+        <label>Programas (Selección múltiple)</label>
+        <select id="f_prog" multiple class="multi-select" size="5"></select>
+      </div>
+      <div class="fr">
+        <label>Áreas (Selección múltiple)</label>
+        <select id="f_area" multiple class="multi-select" size="5">
+          ${D.areas.filter(verArea).map(a => `<option value="${a.id}" ${arrArea.includes(a.id) ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fr2">
+        <div class="fr">
+          <label>Bloque / Ubicación</label>
+          <select id="f_lugar" onchange="toggleLugarEsp()">
+            <option value="">-- Seleccionar --</option>
+            <optgroup label="Bloques">
+              ${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}" ${e.lugar === 'Bloque ' + l ? 'selected' : ''}>Bloque ${l}</option>`).join('')}
+            </optgroup>
+            <optgroup label="Especiales">
+              <option value="Auditorio Principal o Central" ${e.lugar === 'Auditorio Principal o Central' ? 'selected' : ''}>Auditorio Principal o Central</option>
+              <option value="Auditorio Fundadores" ${e.lugar === 'Auditorio Fundadores' ? 'selected' : ''}>Auditorio Fundadores</option>
+              <option value="Clínicas Odontológicas" ${e.lugar === 'Clínicas Odontológicas' ? 'selected' : ''}>Clínicas Odontológicas</option>
+              <option value="Sistema Académico en Línea (SALA)" ${e.lugar === 'Sistema Académico en Línea (SALA)' ? 'selected' : ''}>Sistema Académico en Línea (SALA)</option>
+              <option value="SAUCE" ${e.lugar === 'SAUCE' ? 'selected' : ''}>SAUCE</option>
+              <option value="Sede Chía" ${e.lugar === 'Sede Chía' ? 'selected' : ''}>Sede Chía</option>
+              <option value="Otro" ${e.lugar === 'Otro' ? 'selected' : ''}>Otro</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fr" id="f_lugar_esp_wrap" ${esLugarEspecial ? '' : 'hidden'}>
+          <label>Especifique ubicación</label>
+          <input id="f_lugar_esp" value="${esc(e.lugarEsp || '')}" placeholder="Escriba el lugar...">
+        </div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div>
+        <div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="Teams, Meet, Zoom o cualquier página"></div>
+      </div>
       <div class="fr"><label>Estado</label><select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select></div>
-      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} Guardar</button></div></div>`;
+      <div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;">
+        <button class="btn" data-a="cerrar">Cancelar</button>
+        <button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} Guardar</button>
+      </div>
+    </div>`;
+
     $('#modal').classList.add('on');
     actualizarProgsModal(arrProg);
     setTimeout(() => $('#f_titulo').focus(), 50);
@@ -1496,11 +1557,23 @@
   window.actualizarProgsModal = function(preseleccionados = []) {
     const selectedFacs = [...$('#f_fac').selectedOptions].map(o => o.value);
     const progsDisponibles = [];
-    selectedFacs.forEach(fid => { const f = D.facultades.find(x => x.id === fid); if (f) f.programas.filter(p => verProg(f, p)).forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre })); });
-    if (preseleccionados.length) { $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${preseleccionados.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join(''); }
-    else { const cur = [...$('#f_prog').selectedOptions].map(o => o.value); $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${cur.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join(''); }
+    selectedFacs.forEach(fid => {
+      const f = D.facultades.find(x => x.id === fid);
+      if (f) f.programas.filter(p => verProg(f, p)).forEach(p => progsDisponibles.push({ id: p.id, nombre: p.nombre, fac: f.nombre }));
+    });
+    if (preseleccionados.length) {
+      $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${preseleccionados.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
+    } else {
+      const currentProgs = [...$('#f_prog').selectedOptions].map(o => o.value);
+      $('#f_prog').innerHTML = progsDisponibles.map(p => `<option value="${p.id}" ${currentProgs.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
+    }
   }
-  window.toggleLugarEsp = function() { const val = $('#f_lugar').value; $('#f_lugar_esp_wrap').hidden = !['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(val); }
+
+  window.toggleLugarEsp = function() {
+    const val = $('#f_lugar').value;
+    $('#f_lugar_esp_wrap').hidden = !['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(val);
+  }
+
   const cerrarModal = () => { $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
 
   async function guardarEvento(id) {
@@ -1561,33 +1634,107 @@
     SEL.delete(id); toast(`${FLATICONS.basura} Evento eliminado`); pintarTabla();
   }
 
-  /* ========== NOVEDADES ADMIN ========== */
+  /* ========== NOVEDADES ADMIN (con facultades/programas/ubicaciones + edición) ========== */
   async function pNovedades() {
     const { data } = await dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(200);
     NOVEDADES = data || [];
     const tipos = [['cambio_salon','Cambio de salón'],['cancelacion','Cancelación de clase'],['modalidad','Cambio de modalidad'],['otro','Otro aviso']];
+    const lugares = ['Auditorio Principal o Central','Auditorio Fundadores','Clínicas Odontológicas','Sistema Académico en Línea (SALA)','SAUCE','Sede Chía','Otro',
+      ...['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => 'Bloque ' + l)];
+
     return encabezado('📣 Novedades de clases', 'Publica cambios de salón, cancelaciones, cambios de modalidad u otros avisos para docentes y estudiantes.') + `
-    <div class="caja">
+
+    <div class="caja" id="nov-form">
       <h2>➕ Nueva novedad</h2>
-      <div class="fr2"><div class="fr"><label>Título *</label><input id="nv_titulo" placeholder="Ej: Cambio de salón Cálculo II"></div><div class="fr"><label>Tipo</label><select id="nv_tipo">${tipos.map(t => `<option value="${t[0]}">${t[1]}</option>`).join('')}</select></div></div>
-      <div class="fr2"><div class="fr"><label>Fecha *</label><input type="date" id="nv_fecha" value="${hoy()}"></div><div class="fr"><label>Materia / Curso</label><input id="nv_materia" placeholder="Ej: Cálculo II - Grupo 3"></div></div>
-      <div class="fr2"><div class="fr"><label>Docente</label><input id="nv_docente" placeholder="Nombre del docente"></div><div class="fr"><label>Salón</label><input id="nv_salon" placeholder="Ej: Bloque B - 204"></div></div>
-      <div class="fr2"><div class="fr"><label>Hora inicio</label><input type="time" id="nv_hi"></div><div class="fr"><label>Hora fin</label><input type="time" id="nv_hf"></div></div>
-      <div class="fr2"><div class="fr"><label>Modalidad</label><select id="nv_modal"><option value="">—</option><option>presencial</option><option>virtual</option><option>híbrida</option></select></div><div class="fr"><label>Detalle</label><input id="nv_detalle" placeholder="Descripción breve del cambio"></div></div>
-      <button class="btn pri" data-a="addNov">💾 Publicar novedad</button>
+      <div class="fr2">
+        <div class="fr"><label>Título *</label><input id="nv_titulo" placeholder="Ej: Cambio de salón Cálculo II"></div>
+        <div class="fr"><label>Tipo</label><select id="nv_tipo">${tipos.map(t => `<option value="${t[0]}">${t[1]}</option>`).join('')}</select></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Fecha *</label><input type="date" id="nv_fecha" value="${hoy()}"></div>
+        <div class="fr"><label>Materia / Curso</label><input id="nv_materia" placeholder="Ej: Cálculo II - Grupo 3"></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Docente</label><input id="nv_docente" placeholder="Nombre del docente"></div>
+        <div class="fr"><label>Modalidad</label><select id="nv_modal"><option value="">—</option><option>presencial</option><option>virtual</option><option>híbrida</option></select></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Hora inicio</label><input type="time" id="nv_hi"></div>
+        <div class="fr"><label>Hora fin</label><input type="time" id="nv_hf"></div>
+      </div>
+      <div class="fr">
+        <label>Facultades (Selección múltiple)</label>
+        <select id="nv_fac" multiple class="multi-select" size="5" onchange="actualizarProgsNov()">
+          ${D.facultades.map(f => `<option value="${f.id}">${emojiFac(f)} ${esc(f.nombre)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="fr">
+        <label>Programas (Selección múltiple)</label>
+        <select id="nv_prog" multiple class="multi-select" size="5"></select>
+      </div>
+      <div class="fr2">
+        <div class="fr">
+          <label>Ubicación</label>
+          <select id="nv_ubic" onchange="toggleUbicNov()">
+            <option value="">-- Seleccionar --</option>
+            ${lugares.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fr" id="nv_ubic_esp_wrap" hidden>
+          <label>Especifique ubicación</label>
+          <input id="nv_ubic_esp" placeholder="Escriba el lugar...">
+        </div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Piso</label><input id="nv_piso" placeholder="Ej: Piso 2"></div>
+        <div class="fr"><label>Enlace (Teams / Meet / Zoom)</label><input id="nv_enlace" placeholder="https://..."></div>
+      </div>
+      <div class="fr"><label>Detalle</label><input id="nv_detalle" placeholder="Descripción breve del cambio"></div>
+      <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+        <button class="btn pri" data-a="addNov">💾 Publicar novedad</button>
+      </div>
     </div>
-    <div class="tw"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Título</th><th>Materia</th><th>Salón</th><th></th></tr></thead><tbody>
-      ${NOVEDADES.map(n => `<tr><td>${fmtFecha(n.fecha)}</td><td><span class="chip">${NOV_TAG[n.tipo] || 'Aviso'}</span></td><td><b>${esc(n.titulo)}</b></td><td>${esc(n.materia || '')}</td><td>${esc(n.salon || '')}</td><td><button class="btn sm pel" data-a="delNov" data-i="${n.id}">🗑️</button></td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--suave);padding:1.5rem;">Sin novedades.</td></tr>'}
-    </tbody></table></div>`;
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>Fecha</th><th>Tipo</th><th>Título</th><th>Facultad / Programa</th><th>Ubicación</th><th>Acciones</th></tr></thead>
+        <tbody>
+          ${NOVEDADES.map(n => {
+            const facs = (n.facultad_ids || []).map(id => D.facultades.find(f => String(f.id) === String(id))).filter(Boolean);
+            const progs = [];
+            (n.programa_ids || []).forEach(id => { for (const f of D.facultades) { const p = f.programas.find(x => String(x.id) === String(id)); if (p) progs.push(p.nombre); } });
+            return `<tr>
+              <td>${fmtFecha(n.fecha)}</td>
+              <td><span class="chip">${NOV_TAG[n.tipo] || 'Aviso'}</span></td>
+              <td><b>${esc(n.titulo)}</b>${n.detalle ? `<br><span style="font-size:.8rem;color:var(--suave)">${esc(n.detalle)}</span>` : ''}</td>
+              <td style="font-size:.82rem;">${[...facs.map(f => emojiFac(f) + ' ' + esc(f.nombre)), ...progs.map(p => '📚 ' + esc(p))].join('<br>') || '<i style="color:var(--suave)">—</i>'}</td>
+              <td style="font-size:.82rem;">${esc(n.salon || '')}${n.piso ? '<br><span style="color:var(--suave)">' + esc(n.piso) + '</span>' : ''}</td>
+              <td><div class="acc"><button class="btn sm" data-a="editNov" data-i="${n.id}">${FLATICONS.editar} Editar</button><button class="btn sm pel" data-a="delNov" data-i="${n.id}">${FLATICONS.basura}</button></div></td>
+            </tr>`;
+          }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--suave);padding:1.5rem;">Sin novedades.</td></tr>'}
+        </tbody>
+      </table>
+    </div>`;
   }
 
-  /* Otros paneles admin (resumidos para respetar longitud) */
+  window.actualizarProgsNov = function(preseleccionados = []) {
+    const selectedFacs = [...$('#nv_fac').selectedOptions].map(o => o.value);
+    const lista = [];
+    selectedFacs.forEach(fid => { const f = D.facultades.find(x => String(x.id) === String(fid)); if (f) f.programas.forEach(p => lista.push({ id: p.id, nombre: p.nombre })); });
+    const current = preseleccionados.length ? preseleccionados : [...$('#nv_prog').selectedOptions].map(o => o.value);
+    $('#nv_prog').innerHTML = lista.map(p => `<option value="${p.id}" ${current.includes(String(p.id)) || current.includes(p.id) ? 'selected' : ''}>${esc(p.nombre)}</option>`).join('');
+  }
+  window.toggleUbicNov = function() {
+    const v = $('#nv_ubic').value;
+    $('#nv_ubic_esp_wrap').hidden = !['Sede Chía','Otro','Sistema Académico en Línea (SALA)','SAUCE'].includes(v);
+  }
+
+  /* ========== Otros paneles admin ========== */
   function pFacultades() {
     return encabezado(`${FLATICONS.birrete} Facultades y programas`, 'Organiza la universidad.') + 
     `<div class="caja" style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap; background:#f7fdf9;"><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Nueva facultad</label><input id="n_fac" placeholder="Ej: Artes" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Icono (Emoji opcional)</label><input id="n_fac_emoji" placeholder="🏛️" style="width:80px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; margin-top:0.2rem; text-align:center; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave); font-weight:700;">Color</label><input type="color" id="n_fac_color" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addFac">${FLATICONS.documento} Agregar</button><button class="btn" data-a="autoEmoji" title="Pone un emoji distinto a cada facultad">${FLATICONS.estrella} Asignar emojis sin repetir</button></div>` + 
-    D.facultades.map(f => `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};"><div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;"><input data-ch="facEmoji" data-i="${f.id}" value="${esc(emojiFac(f))}" title="Cambia el emoji de esta facultad" style="width:64px; text-align:center; font-size:1.5rem; padding:.3rem; border:1px solid var(--linea); border-radius:8px; background:#fff;"><input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent; color:var(--petroleo);" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}"><input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;"><span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span><button class="btn sm pel" data-a="delFac" data-i="${f.id}">${FLATICONS.basura} Eliminar</button></div>${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;"><input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}"><select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;">${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}</select><button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button></div>`).join('')}<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;"><input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select><button class="btn sm" data-a="addProg" data-i="${f.id}">${FLATICONS.documento} Agregar manual</button></div></div>`).join(''); 
+    D.facultades.map(f => `<div style="background:#fff; border:1px solid var(--linea); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; border-left: 6px solid ${f.color || 'var(--verde)'};"><div style="display:flex; gap:.6rem; align-items:center; margin-bottom:.7rem;"><input data-ch="facEmoji" data-i="${f.id}" value="${esc(emojiFac(f))}" title="Cambia el emoji" style="width:64px; text-align:center; font-size:1.5rem; padding:.3rem; border:1px solid var(--linea); border-radius:8px; background:#fff;"><input style="font-family:var(--display); font-size:1.2rem; font-weight:700; border:1px solid transparent; border-radius:8px; padding:.3rem .5rem; flex:1; background:transparent; color:var(--petroleo);" value="${esc(f.nombre)}" data-ch="facNom" data-i="${f.id}"><input type="color" value="${f.color || '#007A78'}" data-ch="facColor" data-i="${f.id}" style="width:40px; height:30px; padding:0; border:1px solid var(--linea); border-radius:6px;"><span class="chip">${D.eventos.filter(e => (e.facultad||[]).includes(f.id)).length} eventos</span><button class="btn sm pel" data-a="delFac" data-i="${f.id}">${FLATICONS.basura} Eliminar</button></div>${f.programas.map(p => `<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0;"><input style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;" value="${esc(p.nombre)}" data-ch="progNom" data-i="${f.id}" data-j="${p.id}"><select data-ch="progNivel" data-i="${f.id}" data-j="${p.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;">${opt('pregrado', 'Pregrado', p.nivel !== 'posgrado')}${opt('posgrado', 'Posgrado', p.nivel === 'posgrado')}</select><button class="btn sm pel" data-a="delProg" data-i="${f.id}" data-j="${p.id}">Quitar</button></div>`).join('')}<div style="display:flex; gap:.5rem; align-items:center; padding:.3rem 0; margin-top:0.5rem; border-top:1px dashed var(--linea); padding-top:0.8rem;"><input id="np_${f.id}" placeholder="Nuevo programa…" style="flex:1; padding:.4rem .6rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><select id="nn_${f.id}" style="padding:.4rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="pregrado">Pregrado</option><option value="posgrado">Posgrado</option></select><button class="btn sm" data-a="addProg" data-i="${f.id}">${FLATICONS.documento} Agregar manual</button></div></div>`).join(''); 
   }
-
   function pPeriodos() { const L = [...D.periodos].sort((a, b) => b.id.localeCompare(a.id)); return encabezado(`${FLATICONS.calendario} Semestres`, 'Define cuándo empieza y termina cada semestre.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; flex-wrap:wrap;"><div><label style="font-size:0.78rem; color:var(--suave);">Año</label><input type="number" id="n_anio" value="${new Date().getFullYear() + 1}" style="width:100px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Semestre</label><select id="n_sem" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"><option value="1">1</option><option value="2">2</option></select></div><div><label style="font-size:0.78rem; color:var(--suave);">Inicio</label><input type="date" id="n_ini" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Fin</label><input type="date" id="n_fin" style="padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addPer">${FLATICONS.documento} Crear</button></div></div><div class="tw"><table><thead><tr><th>Semestre</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Eventos</th><th></th></tr></thead><tbody>` + L.map(p => `<tr style="${p.activo === false ? 'opacity:.65;' : ''}"><td><b>${nombrePeriodo(p.id)}</b></td><td><input type="date" value="${p.inicio}" data-ch="perIni" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td><input type="date" value="${p.fin}" data-ch="perFin" data-i="${p.id}" style="color:var(--tinta); background:#fff; border:1px solid var(--linea); border-radius:6px; padding:0.3rem;"></td><td>${p.activo === false ? '<span class="badge" style="background:#FDE8E7; color:#B3261E">⏸ Suspendido</span>' : '<span class="badge" style="background:#E1F2B8; color:#2f4a00">✅ Activo</span>'}</td><td>${usadosPeriodo(p.id)}</td><td><div class="acc"><button class="btn sm warn" data-a="togPer" data-i="${p.id}">${p.activo === false ? '▶ Reactivar' : '⏸ Suspender'}</button><button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
   function pAreas() { return encabezado(`${FLATICONS.personas} Áreas administrativas`, 'Dependencias que publican fechas propias.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva área</label><input id="n_area" placeholder="Ej: Tesorería" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><button class="btn pri" data-a="addArea">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Área</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.areas.map(a => `<tr><td><div style="display:flex; align-items:center; gap:.5rem;"><span style="font-size:1.4rem">${emojiArea(a)}</span><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(a.nombre)}" data-ch="areaNom" data-i="${a.id}"></div></td><td>${D.eventos.filter(e => (e.area||[]).includes(a.id)).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delArea" data-i="${a.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
   function pCategorias() { return encabezado(`${FLATICONS.estrella} Categorías`, 'Los tipos de calendario y sus colores.') + `<div class="caja"><div style="display:flex; gap:1rem; align-items:end; margin-bottom:1rem;"><div><label style="font-size:0.78rem; color:var(--suave);">Nueva categoría</label><input id="n_cat" placeholder="Ej: Bienestar" style="width:260px; padding:0.5rem; border:1px solid var(--linea); border-radius:8px; color:var(--tinta); background:#fff;"></div><div><label style="font-size:0.78rem; color:var(--suave);">Color</label><input type="color" id="n_col" value="#007A78" style="padding:0.2rem; border:1px solid var(--linea); border-radius:8px; height:38px;"></div><button class="btn pri" data-a="addCat">${FLATICONS.documento} Agregar</button></div></div><div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` + D.categorias.map(c => `<tr><td><input type="color" value="${c.color}" data-ch="catCol" data-i="${c.id}" style="padding:0.1rem; border:1px solid var(--linea); border-radius:6px; height:30px; width:40px;"></td><td><input type="text" style="width:100%; padding:0.4rem; border:1px solid var(--linea); border-radius:6px; color:var(--tinta); background:#fff;" value="${esc(c.nombre)}" data-ch="catNom" data-i="${c.id}"></td><td>${D.eventos.filter(e => e.categoria === c.id).length}</td><td><div class="acc"><button class="btn sm pel" data-a="delCat" data-i="${c.id}">${FLATICONS.basura} Eliminar</button></div></td></tr>`).join('') + '</tbody></table></div>'; }
@@ -1759,16 +1906,58 @@
     addNov: async () => {
       const titulo = $('#nv_titulo').value.trim(), fecha = $('#nv_fecha').value;
       if (!titulo || !fecha) return toast('Completa título y fecha', true);
-      const payload = { titulo, fecha, tipo: $('#nv_tipo').value, materia: $('#nv_materia').value.trim() || null, docente: $('#nv_docente').value.trim() || null, salon: $('#nv_salon').value.trim() || null, hora_inicio: $('#nv_hi').value || null, hora_fin: $('#nv_hf').value || null, modalidad: $('#nv_modal').value || null, detalle: $('#nv_detalle').value.trim() || null, creado_por: USUARIO_ACTUAL ? USUARIO_ACTUAL.nombre : null };
+      const fac_ids = [...$('#nv_fac').selectedOptions].map(o => o.value);
+      const prog_ids = [...$('#nv_prog').selectedOptions].map(o => o.value);
+      const ubic = $('#nv_ubic').value;
+      const ubicEsp = ['Sede Chía','Otro','Sistema Académico en Línea (SALA)','SAUCE'].includes(ubic) ? $('#nv_ubic_esp').value.trim() : '';
+      const enlace = normalizarEnlace($('#nv_enlace').value.trim());
+      if ($('#nv_enlace').value.trim() && !enlace) return toast('El enlace no es válido', true);
+      const payload = { titulo, fecha, tipo: $('#nv_tipo').value, materia: $('#nv_materia').value.trim() || null, docente: $('#nv_docente').value.trim() || null, salon: ubic || null, modalidad: $('#nv_modal').value || null, hora_inicio: $('#nv_hi').value || null, hora_fin: $('#nv_hf').value || null, detalle: $('#nv_detalle').value.trim() || null, facultad_ids: fac_ids, programa_ids: prog_ids, ubicacion: ubicEsp || null, piso: $('#nv_piso').value.trim() || null, enlace: enlace || null, creado_por: USUARIO_ACTUAL ? USUARIO_ACTUAL.nombre : null };
       const { error } = await dbClient.from('novedades').insert([payload]);
       if (error) return toast('Error: ' + error.message, true);
       registrarLog('Publicó novedad', titulo); toast('✅ Novedad publicada'); ir('novedades', true);
+    },
+    editNov: (id) => {
+      const n = NOVEDADES.find(x => String(x.id) === String(id));
+      if (!n) return toast('Novedad no encontrada', true);
+      $('#nov-form h2').innerHTML = '✏️ Editar novedad';
+      $('#nv_titulo').value = n.titulo || '';
+      $('#nv_tipo').value = n.tipo || 'otro';
+      $('#nv_fecha').value = n.fecha || hoy();
+      $('#nv_materia').value = n.materia || '';
+      $('#nv_docente').value = n.docente || '';
+      $('#nv_modal').value = n.modalidad || '';
+      $('#nv_hi').value = n.hora_inicio ? String(n.hora_inicio).slice(0,5) : '';
+      $('#nv_hf').value = n.hora_fin ? String(n.hora_fin).slice(0,5) : '';
+      $('#nv_detalle').value = n.detalle || '';
+      $('#nv_piso').value = n.piso || '';
+      $('#nv_enlace').value = n.enlace || '';
+      $('#nv_ubic').value = n.salon || '';
+      toggleUbicNov();
+      $('#nv_ubic_esp').value = n.ubicacion || '';
+      [...$('#nv_fac').options].forEach(o => o.selected = (n.facultad_ids || []).map(String).includes(o.value));
+      actualizarProgsNov((n.programa_ids || []).map(String));
+      $('#nov-form').innerHTML = $('#nov-form').innerHTML.replace('data-a="addNov"', `data-a="saveNov" data-i="${n.id}"`).replace('💾 Publicar novedad', '💾 Guardar cambios');
+      $('#nov-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    saveNov: async (id) => {
+      const titulo = $('#nv_titulo').value.trim(), fecha = $('#nv_fecha').value;
+      if (!titulo || !fecha) return toast('Completa título y fecha', true);
+      const fac_ids = [...$('#nv_fac').selectedOptions].map(o => o.value);
+      const prog_ids = [...$('#nv_prog').selectedOptions].map(o => o.value);
+      const ubic = $('#nv_ubic').value;
+      const ubicEsp = ['Sede Chía','Otro','Sistema Académico en Línea (SALA)','SAUCE'].includes(ubic) ? $('#nv_ubic_esp').value.trim() : '';
+      const enlace = normalizarEnlace($('#nv_enlace').value.trim());
+      const payload = { titulo, fecha, tipo: $('#nv_tipo').value, materia: $('#nv_materia').value.trim() || null, docente: $('#nv_docente').value.trim() || null, salon: ubic || null, modalidad: $('#nv_modal').value || null, hora_inicio: $('#nv_hi').value || null, hora_fin: $('#nv_hf').value || null, detalle: $('#nv_detalle').value.trim() || null, facultad_ids: fac_ids, programa_ids: prog_ids, ubicacion: ubicEsp || null, piso: $('#nv_piso').value.trim() || null, enlace: enlace || null, updated_at: new Date().toISOString() };
+      const { error } = await dbClient.from('novedades').update(payload).eq('id', id);
+      if (error) return toast('Error: ' + error.message, true);
+      registrarLog('Editó novedad', titulo); toast('✅ Novedad actualizada'); ir('novedades', true);
     },
     delNov: async i => { if (!confirm('¿Eliminar esta novedad?')) return; const { error } = await dbClient.from('novedades').delete().eq('id', i); if (error) return toast('Error al eliminar', true); registrarLog('Eliminó novedad', i); toast('Novedad eliminada'); ir('novedades', true); }
   };
 
   const ACC_LIBRES = new Set(['cerrar', 'salir', 'pin', 'guardarEv']);
-  const ACC_PERM = { nuevo: 'crear', dup: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar', resetPin: 'admin', addNov: 'crear', delNov: 'eliminar' };
+  const ACC_PERM = { nuevo: 'crear', dup: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar', resetPin: 'admin', addNov: 'crear', editNov: 'editar', saveNov: 'editar', delNov: 'eliminar' };
   const permisoAcc = k => ACC_LIBRES.has(k) || puede(ACC_PERM[k] || 'admin');
 
   document.addEventListener('click', e => {
