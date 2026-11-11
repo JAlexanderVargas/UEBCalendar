@@ -13,7 +13,6 @@
     --lima: #A6CE39; --verde: #007A78; --petroleo: #003B36; --claro: #C5E86C;
     --fondo: #F3F6F4; --tinta: #16302D; --suave: #5B6F6B; --linea: #DCE5E1; --blanco: #fff;
     --rojo: #B3261E; --rojo-fondo: #FDE8E7;
-    --granate: #800020;
     --display: 'Fraunces', Georgia, serif; --texto: 'Figtree', 'Segoe UI', system-ui, sans-serif;
     --transicion: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --emoji-font: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
@@ -107,7 +106,6 @@
 
   .modulos { padding: 1rem clamp(1rem, 4vw, 3rem) 0.4rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.8rem; position: relative; z-index: 10; }
   
-  /* Módulos públicos renombrados a .mod-card para evitar conflicto con el modal */
   .mod-card { position: relative; overflow: hidden; text-align: left; border: 1px solid var(--linea); background: #fff; color: var(--tinta); border-radius: 10px; padding: 0.7rem 0.9rem; min-height: 70px; display: flex; flex-direction: row; align-items: center; gap: 0.8rem; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
   .mod-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c, var(--lima)); transition: var(--transicion); }
   .mod-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: var(--c, var(--verde)); }
@@ -244,7 +242,7 @@
   .admin-nav .brand small { opacity: .65; font-size: .75rem; color: #fff; }
   .admin-nav .user-info { font-size: .8rem; background: rgba(255,255,255,0.05); padding: 0.5rem 0.8rem; border-radius: 8px; margin-bottom: 1rem; border-left: 3px solid var(--lima); }
   .admin-nav .user-info b { display: block; font-size: 0.9rem; color: #fff; }
-  .admin-nav .user-info span { font-size: 0.7rem; opacity: 0.75; text-transform: uppercase; color: #fff; display: flex; align-items: center; gap: 0.3rem; }
+  .admin-nav .user-info span { font-size: 0.7rem; opacity: 0.75; text-transform: uppercase; color: #fff; display: flex; align-items: center; gap: 0.3rem; flex-wrap: wrap; }
   .admin-nav button.it { display: flex; align-items: center; gap: .7rem; text-align: left; border: 0; background: transparent; color: rgba(255,255,255,.85); padding: .65rem .8rem; border-radius: 10px; font-weight: 600; font-size: .93rem; transition: var(--transicion); }
   .admin-nav button.it:hover { background: rgba(255,255,255,.08); color: #fff; }
   .admin-nav button.it.on { background: var(--lima); color: var(--petroleo); box-shadow: 0 4px 10px rgba(166,206,57,0.3); }
@@ -322,7 +320,7 @@
     color: var(--tinta); 
     max-height: 90vh; 
     overflow-y: auto; 
-    display: block; /* Asegura que no herede flexbox */
+    display: block;
   }
   @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
   .mod h2 { font-family: var(--display); font-size: 1.6rem; margin-bottom: 1.5rem; color: var(--petroleo); display: flex; align-items: center; gap: 0.5rem; }
@@ -628,7 +626,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    const SUPABASE_URL = 'https://zsgavixppceijbpevgoc.supabase.co'; 
+  const SUPABASE_URL = 'https://zsgavixppceijbpevgoc.supabase.co'; 
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzZ2F2aXhwcGNlaWpicGV2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTU4NjEsImV4cCI6MjEwOTgzMTg2MX0.YKJAQVRwtm1qofYtQYku2BhO0V_2A5gbaAPniA8aIM8'; 
 
   let dbClient = null;
@@ -636,6 +634,7 @@
   let DB_READY = false;
   let USUARIO_ACTUAL = null;
   let NOVEDADES = [];
+  let inactividadTimer = null;
 
   try {
     if (!window.supabase) throw new Error("El SDK de Supabase no se cargó.");
@@ -691,7 +690,7 @@
     const numTitas = 15;
     for (let i = 0; i < numTitas; i++) {
       const img = document.createElement('img');
-      img.src = 'cara_tita.jpg';
+      img.src = 'cara_tita.png';
       img.className = 'tita-img';
       const size = Math.floor(Math.random() * 40) + 60;
       img.style.width = size + 'px';
@@ -772,17 +771,61 @@
   const emojiPub = p => EMOJI_PUB[p] || '👥';
   const em = x => `<span class="emoji">${x}</span>`;
 
-  /* ========== ACTUALIZACIÓN DE ROLES ========== */
-  const ROLES_VALIDOS = ['admin', 'creador', 'editor', 'docente', 'administrativo'];
-  const normalizarRol = r => {
-    const n = String(r || '').toLowerCase().trim();
-    if (ROLES_VALIDOS.includes(n)) return n;
-    if (n === 'administrador') return 'admin';
-    if (n === 'create' || n === 'creador') return 'creador';
-    if (n === 'edit' || n === 'editor') return 'editor';
-    if (n.includes('docente')) return 'docente';
-    if (n.includes('administrativ')) return 'administrativo';
-    return 'editor';
+  /* ========== LÓGICA DE MULTI-PERMISOS ========== */
+  const ROLES = { admin: '👑 Administrador', creador: 'Creador', editor: 'Editor', docente: 'Docente', administrativo: 'Administrativo' };
+  const PERM_TXT = { crear: 'Crear', editar: 'Editar', eliminar: 'Eliminar' };
+  
+  // Un rol ahora puede ser "editor,docente" (separado por comas).
+  const tieneRol = (u, r) => String(u.rol).split(',').map(x => x.trim()).includes(r);
+  
+  const puede = a => {
+    if (!USUARIO_ACTUAL) return false;
+    if (tieneRol(USUARIO_ACTUAL, 'admin')) return true;
+    return (USUARIO_ACTUAL.permisos || []).includes(a);
+  };
+  
+  const esDocenteOAdmin = () => USUARIO_ACTUAL && (tieneRol(USUARIO_ACTUAL, 'docente') || tieneRol(USUARIO_ACTUAL, 'administrativo'));
+  const esAdminAct = () => USUARIO_ACTUAL && tieneRol(USUARIO_ACTUAL, 'admin');
+  
+  const sinPermiso = () => toast('Tu perfil no tiene permiso para esta acción', true);
+  const sinArea = () => toast('Solo puedes gestionar eventos de tus facultades o áreas asignadas', true);
+  
+  const misAreas = () => (USUARIO_ACTUAL && USUARIO_ACTUAL.areas) || [];
+  const verFac = f => esAdminAct() || misAreas().includes('f:' + f.id) || f.programas.some(p => misAreas().includes('p:' + p.id));
+  const verProg = (f, p) => esAdminAct() || misAreas().includes('f:' + f.id) || misAreas().includes('p:' + p.id);
+  const verArea = a => esAdminAct() || misAreas().includes('a:' + a.id);
+  
+  // Lógica corregida para verificar si un usuario puede gestionar un evento específico
+  const puedeEnEvento = e => {
+    if (esAdminAct()) return true;
+    
+    // Si el usuario NO tiene permisos de calendario (solo es docente/administrativo), no puede gestionar eventos
+    const tienePermisoCalendario = (USUARIO_ACTUAL.permisos || []).some(p => ['crear', 'editar', 'eliminar'].includes(p));
+    if (!tienePermisoCalendario && !tieneRol(USUARIO_ACTUAL, 'creador') && !tieneRol(USUARIO_ACTUAL, 'editor')) {
+        return false;
+    }
+    
+    const M = misAreas(), facs = e.facultad || [], progs = e.programa || [], areas = e.area || [];
+    
+    // Si el evento es institucional (sin facultades ni áreas), cualquier usuario con permisos de calendario puede gestionarlo
+    if (!facs.length && !areas.length && !progs.length) return true;
+    
+    const facDe = pid => D.facultades.find(f => f.programas.some(p => p.id === pid));
+    const progsDe = fid => progs.filter(pid => { const f = facDe(pid); return f && f.id === fid; });
+    
+    // Validar que todas las facultades del evento estén en las áreas del usuario
+    const facOk = fid => M.includes('f:' + fid) || (progsDe(fid).length > 0 && progsDe(fid).every(pid => M.includes('p:' + pid)));
+    // Validar que todos los programas del evento estén en las áreas del usuario
+    const progOk = pid => M.includes('p:' + pid) || (facDe(pid) && M.includes('f:' + facDe(pid).id));
+    // Validar que todas las áreas del evento estén en las áreas del usuario
+    const areaOk = aid => M.includes('a:' + aid);
+
+    // Si el evento tiene facultades, debe tener TODAS las facultades asignadas. Si no, falla.
+    const okFacs = facs.every(facOk);
+    const okProgs = progs.every(progOk);
+    const okAreas = areas.every(areaOk);
+
+    return okFacs && okProgs && okAreas;
   };
 
   const porNombre = (a, b) => String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es', { sensitivity: 'base' });
@@ -1254,34 +1297,14 @@
 
   window.onscroll = () => { $('#btnTop').classList.toggle('show', window.scrollY > 300); };
   $('#btnTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-    let P = 'resumen';
-  const ROLES = { admin: 'Administrador', creador: 'Creador', editor: 'Editor', docente: 'Docente', administrativo: 'Administrativo' };
+  
+  let P = 'resumen';
   const DESC_ROL = { 
     admin: 'Administras todo el sistema: eventos, estructura, usuarios y logs.', 
     creador: 'Tu perfil permite crear eventos nuevos.', 
     editor: 'Tu perfil permite editar los eventos existentes.', 
     docente: 'Tu perfil permite gestionar las novedades de clases (crear, editar, eliminar).',
     administrativo: 'Tu perfil permite gestionar las novedades de clases (crear, editar, eliminar).'
-  };
-  const PERM = { admin: ['crear', 'editar', 'eliminar', 'admin'], creador: ['crear'], editor: ['editar'], docente: ['crear', 'editar', 'eliminar'], administrativo: ['crear', 'editar', 'eliminar'] };
-  const puede = a => !!USUARIO_ACTUAL && ((USUARIO_ACTUAL.permisos || []).includes(a) || USUARIO_ACTUAL.rol === 'admin');
-  const sinPermiso = () => toast('Tu perfil no tiene permiso para esta acción', true);
-  const sinArea = () => toast('Solo puedes gestionar eventos de tus facultades o áreas asignadas', true);
-  const esAdminAct = () => !!USUARIO_ACTUAL && USUARIO_ACTUAL.rol === 'admin';
-  const misAreas = () => (USUARIO_ACTUAL && USUARIO_ACTUAL.areas) || [];
-  const verFac = f => esAdminAct() || misAreas().includes('f:' + f.id) || f.programas.some(p => misAreas().includes('p:' + p.id));
-  const verProg = (f, p) => esAdminAct() || misAreas().includes('f:' + f.id) || misAreas().includes('p:' + p.id);
-  const verArea = a => esAdminAct() || misAreas().includes('a:' + a.id);
-  const puedeEnEvento = e => {
-    if (esAdminAct()) return true;
-    if (USUARIO_ACTUAL.rol === 'docente' || USUARIO_ACTUAL.rol === 'administrativo') return false; // Docentes y administrativos no tocan eventos
-    const M = misAreas(), facs = e.facultad || [], progs = e.programa || [], areas = e.area || [];
-    if (!facs.length && !areas.length && !progs.length) return false;
-    const facDe = pid => D.facultades.find(f => f.programas.some(p => p.id === pid));
-    const progsDe = fid => progs.filter(pid => { const f = facDe(pid); return f && f.id === fid; });
-    const facOk = fid => M.includes('f:' + fid) || (progsDe(fid).length > 0 && progsDe(fid).every(pid => M.includes('p:' + pid)));
-    const progOk = pid => M.includes('p:' + pid) || (facDe(pid) && M.includes('f:' + facDe(pid).id));
-    return facs.every(facOk) && progs.every(progOk) && areas.every(x => M.includes('a:' + x));
   };
   const F = { q: '', per: '', cat: '', est: '', grupo: '' };
   const SEL = new Set();
@@ -1313,18 +1336,37 @@
     $('#gate').style.display = 'none';
     $('#admin-app').hidden = false;
     $('#userNameDisplay').textContent = USUARIO_ACTUAL.nombre;
-    let rolTxt = ROLES[USUARIO_ACTUAL.rol] || 'Usuario';
-    if (USUARIO_ACTUAL.rol === 'admin') rolTxt = '👑 Administrador';
+    let rolesArray = String(USUARIO_ACTUAL.rol).split(',').map(r => ROLES[r.trim()] || r.trim());
+    if (tieneRol(USUARIO_ACTUAL, 'admin')) rolesArray = ['👑 Administrador'];
+    const rolTxt = rolesArray.join(' + ');
     $('#userRoleDisplay').innerHTML = rolTxt;
     $('#saludoNombre').textContent = USUARIO_ACTUAL.nombre;
     $('#saludoRol').innerHTML = rolTxt;
-    const esAdmin = USUARIO_ACTUAL.rol === 'admin';
+    const esAdmin = tieneRol(USUARIO_ACTUAL, 'admin');
     $$('.admin-only').forEach(el => { el.style.display = esAdmin ? (el.classList.contains('sep') ? 'block' : 'flex') : 'none'; });
+    
+    // Iniciar temporizador de inactividad
+    reiniciarTemporizador();
+    window.onmousemove = reiniciarTemporizador;
+    window.onkeydown = reiniciarTemporizador;
+    window.onclick = reiniciarTemporizador;
+
     ir('resumen');
+  }
+
+  function reiniciarTemporizador() {
+    if (!USUARIO_ACTUAL) return;
+    clearTimeout(inactividadTimer);
+    inactividadTimer = setTimeout(() => {
+      toast('Sesión cerrada por inactividad (5 minutos)', true);
+      cerrarSesion();
+    }, 300000); // 5 minutos
   }
 
   function cerrarSesion() {
     if (USUARIO_ACTUAL) registrarLog('Cierre de sesión', 'Salió del sistema');
+    localStorage.removeItem('ubosque_admin_session'); // Borrar persistencia
+    clearTimeout(inactividadTimer);
     USUARIO_ACTUAL = null; SEL.clear(); cerrarModal();
     $('#admin-panel-inner').innerHTML = '';
     $('#pin').value = '';
@@ -1376,7 +1418,7 @@
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
     const user = await verificarPin(pin);
     if (user) {
-      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: normalizarRol(user.rol), permisos: user.permisos || ['crear','editar'], areas: user.areas_asignadas || [] };
+      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: user.rol, permisos: user.permisos || [], areas: user.areas_asignadas || [] };
       $('#pin').value = '';
       if (user.pin_temporal) {
         USUARIO_ACTUAL = null; window._reset_user_id = user.id; window._reset_verificado = true; window._reset_pin_actual = pin;
@@ -1385,6 +1427,10 @@
         $('#gateLoginFields').hidden = true; $('#gateNewPassFields').hidden = false; $('#new_pin').focus();
         return;
       }
+      
+      // Guardar sesión en localStorage para persistencia
+      localStorage.setItem('ubosque_admin_session', JSON.stringify(USUARIO_ACTUAL));
+      
       registrarLog('Inicio de sesión', 'Ingresó al sistema'); mostrarAppAdmin();
     } else { $('#pin').value = ''; toast('PIN incorrecto', true); }
   };
@@ -1422,8 +1468,12 @@
   async function ir(p, conservar) {
     if (!USUARIO_ACTUAL) return;
     const PANELES = { resumen: pResumen, eventos: pEventos, novedades: pNovedades, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar };
-    const esDocenteOAdmin = ['docente', 'administrativo'].includes(USUARIO_ACTUAL.rol);
-    if (!PANELES[p] || (p !== 'resumen' && p !== 'novedades' && esDocenteOAdmin && p !== 'eventos') || (p !== 'resumen' && p !== 'eventos' && p !== 'novedades' && USUARIO_ACTUAL.rol !== 'admin' && !esDocenteOAdmin)) p = esDocenteOAdmin ? 'novedades' : 'resumen';
+    const isDocenteOAdmin = esDocenteOAdmin();
+    
+    // Si es solo Docente o Administrativo (sin roles de calendario), limitar vistas
+    const tienePermisoCalendario = (USUARIO_ACTUAL.permisos || []).some(p => ['crear', 'editar', 'eliminar'].includes(p)) || tieneRol(USUARIO_ACTUAL, 'creador') || tieneRol(USUARIO_ACTUAL, 'editor');
+    
+    if (!PANELES[p] || (p !== 'resumen' && p !== 'novedades' && isDocenteOAdmin && !tienePermisoCalendario && p !== 'eventos') || (p !== 'resumen' && p !== 'eventos' && p !== 'novedades' && !tieneRol(USUARIO_ACTUAL, 'admin') && !isDocenteOAdmin)) p = (isDocenteOAdmin && !tienePermisoCalendario) ? 'novedades' : 'resumen';
     
     P = p; SEL.clear();
     $$('.admin-nav .it').forEach(b => b.classList.toggle('on', b.dataset.p === p));
@@ -1461,7 +1511,7 @@
       <div class="caja"><h2>${FLATICONS.chart} Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
       <div><div class="caja"><h2>${FLATICONS.calendario} Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem; color:var(--tinta);"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(e.titulo)}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div></div>
     </div>
-    ${puede('crear') && USUARIO_ACTUAL.rol !== 'docente' && USUARIO_ACTUAL.rol !== 'administrativo' ? `<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">${FLATICONS.documento} Agregar evento</button>` : ''}`;
+    ${puede('crear') && !esDocenteOAdmin() ? `<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">${FLATICONS.documento} Agregar evento</button>` : ''}`;
   }
 
   function pEventos() {
@@ -1474,7 +1524,7 @@
       <select id="x_cat"><option value="">Todas las categorías</option>${D.categorias.map(c => opt(c.id, c.nombre)).join('')}</select>
       <select id="x_grupo">${g}</select>
       <select id="x_est"><option value="">Todos los estados</option><option value="publicado">✅ Publicados</option><option value="borrador">📝 Borradores</option></select>
-      ${puede('crear') && USUARIO_ACTUAL.rol !== 'docente' && USUARIO_ACTUAL.rol !== 'administrativo' ? `<button class="btn pri" data-a="nuevo">${FLATICONS.documento} Nuevo evento</button>` : ''}
+      ${puede('crear') && !esDocenteOAdmin() ? `<button class="btn pri" data-a="nuevo">${FLATICONS.documento} Nuevo evento</button>` : ''}
     </div>
     <div id="masiva"></div><div class="tw" id="tabla"></div>`;
   }
@@ -1819,7 +1869,6 @@
     const out = (arr || []).map(v => { const id = String(v).slice(2); if (String(v).startsWith('f:')) { const f = D.facultades.find(x => String(x.id) === id); return f ? `<span class="chip">${emojiFac(f)} ${esc(f.nombre)}</span>` : ''; } if (String(v).startsWith('p:')) { for (const f of D.facultades) { const pr = f.programas.find(x => String(x.id) === id); if (pr) return `<span class="chip">📚 ${esc(pr.nombre)}</span>`; } return ''; } if (String(v).startsWith('a:')) { const a = D.areas.find(x => String(x.id) === id); return a ? `<span class="chip">${emojiArea(a)} ${esc(a.nombre)}</span>` : ''; } return ''; }).filter(Boolean);
     return out.length ? out.join('') : '<span style="color:var(--suave); font-style:italic;">Sin ámbito</span>';
   }
-  const PERM_TXT = { crear: 'Crear', editar: 'Editar', eliminar: 'Eliminar' };
   const checksPermisos = (prefix, sel = []) => ['crear', 'editar', 'eliminar'].map(k => `<label style="display:flex; align-items:center; gap:.4rem; font-weight:normal;"><input type="checkbox" id="${prefix}${k}" ${sel.includes(k) ? 'checked' : ''}> ${PERM_TXT[k]}</label>`).join('');
 
   async function pUsuarios() {
@@ -1828,16 +1877,25 @@
     const col = { admin: ['#E1F2B8', '#2f4a00'], editor: ['#DBEAFE', '#1e3a8a'] };
     const U = [...data].sort((a, b) => String(a.nombre).localeCompare(String(b.nombre)));
     return encabezado(`${FLATICONS.personas} Usuarios y Accesos`, 'Crea usuarios, define qué pueden hacer y en qué facultades, programas o áreas.') + `
-    <div class="caja"><h2>${FLATICONS.documento} Crear nuevo usuario</h2><div style="display:flex; flex-direction:column; gap:1rem;"><div style="display:flex; gap:1rem; flex-wrap:wrap;"><div class="fr" style="margin:0; flex:1; min-width:180px;"><label>Nombre *</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div><div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div><div class="fr" style="margin:0; flex:1; min-width:150px;"><label>PIN inicial * (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" placeholder="••••••"></div><div class="fr" style="margin:0; flex:1; min-width:170px;"><label>Tipo de usuario</label><select id="n_user_rol"><option value="editor">Editor (Calendario)</option><option value="creador">Creador (Calendario)</option><option value="docente">Docente (Novedades)</option><option value="administrativo">Administrativo (Novedades)</option><option value="admin">Administrador (todo)</option></select></div></div><div style="display:flex; gap:1rem; flex-wrap:wrap;"><div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Permisos (puedes marcar varios)</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:0.4rem 0;">${checksPermisos('n_user_p_', ['editar'])}</div></div><div class="fr" style="margin:0; flex:2; min-width:260px;"><label>Facultades, programas o áreas (puedes marcar varios)</label>${checksAreas('n_user_areas')}<p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">Solo podrá actuar sobre los eventos de lo que marques.</p></div></div><div><button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button></div></div></div>
-    <div class="tw"><table><thead><tr><th>Usuario</th><th>Rol / Permisos</th><th>Ámbito Asignado</th><th>Acciones</th></tr></thead><tbody>${U.map(u => {
-      const esAdm = u.rol === 'admin', yo = String(u.id) === String(USUARIO_ACTUAL.id);
-      const rolNorm = normalizarRol(u.rol);
-      const [bg, fg] = rolNorm === 'admin' ? col['admin'] : rolNorm === 'docente' || rolNorm === 'administrativo' ? ['#FEF3C7', '#92400E'] : col['editor'];
-      const pTxt = rolNorm === 'admin' ? '👑 Administrador' : (ROLES[rolNorm] || 'Usuario');
+    <div class="caja"><h2>${FLATICONS.documento} Crear nuevo usuario</h2><div style="display:flex; flex-direction:column; gap:1rem;"><div style="display:flex; gap:1rem; flex-wrap:wrap;"><div class="fr" style="margin:0; flex:1; min-width:180px;"><label>Nombre *</label><input id="n_user_name" placeholder="Ej: Juan Pérez"></div><div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Correo electrónico</label><input id="n_user_correo" type="email" placeholder="juan@unbosque.edu.co"></div><div class="fr" style="margin:0; flex:1; min-width:150px;"><label>PIN inicial * (6-15 dígitos)</label><input id="n_user_pin" type="password" inputmode="numeric" placeholder="••••••"></div><div class="fr" style="margin:0; flex:1; min-width:170px;"><label>Roles (puedes marcar varios)</label>
+      <select id="n_user_rol" multiple class="multi-select" style="min-height:80px; max-height:100px;">
+        <option value="editor">Editor (Calendario)</option>
+        <option value="creador">Creador (Calendario)</option>
+        <option value="docente">Docente (Novedades)</option>
+        <option value="administrativo">Administrativo (Novedades)</option>
+        <option value="admin">Administrador (todo)</option>
+      </select>
+    </div></div><div style="display:flex; gap:1rem; flex-wrap:wrap;"><div class="fr" style="margin:0; flex:1; min-width:200px;"><label>Permisos (puedes marcar varios)</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:0.4rem 0;">${checksPermisos('n_user_p_', ['editar'])}</div></div><div class="fr" style="margin:0; flex:2; min-width:260px;"><label>Facultades, programas o áreas (puedes marcar varios)</label>${checksAreas('n_user_areas')}<p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">Solo podrá actuar sobre los eventos de lo que marques.</p></div></div><div><button class="btn pri" data-a="addUser">${FLATICONS.documento} Crear usuario</button></div></div></div>
+    <div class="tw"><table><thead><tr><th>Usuario</th><th>Roles / Permisos</th><th>Ámbito Asignado</th><th>Acciones</th></tr></thead><tbody>${U.map(u => {
+      const esAdm = tieneRol(u, 'admin'), yo = String(u.id) === String(USUARIO_ACTUAL.id);
+      let rolesArr = String(u.rol).split(',').map(r => ROLES[r.trim()] || r.trim());
+      if (esAdm) rolesArr = ['👑 Administrador'];
+      const pTxt = rolesArr.join(' + ');
+      const [bg, fg] = esAdm ? col['admin'] : (tieneRol(u, 'docente') || tieneRol(u, 'administrativo')) ? ['#FEF3C7', '#92400E'] : col['editor'];
       
       // Acordeón para ámbitos
       const tieneAmbitos = u.areas_asignadas && u.areas_asignadas.length > 0;
-      const ambitoHtml = (rolNorm === 'docente' || rolNorm === 'administrativo') 
+      const ambitoHtml = (tieneRol(u, 'docente') || tieneRol(u, 'administrativo')) 
         ? '<span style="color:var(--suave); font-size:0.8rem;">Solo Novedades</span>' 
         : (esAdm ? '<span style="color:var(--suave); font-size:0.8rem;">Todas</span>' 
         : (tieneAmbitos 
@@ -1929,22 +1987,30 @@
     const { data, error } = await cargarUsuarios();
     const u = (data || []).find(x => String(x.id) === String(id));
     if (error || !u) return toast('No se pudo cargar el usuario', true);
-    const rolNorm = normalizarRol(u.rol);
-    const esNovedades = rolNorm === 'docente' || rolNorm === 'administrativo';
-    $('#modal').innerHTML = `<div class="mod"><h2>${FLATICONS.editar} Editar a ${esc(u.nombre)}</h2><div class="fr2"><div class="fr"><label>Nombre *</label><input id="e_nombre" value="${esc(u.nombre)}"></div><div class="fr"><label>Correo electrónico</label><input id="e_correo" type="email" value="${esc(u.correo || '')}"></div></div><div class="fr"><label>Tipo de usuario</label><select id="e_rol"><option value="editor" ${rolNorm === 'editor' ? 'selected' : ''}>Editor (Calendario)</option><option value="creador" ${rolNorm === 'creador' ? 'selected' : ''}>Creador (Calendario)</option><option value="docente" ${rolNorm === 'docente' ? 'selected' : ''}>Docente (Novedades)</option><option value="administrativo" ${rolNorm === 'administrativo' ? 'selected' : ''}>Administrativo (Novedades)</option><option value="admin" ${rolNorm === 'admin' ? 'selected' : ''}>Administrador (todo el sistema)</option></select></div><div class="fr"><label>Permisos</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:.4rem 0;">${checksPermisos('e_p_', u.permisos || [])}</div></div><div class="fr"><label>Facultades, programas o áreas</label>${checksAreas('e_areas', u.areas_asignadas || [])}<p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">${esNovedades ? 'Docentes y Administrativos solo gestionan novedades, no requieren facultad asignada.' : 'Solo podrá actuar sobre los eventos de lo que marques.'}</p></div><div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="saveUser" data-i="${esc(String(u.id))}">${FLATICONS.guardar} Guardar</button></div></div>`;
+    const esNovedades = tieneRol(u, 'docente') || tieneRol(u, 'administrativo');
+    const rolesArr = String(u.rol).split(',').map(x => x.trim());
+    $('#modal').innerHTML = `<div class="mod"><h2>${FLATICONS.editar} Editar a ${esc(u.nombre)}</h2><div class="fr2"><div class="fr"><label>Nombre *</label><input id="e_nombre" value="${esc(u.nombre)}"></div><div class="fr"><label>Correo electrónico</label><input id="e_correo" type="email" value="${esc(u.correo || '')}"></div></div><div class="fr"><label>Roles (puedes marcar varios)</label>
+      <select id="e_rol" multiple class="multi-select" style="min-height:80px; max-height:100px;">
+        <option value="editor" ${rolesArr.includes('editor') ? 'selected' : ''}>Editor (Calendario)</option>
+        <option value="creador" ${rolesArr.includes('creador') ? 'selected' : ''}>Creador (Calendario)</option>
+        <option value="docente" ${rolesArr.includes('docente') ? 'selected' : ''}>Docente (Novedades)</option>
+        <option value="administrativo" ${rolesArr.includes('administrativo') ? 'selected' : ''}>Administrativo (Novedades)</option>
+        <option value="admin" ${rolesArr.includes('admin') ? 'selected' : ''}>Administrador (todo el sistema)</option>
+      </select></div><div class="fr"><label>Permisos</label><div style="display:flex; gap:1rem; flex-wrap:wrap; padding:.4rem 0;">${checksPermisos('e_p_', u.permisos || [])}</div></div><div class="fr"><label>Facultades, programas o áreas</label>${checksAreas('e_areas', u.areas_asignadas || [])}<p style="font-size:0.75rem; color:var(--suave); margin-top:0.2rem;">${esNovedades ? 'Docentes y Administrativos solo gestionan novedades, no requieren facultad asignada.' : 'Solo podrá actuar sobre los eventos de lo que marques.'}</p></div><div style="display:flex; justify-content:flex-end; gap:.5rem; margin-top:1.2rem;"><button class="btn" data-a="cerrar">Cancelar</button><button class="btn pri" data-a="saveUser" data-i="${esc(String(u.id))}">${FLATICONS.guardar} Guardar</button></div></div>`;
     $('#modal').classList.add('on');
   }
   async function guardarUsuario(id) {
-    const nombre = $('#e_nombre').value.trim(), correo = $('#e_correo').value.trim(), rol = $('#e_rol').value;
+    const nombre = $('#e_nombre').value.trim(), correo = $('#e_correo').value.trim();
+    let rolesArr = [...$('#e_rol').selectedOptions].map(o => o.value);
     let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#e_p_' + k).checked);
     let areas = $$('#e_areas input[value]:checked').map(i => i.value);
     if (!nombre) return toast('El nombre no puede quedar vacío', true);
-    if (rol !== 'admin' && !permisos.length) return toast('Selecciona al menos un permiso', true);
-    if (rol === 'admin') { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
-    if (rol === 'docente' || rol === 'administrativo') { areas = []; }
-    const payload = { nombre, rol, permisos, areas_asignadas: areas, correo: correo || null };
+    if (!rolesArr.length) return toast('Selecciona al menos un rol', true);
+    if (rolesArr.includes('admin')) { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
+    if (rolesArr.includes('docente') || rolesArr.includes('administrativo')) { areas = []; }
+    const payload = { nombre, rol: rolesArr.join(','), permisos, areas_asignadas: areas, correo: correo || null };
     const ok = await ejecutar(() => dbClient.from('usuarios_admin').update(payload).eq('id', id), `${FLATICONS.check} Usuario actualizado`, 'Editó usuario', nombre);
-    if (ok) { if (String(id) === String(USUARIO_ACTUAL.id)) { USUARIO_ACTUAL.nombre = nombre; USUARIO_ACTUAL.permisos = permisos; USUARIO_ACTUAL.areas = areas; $('#userNameDisplay').textContent = nombre; } cerrarModal(); ir('usuarios', true); }
+    if (ok) { if (String(id) === String(USUARIO_ACTUAL.id)) { USUARIO_ACTUAL.nombre = nombre; USUARIO_ACTUAL.rol = rolesArr.join(','); USUARIO_ACTUAL.permisos = permisos; USUARIO_ACTUAL.areas = areas; $('#userNameDisplay').textContent = nombre; } cerrarModal(); ir('usuarios', true); }
   }
 
   const ACC = {
@@ -1968,22 +2034,25 @@
     addCat: async () => { const n = $('#n_cat').value.trim(); if (!n) return toast('Escribe el nombre', true); if (await ejecutar(() => dbClient.from('categorias').insert([{ nombre: n, color: $('#n_col').value }]), `${FLATICONS.check} Categoría agregada`, 'Creó categoría', n)) refrescar(); },
     delCat: async i => { const c = D.categorias.find(x => x.id === i); if (D.eventos.some(e => e.categoria === i)) return toast('Hay eventos en esa categoría', true); if (D.categorias.length === 1) return toast('Debe quedar al menos una', true); if (!confirm('¿Eliminar esta categoría?')) return; if (await ejecutar(() => dbClient.from('categorias').delete().eq('id', i), 'Categoría eliminada', 'Eliminó categoría', c ? c.nombre : i)) refrescar(); },
     addUser: async () => {
-      const nombre = $('#n_user_name').value.trim(), correo = $('#n_user_correo').value.trim(), pin = $('#n_user_pin').value.trim(), rol = $('#n_user_rol').value;
+      const nombre = $('#n_user_name').value.trim(), correo = $('#n_user_correo').value.trim(), pin = $('#n_user_pin').value.trim();
+      let rolesArr = [...$('#n_user_rol').selectedOptions].map(o => o.value);
       let permisos = ['crear', 'editar', 'eliminar'].filter(k => $('#n_user_p_' + k).checked);
       let areas = $$('#n_user_areas input[value]:checked').map(i => i.value);
       if (!nombre || !pin) return toast('Completa nombre y PIN', true);
       if (!PIN_OK(pin)) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
-      if (rol !== 'admin' && permisos.length === 0) return toast('Selecciona al menos un permiso', true);
-      if (rol === 'admin') { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
-      if (rol === 'docente' || rol === 'administrativo') { areas = []; }
+      if (!rolesArr.length) return toast('Selecciona al menos un rol', true);
+      
+      if (rolesArr.includes('admin')) { permisos = ['crear', 'editar', 'eliminar']; areas = []; }
+      if (rolesArr.includes('docente') || rolesArr.includes('administrativo')) { areas = []; }
+      
       try {
         const { data: dup } = await dbClient.from('usuarios_admin').select('id').eq('pin', pin);
         if (dup && dup.length) return toast('Ese PIN ya está en uso', true);
-        await crearUsuario({ nombre, pin, rol, correo: correo || null, permisos, areas_asignadas: areas });
+        await crearUsuario({ nombre, pin, rol: rolesArr.join(','), correo: correo || null, permisos, areas_asignadas: areas });
         registrarLog('Creó usuario', nombre); toast(`${FLATICONS.check} Usuario creado`); ir('usuarios', true);
       } catch (e) { console.error(e); toast('Error al crear usuario: ' + e.message, true); }
     },
-    delUser: async i => { if (String(i) === String(USUARIO_ACTUAL.id)) return toast('No puedes eliminar tu propio usuario', true); const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol'); const u = (data || []).find(x => String(x.id) === String(i)); if (!u) return; if (u.rol === 'admin' && data.filter(x => x.rol === 'admin').length <= 1) return toast('Debe quedar al menos un administrador', true); if (!confirm(`¿Eliminar a ${u.nombre}?`)) return; if (await ejecutar(() => dbClient.from('usuarios_admin').delete().eq('id', i), 'Usuario eliminado', 'Eliminó usuario', u.nombre)) ir('usuarios', true); },
+    delUser: async i => { if (String(i) === String(USUARIO_ACTUAL.id)) return toast('No puedes eliminar tu propio usuario', true); const { data } = await dbClient.from('usuarios_admin').select('id,nombre,rol'); const u = (data || []).find(x => String(x.id) === String(i)); if (!u) return; if (tieneRol(u, 'admin') && data.filter(x => tieneRol(x, 'admin')).length <= 1) return toast('Debe quedar al menos un administrador', true); if (!confirm(`¿Eliminar a ${u.nombre}?`)) return; if (await ejecutar(() => dbClient.from('usuarios_admin').delete().eq('id', i), 'Usuario eliminado', 'Eliminó usuario', u.nombre)) ir('usuarios', true); },
     userPin: i => cambiarPin(i),
     pin: () => cambiarPin(USUARIO_ACTUAL.id),
     logsRef: () => ir('logs', true),
@@ -2107,7 +2176,19 @@
     $('#loader').classList.add('hidden');
   }
 
-  if (dbClient) iniciar();
+  if (dbClient) {
+    // Persistencia de sesión al recargar la página
+    const sesionGuardada = localStorage.getItem('ubosque_admin_session');
+    if (sesionGuardada) {
+      try {
+        USUARIO_ACTUAL = JSON.parse(sesionGuardada);
+        iniciar();
+        setTimeout(() => { document.body.classList.add('en-admin'); irAdmin(); }, 100);
+      } catch (e) { localStorage.removeItem('ubosque_admin_session'); iniciar(); }
+    } else {
+      iniciar();
+    }
+  }
   else $('#loader').innerHTML = `<p style="color:var(--rojo); font-weight:600; text-align:center; padding:2rem;">Faltan las credenciales de Supabase.</p>`;
 </script>
 </body>
