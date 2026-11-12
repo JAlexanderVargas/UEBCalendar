@@ -433,7 +433,8 @@
   .dt-lugar b { color: var(--petroleo); } .dt-lugar span { color: var(--suave); font-size: .88rem; }
   .dt-link { border: 1px solid var(--pc); border-radius: 12px; padding: .8rem .9rem; background: color-mix(in srgb, var(--pc) 7%, #fff); }
   .dt-link-top { display: flex; flex-direction: column; gap: .15rem; margin-bottom: .7rem; }
-  .dt-plat { font-weight: 800; color: var(--pc); }
+  .dt-plat { font-weight: 800; color: var(--pc); display: flex; align-items: center; gap: .4rem; }
+  .dt-plat img { height: 20px; width: auto; }
   .dt-host { font-size: .8rem; color: var(--suave); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .dt-link-btns { display: flex; flex-wrap: wrap; gap: .5rem; }
   .dt-desc { padding: .9rem 1rem; background: var(--fondo); border-radius: 10px; font-size: .93rem; line-height: 1.5; }
@@ -462,6 +463,22 @@
   .chk-lista label:has(input:checked) { background: color-mix(in srgb, var(--lima) 22%, white); border-color: var(--lima); }
   .chk-lista label.chk-todos { grid-column: 1 / -1; border: 1px dashed var(--verde); color: var(--petroleo); }
   .chk-lista input[type=checkbox] { width: 1rem; height: 1rem; flex: none; accent-color: var(--verde); }
+
+  /* NUEVOS ESTILOS PARA TARJETAS DE FACULTAD */
+  .dt-facs-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .dt-fac-card {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: color-mix(in srgb, var(--fc) 10%, white);
+    border: 1px solid color-mix(in srgb, var(--fc) 30%, white);
+    border-left: 4px solid var(--fc);
+    padding: .4rem .8rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 700;
+    color: var(--petroleo);
+  }
 </style>
 </head>
 <body>
@@ -1082,19 +1099,26 @@
     const q = new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: e.titulo || '', startdt: start, enddt: end, body: [e.descripcion, ambito(D, e)].filter(Boolean).join(' · '), location: [e.lugar, e.lugarEsp, e.piso].filter(Boolean).join(' - ') });
     return 'https://outlook.office.com/calendar/0/deeplink/compose?' + q.toString();
   }
+  
+  // --- LÓGICA DE PLATAFORMAS Y LOGOS ---
   const PLATAFORMAS = [
-    [/teams\.(microsoft|live)\.com/i, 'Microsoft Teams', '#5B5FC7'],
-    [/meet\.google\.com/i, 'Google Meet', '#00897B'],
-    [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF'],
-    [/webex\.com/i, 'Webex', '#00A0D1'],
-    [/youtube\.com|youtu\.be/i, 'YouTube', '#D32F2F']
+    [/meet\.google\.com/i, 'Google Meet', '#00897B', 'logo_meet.png', '🎥'],
+    [/teams\.(microsoft|live)\.com/i, 'Microsoft Teams', '#5B5FC7', 'logo_teams.png', '💻'],
+    [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF', 'logo_zoom.png', '📹'],
+    [/webex\.com/i, 'Webex', '#00A0D1', '', '🌐'],
+    [/youtube\.com|youtu\.be/i, 'YouTube', '#D32F2F', '', '▶️']
   ];
+  
   function infoEnlace(raw) {
     const url = normalizarEnlace(raw); if (!url) return null;
     const host = new URL(url).hostname.replace(/^www\./, '');
     const p = PLATAFORMAS.find(x => x[0].test(host));
-    return { url, nombre: p ? p[1] : 'Página web · ' + host, color: p ? p[2] : '#007A78' };
+    if (p) {
+        return { url, nombre: p[1], color: p[2], logo: p[3], emoji: p[4] };
+    }
+    return { url, nombre: 'Enlace web', color: '#007A78', logo: '', emoji: '🔗' };
   }
+
   document.addEventListener('click', ev => {
     const b = ev.target.closest('[data-copy]'); if (!b) return;
     (navigator.clipboard ? navigator.clipboard.writeText(b.dataset.copy) : Promise.reject()).then(() => toast('Enlace copiado'), () => toast('No se pudo copiar el enlace', true));
@@ -1112,7 +1136,14 @@
     const lugarHtml = lugarTxt ? `<span class="info-pill">${FLATICONS.pin} ${esc(lugarTxt + pisoTxt)}</span>` : '';
     let horaHtml = '';
     if (e.horaInicio) horaHtml = `<span class="info-pill">${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</span>`;
-    const linkHtml = normalizarEnlace(e.enlace) ? `<a href="${esc(normalizarEnlace(e.enlace))}" target="_blank" rel="noopener" class="link-pill" onclick="event.stopPropagation()">${FLATICONS.link} Unirse</a>` : '';
+    
+    const L = infoEnlace(e.enlace);
+    let linkHtml = '';
+    if (L) {
+        const iconHtml = L.logo ? `<img src="${L.logo}" style="height:14px; width:auto;" onerror="this.style.display='none'">` : L.emoji;
+        linkHtml = `<a href="${esc(L.url)}" target="_blank" rel="noopener" class="link-pill" style="background:${L.color}20; color:${L.color}; border-color:${L.color}40;" onclick="event.stopPropagation()">${iconHtml} Unirse</a>`;
+    }
+    
     const msHtml = !e.esFestivo ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" onclick="event.stopPropagation()">📅 Teams</a>` : '';
     const dirigidoA = e.publico && e.publico.length ? e.publico[0] : 'Comunidad universitaria';
     const infoExtraHtml = `<span class="info-pill">${em(emojiPub(dirigidoA))} ${esc(dirigidoA)}${e.publico && e.publico.length > 1 ? ` +${e.publico.length - 1}` : ''}</span> <span class="info-pill">${FLATICONS.calendario} ${nombrePeriodo(e.periodo)}</span>`;
@@ -1196,16 +1227,32 @@
     const d0 = parse(e.inicio), d1 = parse(finDe(e)), multi = e.inicio !== finDe(e), nDias = diffDias(e.inicio, finDe(e)) + 1;
     const cat = catDe(D, e.categoria);
     const tile = d => `<div class="dt-tile"><b>${d.getDate()}</b><span>${MESES_C[d.getMonth()]} ${d.getFullYear()}</span><em>${DIAS_L[d.getDay()]}</em></div>`;
-    const chips = (arr, ic) => arr.map(x => `<span class="dt-chip">${ic || ''}${esc(x)}</span>`).join('');
     const sec = (ic, t, body) => body ? `<section class="dt-sec"><h4>${ic} ${t}</h4>${body}</section>` : '';
     const facs = (e.facultad || []).map(fid => D.facultades.find(f => f.id === fid)).filter(Boolean);
     const progs = (e.programa || []).map(pid => { for (const f of D.facultades) { const p = f.programas.find(x => x.id === pid); if (p) return p.nombre; } return ''; }).filter(Boolean);
     const areas = (e.area || []).map(aid => D.areas.find(x => x.id === aid)).filter(Boolean);
     const hora = e.horaInicio ? `${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}` : '';
+    
     const L = infoEnlace(e.enlace);
+    let linkBody = '';
+    if (L) {
+        const iconHtml = L.logo ? `<img src="${L.logo}" style="height:24px; width:auto;" onerror="this.style.display='none'">` : L.emoji;
+        linkBody = `<div class="dt-link" style="--pc:${L.color}">
+          <div class="dt-link-top">
+            <span class="dt-plat">${iconHtml} ${esc(L.nombre)}</span>
+            <span class="dt-host" title="${esc(L.url)}">${esc(L.url.replace(/^https?:\/\//, ''))}</span>
+          </div>
+          <div class="dt-link-btns">
+            <a class="btn pri" href="${esc(L.url)}" target="_blank" rel="noopener" style="background:${L.color}; border-color:${L.color}; color:white;">${FLATICONS.link} Unirse a la reunión</a>
+            <button class="btn" data-copy="${esc(L.url)}">${FLATICONS.documento} Copiar enlace</button>
+          </div>
+        </div>`;
+    }
+    
     const lugarBody = e.lugar ? `<div class="dt-lugar"><b>${esc(e.lugar)}</b>${e.lugarEsp ? `<span>${esc(e.lugarEsp)}</span>` : ''}${e.piso ? `<span>${esc(e.piso)}</span>` : ''}</div>` : '';
-    const linkBody = L ? `<div class="dt-link" style="--pc:${L.color}"><div class="dt-link-top"><span class="dt-plat">${esc(L.nombre)}</span><span class="dt-host" title="${esc(L.url)}">${esc(L.url.replace(/^https?:\/\//, ''))}</span></div><div class="dt-link-btns"><a class="btn pri" href="${esc(L.url)}" target="_blank" rel="noopener">${FLATICONS.link} Unirse</a><button class="btn" data-copy="${esc(L.url)}">${FLATICONS.documento} Copiar enlace</button></div></div>` : '';
     const periodos = [e.periodo, e.periodo2].filter(Boolean).map(nombrePeriodo);
+
+    const facsHtml = facs.map(f => `<div class="dt-fac-card" style="--fc:${f.color || 'var(--verde)'}">${em(emojiFac(f))} ${esc(f.nombre)}</div>`).join('');
 
     $('#cajon').innerHTML = `<div class="dt-head" style="--fc:${facColor}">
         <button class="cerrar" data-cerrar>×</button>
@@ -1215,12 +1262,14 @@
       </div>
       <div class="dt-fechas" style="--fc:${facColor}">${tile(d0)}${multi ? `<div class="dt-arrow">→</div>${tile(d1)}` : ''}<div class="dt-meta"><b>${multi ? nDias + ' días' : 'Un solo día'}</b><span>${FLATICONS.reloj} ${hora || 'Todo el día'}</span></div></div>
       ${sec(FLATICONS.personas, 'Dirigido a', e.publico && e.publico.length ? `<div class="dt-chips">${e.publico.map(x => `<span class="dt-chip">${em(emojiPub(x))}${esc(x)}</span>`).join('')}</div>` : '')}
-      ${sec(FLATICONS.birrete, 'Facultades', facs.length ? `<div class="dt-chips">${facs.map(f => `<span class="dt-chip">${em(emojiFac(f))}${esc(f.nombre)}</span>`).join('')}</div>` : '')}
-      ${sec(FLATICONS.libro, 'Programas', progs.length ? `<div class="dt-chips">${chips(progs, FLATICONS.libro)}</div>` : '')}
+      
+      ${sec(FLATICONS.birrete, 'Facultades', facs.length ? `<div class="dt-facs-grid">${facsHtml}</div>` : '')}
+      
+      ${sec(FLATICONS.libro, 'Programas', progs.length ? `<div class="dt-chips">${progs.map(p => `<span class="dt-chip">${FLATICONS.libro} ${esc(p)}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.personas, 'Áreas administrativas', areas.length ? `<div class="dt-chips">${areas.map(a => `<span class="dt-chip">${em(emojiArea(a))}${esc(a.nombre)}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.pin, 'Lugar', lugarBody)}
       ${sec(FLATICONS.link, 'Enlace', linkBody)}
-      ${sec(FLATICONS.calendario, 'Semestre', periodos.length ? `<div class="dt-chips">${chips(periodos)}</div>` : '')}
+      ${sec(FLATICONS.calendario, 'Semestre', periodos.length ? `<div class="dt-chips">${periodos.map(nombrePeriodo).map(p => `<span class="dt-chip">${esc(p)}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.documento, 'Detalles', e.descripcion ? `<div class="dt-desc">${esc(e.descripcion).replace(/\n/g, '<br>')}</div>` : '')}
       <div class="dt-acc">
         <a class="btn" href="${gc}" target="_blank" rel="noopener">${FLATICONS.calendario} Google Calendar</a>
