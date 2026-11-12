@@ -155,6 +155,15 @@
   .pill { --c-fac: #007A78; --c-cat: #007A78; display: block; width: 100%; text-align: left; border: 0; background: color-mix(in srgb, var(--c-fac) 12%, white); border-left: 3px solid var(--c-fac); border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transicion); cursor: pointer; position: relative; color: var(--tinta); }
   .pill::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c-cat); opacity: 0.8; }
   .pill:hover { transform: translateX(2px); background: color-mix(in srgb, var(--c-fac) 25%, white); }
+  /* Semanas: los eventos de varios días son una sola barra continua */
+  .cal .sem { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(7, 1fr); --lh: 22px; min-height: 96px; }
+  .cal .sem .dia { min-height: 0; }
+  .cal .sem .dia.c0 { border-left: 0; }
+  .cal .sem .pill { position: relative; z-index: 2; width: auto; min-width: 0; margin: 0 2px 2px; height: calc(var(--lh) - 2px); line-height: calc(var(--lh) - 5px); }
+  .cal .sem .pill.sigue-ant { margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+  .cal .sem .pill.sigue-sig { margin-right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .pill .rg { font-weight: 500; opacity: .7; margin-left: .4rem; font-size: .66rem; }
+  .mas-dia { position: relative; z-index: 2; border: 0; background: none; color: var(--verde); font-weight: 700; font-size: .72rem; padding: 0 6px; text-align: left; cursor: pointer; }
   .pill.festivo { background: var(--rojo); color: #fff; border-left-color: #8a1c14; font-weight: 700; }
 
   .leyenda { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.7rem; font-size: 0.82rem; color: var(--suave); font-weight: 600; }
@@ -400,6 +409,9 @@
     .estado-block { grid-column: 2; align-items: flex-start; margin-top: 0.4rem;}
     .cal .dia { min-height: 64px; }
     .pill { font-size: 0; padding: 4px; height: 10px; border-radius: 2px; }
+    .cal .sem { --lh: 14px; min-height: 64px; }
+    .cal .sem .pill { line-height: 0; }
+    .pill .rg { display: none; }
     .barra { top: 120px; }
     #admin-app { grid-template-columns: 1fr; }
     .admin-nav { position: static; height: auto; flex-direction: row; flex-wrap: wrap; }
@@ -1176,22 +1188,42 @@
     const Lvis = L.filter(e => e.inicio <= finIso && finDe(e) >= iniIso);
     let h = `<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.8rem; flex-wrap:wrap;"><h2 style="font-family:var(--display); font-size:1.5rem; flex:1; color:var(--petroleo);">${MESES[m]} ${y}</h2><button class="btn" data-mes="-1">←</button><button class="btn" data-mes="0">Hoy</button><button class="btn" data-mes="1">→</button></div><div class="cal ${S.dir}" style="--mes-img:url('${imgMes}')">`;
     ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(n => h += `<div class="dh">${n}</div>`);
-    const h0 = hoy();
-    for (let i = 0; i < 42; i++) {
-      const dia = new Date(inicio); dia.setDate(inicio.getDate() + i);
-      const s = iso(dia);
-      const fDelDia = festivosDia(s);
-      const eDelDia = Lvis.filter(e => e.inicio <= s && s <= finDe(e));
-      const todosDelDia = [...fDelDia, ...eDelDia];
-      h += `<div class="dia ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${fDelDia.length ? 'festivo' : ''}"><span class="n">${dia.getDate()}</span>`;
-      todosDelDia.slice(0, 3).forEach(e => {
-        let { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
-        let inminente = esInminente(e);
+    const h0 = hoy(), MAXL = 3;
+    const rango = e => { const a = parse(e.inicio), b = parse(finDe(e)); return a.getMonth() === b.getMonth() ? `${a.getDate()}–${b.getDate()} ${MESES_C[b.getMonth()]}` : `${a.getDate()} ${MESES_C[a.getMonth()]} – ${b.getDate()} ${MESES_C[b.getMonth()]}`; };
+    for (let w = 0; w < 6; w++) {
+      const dias = [];
+      for (let c = 0; c < 7; c++) { const d = new Date(inicio); d.setDate(inicio.getDate() + w * 7 + c); dias.push(d); }
+      const ss = dias.map(iso);
+      // eventos de la semana, cada uno con su columna inicial/final
+      const items = [];
+      ss.forEach((s, c) => festivosDia(s).forEach(f => items.push({ e: f, a: c, b: c, antes: false, despues: false })));
+      Lvis.forEach(e => {
+        const fe = finDe(e);
+        if (e.inicio > ss[6] || fe < ss[0]) return;
+        items.push({ e, a: e.inicio < ss[0] ? 0 : ss.indexOf(e.inicio), b: fe > ss[6] ? 6 : ss.indexOf(fe), antes: e.inicio < ss[0], despues: fe > ss[6] });
+      });
+      items.sort((x, y) => x.a - y.a || (y.e.esFestivo ? 1 : 0) - (x.e.esFestivo ? 1 : 0) || (y.b - y.a) - (x.b - x.a));
+      // cada evento conserva su mismo carril (fila) durante toda la semana
+      const ult = [];
+      items.forEach(it => { let l = ult.findIndex(x => x < it.a); if (l < 0) { l = ult.length; ult.push(-1); } ult[l] = it.b; it.l = l; });
+      const nl = Math.min(MAXL, ult.length);
+      const ocultos = [0, 0, 0, 0, 0, 0, 0];
+      items.filter(it => it.l >= MAXL).forEach(it => { for (let c = it.a; c <= it.b; c++) ocultos[c]++; });
+      h += `<div class="sem" style="grid-template-rows:30px ${'var(--lh) '.repeat(nl)}minmax(8px,auto)">`;
+      dias.forEach((dia, c) => {
+        const s = ss[c];
+        h += `<div class="dia c${c} ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${festivosDia(s).length ? 'festivo' : ''}" style="grid-column:${c + 1};grid-row:1 / ${nl + 3}"><span class="n">${dia.getDate()}</span></div>`;
+      });
+      items.filter(it => it.l < MAXL).forEach(it => {
+        const e = it.e;
+        const { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
         const titulo = e.titulo || e.nombre || '';
         const eid = e.id || ('festivo-' + e.fecha);
-        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${eid}" title="${esc(titulo)}">${icono ? icono + ' ' : ''}${esc(titulo)}</button>`;
+        const span = it.b - it.a + 1;
+        const rg = !e.esFestivo && e.inicio !== finDe(e) ? rango(e) : '';
+        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${esInminente(e) ? 'destacado' : ''} ${it.antes ? 'sigue-ant' : ''} ${it.despues ? 'sigue-sig' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};grid-column:${it.a + 1} / span ${span};grid-row:${it.l + 2}" data-id="${eid}" title="${esc(titulo + (rg ? ' · ' + rg : ''))}">${it.antes ? '◂ ' : ''}${icono ? icono + ' ' : ''}${esc(titulo)}${rg && span >= 3 ? `<span class="rg">${rg}</span>` : ''}${it.despues ? ' ▸' : ''}</button>`;
       });
-      if (todosDelDia.length > 3) h += `<button style="border:0; background:none; color:var(--verde); font-weight:700; font-size:0.72rem; padding:2px 4px;" data-dia="${s}">+${todosDelDia.length - 3} más</button>`;
+      ocultos.forEach((n, c) => { if (n) h += `<button class="mas-dia" style="grid-column:${c + 1};grid-row:${nl + 2}" data-dia="${ss[c]}">+${n} más</button>`; });
       h += '</div>';
     }
     return h + '</div><p class="leyenda"><i></i>Festivo nacional de Colombia</p>';
