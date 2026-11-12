@@ -182,9 +182,11 @@
   .ev-bottom { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--suave); }
   .info-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fondo); padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid var(--linea); font-weight: 600; color: var(--tinta); }
   .info-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--c-fac); }
-  .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: #e0f2fe; padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid #bae6fd; font-weight: 700; color: #0369a1; text-decoration: none; transition: var(--transicion);}
-  .link-pill:hover { background: #bae6fd; color: #075985; }
-  .link-pill.ms { background: #e8eafd; border-color: #c7ccf9; color: #4b53bc; }
+  
+  /* ESTILO DE BOTÓN DE UNIRSE DINÁMICO */
+  .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 700; text-decoration: none; transition: var(--transicion); }
+  .link-pill img { height: 14px; width: auto; }
+  .link-pill.ms { background: #e8eafd; border: 1px solid #c7ccf9; color: #4b53bc; }
   .link-pill.ms:hover { background: #c7ccf9; color: #2f3579; }
 
   .estado-block { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
@@ -431,6 +433,8 @@
   .dt-chip .flaticon { width: 1.1em; height: 1.1em; }
   .dt-lugar { display: flex; flex-direction: column; gap: .15rem; padding: .7rem .9rem; background: var(--fondo); border-radius: 10px; border-left: 4px solid var(--fc, var(--verde)); }
   .dt-lugar b { color: var(--petroleo); } .dt-lugar span { color: var(--suave); font-size: .88rem; }
+  
+  /* ESTILOS DE ENLACE EN EL MODAL */
   .dt-link { border: 1px solid var(--pc); border-radius: 12px; padding: .8rem .9rem; background: color-mix(in srgb, var(--pc) 7%, #fff); }
   .dt-link-top { display: flex; flex-direction: column; gap: .15rem; margin-bottom: .7rem; }
   .dt-plat { font-weight: 800; color: var(--pc); display: flex; align-items: center; gap: .4rem; }
@@ -1141,7 +1145,7 @@
     let linkHtml = '';
     if (L) {
         const iconHtml = L.logo ? `<img src="${L.logo}" style="height:14px; width:auto;" onerror="this.style.display='none'">` : L.emoji;
-        linkHtml = `<a href="${esc(L.url)}" target="_blank" rel="noopener" class="link-pill" style="background:${L.color}20; color:${L.color}; border-color:${L.color}40;" onclick="event.stopPropagation()">${iconHtml} Unirse</a>`;
+        linkHtml = `<a href="${esc(L.url)}" target="_blank" rel="noopener" class="link-pill" style="background:${L.color}20; color:${L.color}; border:1px solid ${L.color}40;" onclick="event.stopPropagation()">${iconHtml} Unirse</a>`;
     }
     
     const msHtml = !e.esFestivo ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" onclick="event.stopPropagation()">📅 Teams</a>` : '';
