@@ -1642,6 +1642,7 @@
         <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div>
         <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div>
       </div>
+      <div id="f_fechas_hint" style="font-size:.8rem;color:var(--suave);margin:-.4rem 0 .6rem;"></div>
       
       <div class="fr2">
         <div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div>
@@ -1717,6 +1718,8 @@
 
     $('#modal').classList.add('on');
     actualizarProgsModal(arrProg);
+    ['f_titulo', 'f_desc'].forEach(i => $('#' + i).addEventListener('input', aplicarModoFechas));
+    aplicarModoFechas();
     setTimeout(() => $('#f_titulo').focus(), 50);
   }
 
@@ -1742,12 +1745,49 @@
 
   const cerrarModal = () => { $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
 
+  // --- MODO DE FECHAS SEGÚN EL TEXTO ("Inicia…" / "Finaliza…") ---
+  const RX_INICIO = /\b(inici\w*|comienz\w*|empiez\w*|empieza\w*|apertur\w*|abre|abren|arranc\w*)\b/;
+  const RX_FIN = /\b(fin|finaliz\w*|termin\w*|cierr\w*|cierre|culmin\w*|venc\w*)\b/;
+  function modoFechas(txt) {
+    const t = String(txt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const i = RX_INICIO.test(t), f = RX_FIN.test(t);
+    return i && f ? 'ambos' : i ? 'inicio' : f ? 'fin' : 'libre';
+  }
+  function aplicarModoFechas() {
+    const m = modoFechas(($('#f_titulo').value || '') + ' ' + ($('#f_desc').value || ''));
+    const cfg = {
+      libre:  { ini: [true, true],  fin: [true, false] },
+      inicio: { ini: [true, true],  fin: [false, false] },
+      fin:    { ini: [false, false], fin: [true, true] },
+      ambos:  { ini: [true, true],  fin: [true, true] }
+    }[m];
+    [['f_ini', 'Desde', cfg.ini], ['f_fin', 'Hasta', cfg.fin]].forEach(([id, nombre, [on, req]]) => {
+      const inp = $('#' + id), lab = inp.closest('.fr').querySelector('label');
+      if (!on && inp.value) { inp.dataset.prev = inp.value; inp.value = ''; }
+      if (on && !inp.value && inp.dataset.prev) { inp.value = inp.dataset.prev; delete inp.dataset.prev; }
+      inp.disabled = !on; inp.style.opacity = on ? '' : '.45';
+      lab.textContent = nombre + (req ? ' *' : '');
+    });
+    $('#f_fechas_hint').textContent = {
+      libre: '',
+      inicio: 'El texto indica inicio: solo se pide la fecha «Desde».',
+      fin: 'El texto indica finalización: solo se pide la fecha «Hasta».',
+      ambos: 'El texto indica inicio y fin: se piden «Desde» y «Hasta».'
+    }[m];
+  }
+
   async function guardarEvento(id) {
     if (id ? !puede('editar') : !puede('crear')) return sinPermiso();
     if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
     const g = i => $('#' + i).value.trim();
-    const titulo = g('f_titulo'), inicio = g('f_ini'), fin = g('f_fin') || inicio;
+    const titulo = g('f_titulo');
+    const modo = modoFechas(titulo + ' ' + g('f_desc'));
+    let inicio = g('f_ini'), fin = g('f_fin') || inicio;
+    if (modo === 'fin') { inicio = fin = g('f_fin'); }
+    else if (modo === 'inicio') { fin = inicio; }
     if (!titulo) return toast('Escribe el nombre del evento', true);
+    if (modo === 'fin' && !fin) return toast('Falta la fecha «Hasta» (el evento indica finalización)', true);
+    if (modo === 'ambos' && !g('f_fin')) return toast('Falta la fecha «Hasta» (el evento indica inicio y fin)', true);
     if (!inicio) return toast('Falta la fecha de inicio', true);
     if (fin < inicio) return toast('La fecha final no puede ser antes', true);
     const publico = [...$('#f_pub').selectedOptions].map(o => o.value);
