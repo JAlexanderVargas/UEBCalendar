@@ -185,9 +185,12 @@
   
   /* ESTILO DE BOTÓN DE UNIRSE DINÁMICO */
   .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 700; text-decoration: none; transition: var(--transicion); }
-  .link-pill img { height: 14px; width: auto; }
-  .link-pill.ms { background: #e8eafd; border: 1px solid #c7ccf9; color: #4b53bc; }
-  .link-pill.ms:hover { background: #c7ccf9; color: #2f3579; }
+  .link-pill img, .plat-ico { height: 14px; width: 14px; object-fit: contain; border-radius: 3px; }
+  .link-pill:hover { filter: brightness(.95); transform: translateY(-1px); }
+  .plat-emo { font-size: 1em; line-height: 1; }
+  .dt-plat .plat-ico { height: 24px; width: 24px; }
+  .link-pill.ms { background: #e5f1fb; border: 1px solid #b5d6f2; color: #0f6cbd; }
+  .link-pill.ms:hover { background: #b5d6f2; color: #0a4a85; }
 
   .estado-block { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
   .estado { font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 999px; white-space: nowrap; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--linea); color: var(--tinta); display: flex; align-items: center; gap: 0.3rem;}
@@ -1081,7 +1084,7 @@
               ${hora ? `<span>🕒 ${hora}</span>` : ''}
               ${n.modalidad ? `<span>💻 ${esc(n.modalidad)}</span>` : ''}
               ${(n.salon || n.piso) ? `<span>📍 ${esc([n.salon, n.ubicacion, n.piso].filter(Boolean).join(' · '))}</span>` : ''}
-              ${L ? `<a class="link-pill" href="${esc(L.url)}" target="_blank" rel="noopener">${FLATICONS.link} Unirse</a>` : ''}
+              ${L ? pillEnlace(L) : ''}
             </div>
             ${(facs.length || progs.length) ? `<div class="nov-chips">${facs.map(f => `<span class="nov-chip">${emojiFac(f)} ${esc(f.nombre)}</span>`).join('')}${progs.map(p => `<span class="nov-chip">📚 ${esc(p)}</span>`).join('')}</div>` : ''}
           </article>`;
@@ -1106,21 +1109,29 @@
   
   // --- LÓGICA DE PLATAFORMAS Y LOGOS ---
   const PLATAFORMAS = [
-    [/meet\.google\.com/i, 'Google Meet', '#00897B', 'logo_meet.png', '🎥'],
-    [/teams\.(microsoft|live)\.com/i, 'Microsoft Teams', '#5B5FC7', 'logo_teams.png', '💻'],
-    [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF', 'logo_zoom.png', '📹'],
-    [/webex\.com/i, 'Webex', '#00A0D1', '', '🌐'],
-    [/youtube\.com|youtu\.be/i, 'YouTube', '#D32F2F', '', '▶️']
+    // [regex del host, nombre, color, dominio del favicon, emoji de respaldo, nombre corto]
+    [/^meet\.google\.com$/i, 'Google Meet', '#00832D', 'meet.google.com', '🎥', 'Meet'],
+    [/^teams\.microsoft\.com$|^(teams\.)?live\.com$/i, 'Microsoft Teams', '#5B5FC7', 'teams.microsoft.com', '👥', 'Teams'],
+    [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF', 'zoom.us', '📹', 'Zoom'],
+    [/(^|\.)webex\.com$/i, 'Webex', '#00A0D1', 'webex.com', '🌐', 'Webex'],
+    [/(^|\.)youtube\.com$|^youtu\.be$/i, 'YouTube', '#D32F2F', 'youtube.com', '▶️', 'YouTube']
   ];
-  
+
   function infoEnlace(raw) {
     const url = normalizarEnlace(raw); if (!url) return null;
-    const host = new URL(url).hostname.replace(/^www\./, '');
+    const host = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
     const p = PLATAFORMAS.find(x => x[0].test(host));
-    if (p) {
-        return { url, nombre: p[1], color: p[2], logo: p[3], emoji: p[4] };
-    }
-    return { url, nombre: 'Enlace web', color: '#007A78', logo: '', emoji: '🔗' };
+    if (p) return { url, nombre: p[1], color: p[2], fav: p[3], emoji: p[4], corto: p[5], generico: false };
+    return { url, nombre: 'Enlace web', color: '#64748B', fav: '', emoji: '🔗', corto: 'Enlace', generico: true };
+  }
+
+  // Logo real (favicon de la plataforma); si no carga, se muestra el emoji
+  function iconoPlat(L) {
+    if (!L.fav) return `<span class="plat-emo">${L.emoji}</span>`;
+    return `<img class="plat-ico" src="https://www.google.com/s2/favicons?domain=${L.fav}&sz=64" alt="" onerror="this.replaceWith(document.createTextNode('${L.emoji}'))">`;
+  }
+  function pillEnlace(L, extra = '') {
+    return `<a href="${esc(L.url)}" target="_blank" rel="noopener" class="link-pill" style="background:${L.color}1F; color:${L.color}; border:1px solid ${L.color}66;" title="${esc(L.nombre)}"${extra}>${iconoPlat(L)} ${L.generico ? 'Abrir enlace' : 'Unirse · ' + esc(L.corto)}</a>`;
   }
 
   document.addEventListener('click', ev => {
@@ -1142,13 +1153,9 @@
     if (e.horaInicio) horaHtml = `<span class="info-pill">${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</span>`;
     
     const L = infoEnlace(e.enlace);
-    let linkHtml = '';
-    if (L) {
-        const iconHtml = L.logo ? `<img src="${L.logo}" style="height:14px; width:auto;" onerror="this.style.display='none'">` : L.emoji;
-        linkHtml = `<a href="${esc(L.url)}" target="_blank" rel="noopener" class="link-pill" style="background:${L.color}20; color:${L.color}; border:1px solid ${L.color}40;" onclick="event.stopPropagation()">${iconHtml} Unirse</a>`;
-    }
+    const linkHtml = L ? pillEnlace(L, ' onclick="event.stopPropagation()"') : '';
     
-    const msHtml = !e.esFestivo ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" onclick="event.stopPropagation()">📅 Teams</a>` : '';
+    const msHtml = !e.esFestivo ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" title="Agregar a Outlook Calendar" onclick="event.stopPropagation()">📅 Outlook</a>` : '';
     const dirigidoA = e.publico && e.publico.length ? e.publico[0] : 'Comunidad universitaria';
     const infoExtraHtml = `<span class="info-pill">${em(emojiPub(dirigidoA))} ${esc(dirigidoA)}${e.publico && e.publico.length > 1 ? ` +${e.publico.length - 1}` : ''}</span> <span class="info-pill">${FLATICONS.calendario} ${nombrePeriodo(e.periodo)}</span>`;
 
@@ -1240,14 +1247,13 @@
     const L = infoEnlace(e.enlace);
     let linkBody = '';
     if (L) {
-        const iconHtml = L.logo ? `<img src="${L.logo}" style="height:24px; width:auto;" onerror="this.style.display='none'">` : L.emoji;
         linkBody = `<div class="dt-link" style="--pc:${L.color}">
           <div class="dt-link-top">
-            <span class="dt-plat">${iconHtml} ${esc(L.nombre)}</span>
+            <span class="dt-plat">${iconoPlat(L)} ${esc(L.nombre)}</span>
             <span class="dt-host" title="${esc(L.url)}">${esc(L.url.replace(/^https?:\/\//, ''))}</span>
           </div>
           <div class="dt-link-btns">
-            <a class="btn pri" href="${esc(L.url)}" target="_blank" rel="noopener" style="background:${L.color}; border-color:${L.color}; color:white;">${FLATICONS.link} Unirse a la reunión</a>
+            <a class="btn pri" href="${esc(L.url)}" target="_blank" rel="noopener" style="background:${L.color}; border-color:${L.color}; color:white;">${FLATICONS.link} ${L.generico ? 'Abrir enlace' : 'Unirse a ' + esc(L.corto)}</a>
             <button class="btn" data-copy="${esc(L.url)}">${FLATICONS.documento} Copiar enlace</button>
           </div>
         </div>`;
@@ -1277,7 +1283,7 @@
       ${sec(FLATICONS.documento, 'Detalles', e.descripcion ? `<div class="dt-desc">${esc(e.descripcion).replace(/\n/g, '<br>')}</div>` : '')}
       <div class="dt-acc">
         <a class="btn" href="${gc}" target="_blank" rel="noopener">${FLATICONS.calendario} Google Calendar</a>
-        <a class="btn" href="${enlaceOutlook(e)}" target="_blank" rel="noopener" style="border-color:#4b53bc;color:#4b53bc;">📅 Microsoft / Teams</a>
+        <a class="btn" href="${enlaceOutlook(e)}" target="_blank" rel="noopener" style="border-color:#0f6cbd;color:#0f6cbd;">📅 Outlook Calendar</a>
         <button class="btn" data-ics="${e.id}">${FLATICONS.documento} Descargar (.ics)</button>
       </div>`;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
