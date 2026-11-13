@@ -88,6 +88,35 @@
   .btn { border: 1px solid var(--linea); background: #fff; color: var(--tinta); padding: 0.5rem 0.9rem; border-radius: 10px; font-size: 0.86rem; font-weight: 600; transition: var(--transicion); display: inline-flex; align-items: center; gap: 0.35rem; justify-content: center; text-decoration: none;}
   .btn:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
+  /* ===== FILTRO "DIRIGIDO A" (ROLES) ===== */
+  .filtro-pub { position: relative; }
+  .filtro-pub > summary {
+    list-style: none; cursor: pointer; padding: .5rem .8rem; border-radius: 10px;
+    border: 1px solid var(--linea); background: #fff; font-size: .9rem; font-weight: 600;
+    color: var(--tinta); display: inline-flex; align-items: center; gap: .35rem;
+    transition: var(--transicion); white-space: nowrap;
+  }
+  .filtro-pub > summary::-webkit-details-marker { display: none; }
+  .filtro-pub > summary:hover { border-color: var(--verde); color: var(--verde); }
+  .filtro-pub[open] > summary { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,122,120,.1); }
+  .filtro-pub.activo > summary { border-color: var(--verde); color: var(--petroleo); background: color-mix(in srgb, var(--lima) 18%, white); }
+  .filtro-pub .drop {
+    position: absolute; top: calc(100% + .35rem); left: 0; z-index: 60;
+    background: #fff; border: 1px solid var(--linea); border-radius: 10px;
+    padding: .6rem; box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    min-width: 250px; max-height: 320px; overflow: auto;
+    display: flex; flex-direction: column; gap: .25rem;
+  }
+  .filtro-pub .drop label {
+    display: flex; align-items: center; gap: .5rem; padding: .35rem .5rem;
+    border-radius: 8px; font-size: .88rem; font-weight: 500; cursor: pointer;
+    color: var(--tinta);
+  }
+  .filtro-pub .drop label:hover { background: var(--fondo); }
+  .filtro-pub .drop label:has(input:checked) { background: color-mix(in srgb, var(--lima) 22%, white); }
+  .filtro-pub .drop input { accent-color: var(--verde); width: 1rem; height: 1rem; }
+  .filtro-pub .drop .pub-todos { border: 1px dashed var(--verde); color: var(--petroleo); font-weight: 700; }
+
   .novedades { padding: 1rem clamp(1rem, 4vw, 3rem) 0.4rem; position: relative; z-index: 10; }
   .novedades-head { display: flex; align-items: center; gap: .6rem; margin-bottom: .6rem; }
   .novedades-head h2 { font-family: var(--display); font-size: 1.3rem; color: var(--petroleo); }
@@ -155,7 +184,6 @@
   .pill { --c-fac: #007A78; --c-cat: #007A78; display: block; width: 100%; text-align: left; border: 0; background: color-mix(in srgb, var(--c-fac) 12%, white); border-left: 3px solid var(--c-fac); border-radius: 4px; padding: 2px 5px; margin-bottom: 2px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: var(--transicion); cursor: pointer; position: relative; color: var(--tinta); }
   .pill::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c-cat); opacity: 0.8; }
   .pill:hover { transform: translateX(2px); background: color-mix(in srgb, var(--c-fac) 25%, white); }
-  /* Semanas: los eventos de varios días son una sola barra continua */
   .cal .sem { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(7, 1fr); --lh: 22px; min-height: 96px; }
   .cal .sem .dia { min-height: 0; }
   .cal .sem .dia.c0 { border-left: 0; }
@@ -192,7 +220,6 @@
   .info-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fondo); padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid var(--linea); font-weight: 600; color: var(--tinta); }
   .info-pill .flaticon { width: 1.1em; height: 1.1em; color: var(--c-fac); }
   
-  /* ESTILO DE BOTÓN DE UNIRSE DINÁMICO */
   .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 700; text-decoration: none; transition: var(--transicion); }
   .link-pill img, .plat-ico { height: 14px; width: 14px; object-fit: contain; border-radius: 3px; }
   .link-pill:hover { filter: brightness(.95); transform: translateY(-1px); }
@@ -319,7 +346,6 @@
   .est:hover { filter: brightness(0.95); }
   .acc { display: flex; gap: .3rem; justify-content: flex-end; flex-wrap: wrap; }
   
-  /* ===== MODAL Y FORMULARIOS CORREGIDOS ===== */
   #modal { position: fixed; inset: 0; background: rgba(0,30,27,.5); display: none; place-items: center; padding: 1.5rem; z-index: 10000; overflow: auto; backdrop-filter: blur(3px); }
   #modal.on { display: grid; }
   
@@ -387,7 +413,6 @@
   #toast.on { transform: translateX(-50%) translateY(0); }
   #toast.err { background: var(--rojo); }
 
-  /* ACORDEÓN PARA TABLA DE USUARIOS */
   details.acc-perm { position: relative; display: inline-block; }
   details.acc-perm summary { font-size: 0.8rem; color: var(--verde); cursor: pointer; font-weight: 600; outline: none; list-style: none; }
   details.acc-perm summary::-webkit-details-marker { display: none; }
@@ -449,7 +474,6 @@
   .dt-lugar { display: flex; flex-direction: column; gap: .15rem; padding: .7rem .9rem; background: var(--fondo); border-radius: 10px; border-left: 4px solid var(--fc, var(--verde)); }
   .dt-lugar b { color: var(--petroleo); } .dt-lugar span { color: var(--suave); font-size: .88rem; }
   
-  /* ESTILOS DE ENLACE EN EL MODAL */
   .dt-link { border: 1px solid var(--pc); border-radius: 12px; padding: .8rem .9rem; background: color-mix(in srgb, var(--pc) 7%, #fff); }
   .dt-link-top { display: flex; flex-direction: column; gap: .15rem; margin-bottom: .7rem; }
   .dt-plat { font-weight: 800; color: var(--pc); display: flex; align-items: center; gap: .4rem; }
@@ -483,7 +507,6 @@
   .chk-lista label.chk-todos { grid-column: 1 / -1; border: 1px dashed var(--verde); color: var(--petroleo); }
   .chk-lista input[type=checkbox] { width: 1rem; height: 1rem; flex: none; accent-color: var(--verde); }
 
-  /* NUEVOS ESTILOS PARA TARJETAS DE FACULTAD */
   .dt-facs-grid { display: flex; flex-wrap: wrap; gap: .6rem; }
   .dt-fac-card {
     display: inline-flex;
@@ -546,10 +569,18 @@
     </div>
     <select id="fGrupo" aria-label="Facultad o área"></select>
     <select id="fProg" aria-label="Programa" hidden></select>
+
+    <!-- FILTRO POR ROLES / DIRIGIDO A -->
+    <details class="filtro-pub" id="fPubWrap">
+      <summary id="fPubSummary">👥 Dirigido a: Todos</summary>
+      <div class="drop" id="fPubList"></div>
+    </details>
+
     <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
     <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
     <div class="der">
       <button class="btn" onclick="irHoy()">📍 Hoy</button>
+      <button class="btn" onclick="limpiarFiltros()" title="Quitar todos los filtros">🧹 Limpiar</button>
       <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
       <button class="btn" onclick="print()">🖨️ Imprimir</button>
     </div>
@@ -807,6 +838,9 @@
   const emojiPub = p => EMOJI_PUB[p] || '👥';
   const em = x => `<span class="emoji">${x}</span>`;
 
+  // Lista fija de roles/públicos para el filtro "Dirigido a"
+  const PUBLICOS_ROLES = ['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'];
+
   /* ========== LÓGICA DE MULTI-PERMISOS ========== */
   const ROLES = { admin: '👑 Administrador', creador: 'Creador', editor: 'Editor', docente: 'Docente', administrativo: 'Administrativo' };
   const PERM_TXT = { crear: 'Crear', editar: 'Editar', eliminar: 'Eliminar' };
@@ -837,7 +871,7 @@
   const puedeEnEvento = e => {
     if (esAdminAct()) return true;
     
-    if (!e || !e.facultad) return true; // Evento nuevo (vacío)
+    if (!e || !e.facultad) return true;
     if (!tienePermisoCalendario()) return false;
     
     const M = misAreas(), facs = e.facultad || [], progs = e.programa || [], areas = e.area || [];
@@ -915,7 +949,8 @@
   }
   function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
 
-  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date() };
+  // Estado global (incluye el filtro de roles público)
+  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date(), publico: [] };
   let listaFiltradaCompleta = [];
 
   function getColores(D, e) {
@@ -983,6 +1018,11 @@
       if (!p1 && !p2) return false;
       if (!sinPeriodo && S.sem) { const s1 = e.periodo && e.periodo.endsWith('-' + S.sem); const s2 = e.periodo2 ? e.periodo2.endsWith('-' + S.sem) : false; if (!s1 && !s2) return false; }
       if (!sinCat && S.cat && e.categoria !== S.cat) return false;
+      // Filtro por roles / dirigido a
+      if (S.publico.length) {
+        const pubs = (e.publico && e.publico.length) ? e.publico : ['Comunidad universitaria'];
+        if (!pubs.some(p => S.publico.includes(p))) return false;
+      }
       const facs = e.facultad || [], areas = e.area || [], progs = e.programa || [];
       if (S.grupo) { const [t, id] = S.grupo.split(':'); const coincide = t === 'f' ? facs.includes(id) && (!S.prog || !progs.length || progs.includes(S.prog)) : areas.includes(id); if (!coincide && !(S.inst && esInstitucional(e))) return false; }
       if (q && !norm(`${e.titulo} ${e.descripcion} ${ambito(D, e)} ${catDe(D, e.categoria).nombre}`).includes(q)) return false;
@@ -1007,7 +1047,8 @@
     if (e.inicio <= h) return true;
     return diffDias(h, e.inicio) <= 3;
   }
-    function pintarEncabezado() {
+
+  function pintarEncabezado() {
     $('#inst').textContent = D.institucion;
     document.title = 'Calendario Académico · ' + D.institucion;
     const h = new Date();
@@ -1022,6 +1063,23 @@
     if (f) fp.innerHTML = '<option value="">Todos los programas</option>' + f.programas.map(p => `<option value="${p.id}" ${S.prog === p.id ? 'selected' : ''}>${esc(p.nombre)}${p.nivel === 'posgrado' ? ' (posgrado)' : ''}</option>`).join('');
     $('#fInst').checked = S.inst;
     $('#fInst').parentElement.style.display = S.grupo ? '' : 'none';
+
+    // Filtro "Dirigido a" (roles)
+    const pubList = $('#fPubList');
+    if (pubList) {
+      const todosMarcado = S.publico.length === 0;
+      pubList.innerHTML =
+        `<label class="pub-todos"><input type="checkbox" id="fPubTodos" ${todosMarcado ? 'checked' : ''}> <b>👥 Todos los roles</b></label>` +
+        PUBLICOS_ROLES.map(p => `<label><input type="checkbox" value="${esc(p)}" ${S.publico.includes(p) ? 'checked' : ''}> ${em(emojiPub(p))} ${esc(p)}</label>`).join('');
+    }
+    const wrap = $('#fPubWrap');
+    if (wrap) wrap.classList.toggle('activo', S.publico.length > 0);
+    const summ = $('#fPubSummary');
+    if (summ) {
+      if (S.publico.length === 0) summ.innerHTML = '👥 Dirigido a: Todos';
+      else if (S.publico.length === 1) summ.innerHTML = '👥 ' + esc(S.publico[0]);
+      else summ.innerHTML = `👥 Dirigido a: ${S.publico.length} roles`;
+    }
   }
   
   function pintarProgreso() {
@@ -1046,7 +1104,13 @@
     el.innerHTML = tarjeta + `<div class="hero-chips"><span><b>${enCurso}</b>en curso hoy</span><span><b>${prox7}</b>en los próximos 7 días</span><span><b>${L.length}</b>fechas publicadas</span></div>`;
   }
 
-  function irHoy() { const h = new Date(); S.anio = h.getFullYear(); S.ref = h; S.q = ''; const q = $('#q'); if (q) q.value = ''; pintarPublico(); irMes(); }
+  function irHoy() { const h = new Date(); S.anio = h.getFullYear(); S.ref = h; S.q = ''; S.publico = []; const q = $('#q'); if (q) q.value = ''; pintarPublico(); irMes(); }
+
+  function limpiarFiltros() {
+    S.cat = ''; S.grupo = ''; S.prog = ''; S.q = ''; S.publico = []; S.inst = true; S.festivos = true;
+    const q = $('#q'); if (q) q.value = '';
+    pintarPublico();
+  }
 
   function pintarProximos() {
     const h = hoy();
@@ -1119,9 +1183,7 @@
     return 'https://outlook.office.com/calendar/0/deeplink/compose?' + q.toString();
   }
   
-  // --- LÓGICA DE PLATAFORMAS Y LOGOS ---
   const PLATAFORMAS = [
-    // [regex del host, nombre, color, dominio del favicon, emoji de respaldo, nombre corto]
     [/^meet\.google\.com$/i, 'Google Meet', '#00832D', 'meet.google.com', '🎥', 'Meet'],
     [/^teams\.microsoft\.com$|^(teams\.)?live\.com$/i, 'Microsoft Teams', '#5B5FC7', 'teams.microsoft.com', '👥', 'Teams'],
     [/(^|\.)zoom\.(us|com)$/i, 'Zoom', '#2D8CFF', 'zoom.us', '📹', 'Zoom'],
@@ -1137,7 +1199,6 @@
     return { url, nombre: 'Enlace web', color: '#64748B', fav: '', emoji: '🔗', corto: 'Enlace', generico: true };
   }
 
-  // Logo real (favicon de la plataforma); si no carga, se muestra el emoji
   function iconoPlat(L) {
     if (!L.fav) return `<span class="plat-emo">${L.emoji}</span>`;
     return `<img class="plat-ico" src="https://www.google.com/s2/favicons?domain=${L.fav}&sz=64" alt="" onerror="this.replaceWith(document.createTextNode('${L.emoji}'))">`;
@@ -1194,7 +1255,6 @@
       const dias = [];
       for (let c = 0; c < 7; c++) { const d = new Date(inicio); d.setDate(inicio.getDate() + w * 7 + c); dias.push(d); }
       const ss = dias.map(iso);
-      // eventos de la semana, cada uno con su columna inicial/final
       const items = [];
       ss.forEach((s, c) => festivosDia(s).forEach(f => items.push({ e: f, a: c, b: c, antes: false, despues: false })));
       Lvis.forEach(e => {
@@ -1203,7 +1263,6 @@
         items.push({ e, a: e.inicio < ss[0] ? 0 : ss.indexOf(e.inicio), b: fe > ss[6] ? 6 : ss.indexOf(fe), antes: e.inicio < ss[0], despues: fe > ss[6] });
       });
       items.sort((x, y) => x.a - y.a || (y.e.esFestivo ? 1 : 0) - (x.e.esFestivo ? 1 : 0) || (y.b - y.a) - (x.b - x.a));
-      // cada evento conserva su mismo carril (fila) durante toda la semana
       const ult = [];
       items.forEach(it => { let l = ult.findIndex(x => x < it.a); if (l < 0) { l = ult.length; ult.push(-1); } ult[l] = it.b; it.l = l; });
       const nl = Math.min(MAXL, ult.length);
@@ -1232,7 +1291,7 @@
   function vistaLista(L) {
     let out = '', mes = '';
     L.forEach(e => { const d = parse(e.inicio), k = `${d.getFullYear()}-${d.getMonth()}`; if (k !== mes) { mes = k; out += `<h2 class="mes-t rev" id="m-${d.getFullYear()}-${d.getMonth()}">${MESES[d.getMonth()]} ${d.getFullYear()}</h2>`; } out += filaEvento(e); });
-    return out || `<div style="text-align:center; padding:3rem 1rem; color:var(--suave);"><b style="display:block; font-family:var(--display); font-size:1.3rem; color:var(--tinta); margin-bottom:0.3rem;">No encontramos fechas</b>Prueba con otro semestre, facultad o categoría.</div>`;
+    return out || `<div style="text-align:center; padding:3rem 1rem; color:var(--suave);"><b style="display:block; font-family:var(--display); font-size:1.3rem; color:var(--tinta); margin-bottom:0.3rem;">No encontramos fechas</b>Prueba con otro semestre, facultad, rol o categoría.</div>`;
   }
 
   function pintarPublico() {
@@ -1357,6 +1416,10 @@
 
   document.addEventListener('click', ev => {
     const t = ev.target;
+    // Cerrar dropdown de roles al hacer click fuera
+    const pubWrap = $('#fPubWrap');
+    if (pubWrap && pubWrap.open && !pubWrap.contains(t)) pubWrap.open = false;
+
     const mod = t.closest('[data-cat]'); if (mod) { S.cat = mod.dataset.cat; return pintarPublico(); }
     if (t.closest('[data-cerrar]') || t.id === 'velo') return cerrar();
     const ics = t.closest('[data-ics]'); if (ics) return descargarIcs([D.eventos.find(e => e.id === ics.dataset.ics)], 'evento');
@@ -1366,7 +1429,7 @@
     const sm = t.closest('#fSem button'); if (sm) { S.sem = sm.dataset.v; if (S.sem) S.ref = new Date(S.anio, S.sem == 2 ? 6 : 0, 1); pintarPublico(); return irMes(); }
     const row = t.closest('[data-id]'); if (row) { abrirDetalle(row.dataset.id); }
   });
-  document.addEventListener('keydown', ev => { if (ev.key === 'Escape') cerrar(); if (ev.key === 'Enter' && ev.target.classList.contains('ev')) abrirDetalle(ev.target.dataset.id); });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape') { cerrar(); const pw = $('#fPubWrap'); if (pw) pw.open = false; } if (ev.key === 'Enter' && ev.target.classList.contains('ev')) abrirDetalle(ev.target.dataset.id); });
   $('#fAnio').onchange = e => { S.anio = +e.target.value; S.ref = new Date(S.anio, S.ref.getMonth(), 1); pintarPublico(); };
   $('#fFest').onchange = e => { S.festivos = e.target.checked; pintarPublico(); };
   $('#fGrupo').onchange = e => { S.grupo = e.target.value; S.prog = ''; pintarPublico(); };
@@ -1374,6 +1437,23 @@
   $('#fInst').onchange = e => { S.inst = e.target.checked; pintarPublico(); };
   $('#q').oninput = e => { S.q = e.target.value; pintarPublico(); };
   $('#bIcs').onclick = () => { if (!listaFiltradaCompleta.length) return alert('No hay fechas para añadir con estos filtros.'); descargarIcs(listaFiltradaCompleta, `calendario-${S.anio}${S.sem ? '-s' + S.sem : ''}`); };
+
+  // Cambios del filtro "Dirigido a" (roles)
+  document.addEventListener('change', e => {
+    const t = e.target;
+    if (t.id === 'fPubTodos') {
+      S.publico = [];
+      pintarPublico();
+      return;
+    }
+    if (t.closest('#fPubList') && t.matches('input[type=checkbox]') && t.value) {
+      const v = t.value;
+      if (t.checked) { if (!S.publico.includes(v)) S.publico.push(v); }
+      else S.publico = S.publico.filter(x => x !== v);
+      pintarPublico();
+      return;
+    }
+  });
 
   window.onscroll = () => { $('#btnTop').classList.toggle('show', window.scrollY > 300); };
   $('#btnTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1777,7 +1857,6 @@
 
   const cerrarModal = () => { $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
 
-  // --- MODO DE FECHAS SEGÚN EL TEXTO ("Inicia…" / "Finaliza…") ---
   const RX_INICIO = /\b(inici\w*|comienz\w*|empiez\w*|empieza\w*|apertur\w*|abre|abren|arranc\w*)\b/;
   const RX_FIN = /\b(fin|finaliz\w*|termin\w*|cierr\w*|cierre|culmin\w*|venc\w*)\b/;
   function modoFechas(txt) {
