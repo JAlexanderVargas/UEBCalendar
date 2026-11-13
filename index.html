@@ -200,16 +200,76 @@
   .lista-eventos { animation: slideUp 0.5s ease-out; }
   .mes-t { font-family: var(--display); font-size: 1.5rem; margin: 1.6rem 0 0.6rem; color: var(--petroleo); border-bottom: 2px solid var(--lima); display: inline-block; padding-bottom: 0.2rem; }
   
-  .ev { --c-fac: #007A78; --c-cat: #007A78; display: grid; grid-template-columns: 86px 1fr auto; gap: 1rem; align-items: stretch; border: 1px solid var(--linea); border-left: 5px solid var(--c-fac); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 0.6rem; cursor: pointer; transition: var(--transicion); position: relative; overflow: hidden; animation: scaleIn 0.3s ease-out; background: #fff; }
-  .ev:hover { box-shadow: 0 8px 20px rgba(0,59,54,0.1); transform: translateY(-2px); }
-  .ev.pasado { opacity: 0.65; }
+  /* ===== MEJORAS EN LA TARJETA DE EVENTO (filaEvento) ===== */
+  .ev { 
+    --c-fac: #007A78; 
+    --c-cat: #007A78; 
+    display: grid; 
+    grid-template-columns: 86px 1fr auto; 
+    gap: 0; /* Quitamos el gap para que el bloque de color pegue perfectamente */
+    align-items: stretch; 
+    border: 1px solid var(--linea); 
+    border-radius: 14px; 
+    margin-bottom: 0.8rem; 
+    cursor: pointer; 
+    transition: var(--transicion); 
+    position: relative; 
+    overflow: hidden; 
+    animation: scaleIn 0.3s ease-out; 
+    background: #fff; 
+  }
+  .ev:hover { 
+    box-shadow: 0 10px 25px rgba(0,59,54,0.12); 
+    transform: translateY(-2px); 
+    border-color: color-mix(in srgb, var(--c-fac) 40%, var(--linea));
+  }
+  .ev.pasado { opacity: 0.65; filter: grayscale(0.3); }
   
-  .fecha-block { display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid var(--linea); padding-right: 0.8rem;}
-  .fecha-block b { font-family: var(--display); font-size: 1.8rem; color: var(--petroleo); line-height: 1;}
-  .fecha-block .mes { font-size: 0.8rem; color: var(--suave); font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;}
-  .fecha-block .dia-sem { font-size: 0.7rem; color: var(--suave); font-weight: 600; text-transform: none; text-align: center; line-height: 1.1; margin-top: .15rem; }
+  /* Bloque de fecha integrado con el color de la facultad/categoría */
+  .fecha-block { 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    background: var(--c-fac); 
+    color: #fff; 
+    padding: 0.8rem 0.4rem;
+    min-width: 86px;
+    transition: var(--transicion);
+  }
   
-  .ev-content { display: flex; flex-direction: column; gap: 0.4rem; justify-content: center;}
+  .fecha-block b { 
+    font-family: var(--display); 
+    font-size: 1.9rem; 
+    color: #fff; 
+    line-height: 1; 
+    text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+  .fecha-block .mes { 
+    font-size: 0.8rem; 
+    color: rgba(255, 255, 255, 0.95); 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    margin-top: 0.25rem; 
+    letter-spacing: 0.05em;
+  }
+  .fecha-block .dia-sem { 
+    font-size: 0.7rem; 
+    color: rgba(255, 255, 255, 0.85); 
+    font-weight: 600; 
+    text-transform: none; 
+    text-align: center; 
+    line-height: 1.1; 
+    margin-top: .2rem; 
+  }
+  
+  .ev-content { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 0.4rem; 
+    justify-content: center;
+    padding: 0.85rem 1rem;
+  }
   .ev-top { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
   .ev h3 { font-size: 1.05rem; font-weight: 700; color: var(--tinta); margin: 0; line-height: 1.2; }
   
@@ -228,18 +288,21 @@
   .link-pill.ms { background: #e5f1fb; border: 1px solid #b5d6f2; color: #0f6cbd; }
   .link-pill.ms:hover { background: #b5d6f2; color: #0a4a85; }
 
-  .estado-block { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
+  .estado-block { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; padding: 0.85rem 1rem 0.85rem 0; }
   .estado { font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 999px; white-space: nowrap; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--linea); color: var(--tinta); display: flex; align-items: center; gap: 0.3rem;}
   .estado.e-curso { color: var(--verde); border-color: var(--verde); background: #e6f2f1;}
   .estado.e-pronto { color: #8A5A00; border-color: #c9a83d; background: #fff8e6;}
   .estado.e-fin { color: var(--suave); }
   
-  .ev.festivo { border-left-color: var(--rojo); background-color: var(--rojo-fondo); border-color: #f3b8b4; }
-  .ev.festivo .fecha-block b { color: var(--rojo); }
+  /* Festivos: el bloque se tiñe de rojo automáticamente por la variable --c-fac */
+  .ev.festivo { border-left: none; border-color: #f3b8b4; background-color: var(--rojo-fondo); }
+  .ev.festivo .fecha-block { background: var(--rojo); color: #fff; }
+  .ev.festivo .fecha-block b { color: #fff; }
+  .ev.festivo .fecha-block .mes, .ev.festivo .fecha-block .dia-sem { color: rgba(255,255,255,0.9); }
   .ev.festivo .cat-pill { background: #fff; color: var(--rojo); border-color: #f3b8b4; }
   .ev.festivo .cat-pill::before { background: var(--rojo); }
 
-  @keyframes breathe-mix { 0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 6%, white); border-left-color: var(--c-fac); } 50% { background-color: color-mix(in srgb, var(--c-cat) 10%, white); border-left-color: var(--c-cat); } }
+  @keyframes breathe-mix { 0%, 100% { background-color: #fff; box-shadow: 0 0 0 0 transparent; } 50% { background-color: color-mix(in srgb, var(--c-cat) 5%, white); box-shadow: 0 0 15px color-mix(in srgb, var(--c-cat) 20%, transparent); } }
   .ev.destacado { animation: breathe-mix 4s ease-in-out infinite; }
   @keyframes breathe-mix-pill { 0%, 100% { background-color: color-mix(in srgb, var(--c-fac) 12%, white); border-left-color: var(--c-fac); } 50% { background-color: color-mix(in srgb, var(--c-cat) 25%, white); border-left-color: var(--c-cat); } }
   .pill.destacado { animation: breathe-mix-pill 4s ease-in-out infinite; }
@@ -430,8 +493,11 @@
     .hero { grid-template-columns: 1fr; }
     .search { flex-basis: 100%; order: 5; margin-top: 0.5rem; }
     .top { flex-wrap: wrap; }
-    .ev { grid-template-columns: 80px 1fr; }
-    .estado-block { grid-column: 2; align-items: flex-start; margin-top: 0.4rem;}
+    .ev { grid-template-columns: 70px 1fr; }
+    .fecha-block { min-width: 70px; padding: 0.6rem 0.2rem; }
+    .fecha-block b { font-size: 1.5rem; }
+    .fecha-block .mes, .fecha-block .dia-sem { font-size: 0.65rem; }
+    .estado-block { grid-column: 2; align-items: flex-start; margin-top: -0.5rem; padding: 0 1rem 0.85rem; }
     .cal .dia { min-height: 64px; }
     .pill { font-size: 0; padding: 4px; height: 10px; border-radius: 2px; }
     .cal .sem { --lh: 14px; min-height: 64px; }
