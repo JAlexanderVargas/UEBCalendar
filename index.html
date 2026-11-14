@@ -715,6 +715,7 @@ body.logged-in #topbar { display: flex; }
 
  <div class="note">
    <div class="backup-btns">
+     <button class="btn-backup" id="btnSyncAhora" style="display:none" onclick="sincronizarAhora()">☁️ Sincronizar ahora</button>
      <button class="btn-backup" onclick="descargarRespaldo()">💾 Descargar respaldo</button>
      <button class="btn-backup" onclick="guardarYLimpiar()">🧹 Guardar y Limpiar</button>
      <button class="btn-backup import" onclick="document.getElementById('fileImport').click()">📂 Importar Respaldo</button>
@@ -750,6 +751,7 @@ body.logged-in #topbar { display: flex; }
        <button class="btn sm" onclick="cronFileInput.click()">📂 Cargar Excel</button>
        <input type="file" id="cronFileInput" accept=".xlsx,.xls,.csv" class="hide" onchange="importarCronograma(this)">
        <button class="btn sm" onclick="descargarPlantillaCronograma()">⬇️ Descargar Plantilla</button>
+       <button class="btn sm" id="btnExpCron" style="display:none" onclick="exportarCronogramaExcel()">📥 Descargar Cronograma (Excel)</button>
        <button class="btn sm" onclick="solicitarPermisoNotif()">🔔 Notificaciones</button>
        <button class="btn sm" onclick="testSound()">🔊 Probar Sonido</button>
      </div>
@@ -1711,6 +1713,8 @@ function aplicarPermisosUI(){
   const esAuditor = SESSION?.rol === 'auditor';
   if($('btnCerrarElec')) $('btnCerrarElec').style.display = esAdmin ? '' : 'none';
   if($('btnVerUsuarios')) $('btnVerUsuarios').style.display = esAdmin ? '' : 'none';
+  if($('btnSyncAhora')) $('btnSyncAhora').style.display = esAdmin ? '' : 'none';
+  if($('btnExpCron')) $('btnExpCron').style.display = esAdmin ? '' : 'none';
   if($('btnVerLog')) $('btnVerLog').style.display = (esAdmin || esAuditor) ? '' : 'none';
   if($('btnLimpiar')) $('btnLimpiar').style.display = '';
 
@@ -2241,6 +2245,23 @@ function _syncPush(localKey){
   }, 800);
 }
 
+async function sincronizarAhora(){
+  if(SESSION?.rol !== 'administrador'){ toast('⛔ Solo el administrador'); return; }
+  if(!supabaseClient){ alert('No hay conexión con Supabase (supabaseClient no está inicializado). Revisa SUPABASE_URL y SUPABASE_ANON_KEY.'); return; }
+  if(!confirm('Esto envía al servidor los datos que tiene ESTE navegador (candidatos, cronograma, votantes, censo, soporte y órganos activos) y reemplaza lo que haya allí. ¿Continuar?')) return;
+  const res = [];
+  for(const k of Object.keys(SYNC_KEYS)){
+    try{
+      const { error } = await supabaseClient.from(CONFIG.tabla_config).upsert({ [CONFIG.col_config_clave]: 'sync_' + SYNC_KEYS[k], [CONFIG.col_config_valor]: JSON.stringify(_syncGet[k]()) }, { onConflict: CONFIG.col_config_clave });
+      res.push((error ? '❌ ' : '✅ ') + SYNC_KEYS[k] + (error ? ': ' + [error.code, error.message, error.details, error.hint].filter(Boolean).join(' | ') : ''));
+      if(!error) _dirty.delete(k);
+    }catch(e){ res.push('❌ ' + SYNC_KEYS[k] + ': ' + (e.message || e)); }
+  }
+  _pulledOnce = true;
+  const fallos = res.filter(r => r.startsWith('❌')).length;
+  alert((fallos ? 'Hubo ' + fallos + ' error(es) al guardar en el servidor:\n\n' : 'Todo se guardó correctamente en el servidor.\n\n') + res.join('\n') + (fallos ? '\n\nEnvía este mensaje para poder corregirlo.' : ''));
+  registrarLog('Sincronizar ahora', '-', fallos ? fallos + ' errores' : 'OK');
+}
 function refrescarVistas(){
   try { normalizarFacultadesGlobal(); normalizarNombresGlobal(); } catch(e){}
   try { fillSel(); } catch(e){}
@@ -2610,6 +2631,17 @@ function draw(){
  $('tbl').insertAdjacentHTML('beforeend',L.map((c,i)=>{ const P=ppl(c); const duplaColor = ['#70BE33','#F7941D','#3498db','#9b59b6','#e74c3c','#1abc9c','#f39c12','#34495e'][i % 8]; return `<tbody class="grp">${P.map(([lab,p],j)=>rowP(c,lab==='Principal'?'pri':'sup',lab,p,j===0,P.length,duplaColor)).join('')}</tbody>`; }).join(''));
  deshabilitarBotonesEdicion();
  try{ const kv = clavesValidador(), pe = $('validadorPend'); if(kv && pe){ let pend = 0; LD.forEach(c => ppl(c).forEach(([,p]) => { if(kv.some(k => (CH[c.rol]||[]).includes(k) && !p.ck[k])) pend++; })); pe.textContent = pend ? `${pend} pendiente(s) por validar` : '✔ Todo validado'; } }catch(e){}
+ try{
+  const ib = $('validadorInfoBox'); if(!ib) return;
+  let ob = $('validadorOculto');
+  if(!ob){ ob = document.createElement('div'); ob.id = 'validadorOculto'; ob.className = 'validador-info-box'; ob.style.cssText = 'background:#fff8e6;border-color:#f3d28a;color:#8a5a00'; ib.insertAdjacentElement('afterend', ob); }
+  const kv2 = clavesValidador();
+  const fuera = kv2 ? D.filter(c => ORG_ACTIVOS.includes(c.org) && !enAlcance(c)) : [];
+  if(!fuera.length){ ob.classList.add('hide'); return; }
+  const porRol = {}; fuera.forEach(c => { const r = (c.rol || 'Sin rol') + 's'; porRol[r] = (porRol[r] || 0) + 1; });
+  ob.classList.remove('hide');
+  ob.innerHTML = 'ℹ️ Hay <b>' + fuera.length + '</b> candidato(s) que no ves porque no son de tu alcance (' + Object.entries(porRol).map(([r,n]) => n + ' ' + r).join(', ') + '). Tu perfil solo valida: <b>' + [...new Set(Object.keys(CH).filter(r => CH[r].some(k => kv2.includes(k))))].join(' / ') + '</b>.';
+ }catch(e){}
 }
 
 const per=(c,w)=>w==='pri'?c.pri:c.sup;
@@ -3647,6 +3679,25 @@ function etapasDe(lista){ const extra = [...new Set(lista.map(a=>a.etapa))].filt
 const MESES_ES = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
 function parseFechaExcel(raw){ if(raw === null || raw === undefined || raw === '') return ''; if(raw instanceof Date && !isNaN(raw)) return raw.toISOString().slice(0,10); const pad = x => String(x).padStart(2,'0'); const ok = (y,m,d) => (y>1999 && m>=1 && m<=12 && d>=1 && d<=31) ? `${y}-${pad(m)}-${pad(d)}` : ''; if(typeof raw === 'number' || /^\d{5}(\.\d+)?$/.test(String(raw).trim())){ const num = Number(raw); if(num > 20000) return new Date(Math.round((num - 25569) * 864e5)).toISOString().slice(0,10); } const t = norm(String(raw)).replace(/\s+/g,' '); let m; if((m = t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/))) return ok(+m[1],+m[2],+m[3]); if((m = t.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/))){ let y = +m[3]; if(y < 100) y += 2000; return ok(y,+m[2],+m[1]); } if((m = t.match(/^(\d{1,2})[ \-\/.]+(?:de )?([a-z]{3,})\.?[ \-\/.]+(?:de |del )?(\d{4})/))){ const mes = MESES_ES[m[2]] || Object.entries(MESES_ES).find(([k]) => k.startsWith(m[2].slice(0,3)))?.[1]; if(mes) return ok(+m[3],mes,+m[1]); } return ''; }
 function migrarCron(){ let cambio = false; CRON.forEach(a=>{ const e = normEtapa(a.etapa); if(a.etapa !== e){ a.etapa = e; cambio = true; } if(!TIPOS_CRON.includes(a.tipo)){ a.tipo = inferTipo(a.nombre); cambio = true; } if(!a.fecha){ a.fecha = new Date().toISOString().slice(0,10); cambio = true; } if(a.responsable === undefined){ const m = String(a.desc||'').match(/^Responsable:\s*(.*?)(?:\.\s*Obs:\s*(.*))?$/s); if(m){ a.responsable = (m[1]||'').trim(); a.desc = (m[2]||'').trim(); } else a.responsable = ''; cambio = true; } }); if(cambio) saveCron(); }
+function exportarCronogramaExcel(){
+  if(SESSION?.rol !== 'administrador'){ toast('⛔ Solo el administrador puede descargar el cronograma'); return; }
+  if(!CRON.length){ toast('No hay actividades en el cronograma para exportar'); return; }
+  const orden = etapasDe(CRON);
+  const lista = [...CRON].sort((a,b) => (orden.indexOf(a.etapa) - orden.indexOf(b.etapa)) || (a.fecha||'').localeCompare(b.fecha||'') || (a.fechaFin||'').localeCompare(b.fechaFin||''));
+  const filas = lista.map(a => {
+    const est = a.completado ? 'Completado' : (a.motivo === 'En curso' ? 'En curso' : '');
+    const d = String(a.desc || '').trim();
+    const obs = est ? (norm(d).includes(norm(est)) ? d : (d ? est + ' - ' + d : est)) : (d || 'Pendiente');
+    return [a.etapa || '', a.nombre || '', a.responsable || '', a.fecha || '', a.fechaFin || '', obs, a.publica ? 'SI' : 'NO'];
+  });
+  const ws = XLSX.utils.aoa_to_sheet([['Etapa','Actividad','Responsable','Fecha Inicio','Fecha Fin','Estado / Observación','Visible en Público (SI/NO)'], ...filas]);
+  ws['!cols'] = [{wch:16},{wch:48},{wch:26},{wch:13},{wch:13},{wch:40},{wch:14}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Cronograma');
+  XLSX.writeFile(wb, 'cronograma-' + new Date().toISOString().slice(0,10) + '.xlsx');
+  registrarLog('Descargar cronograma', 'Cronograma', filas.length + ' actividades');
+  toast('✅ Cronograma descargado (' + filas.length + ' actividades)');
+}
 function importarCronograma(input) { if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, { type: 'array' }); const clean = h => norm(h).replace(/[^a-z0-9]/g, ''); let arr = null, hdr = -1; for (const sn of workbook.SheetNames) { const a2 = XLSX.utils.sheet_to_json(workbook.Sheets[sn], { header: 1, defval: '', raw: true }); for (let i = 0; i < Math.min(a2.length, 15); i++) { const hs = (a2[i] || []).map(clean); if (hs.some(h => h.includes('actividad') || h === 'nombre') && hs.some(h => h.includes('fecha') || h.includes('inicio'))) { arr = a2; hdr = i; break; } } if (arr) break; } if (!arr) { toast('No encontré las columnas "Actividad" y "Fecha"'); input.value=''; return; } const H = arr[hdr].map(clean); const col = (...names) => { for (const n of names) { const i = H.findIndex(h => h.includes(n)); if (i !== -1) return i; } return -1; }; const iEtapa = col('etapa','fase'); const iNom = col('actividad','nombre'); const iResp = col('responsable'); const iIni = col('fechainicio','fechadeinicio','inicio','fecha'); const iFin = col('fechafin','fechadefin','fechafinal','fin','termina'); const iObs = col('estadoobservacion','estado','observacion'); const iPub = col('visibleenpublico','publico','visible'); const get = (r,i) => i === -1 || r[i] === undefined || r[i] === null ? '' : r[i]; const nuevoCron = []; for (let i = hdr + 1; i < arr.length; i++) { const r = arr[i]; if (!r || !r.some(c => String(c).trim() !== '')) continue; const nombre = String(get(r,iNom)).replace(/\s+/g,' ').trim(); if (!nombre) continue; const etapa = normEtapa(get(r,iEtapa)); const resp = String(get(r,iResp)).trim(); const obs = String(get(r,iObs)).trim(); const fecha = parseFechaExcel(get(r,iIni)) || new Date().toISOString().slice(0,10); let fechaFin = parseFechaExcel(get(r,iFin)); if (fechaFin && fechaFin < fecha) fechaFin = fecha; const nobs = norm(obs); const completado = nobs.includes('complet') || nobs.includes('finaliz') || nobs.includes('realizad') || nobs.includes('cerrad'); const publica = ['si','yes','true','1','x','publico'].includes(norm(get(r,iPub)).replace(/[^a-z0-9]/g,'')); nuevoCron.push({id: uid(),nombre,fecha,fechaFin: fechaFin || '',tipo: inferTipo(nombre),etapa,responsable: resp,desc: obs,completado,motivo: nobs.includes('en curso') ? 'En curso' : '',publica}); } if (nuevoCron.length === 0) { toast('No se encontraron actividades válidas'); input.value = ''; return; } const manuales = CRON.filter(a=>a.manual); CRON = nuevoCron.concat(manuales); saveCron(); renderCronograma(); toast(`✅ ${nuevoCron.length} actividades cargadas`); input.value = ''; } catch (error) { console.error(error); toast('Error al procesar el archivo'); } }; reader.readAsArrayBuffer(file); }
 setInterval(()=>{ const hoy = new Date().toISOString().slice(0,10); CRON.forEach(a=>{ if(!a.completado && a.fecha === hoy && !a._notificado){ a._notificado = true; lanzarNotificacion('Recordatorio: '+a.nombre, 'Actividad programada para hoy'); } }); }, 60000);
 
