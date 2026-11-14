@@ -1347,7 +1347,7 @@ const CONFIG = {
 let supabaseClient = null;
 try {
   if(window.supabase && SUPABASE_URL && !SUPABASE_URL.includes('TU-PROYECTO')) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false } });
   }
 } catch(e) { console.error('Supabase init error:', e); }
 
@@ -1381,7 +1381,7 @@ const esGlobal = (org) => ORG_GLOBALES.includes(org);
 let D=[],editId=null,CRON=[],FIRMAS=[];
 let VOTANTES = { totalCenso: 0, totalHabilitados: 0, fechaCorte: '', historial: [] };
 let CENSO_DATA = [], SOPORTES = [];
-let ORG_ACTIVOS = JSON.parse(localStorage.getItem(K_ORG_ACTIVOS) || '["Consejo de Facultad","Consejo Directivo","Consejo Académico","Comité de Posgrado"]');
+let ORG_ACTIVOS = ["Consejo de Facultad","Consejo Directivo","Consejo Académico","Comité de Posgrado"];
 let chartRolesInstance, chartOrganosInstance, chartFacInstance, chartHistInstance, chartCensoFacInstance, chartCensoRolInstance;
 let chartPartInstance, chartSopCanalInstance, chartSopEstadoInstance, chartSopDiaInstance;
 
@@ -1415,14 +1415,12 @@ const ROLES_DESC = {
   fac_prog:'Valida solo la columna de Facultad / Programa y únicamente de los candidatos Estudiantes.'
 };
 let SESSION = null;
-try { SESSION = JSON.parse(localStorage.getItem(K_SESSION) || 'null'); } catch(e) {}
 let LOG = [];
-try { LOG = JSON.parse(localStorage.getItem(K_LOG_LOCAL) || '[]'); } catch(e) {}
-let ELECCIONES_CERRADAS = localStorage.getItem(K_CERRADA) === '1';
+let ELECCIONES_CERRADAS = false;
 let USERS_CACHE = [];
 
-const saveSession = () => localStorage.setItem(K_SESSION, JSON.stringify(SESSION));
-const saveLogLocal = () => { if(LOG.length > 3000) LOG = LOG.slice(-3000); localStorage.setItem(K_LOG_LOCAL, JSON.stringify(LOG)); };
+const saveSession = () => {}; // la sesión solo vive en memoria
+const saveLogLocal = () => { if(LOG.length > 3000) LOG = LOG.slice(-3000); };
 
 async function registrarLog(accion, modulo, detalle){
   const entry = {usuario: SESSION?.username || 'sistema', rol: SESSION?.rol || '-', modulo: modulo || '-', accion: accion || '-', detalle: String(detalle ?? '').slice(0, 400), fecha: new Date().toISOString()};
@@ -1527,7 +1525,6 @@ function doLogout(){
   detenerTimerSesion();
   registrarLog('Cierre de sesión', '-', SESSION?.username || '');
   SESSION = null;
-  try { localStorage.removeItem(K_SESSION); localStorage.removeItem(K_LAST_ACTIVITY); } catch(e){}
   if(supabaseClient){
     supabaseClient.auth.signOut().finally(()=>location.reload());
   } else {
@@ -1542,7 +1539,6 @@ async function cargarEstadoElecciones(){
     if(data){
       const v = data[CONFIG.col_config_valor];
       ELECCIONES_CERRADAS = (v === true || v === 'true' || v === '1');
-      localStorage.setItem(K_CERRADA, ELECCIONES_CERRADAS ? '1' : '0');
     }
   } catch(e) { console.warn('Estado elecciones:', e.message); }
 }
@@ -1557,7 +1553,8 @@ async function guardarEstadoElecciones(cerrado){
 const SESSION_TIMEOUT_MS = 5 * 60 * 1000;
 let _sessionCheckInterval = null;
 
-function registrarActividad(){ if(!SESSION) return; try { localStorage.setItem(K_LAST_ACTIVITY, String(Date.now())); } catch(e){} }
+let _lastActivity = 0;
+function registrarActividad(){ if(!SESSION) return; _lastActivity = Date.now(); }
 
 ['mousemove','mousedown','keydown','scroll','touchstart','click'].forEach(evt => {
   document.addEventListener(evt, registrarActividad, { passive: true, capture: true });
@@ -1566,12 +1563,10 @@ function registrarActividad(){ if(!SESSION) return; try { localStorage.setItem(K
 function iniciarTimerSesion(){
   if(_sessionCheckInterval) clearInterval(_sessionCheckInterval);
   if(!SESSION) return;
-  const ultimo = Number(localStorage.getItem(K_LAST_ACTIVITY) || 0);
-  if(!ultimo || (Date.now() - ultimo) > SESSION_TIMEOUT_MS){ try { localStorage.setItem(K_LAST_ACTIVITY, String(Date.now())); } catch(e){} }
+  if(!_lastActivity || (Date.now() - _lastActivity) > SESSION_TIMEOUT_MS){ _lastActivity = Date.now(); }
   _sessionCheckInterval = setInterval(() => {
     if(!SESSION) return;
-    const ultimo = Number(localStorage.getItem(K_LAST_ACTIVITY) || 0);
-    const restante = SESSION_TIMEOUT_MS - (Date.now() - ultimo);
+    const restante = SESSION_TIMEOUT_MS - (Date.now() - _lastActivity);
     const el = $('sessionTimer');
     if(el){
       if(restante > 0){
@@ -1586,7 +1581,6 @@ function iniciarTimerSesion(){
       toast('⏱️ Sesión expirada por inactividad. Cerrando...');
       registrarLog('Cierre automático por inactividad', '-', '5 minutos sin actividad');
       SESSION = null;
-      try { localStorage.removeItem(K_SESSION); localStorage.removeItem(K_LAST_ACTIVITY); } catch(e){}
       if(supabaseClient) supabaseClient.auth.signOut().finally(()=>window.location.reload());
       else setTimeout(() => { window.location.reload(); }, 1800);
     }
@@ -1609,18 +1603,7 @@ function aplicarSesion(){
   $('sideActions').classList.remove('hide');
   _syncEnabled = true;
   // Pull inicial de datos compartidos
-  syncPullAll().then(changed => {
-    if(changed){
-      try { normalizarFacultadesGlobal(); normalizarNombresGlobal(); } catch(e){}
-      try { fillSel(); draw(); } catch(e){}
-      try { renderCronograma(false); } catch(e){}
-      try { renderCensoData(); } catch(e){}
-      try { renderSoportes(); } catch(e){}
-      try { renderFirmas(); } catch(e){}
-      try { renderVacantes(); } catch(e){}
-      try { renderDirectorio(); } catch(e){}
-    }
-  });
+  pullYRefrescar(true);
   actualizarUserCard();
   aplicarPermisosUI();
   actualizarBannerCierre();
@@ -1629,7 +1612,6 @@ function aplicarSesion(){
   const mods = getModulosPermitidos();
   if(mods.length){
     let idx = 0;
-    try{ const g = parseInt(localStorage.getItem('ultima_tab_v1') || '0', 10); if(g > 0 && puedeVer(orden[g-1])) idx = g; }catch(e){}
     if(!idx) idx = orden.indexOf(mods[0]) + 1;
     if(idx > 0) tab(idx);
   }
@@ -1799,7 +1781,6 @@ async function toggleCerrarElecciones(){
   const msg = nuevo ? '⚠️ ¿CERRAR LAS ELECCIONES? NADIE podrá editar información.' : '¿Reabrir las elecciones?';
   if(!confirm(msg)) return;
   ELECCIONES_CERRADAS = nuevo;
-  localStorage.setItem(K_CERRADA, nuevo ? '1' : '0');
   await guardarEstadoElecciones(nuevo);
   registrarLog(nuevo ? 'Cerrar elecciones' : 'Reabrir elecciones', '-', 'Estado cambiado');
   actualizarBannerCierre();
@@ -2179,29 +2160,24 @@ function limpiarVotosEnBlancoInvalidos() {
   return cambios;
 }
 
-try{ const a=localStorage.getItem(K); if(a) D=JSON.parse(a); }catch(e){}
-try{ const c=localStorage.getItem(K_CRON); if(c) CRON=JSON.parse(c); else CRON = []; }catch(e){}
-try{ const f=localStorage.getItem(K_FIRMAS); if(f) FIRMAS=JSON.parse(f); else FIRMAS=[]; }catch(e){}
-try{ const v=localStorage.getItem(K_VOTANTES); if(v) { const parsed = JSON.parse(v); VOTANTES = { ...VOTANTES, ...parsed }; if(!VOTANTES.historial) VOTANTES.historial = []; } }catch(e){}
-try{ const cd = localStorage.getItem(K_CENSO); if(cd) CENSO_DATA = JSON.parse(cd); }catch(e){}
-try{ const s = localStorage.getItem(K_SOPORTE); if(s) SOPORTES = JSON.parse(s); }catch(e){}
-try{ const fs = localStorage.getItem(K_FONT_SIZE); if(fs) { $('fontSizeSlider').value = fs; ajustarTamanoLetra(fs); } else { ajustarTamanoLetra(12); } }catch(e){}
+try{ ajustarTamanoLetra(12); }catch(e){}
 
-const IDB_NAME='elecciones_db', IDB_STORE='kv';
-let _idbP=null;
-function idbOpen(){ if(_idbP) return _idbP; _idbP=new Promise((res,rej)=>{ try{ const rq=indexedDB.open(IDB_NAME,1); rq.onupgradeneeded=()=>rq.result.createObjectStore(IDB_STORE); rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); }catch(e){ rej(e); } }); return _idbP; }
-const idbSet=(k,v)=>idbOpen().then(db=>new Promise((res,rej)=>{const tx=db.transaction(IDB_STORE,'readwrite');tx.objectStore(IDB_STORE).put(v,k);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);})).catch(()=>{});
-const idbClear=()=>idbOpen().then(db=>new Promise(res=>{const tx=db.transaction(IDB_STORE,'readwrite');tx.objectStore(IDB_STORE).clear();tx.oncomplete=res;tx.onerror=res;})).catch(()=>{});
-let _avisoAlm=false, _lsOK = true;
-function persistir(key,val){ const ts = Date.now(); idbSet(key+'__ts', ts); try{ localStorage.setItem(key,JSON.stringify(val)); localStorage.setItem(key+'__ts', String(ts)); _lsOK = true; } catch(e){ _lsOK = false; if(!_avisoAlm){ _avisoAlm=true; } } idbSet(key,val); }
-try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+let _lsOK = true; // sin almacenamiento local: los datos viven en memoria y se sincronizan con Supabase
 
 /* ===== SINCRONIZACIÓN COMPARTIDA (pull y push) ===== */
 const SYNC_KEYS = {
   cand_v2: 'candidatos', cronograma_v2: 'cronograma', votantes_v2: 'votantes',
-  censo_data_v1: 'censo', org_activos_v1: 'org_activos', soporte_data_v1: 'soporte', firmas_acta_v1: 'firmas'
+  censo_data_v1: 'censo', org_activos_v1: 'org_activos', soporte_data_v1: 'soporte'
 };
-let _syncTimer = null;
+let _syncTimers = {};
+let _pulledOnce = false;
+const _dirty = new Set();      // claves con cambios locales aún no confirmados por el servidor
+const _pushFails = {}, _pushSeq = {};
+let _lastPull = 0;
+const _syncGet = {
+  cand_v2: () => D, cronograma_v2: () => CRON, votantes_v2: () => VOTANTES,
+  censo_data_v1: () => CENSO_DATA, org_activos_v1: () => ORG_ACTIVOS, soporte_data_v1: () => SOPORTES
+};
 let _syncEnabled = false;
 
 async function syncPullAll(){
@@ -2210,20 +2186,19 @@ async function syncPullAll(){
     const claves = Object.values(SYNC_KEYS).map(k => 'sync_' + k);
     const { data, error } = await supabaseClient.from(CONFIG.tabla_config).select('*').in(CONFIG.col_config_clave, claves);
     if(error) throw error;
+    _pulledOnce = true;
     if(!data || !data.length) return false;
     const map = {};
     data.forEach(row => { map[row[CONFIG.col_config_clave]] = row[CONFIG.col_config_valor]; });
     let changed = false;
     const apply = (localKey, setter) => {
+      if(_dirty.has(localKey)) return;   // hay un cambio local en camino al servidor
       const raw = map['sync_' + SYNC_KEYS[localKey]];
       if(raw === undefined || raw === null) return;
       try {
         const val = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        const local = localStorage.getItem(localKey);
-        const localParsed = local ? JSON.parse(local) : null;
-        if(JSON.stringify(val) !== JSON.stringify(localParsed)){
+        if(JSON.stringify(val) !== JSON.stringify(_syncGet[localKey]())){
           setter(val);
-          try { localStorage.setItem(localKey, JSON.stringify(val)); } catch(e){}
           changed = true;
         }
       } catch(e) { console.warn('sync apply', localKey, e); }
@@ -2234,33 +2209,64 @@ async function syncPullAll(){
     apply('censo_data_v1', v => { if(Array.isArray(v)) CENSO_DATA = v; });
     apply('org_activos_v1', v => { if(Array.isArray(v)) ORG_ACTIVOS = v; });
     apply('soporte_data_v1', v => { if(Array.isArray(v)) SOPORTES = v; });
-    apply('firmas_acta_v1', v => { if(Array.isArray(v)) FIRMAS = v; });
     return changed;
   } catch(e) { console.warn('syncPullAll:', e.message); return false; }
 }
 
 function _syncPush(localKey){
   if(!_syncEnabled || !supabaseClient) return;
-  clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(async () => {
-    const syncKey = SYNC_KEYS[localKey]; if(!syncKey) return;
+  if(!SYNC_KEYS[localKey]) return;
+  _dirty.add(localKey);
+  const seq = _pushSeq[localKey] = (_pushSeq[localKey] || 0) + 1;
+  clearTimeout(_syncTimers[localKey]);
+  _syncTimers[localKey] = setTimeout(async () => {
+    // Si aún no se descargaron los datos del servidor, esperar para no pisarlos
+    if(!_pulledOnce){ _syncPush(localKey); return; }
+    const syncKey = SYNC_KEYS[localKey];
     try {
-      const raw = localStorage.getItem(localKey);
-      if(raw === null) return;
-      await supabaseClient.from(CONFIG.tabla_config).upsert({
+      const raw = JSON.stringify(_syncGet[localKey]());
+      const { error } = await supabaseClient.from(CONFIG.tabla_config).upsert({
         [CONFIG.col_config_clave]: 'sync_' + syncKey,
         [CONFIG.col_config_valor]: raw
       }, { onConflict: CONFIG.col_config_clave });
-    } catch(e) { console.warn('syncPush', localKey, e.message); }
+      if(error) throw error;
+      _pushFails[localKey] = 0;
+      if(_pushSeq[localKey] === seq) _dirty.delete(localKey);   // solo si no hubo más cambios mientras se enviaba
+    } catch(e) {
+      console.warn('syncPush', localKey, e);
+      const n = _pushFails[localKey] = (_pushFails[localKey] || 0) + 1;
+      toast('❌ No se pudo guardar en el servidor (' + syncKey + '): ' + (e.message || e) + (n <= 3 ? ' — reintentando…' : ''));
+      if(n <= 3) setTimeout(() => _syncPush(localKey), 3000 * n);
+    }
   }, 800);
 }
 
-const save=()=>{ persistir(K,D); _syncPush('cand_v2'); };
-const saveCron=()=>{ persistir(K_CRON,CRON); try{ estadoGuardado(); }catch(e){} _syncPush('cronograma_v2'); };
-const saveFirmas=()=>{ persistir(K_FIRMAS,FIRMAS); _syncPush('firmas_acta_v1'); };
-const saveVotantes=()=>{ persistir(K_VOTANTES,VOTANTES); _syncPush('votantes_v2'); };
-const saveCenso=()=>{ persistir(K_CENSO,CENSO_DATA); _syncPush('censo_data_v1'); };
-const saveSoportes=()=>{ persistir(K_SOPORTE,SOPORTES); _syncPush('soporte_data_v1'); };
+function refrescarVistas(){
+  try { normalizarFacultadesGlobal(); normalizarNombresGlobal(); } catch(e){}
+  try { fillSel(); } catch(e){}
+  try { if(document.querySelector('main > section:not(.hide)')?.id === 'vSeg') aplicarAlcanceSeguimiento(); } catch(e){}
+  try { draw(); } catch(e){}
+  try { renderCronograma(false); } catch(e){}
+  try { renderCensoData(); } catch(e){}
+  try { renderSoportes(); } catch(e){}
+  try { renderFirmas(); } catch(e){}
+  try { renderVacantes(); } catch(e){}
+  try { renderDirectorio(); } catch(e){}
+}
+async function pullYRefrescar(forzar){
+  if(!SESSION || !_syncEnabled) return false;
+  if(!forzar && Date.now() - _lastPull < 3000) return false;
+  _lastPull = Date.now();
+  const changed = await syncPullAll();
+  if(changed) refrescarVistas();
+  return changed;
+}
+const save=()=>{ _syncPush('cand_v2'); };
+const saveCron=()=>{ try{ estadoGuardado(); }catch(e){} _syncPush('cronograma_v2'); };
+const saveFirmas=()=>{}; // las firmas son de un solo uso: no se guardan
+const saveVotantes=()=>{ _syncPush('votantes_v2'); };
+const saveCenso=()=>{ _syncPush('censo_data_v1'); };
+const saveSoportes=()=>{ _syncPush('soporte_data_v1'); };
 
 const esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
@@ -2317,7 +2323,7 @@ function fechaALetras(fechaStr) { if(!fechaStr) return ''; const f = new Date(fe
 function horaALetras(h,m){ const h12=((h+11)%12)+1; const hs = h12===1 ? 'una' : numALetras(h12); const t = hs + (m===0 ? ' en punto' : ' y ' + numALetras(m)); return t + (h<12 ? ' de la mañana' : (h<19 ? ' de la tarde' : ' de la noche')); }
 function horaActualFmt(d){ const h=d.getHours(), m=d.getMinutes(), h12=((h+11)%12)+1; return `${h12}:${String(m).padStart(2,'0')} ${h<12?'a.m.':'p.m.'}`; }
 
-function ajustarTamanoLetra(size) { document.documentElement.style.setProperty('--font-size-acta', size + 'px'); try { localStorage.setItem(K_FONT_SIZE, size); } catch(e) {} const outDiv = $('actaOut'); if (outDiv) { outDiv.style.fontSize = size + 'px'; const bodyAct = outDiv.querySelector('.acta-body'); if(bodyAct) bodyAct.style.fontSize = size + 'px'; } }
+function ajustarTamanoLetra(size) { document.documentElement.style.setProperty('--font-size-acta', size + 'px'); const outDiv = $('actaOut'); if (outDiv) { outDiv.style.fontSize = size + 'px'; const bodyAct = outDiv.querySelector('.acta-body'); if(bodyAct) bodyAct.style.fontSize = size + 'px'; } }
 let audioCtx;
 function playSound(){ try{ if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(880, audioCtx.currentTime); osc.frequency.setValueAtTime(1100, audioCtx.currentTime + 0.15); gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4); osc.start(); osc.stop(audioCtx.currentTime + 0.4); }catch(e){} }
 function testSound(){ playSound(); toast('🔊 Sonido reproducido'); }
@@ -2370,7 +2376,6 @@ function updateOrgActivos() {
   }
   ORG_ACTIVOS = [];
   document.querySelectorAll('.ck-org').forEach(chk => { if(chk.checked) ORG_ACTIVOS.push(chk.value); });
-  localStorage.setItem(K_ORG_ACTIVOS, JSON.stringify(ORG_ACTIVOS));
   _syncPush('org_activos_v1');
   inyectarVotosEnBlanco();
   limpiarVotosEnBlancoInvalidos();
@@ -2381,7 +2386,7 @@ function tab(n){
   const mapa = {1:'vCron',2:'vSeg',3:'vVotantes',4:'vAnal',5:'vVac',6:'vCargaVotos',7:'vAct',8:'vGanadores',9:'vSoporte',10:'vDocs'};
   const modKey = mapa[n];
   if(SESSION && modKey && !puedeVer(modKey)){ toast('⛔ No tienes permiso para este módulo'); return; }
-  try{ if(SESSION) localStorage.setItem('ultima_tab_v1', String(n)); }catch(e){}
+  pullYRefrescar();
   ['vCron','vSeg','vVotantes','vAnal','vVac','vCargaVotos','vAct','vGanadores','vSoporte','vDocs'].forEach((id,i)=>{ $(id).classList.toggle('hide', i+1 !== n); $('n'+(i+1)).classList.toggle('on', i+1 === n); });
 
   if(n===1){ aplicarVistaCron(); }
@@ -2436,9 +2441,9 @@ const TEXTO_ACTA_DEFECTO = [
 'En constancia de lo anterior, se firma la presente acta en {{lugar}}, D.C., siendo las {{hora_actual}} ({{hora_actual_letras}}), a los {{fecha_firma_letras}}.'
 ].join('\n');
 
-function cargarTextoActa(forzar){ let t=null; if(!forzar){ try{ t=localStorage.getItem(K_TEXTO_ACTA); }catch(e){} } if(forzar || t!==null) $('at').value = (t!==null && !forzar) ? t : TEXTO_ACTA_DEFECTO; else if(!$('at').value) $('at').value = TEXTO_ACTA_DEFECTO; }
-function guardarTextoActa(){ try{ localStorage.setItem(K_TEXTO_ACTA,$('at').value); }catch(e){} }
-function restaurarTextoActa(){ if(!confirm('¿Restaurar el texto predefinido?')) return; try{ localStorage.removeItem(K_TEXTO_ACTA); }catch(e){} cargarTextoActa(true); toast('Texto restaurado'); }
+function cargarTextoActa(forzar){ if(forzar || !$('at').value) $('at').value = TEXTO_ACTA_DEFECTO; }
+function guardarTextoActa(){ /* el texto vive solo en el campo mientras la página está abierta */ }
+function restaurarTextoActa(){ if(!confirm('¿Restaurar el texto predefinido?')) return; cargarTextoActa(true); toast('Texto restaurado'); }
 
 function datosActa(){
   const o=$('ao').value, f=$('af').value, jornada=$('aJornada').value;
@@ -3124,7 +3129,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       select.id = 'selectFirmanteGrupal';
       select.className = 'in';
       select.style.marginBottom = '16px';
-      const listaFirmantes = JSON.parse(localStorage.getItem('firmas_acta_v1') || '[]');
+      const listaFirmantes = [];
       const opciones = listaFirmantes.map(f => `<option value="${esc(f.nombre)}|${esc(f.cargo || 'Sin cargo')}">${esc(f.nombre)} - ${esc(f.cargo || 'Sin cargo')}</option>`).join('');
       select.innerHTML = opciones
         ? `<option value="">-- Selecciona tu nombre --</option>` + opciones
@@ -3542,7 +3547,7 @@ function partesFecha(iso){ const m = String(iso||'').match(/^(\d{4})-(\d{2})-(\d
 function diasEntre(a,b){ return Math.round((new Date(b+'T00:00:00') - new Date(a+'T00:00:00'))/864e5)+1; }
 const TIPO_STYLE = {'Inscripción':['📝','#1f6fd1','#e4f0fd'],'Campaña':['📣','#e8590c','#ffe8d9'],'Votación':['🗳️','#0B9B5B','#dcf6e7'],'Escrutinio':['🧮','#7d3c98','#f1e4f7'],'Poselectoral':['🏛️','#c2255c','#fde4ee'],'Otro':['📌','#4a6572','#e6eef2']};
 
-function estadoGuardado(){ const el = $('cronGuardado'); if(!el) return; let kb = 0; try{ let n=0; for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); n += k.length + (localStorage.getItem(k)||'').length; } kb = Math.round(n*2/1024); }catch(e){} const hora = new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}); if(!_lsOK){ el.className='cr-save warn'; el.innerHTML = `⚠️ Almacenamiento lleno (${kb} KB). <button onclick="descargarRespaldo()">Descargar respaldo</button>`; } else { el.className='cr-save'; el.innerHTML = `💾 Guardado automáticamente · ${CRON.length} actividades · ${hora} · ${kb} KB <button onclick="descargarRespaldo()">Respaldo</button>`; } }
+function estadoGuardado(){ const el = $('cronGuardado'); if(!el) return; const hora = new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}); el.className='cr-save'; el.innerHTML = `☁️ Sincronizado con el servidor · ${CRON.length} actividades · ${hora} <button onclick="descargarRespaldo()">Respaldo</button>`; }
 
 let _crI=0;
 function cronItemHTML(a, hoy, interno){ const fin = a.fechaFin || a.fecha; let cls='upcoming', label='○ Por iniciar'; if(a.completado){ cls='completed'; label='✔ Completado'; } else if(fin < hoy){ cls='pending'; label='⚠ Vencida'; } else if(a.motivo === 'En curso' || (a.fecha <= hoy && hoy <= fin)){ cls='in-progress'; label='⏳ En curso'; } const di = partesFecha(a.fecha), df = partesFecha(fin); const dias = (a.fecha && fin >= a.fecha) ? diasEntre(a.fecha, fin) : 1; const T = TIPO_STYLE[a.tipo] || TIPO_STYLE['Otro']; return `<div class="cr-item ${cls}" style="--tc:${T[1]};--tsoft:${T[2]};--i:${Math.min(_crI++,24)}"><div class="cr-dates"><div class="cr-d"><small>Inicio</small><b>${di.d}</b><span>${di.m}</span></div><div class="cr-arrow">→<i>${dias} ${dias===1?'día':'días'}</i></div><div class="cr-d"><small>Fin</small><b>${df.d}</b><span>${df.m}</span></div></div><div class="cr-body"><b class="cr-name"><span class="cr-ico">${T[0]}</span>${interno && a.publica?'🌐 ':''}${esc(a.nombre)}</b><div class="cr-meta"><span class="cr-chip tipo">${ICO_TAG}${esc(a.tipo||'Otro')}</span>${a.responsable ? `<span class="cr-chip resp">${ICO_USER}${esc(a.responsable)}</span>` : ''}</div>${a.desc ? `<span class="cr-obs">${esc(a.desc)}</span>` : ''}</div><div class="cr-side"><span class="tl-status ${cls}">${label}</span>${interno ? `<div class="cr-actions"><button class="ic" onclick="toggleAct('${a.id}')" title="${a.completado?'Marcar pendiente':'Marcar completada'}">${a.completado?'↩':'✔'}</button><button class="ic" onclick="editAct('${a.id}')" title="Editar">✎</button><button class="ic" onclick="delAct('${a.id}')" title="Eliminar">🗑</button></div>` : ''}</div></div>`; }
@@ -3917,8 +3922,8 @@ function expGanadoresXL() { const orgFil = $('gOrgFilter').value; const facFil =
 function demo(){ const p=(nombre,doc,email,tel,sem,tot,ck,nov)=>({nombre,doc,email,tel,sem,tot,ck:ck||{},nov:nov||'',obs:''}); D.push({id:uid(),votos:0,gan:false,rol:'Estudiante',org:'Consejo de Facultad',fac:'Facultad de Ingeniería',prog:'Sistemas',pri:p('Ana Pérez','1001','ana@unbosque.edu.co','3001234567','5','10',{sg:'ok',fp:'ok'}),sup:p('Luis Gómez','1002','luis@unbosque.edu.co','3007654321','1','10')},{id:uid(),votos:0,gan:false,rol:'Docente',org:'Consejo Académico',fac:'N/A',prog:'Biología',pri:p('Marta Ruiz','1003','marta@unbosque.edu.co','3101112222','','',{th:'ok'}),sup:p('Jorge León','1006','jorge@unbosque.edu.co','3153334444','','',{th:'ok'},'Renuncia')},{id:uid(),votos:0,gan:false,rol:'Egresado',org:'Comité de Posgrado',fac:'Facultad de Ciencias',prog:'Maestría en Química',pri:p('Carlos Díaz','1004','carlos@unbosque.edu.co','3205556666','','',{eg:'x'}),sup:p('Elena Rojas','1007','elena@unbosque.edu.co','3187778888','','',{eg:'ok'})}); save();draw(); }
 
 function descargarRespaldo() { const data = { D, CRON, FIRMAS, VOTANTES, CENSO_DATA, SOPORTES, fecha: new Date().toISOString() }; const a = document.createElement('a'); a.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))); a.setAttribute('download', 'respaldo_elecciones.json'); document.body.appendChild(a); a.click(); a.remove(); toast('Respaldo descargado'); }
-function guardarYLimpiar() { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } if(!confirm('Esto descarga un respaldo y BORRA todos los datos. ¿Continuar?')) return; if(!confirm('¿Estás seguro?')) return; const backup = { D, CRON, FIRMAS, VOTANTES, CENSO_DATA, SOPORTES, ORG_ACTIVOS }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", "respaldo_elecciones.json"); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); localStorage.removeItem(K); localStorage.removeItem(K_CRON); localStorage.removeItem(K_FIRMAS); localStorage.removeItem(K_VOTANTES); localStorage.removeItem(K_CENSO); localStorage.removeItem(K_ORG_ACTIVOS); localStorage.removeItem(K_SOPORTE); idbClear(); toast('Respaldo descargado. Recargando...'); setTimeout(() => { window.location.reload(); }, 1500); }
-function importarRespaldo(input) { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); if(data.D) D = data.D; if(data.CRON) CRON = data.CRON; if(data.FIRMAS) FIRMAS = data.FIRMAS; if(data.VOTANTES) VOTANTES = data.VOTANTES; if(data.CENSO_DATA) CENSO_DATA = data.CENSO_DATA; if(data.SOPORTES) SOPORTES = data.SOPORTES; if(data.ORG_ACTIVOS) ORG_ACTIVOS = data.ORG_ACTIVOS; save(); saveCron(); saveFirmas(); saveVotantes(); saveCenso(); saveSoportes(); localStorage.setItem(K_ORG_ACTIVOS, JSON.stringify(ORG_ACTIVOS)); toast('Datos importados. Recargando...'); setTimeout(() => { window.location.reload(); }, 1500); } catch (error) { console.error(error); toast('Error al importar el archivo.'); } input.value = ''; }; reader.readAsText(file); }
+function guardarYLimpiar() { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } if(!confirm('Esto descarga un respaldo y BORRA todos los datos. ¿Continuar?')) return; if(!confirm('¿Estás seguro?')) return; const backup = { D, CRON, FIRMAS, VOTANTES, CENSO_DATA, SOPORTES, ORG_ACTIVOS }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", "respaldo_elecciones.json"); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); D = []; CRON = []; FIRMAS = []; VOTANTES = { totalCenso: 0, totalHabilitados: 0, fechaCorte: '', historial: [] }; CENSO_DATA = []; SOPORTES = []; toast('Respaldo descargado. Recargando...'); setTimeout(() => { window.location.reload(); }, 1500); }
+function importarRespaldo(input) { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); if(data.D) D = data.D; if(data.CRON) CRON = data.CRON; if(data.FIRMAS) FIRMAS = data.FIRMAS; if(data.VOTANTES) VOTANTES = data.VOTANTES; if(data.CENSO_DATA) CENSO_DATA = data.CENSO_DATA; if(data.SOPORTES) SOPORTES = data.SOPORTES; if(data.ORG_ACTIVOS) ORG_ACTIVOS = data.ORG_ACTIVOS; save(); saveCron(); saveFirmas(); saveVotantes(); saveCenso(); saveSoportes(); toast('Datos importados. Recargando...'); setTimeout(() => { window.location.reload(); }, 3000); } catch (error) { console.error(error); toast('Error al importar el archivo.'); } input.value = ''; }; reader.readAsText(file); }
 
 (async function verificarTokenReset(){
   const params = new URLSearchParams(window.location.search);
@@ -4136,7 +4141,6 @@ function _guardar(nombre, modulo){
           await supabaseClient.auth.signOut();
           detenerTimerSesion();
           SESSION = null;
-          try { localStorage.removeItem(K_SESSION); localStorage.removeItem(K_LAST_ACTIVITY); } catch(e){}
           location.reload();
           return;
         }
@@ -4157,19 +4161,9 @@ function _guardar(nombre, modulo){
 setInterval(async () => { if(SESSION && supabaseClient){ await cargarEstadoElecciones(); actualizarBannerCierre(); } }, 60000);
 
 // Pull periódico para mantener datos sincronizados entre usuarios
-setInterval(async () => {
-  if(!SESSION || !_syncEnabled || document.hidden) return;
-  const changed = await syncPullAll();
-  if(changed){
-    try { fillSel(); } catch(e){}
-    const tabActiva = document.querySelector('main > section:not(.hide)')?.id;
-    if(tabActiva === 'vCron') renderCronograma(false);
-    if(tabActiva === 'vSeg') { aplicarAlcanceSeguimiento(); draw(); }
-    if(tabActiva === 'vVotantes') renderCensoData();
-    if(tabActiva === 'vSoporte') renderSoportes();
-    if(tabActiva === 'vAct') renderFirmas();
-  }
-}, 20000);
+setInterval(() => { if(!document.hidden) pullYRefrescar(true); }, 10000);
+document.addEventListener('visibilitychange', () => { if(!document.hidden) pullYRefrescar(true); });
+window.addEventListener('focus', () => pullYRefrescar());
 </script>
 </body>
 </html>
