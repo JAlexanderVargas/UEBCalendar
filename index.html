@@ -283,6 +283,10 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 @media print{*{animation:none!important;transition:none!important}}
 
+/* ===== Alerta de nube (barra roja superior) ===== */
+#nubeAlerta{position:fixed;top:0;left:0;right:0;z-index:9500;padding:9px 16px;background:#b3261e;color:#fff;font-weight:700;font-size:13px;text-align:center;cursor:pointer;box-shadow:0 6px 20px -6px rgba(0,0,0,.5)}
+#nubeAlerta[hidden]{display:none}
+#nubeAlerta u{margin-left:8px;opacity:.9}
 /* ===== Sincronización ===== */
 .sync-badge{margin-top:8px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.1);color:#c0d6cc;text-align:center;transition:.3s}
 .sync-badge.ok{background:rgba(112,190,51,.25);color:#d8f5b0}
@@ -1321,6 +1325,7 @@ body.logged-in #topbar { display: flex; }
   <div class="df"><button class="btn" onclick="dlgReset.close()">Cerrar</button></div>
 </dialog>
 
+<div id="nubeAlerta" onclick="mostrarDiagnosticoSync()" hidden></div>
 <div id="toast" popover="manual" role="status" aria-live="assertive"></div>
 
 <script>
@@ -1526,6 +1531,7 @@ async function doLogin(){
     await cargarEstadoElecciones();
     aplicarSesion();
     await syncPullTodo(true);
+    probarNubeLogin();
   } catch(err) {
     console.error(err);
     $('loginErr').textContent = '❌ ' + (err.message || 'Error de conexión');
@@ -4202,7 +4208,18 @@ function _syncDefs(){ return {
   [K_ORG_ACTIVOS]:{n:'Órganos activos', get:()=>ORG_ACTIVOS,set:v=>{ ORG_ACTIVOS = Array.isArray(v) && v.length ? v : ORG_ACTIVOS; }, mods:['vCron']}
 }; }
 
+let _nubeSondaOk = true, _nubeSyncErr = '';
+function actualizarNubeAlerta(){
+  const a = $('nubeAlerta'); if(!a) return;
+  const motivo = !SESSION ? '' : (_nubeSyncErr || (!_nubeSondaOk ? _nubeSondaMsg : ''));
+  if(motivo){ a.innerHTML = '☁ Los datos NO se están compartiendo entre usuarios: ' + esc(motivo) + ' <u>Ver diagnóstico</u>'; a.hidden = false; }
+  else a.hidden = true;
+}
+let _nubeSondaMsg = '';
 function setSyncBadge(est, msg){
+  if(est === 'err') _nubeSyncErr = String(msg || 'error de sincronización').slice(0,160);
+  else if(est === 'ok') _nubeSyncErr = '';
+  setTimeout(actualizarNubeAlerta, 0);
   const b = $('syncBadge'); if(!b) return;
   b.className = 'sync-badge ' + est;
   b.dataset.v = APP_VERSION;
@@ -4466,13 +4483,15 @@ const APP_VERSION = '3.0-sync';
 async function probarNubeLogin(){
   const base = `Versión ${APP_VERSION}`;
   const el = { set innerHTML(h){ ['loginNube','navNube'].forEach(id => { const e = $(id); if(e) e.innerHTML = h; }); } };
-  if(!supabaseClient){ el.innerHTML = `${base} · ❌ sin conexión a Supabase`; return; }
+  if(!supabaseClient){ el.innerHTML = `${base} · ❌ sin conexión a Supabase`; _nubeSondaOk = false; _nubeSondaMsg = 'no hay conexión con Supabase.'; actualizarNubeAlerta(); return; }
   try{
     const {data, error} = await supabaseClient.from(CONFIG.tabla_config).select(CONFIG.col_config_clave).like(CONFIG.col_config_clave, SYNC_PREFIX+'%');
     if(error) throw error;
     const n = (data||[]).filter(r => !String(r[CONFIG.col_config_clave]).endsWith('_prueba')).length;
     el.innerHTML = n ? `${base} · ✅ nube conectada · ${n} conjuntos de datos compartidos` : `${base} · ⚠️ nube conectada pero SIN datos (el administrador debe entrar y migrarlos)`;
-  }catch(e){ el.innerHTML = `${base} · ❌ la nube no responde: ${esc(e.message||e)}`; }
+    _nubeSondaOk = n > 0 || SESSION?.rol === 'administrador'; _nubeSondaMsg = 'la nube no tiene datos todavía (el administrador debe entrar con el navegador donde los creó).';
+  }catch(e){ el.innerHTML = `${base} · ❌ la nube no responde: ${esc(e.message||e)}`; _nubeSondaOk = false; _nubeSondaMsg = 'la nube no responde (' + (e.message||e) + ').'; }
+  actualizarNubeAlerta();
 }
 setTimeout(probarNubeLogin, 400);
 setInterval(() => { if(!document.hidden) probarNubeLogin(); }, 60000);
