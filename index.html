@@ -653,6 +653,7 @@ body.logged-in #topbar { display: flex; }
     <label style="font-size:12.5px;font-weight:600;color:var(--mut);display:block;margin-bottom:4px;">Contraseña</label>
     <input class="in" id="loginPass" type="password" autocomplete="current-password" style="width:100%;margin-bottom:16px;">
     <div id="loginErr" style="color:var(--alert-line);font-size:12.5px;margin-bottom:10px;min-height:16px;"></div>
+    <div id="loginNube" style="font-size:11.5px;color:var(--mut);text-align:center;margin-top:10px;">Versión <span id="appVer"></span> · comprobando nube…</div>
     <button class="btn p" id="loginBtn" style="width:100%;padding:12px;font-weight:800" onclick="doLogin()">Ingresar</button>
     <button class="reset-link" onclick="abrirResetDesdeLogin()">¿Olvidaste tu contraseña?</button>
     <div id="loginLoad" class="hide" style="text-align:center;margin-top:10px;color:var(--mut);font-size:12px;">Conectando con el servidor...</div>
@@ -4201,9 +4202,10 @@ function _syncDefs(){ return {
 function setSyncBadge(est, msg){
   const b = $('syncBadge'); if(!b) return;
   b.className = 'sync-badge ' + est;
+  b.dataset.v = APP_VERSION;
   const hora = new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
   b.textContent = est==='ok' ? `☁ Sincronizado ${hora}` : est==='sync' ? '☁ Sincronizando…' : est==='err' ? '⚠ Sin sincronizar' : '☁ —';
-  if(msg) b.title = msg;
+  if(msg) b.title = msg + ' · v' + APP_VERSION;
 }
 function syncPuedeEscribir(key){
   if(!SESSION) return false;
@@ -4457,6 +4459,19 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
   })); }).observe(document.body,{childList:true,subtree:true});
 }
 
+const APP_VERSION = '3.0-sync';
+async function probarNubeLogin(){
+  const el = $('loginNube'); if(!el) return;
+  const base = `Versión ${APP_VERSION}`;
+  if(!supabaseClient){ el.innerHTML = `${base} · ❌ sin conexión a Supabase`; return; }
+  try{
+    const {data, error} = await supabaseClient.from(CONFIG.tabla_config).select(CONFIG.col_config_clave).like(CONFIG.col_config_clave, SYNC_PREFIX+'%');
+    if(error) throw error;
+    const n = (data||[]).filter(r => !String(r[CONFIG.col_config_clave]).endsWith('_prueba')).length;
+    el.innerHTML = n ? `${base} · ✅ nube conectada · ${n} conjuntos de datos compartidos` : `${base} · ⚠️ nube conectada pero SIN datos (el administrador debe entrar y migrarlos)`;
+  }catch(e){ el.innerHTML = `${base} · ❌ la nube no responde: ${esc(e.message||e)}`; }
+}
+setTimeout(probarNubeLogin, 400);
 (async function initAuth(){
   if(SESSION){
     document.body.classList.add('logged-in'); document.body.classList.remove('logged-out');
