@@ -33,7 +33,7 @@ small{display:block;color:var(--mut);font-size:12px;line-height:1.3}
 .hide{display:none!important}
 
 /* ================= SIDEBAR ================= */
-aside{background:var(--oscuro);color:var(--blanco);padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;overflow-y:auto;transition:box-shadow .3s}
+aside{background:var(--oscuro);color:var(--blanco);padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;overflow-y:auto;transition:box-shadow .3s;z-index:10}
 .brand{display:flex;flex-direction:column;align-items:center;margin:0 6px 14px;color:var(--blanco);text-align:center}
 .brand img{height:70px;width:auto;margin-bottom:12px;filter: brightness(0) invert(1);transition:transform .4s ease}
 .brand img:hover{transform:scale(1.06) rotate(-2deg)}
@@ -1342,7 +1342,9 @@ const CONFIG = {
   col_log_accion: 'accion',
   col_log_detalle: 'detalle',
   col_log_fecha: 'fecha',
-  tabla_firmas: 'acta_firmas'
+  tabla_firmas: 'acta_firmas',
+  // NUEVA TABLA PARA SINCRONIZACIÓN GLOBAL
+  tabla_estado: 'estado_sistema' 
 };
 
 let supabaseClient = null;
@@ -1609,7 +1611,8 @@ function aplicarSesion(){
   $('loginScreen').classList.add('hide');
   $('sideActions').classList.remove('hide');
   _syncEnabled = true;
-  // Pull inicial de datos compartidos
+  
+  // Pull inicial de datos compartidos (NUEVO SISTEMA)
   syncPullAll().then(changed => {
     if(changed){
       try { normalizarFacultadesGlobal(); normalizarNombresGlobal(); } catch(e){}
@@ -1620,8 +1623,10 @@ function aplicarSesion(){
       try { renderFirmas(); } catch(e){}
       try { renderVacantes(); } catch(e){}
       try { renderDirectorio(); } catch(e){}
+      try { renderAnalitica(); } catch(e){}
     }
   });
+  
   actualizarUserCard();
   aplicarPermisosUI();
   actualizarBannerCierre();
@@ -2180,6 +2185,7 @@ function limpiarVotosEnBlancoInvalidos() {
   return cambios;
 }
 
+// CARGA INICIAL (LOCAL)
 try{ const a=localStorage.getItem(K); if(a) D=JSON.parse(a); }catch(e){}
 try{ const c=localStorage.getItem(K_CRON); if(c) CRON=JSON.parse(c); else CRON = []; }catch(e){}
 try{ const f=localStorage.getItem(K_FIRMAS); if(f) FIRMAS=JSON.parse(f); else FIRMAS=[]; }catch(e){}
@@ -2197,7 +2203,7 @@ let _avisoAlm=false, _lsOK = true;
 function persistir(key,val){ const ts = Date.now(); idbSet(key+'__ts', ts); try{ localStorage.setItem(key,JSON.stringify(val)); localStorage.setItem(key+'__ts', String(ts)); _lsOK = true; } catch(e){ _lsOK = false; if(!_avisoAlm){ _avisoAlm=true; } } idbSet(key,val); }
 try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
 
-/* ===== SINCRONIZACIÓN COMPARTIDA (pull y push) ===== */
+/* ===== SINCRONIZACIÓN COMPARTIDA (NUEVA TABLA: estado_sistema) ===== */
 const SYNC_KEYS = {
   cand_v2: 'candidatos', cronograma_v2: 'cronograma', votantes_v2: 'votantes',
   censo_data_v1: 'censo', org_activos_v1: 'org_activos', soporte_data_v1: 'soporte', firmas_acta_v1: 'firmas'
@@ -2208,26 +2214,26 @@ let _syncEnabled = false;
 async function syncPullAll(){
   if(!supabaseClient) return false;
   try {
-    const claves = Object.values(SYNC_KEYS).map(k => 'sync_' + k);
-    const { data, error } = await supabaseClient.from(CONFIG.tabla_config).select('*').in(CONFIG.col_config_clave, claves);
+    const claves = Object.values(SYNC_KEYS);
+    const { data, error } = await supabaseClient.from(CONFIG.tabla_estado).select('*').in('clave', claves);
     if(error) throw error;
     if(!data || !data.length) return false;
     const map = {};
-    data.forEach(row => { map[row[CONFIG.col_config_clave]] = row[CONFIG.col_config_valor]; });
+    data.forEach(row => { map[row.clave] = row.valor; });
     let changed = false;
     const apply = (localKey, setter) => {
-      const raw = map['sync_' + SYNC_KEYS[localKey]];
-      if(raw === undefined || raw === null) return;
+      const val = map[SYNC_KEYS[localKey]];
+      if(val === undefined || val === null) return;
       try {
-        const val = typeof raw === 'string' ? JSON.parse(raw) : raw;
         const local = localStorage.getItem(localKey);
         const localParsed = local ? JSON.parse(local) : null;
+        // Comparar para no redibujar si es exactamente igual
         if(JSON.stringify(val) !== JSON.stringify(localParsed)){
           setter(val);
           try { localStorage.setItem(localKey, JSON.stringify(val)); } catch(e){}
           changed = true;
         }
-      } catch(e) { console.warn('sync apply', localKey, e); }
+      } catch(e) { console.warn('sync apply error', localKey, e); }
     };
     apply('cand_v2', v => { if(Array.isArray(v)) D = v; });
     apply('cronograma_v2', v => { if(Array.isArray(v)) CRON = v; });
@@ -2246,12 +2252,14 @@ function _syncPush(localKey){
   _syncTimer = setTimeout(async () => {
     const syncKey = SYNC_KEYS[localKey]; if(!syncKey) return;
     try {
-      const raw = localStorage.getItem(localKey);
-      if(raw === null) return;
-      await supabaseClient.from(CONFIG.tabla_config).upsert({
-        [CONFIG.col_config_clave]: 'sync_' + syncKey,
-        [CONFIG.col_config_valor]: raw
-      }, { onConflict: CONFIG.col_config_clave });
+      const local = localStorage.getItem(localKey);
+      if(local === null) return;
+      const parsed = JSON.parse(local);
+      await supabaseClient.from(CONFIG.tabla_estado).upsert({
+        clave: syncKey,
+        valor: parsed,
+        actualizado_en: new Date().toISOString()
+      }, { onConflict: 'clave' });
     } catch(e) { console.warn('syncPush', localKey, e.message); }
   }, 800);
 }
@@ -2371,7 +2379,7 @@ function updateOrgActivos() {
   }
   ORG_ACTIVOS = [];
   document.querySelectorAll('.ck-org').forEach(chk => { if(chk.checked) ORG_ACTIVOS.push(chk.value); });
-  localStorage.setItem(K_ORG_ACTIVOS, JSON.stringify(ORG_ACTIVOS));
+  persistir(K_ORG_ACTIVOS, ORG_ACTIVOS);
   _syncPush('org_activos_v1');
   inyectarVotosEnBlanco();
   limpiarVotosEnBlancoInvalidos();
