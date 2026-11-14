@@ -32,7 +32,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 small{display:block;color:var(--mut);font-size:12px;line-height:1.3}
 .hide{display:none!important}
 
-aside{background:var(--oscuro);color:var(--blanco);padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;overflow-y:auto;transition:box-shadow .3s;z-index:10}
+/* ================= SIDEBAR ================= */
+aside{background:var(--oscuro);color:var(--blanco);padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px;overflow-y:auto;transition:box-shadow .3s}
 .brand{display:flex;flex-direction:column;align-items:center;margin:0 6px 14px;color:var(--blanco);text-align:center}
 .brand img{height:70px;width:auto;margin-bottom:12px;filter: brightness(0) invert(1);transition:transform .4s ease}
 .brand img:hover{transform:scale(1.06) rotate(-2deg)}
@@ -55,11 +56,13 @@ aside{background:var(--oscuro);color:var(--blanco);padding:24px 16px;position:st
 #sideActions .nav svg { flex: none; }
 body.logged-in aside { padding-top: 20px; overflow-y: auto; }
 
+/* ================= MAIN ================= */
 main{padding:28px 32px 60px;min-width:0}
 .top h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--oscuro);animation:fadeUp .4s ease both}
 .top p{margin:2px 0 20px;color:var(--oscuro);opacity:0.8;animation:fadeUp .45s ease .05s both}
 main > section:not(.hide){animation:fadeUp .35s cubic-bezier(.2,.8,.2,1) both}
 
+/* ================= KPIS ================= */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-bottom:18px}
 .kpi-card{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;padding:20px 22px 18px;border-radius:22px;
   background:linear-gradient(150deg,#ffffff 0%,var(--soft,#f1f7f3) 160%);border:1px solid rgba(11,59,44,.07);
@@ -207,6 +210,7 @@ textarea.in{min-height:110px;resize:vertical}
 tr.posible-ganador td { background-color: #FFF3CD !important; font-weight: 600; }
 tr.posible-ganador td:first-child { border-left: 4px solid #FFC107 !important; }
 
+/* === FIRMAS === */
 .acta-firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 80px; margin-top: 60px; margin-bottom: 80px; }
 .acta-firma-item { text-align: center; margin-bottom: 40px; page-break-inside: avoid; }
 .acta-firma-item .firma-img-wrap { height: 60px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 4px; }
@@ -258,6 +262,7 @@ dialog[open] .dh{animation:slideRight .3s ease both}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dlg{margin:0}
 
+/* Toast */
 #toast{position:fixed;inset:auto auto 24px 50%;margin:0;border:0;padding:0;background:transparent;overflow:visible;width:max-content;max-width:min(580px,92vw);height:auto;transform:translate(-50%,30px);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:2147483647;color:#fff}
 #toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #toast::backdrop{background:transparent}
@@ -268,6 +273,7 @@ dialog[open] .dh{animation:slideRight .3s ease both}
 #toast .t-x{border:0;background:rgba(255,255,255,.18);color:#fff;width:26px;height:26px;border-radius:8px;cursor:pointer;font-weight:800;flex:none;line-height:1;transition:background .2s,transform .2s}
 #toast .t-x:hover{background:rgba(255,255,255,.32);transform:rotate(90deg)}
 
+/* Permisos / solo lectura */
 .ro-banner{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px 14px;border-radius:12px;background:#fff7e0;border:1px solid #f0d58a;color:#7a5a06;font-weight:700;font-size:13px;animation:fadeUp .3s ease both}
 .ro-banner[hidden]{display:none!important}
 section.ro .wo,
@@ -625,6 +631,7 @@ body.logged-in #topbar { display: flex; }
 .rol-validador-badge { display:inline-block; padding:2px 8px; border-radius:99px; background:#fff3cd; color:#856404; font-size:10.5px; font-weight:700; margin-left:4px; }
 .validador-info-box { background:#eaf3fd; border:1px solid #b3d4f5; border-radius:10px; padding:8px 12px; font-size:12.5px; color:#1b5fae; margin-bottom:12px; animation:fadeUp .3s ease both }
 
+/* ===== ANIMACIONES GLOBALES ===== */
 @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-3deg)} 75%{transform:rotate(3deg)} }
 @keyframes glowPulse { 0%,100%{box-shadow:0 0 0 0 rgba(247,148,29,.4)} 50%{box-shadow:0 0 0 8px rgba(247,148,29,0)} }
@@ -713,7 +720,6 @@ body.logged-in #topbar { display: flex; }
      <button class="btn-backup import" onclick="document.getElementById('fileImport').click()">📂 Importar Respaldo</button>
      <input type="file" id="fileImport" class="hide" accept=".json" onchange="importarRespaldo(this)">
    </div>
-   <p style="margin-top:10px;margin-bottom:0;">Los datos se guardan en este navegador.</p>
  </div>
 </aside>
 <main>
@@ -1335,9 +1341,7 @@ const CONFIG = {
   col_log_accion: 'accion',
   col_log_detalle: 'detalle',
   col_log_fecha: 'fecha',
-  tabla_firmas: 'acta_firmas',
-  // NUEVA TABLA CENTRAL DE DATOS
-  tabla_estado: 'estado_sistema' 
+  tabla_firmas: 'acta_firmas'
 };
 
 let supabaseClient = null;
@@ -1374,11 +1378,10 @@ const FACULTADES = ['Facultad de Medicina','Facultad de Ciencias','Facultad de C
 const ORG_GLOBALES = ['Consejo Directivo', 'Consejo Académico', 'Comité de Posgrado'];
 const esGlobal = (org) => ORG_GLOBALES.includes(org);
 
-// Variables en memoria (se llenan desde Supabase)
 let D=[],editId=null,CRON=[],FIRMAS=[];
 let VOTANTES = { totalCenso: 0, totalHabilitados: 0, fechaCorte: '', historial: [] };
 let CENSO_DATA = [], SOPORTES = [];
-let ORG_ACTIVOS = ["Consejo de Facultad","Consejo Directivo","Consejo Académico","Comité de Posgrado"];
+let ORG_ACTIVOS = JSON.parse(localStorage.getItem(K_ORG_ACTIVOS) || '["Consejo de Facultad","Consejo Directivo","Consejo Académico","Comité de Posgrado"]');
 let chartRolesInstance, chartOrganosInstance, chartFacInstance, chartHistInstance, chartCensoFacInstance, chartCensoRolInstance;
 let chartPartInstance, chartSopCanalInstance, chartSopEstadoInstance, chartSopDiaInstance;
 
@@ -1509,7 +1512,7 @@ async function doLogin(){
     saveSession();
     await registrarLog('Inicio de sesión', '-', SESSION.username);
     await cargarEstadoElecciones();
-    await aplicarSesion(); // AHORA ESPERA A QUE SE CARGUEN LOS DATOS
+    aplicarSesion();
   } catch(err) {
     console.error(err);
     $('loginErr').textContent = '❌ ' + (err.message || 'Error de conexión');
@@ -1599,24 +1602,29 @@ function actualizarUserCard(){
   $('userCardName').textContent = (SESSION.nombre || SESSION.username) + ' · ' + (ROLES[SESSION.rol]?.label || SESSION.rol);
 }
 
-async function aplicarSesion(){
+function aplicarSesion(){
   document.body.classList.remove('logged-out');
   document.body.classList.add('logged-in');
   $('loginScreen').classList.add('hide');
   $('sideActions').classList.remove('hide');
-  
-  // 1. DESCARGAR DATOS DE SUPABASE ANTES DE MOSTRAR NADA
-  const exito = await cargarTodoDesdeSupabase();
-  if(!exito){
-    toast('⚠️ No se pudieron cargar los datos desde el servidor. Revisa tu conexión.', 'error');
-  }
-
-  // 2. APLICAR PERMISOS Y DIBUJAR
+  _syncEnabled = true;
+  // Pull inicial de datos compartidos
+  syncPullAll().then(changed => {
+    if(changed){
+      try { normalizarFacultadesGlobal(); normalizarNombresGlobal(); } catch(e){}
+      try { fillSel(); draw(); } catch(e){}
+      try { renderCronograma(false); } catch(e){}
+      try { renderCensoData(); } catch(e){}
+      try { renderSoportes(); } catch(e){}
+      try { renderFirmas(); } catch(e){}
+      try { renderVacantes(); } catch(e){}
+      try { renderDirectorio(); } catch(e){}
+    }
+  });
   actualizarUserCard();
   aplicarPermisosUI();
   actualizarBannerCierre();
   iniciarTimerSesion();
-  
   const orden = ['vCron','vSeg','vVotantes','vAnal','vVac','vCargaVotos','vAct','vGanadores','vSoporte','vDocs'];
   const mods = getModulosPermitidos();
   if(mods.length){
@@ -1625,129 +1633,6 @@ async function aplicarSesion(){
     if(!idx) idx = orden.indexOf(mods[0]) + 1;
     if(idx > 0) tab(idx);
   }
-
-  // 3. SUSCRIBIRSE A CAMBIOS EN TIEMPO REAL
-  suscribirCambiosRealtime();
-}
-
-/* =====================================================================
-   NUEVA ARQUITECTURA DE DATOS: SUPABASE ES LA ÚNICA FUENTE DE VERDAD
-   ===================================================================== */
-const SYNC_KEYS = {
-  cand_v2: 'candidatos', cronograma_v2: 'cronograma', votantes_v2: 'votantes',
-  censo_data_v1: 'censo', org_activos_v1: 'org_activos', soporte_data_v1: 'soporte', firmas_acta_v1: 'firmas'
-};
-
-async function cargarTodoDesdeSupabase() {
-  if (!supabaseClient) return false;
-  try {
-    const { data, error } = await supabaseClient.from(CONFIG.tabla_estado).select('*').in('clave', Object.values(SYNC_KEYS));
-    if (error) throw error;
-    
-    const map = {};
-    (data || []).forEach(row => { map[row.clave] = row.valor; });
-
-    // Asignar a variables en memoria. Si no existe en Supabase, usar valor por defecto.
-    D = map[SYNC_KEYS.cand_v2] || [];
-    CRON = map[SYNC_KEYS.cronograma_v2] || [];
-    VOTANTES = map[SYNC_KEYS.votantes_v2] || { totalCenso: 0, totalHabilitados: 0, fechaCorte: '', historial: [] };
-    CENSO_DATA = map[SYNC_KEYS.censo_data_v1] || [];
-    ORG_ACTIVOS = map[SYNC_KEYS.org_activos_v1] || ["Consejo de Facultad","Consejo Directivo","Consejo Académico","Comité de Posgrado"];
-    SOPORTES = map[SYNC_KEYS.soporte_data_v1] || [];
-    FIRMAS = map[SYNC_KEYS.firmas_acta_v1] || [];
-
-    // Re-renderizar toda la interfaz con los datos frescos
-    document.querySelectorAll('.ck-org').forEach(chk => { chk.checked = ORG_ACTIVOS.includes(chk.value); });
-    fillSel();
-    draw();
-    migrarCron();
-    renderCronograma();
-    renderFirmas();
-    renderCensoData();
-    renderVacantes();
-    renderSoportes();
-    renderDirectorio();
-    if(typeof renderAnalitica === 'function') renderAnalitica();
-
-    return true;
-  } catch (e) {
-    console.error('Error cargando desde Supabase:', e);
-    return false;
-  }
-}
-
-async function guardarEnSupabase(clave, valor) {
-  if (!supabaseClient) { toast('❌ Sin conexión a Supabase', 'error'); return false; }
-  try {
-    const { error } = await supabaseClient.from(CONFIG.tabla_estado).upsert({
-      clave: clave,
-      valor: valor,
-      actualizado_en: new Date().toISOString()
-    }, { onConflict: 'clave' });
-    if (error) throw error;
-    return true;
-  } catch (e) {
-    console.error('Error guardando en Supabase:', e);
-    toast('❌ Error al guardar: ' + e.message, 'error');
-    return false;
-  }
-}
-
-// Las funciones de guardado ahora son asíncronas y escriben directamente en Supabase
-const save = async () => {
-  const ok = await guardarEnSupabase(SYNC_KEYS.cand_v2, D);
-  if(ok) toast('💾 Candidatos guardados', 'ok');
-};
-const saveCron = async () => {
-  const ok = await guardarEnSupabase(SYNC_KEYS.cronograma_v2, CRON);
-  if(ok) { estadoGuardado(); toast('💾 Cronograma guardado', 'ok'); }
-};
-const saveFirmas = async () => {
-  const ok = await guardarEnSupabase(SYNC_KEYS.firmas_acta_v1, FIRMAS);
-  if(ok) toast('💾 Firmas guardadas', 'ok');
-};
-const saveVotantes = async () => {
-  const ok = await guardarEnSupabase(SYNC_KEYS.votantes_v2, VOTANTES);
-  if(ok) toast('💾 Censo guardado', 'ok');
-};
-const saveCenso = async () => {
-  const ok = await guardarEnSupabase(SYNC_KEYS.censo_data_v1, CENSO_DATA);
-  if(ok) toast('💾 Censo guardado', 'ok');
-};
-const saveSoportes = async () => {
-  const ok = await guardarEnSupabase(SYNC_KEYS.soporte_data_v1, SOPORTES);
-  if(ok) toast('💾 Soportes guardados', 'ok');
-};
-
-// Suscripción en tiempo real
-function suscribirCambiosRealtime() {
-  if (!supabaseClient) return;
-  supabaseClient
-    .channel('estado_cambios')
-    .on('postgres_changes', { event: '*', schema: 'public', table: CONFIG.tabla_estado }, payload => {
-      console.log('Cambio en tiempo real detectado:', payload);
-      const { clave, valor } = payload.new;
-      
-      if (clave === SYNC_KEYS.cand_v2) D = valor || [];
-      if (clave === SYNC_KEYS.cronograma_v2) CRON = valor || [];
-      if (clave === SYNC_KEYS.votantes_v2) VOTANTES = valor || {};
-      if (clave === SYNC_KEYS.censo_data_v1) CENSO_DATA = valor || [];
-      if (clave === SYNC_KEYS.org_activos_v1) ORG_ACTIVOS = valor || [];
-      if (clave === SYNC_KEYS.soporte_data_v1) SOPORTES = valor || [];
-      if (clave === SYNC_KEYS.firmas_acta_v1) FIRMAS = valor || [];
-
-      // Refrescar la vista activa
-      const tabActiva = document.querySelector('main > section:not(.hide)')?.id;
-      if (tabActiva === 'vCron') renderCronograma(false);
-      if (tabActiva === 'vSeg') draw();
-      if (tabActiva === 'vVotantes') renderCensoData();
-      if (tabActiva === 'vSoporte') renderSoportes();
-      if (tabActiva === 'vAct') renderFirmas();
-      if (tabActiva === 'vGanadores') renderDirectorio();
-      
-      toast('🔄 Datos actualizados por otro usuario', 'ok');
-    })
-    .subscribe();
 }
 
 /* =====================================================================
@@ -2294,6 +2179,89 @@ function limpiarVotosEnBlancoInvalidos() {
   return cambios;
 }
 
+try{ const a=localStorage.getItem(K); if(a) D=JSON.parse(a); }catch(e){}
+try{ const c=localStorage.getItem(K_CRON); if(c) CRON=JSON.parse(c); else CRON = []; }catch(e){}
+try{ const f=localStorage.getItem(K_FIRMAS); if(f) FIRMAS=JSON.parse(f); else FIRMAS=[]; }catch(e){}
+try{ const v=localStorage.getItem(K_VOTANTES); if(v) { const parsed = JSON.parse(v); VOTANTES = { ...VOTANTES, ...parsed }; if(!VOTANTES.historial) VOTANTES.historial = []; } }catch(e){}
+try{ const cd = localStorage.getItem(K_CENSO); if(cd) CENSO_DATA = JSON.parse(cd); }catch(e){}
+try{ const s = localStorage.getItem(K_SOPORTE); if(s) SOPORTES = JSON.parse(s); }catch(e){}
+try{ const fs = localStorage.getItem(K_FONT_SIZE); if(fs) { $('fontSizeSlider').value = fs; ajustarTamanoLetra(fs); } else { ajustarTamanoLetra(12); } }catch(e){}
+
+const IDB_NAME='elecciones_db', IDB_STORE='kv';
+let _idbP=null;
+function idbOpen(){ if(_idbP) return _idbP; _idbP=new Promise((res,rej)=>{ try{ const rq=indexedDB.open(IDB_NAME,1); rq.onupgradeneeded=()=>rq.result.createObjectStore(IDB_STORE); rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); }catch(e){ rej(e); } }); return _idbP; }
+const idbSet=(k,v)=>idbOpen().then(db=>new Promise((res,rej)=>{const tx=db.transaction(IDB_STORE,'readwrite');tx.objectStore(IDB_STORE).put(v,k);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);})).catch(()=>{});
+const idbClear=()=>idbOpen().then(db=>new Promise(res=>{const tx=db.transaction(IDB_STORE,'readwrite');tx.objectStore(IDB_STORE).clear();tx.oncomplete=res;tx.onerror=res;})).catch(()=>{});
+let _avisoAlm=false, _lsOK = true;
+function persistir(key,val){ const ts = Date.now(); idbSet(key+'__ts', ts); try{ localStorage.setItem(key,JSON.stringify(val)); localStorage.setItem(key+'__ts', String(ts)); _lsOK = true; } catch(e){ _lsOK = false; if(!_avisoAlm){ _avisoAlm=true; } } idbSet(key,val); }
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+
+/* ===== SINCRONIZACIÓN COMPARTIDA (pull y push) ===== */
+const SYNC_KEYS = {
+  cand_v2: 'candidatos', cronograma_v2: 'cronograma', votantes_v2: 'votantes',
+  censo_data_v1: 'censo', org_activos_v1: 'org_activos', soporte_data_v1: 'soporte', firmas_acta_v1: 'firmas'
+};
+let _syncTimer = null;
+let _syncEnabled = false;
+
+async function syncPullAll(){
+  if(!supabaseClient) return false;
+  try {
+    const claves = Object.values(SYNC_KEYS).map(k => 'sync_' + k);
+    const { data, error } = await supabaseClient.from(CONFIG.tabla_config).select('*').in(CONFIG.col_config_clave, claves);
+    if(error) throw error;
+    if(!data || !data.length) return false;
+    const map = {};
+    data.forEach(row => { map[row[CONFIG.col_config_clave]] = row[CONFIG.col_config_valor]; });
+    let changed = false;
+    const apply = (localKey, setter) => {
+      const raw = map['sync_' + SYNC_KEYS[localKey]];
+      if(raw === undefined || raw === null) return;
+      try {
+        const val = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        const local = localStorage.getItem(localKey);
+        const localParsed = local ? JSON.parse(local) : null;
+        if(JSON.stringify(val) !== JSON.stringify(localParsed)){
+          setter(val);
+          try { localStorage.setItem(localKey, JSON.stringify(val)); } catch(e){}
+          changed = true;
+        }
+      } catch(e) { console.warn('sync apply', localKey, e); }
+    };
+    apply('cand_v2', v => { if(Array.isArray(v)) D = v; });
+    apply('cronograma_v2', v => { if(Array.isArray(v)) CRON = v; });
+    apply('votantes_v2', v => { if(v && typeof v === 'object') VOTANTES = { ...VOTANTES, ...v }; });
+    apply('censo_data_v1', v => { if(Array.isArray(v)) CENSO_DATA = v; });
+    apply('org_activos_v1', v => { if(Array.isArray(v)) ORG_ACTIVOS = v; });
+    apply('soporte_data_v1', v => { if(Array.isArray(v)) SOPORTES = v; });
+    apply('firmas_acta_v1', v => { if(Array.isArray(v)) FIRMAS = v; });
+    return changed;
+  } catch(e) { console.warn('syncPullAll:', e.message); return false; }
+}
+
+function _syncPush(localKey){
+  if(!_syncEnabled || !supabaseClient) return;
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(async () => {
+    const syncKey = SYNC_KEYS[localKey]; if(!syncKey) return;
+    try {
+      const raw = localStorage.getItem(localKey);
+      if(raw === null) return;
+      await supabaseClient.from(CONFIG.tabla_config).upsert({
+        [CONFIG.col_config_clave]: 'sync_' + syncKey,
+        [CONFIG.col_config_valor]: raw
+      }, { onConflict: CONFIG.col_config_clave });
+    } catch(e) { console.warn('syncPush', localKey, e.message); }
+  }, 800);
+}
+
+const save=()=>{ persistir(K,D); _syncPush('cand_v2'); };
+const saveCron=()=>{ persistir(K_CRON,CRON); try{ estadoGuardado(); }catch(e){} _syncPush('cronograma_v2'); };
+const saveFirmas=()=>{ persistir(K_FIRMAS,FIRMAS); _syncPush('firmas_acta_v1'); };
+const saveVotantes=()=>{ persistir(K_VOTANTES,VOTANTES); _syncPush('votantes_v2'); };
+const saveCenso=()=>{ persistir(K_CENSO,CENSO_DATA); _syncPush('censo_data_v1'); };
+const saveSoportes=()=>{ persistir(K_SOPORTE,SOPORTES); _syncPush('soporte_data_v1'); };
+
 const esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -2394,7 +2362,7 @@ function inyectarVotosEnBlanco() {
   if (agregados > 0) save();
 }
 
-async function updateOrgActivos() {
+function updateOrgActivos() {
   if(SESSION && !puedeEditar('vCron')){
     toast('⛔ Sin permiso para cambiar los órganos activos');
     document.querySelectorAll('.ck-org').forEach(chk => { chk.checked = ORG_ACTIVOS.includes(chk.value); });
@@ -2402,7 +2370,8 @@ async function updateOrgActivos() {
   }
   ORG_ACTIVOS = [];
   document.querySelectorAll('.ck-org').forEach(chk => { if(chk.checked) ORG_ACTIVOS.push(chk.value); });
-  await guardarEnSupabase(SYNC_KEYS.org_activos_v1, ORG_ACTIVOS);
+  localStorage.setItem(K_ORG_ACTIVOS, JSON.stringify(ORG_ACTIVOS));
+  _syncPush('org_activos_v1');
   inyectarVotosEnBlanco();
   limpiarVotosEnBlancoInvalidos();
   fillSel(); draw(); renderVacantes(); renderDirectorio();
@@ -2639,7 +2608,7 @@ function draw(){
 }
 
 const per=(c,w)=>w==='pri'?c.pri:c.sup;
-async function cyc(id,w,k){
+function cyc(id,w,k){
   const c = D.find(x=>x.id===id);
   if(!c) return;
   if(SESSION && !puedeValidar(k, c)){ toast('⛔ No tienes permiso para marcar esta casilla (solo tu columna y tus candidatos)'); return; }
@@ -2650,7 +2619,7 @@ async function cyc(id,w,k){
   p.ck[k] = ({'':'ok', ok:'x', x:''})[p.ck[k]||''];
   if(!p.ckMeta) p.ckMeta = {};
   p.ckMeta[k] = { v: p.ck[k], by: SESSION?.nombre || SESSION?.username || 'sistema', at: new Date().toISOString() };
-  await save(); // GUARDA EN SUPABASE
+  save();
   const scrollY = window.scrollY;
   draw();
   window.scrollTo(0, scrollY);
@@ -2658,7 +2627,7 @@ async function cyc(id,w,k){
   if(btn) btn.focus({preventScroll:true});
   if(p.ck[k]==='x'){ toast('⚠️ Condición marcada como NO cumple.'); playSound(); }
 }
-async function setNov(id,w,v){
+function setNov(id,w,v){
   if(SESSION && !puedeValidar('nov', D.find(x=>x.id===id))){ toast('⛔ No tienes permiso para cambiar novedades de este candidato'); draw(); return; }
   if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; }
   const c = D.find(x=>x.id===id);
@@ -2666,29 +2635,29 @@ async function setNov(id,w,v){
   p.nov = v;
   if(!p.novMeta) p.novMeta = {};
   p.novMeta = { v: v, by: SESSION?.nombre || SESSION?.username || 'sistema', at: new Date().toISOString() };
-  await save(); // GUARDA EN SUPABASE
+  save();
   const scrollY = window.scrollY;
   draw();
   window.scrollTo(0, scrollY);
   if(v==='Renuncia'){ toast('Renuncia registrada.'); playSound(); }
 }
-async function del(id){ if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } if(confirm('¿Eliminar esta fórmula?')){D=D.filter(x=>x.id!==id); await save(); draw(); toast('Fórmula eliminada')} }
-async function aprobarTodos() { if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } if(!confirm('¿Marcar todas las validaciones como "Cumple"?')) return; let count = 0; D.filter(c => ORG_ACTIVOS.includes(c.org) && c.pri.nombre.toUpperCase() !== 'VOTO EN BLANCO').forEach(c => { const act = CH[c.rol] || []; act.forEach(k => { if (c.pri.ck[k] !== 'x') c.pri.ck[k] = 'ok'; }); if (c.sup) { act.forEach(k => { if (c.sup.ck[k] !== 'x') c.sup.ck[k] = 'ok'; }); } count++; }); await save(); draw(); toast(`✅ Se aprobaron ${count} fórmulas.`); }
+function del(id){ if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } if(confirm('¿Eliminar esta fórmula?')){D=D.filter(x=>x.id!==id);save();draw();toast('Fórmula eliminada')} }
+function aprobarTodos() { if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } if(!confirm('¿Marcar todas las validaciones como "Cumple"?')) return; let count = 0; D.filter(c => ORG_ACTIVOS.includes(c.org) && c.pri.nombre.toUpperCase() !== 'VOTO EN BLANCO').forEach(c => { const act = CH[c.rol] || []; act.forEach(k => { if (c.pri.ck[k] !== 'x') c.pri.ck[k] = 'ok'; }); if (c.sup) { act.forEach(k => { if (c.sup.ck[k] !== 'x') c.sup.ck[k] = 'ok'; }); } count++; }); save(); draw(); toast(`✅ Se aprobaron ${count} fórmulas.`); }
 
 function toggleSem(){document.querySelectorAll('.semrow').forEach(e=>e.classList.toggle('hide',$('f_rol').value!=='Estudiante'))}
 function fillP(pre,p){ p=p||{}; $(pre+'_nombre').value=p.nombre||'';$(pre+'_doc').value=p.doc||'';$(pre+'_tel').value=p.tel||''; $(pre+'_email').value=p.email||'';$(pre+'_foto').value=p.foto||'';$(pre+'_sem').value=p.sem||''; $(pre+'_tot').value=p.tot||'';$(pre+'_nov').value=p.nov||'';$(pre+'_obs').value=p.obs||''; toggleErr(pre); }
 function readP(pre,old){ const est=$('f_rol').value==='Estudiante'; return {nombre:$(pre+'_nombre').value.trim(),doc:$(pre+'_doc').value.trim(),tel:$(pre+'_tel').value.trim(),email:$(pre+'_email').value.trim(),foto:$(pre+'_foto').value.trim(),sem:est?$(pre+'_sem').value:'',tot:est?$(pre+'_tot').value:'',nov:$(pre+'_nov').value,err:$(pre+'_err').value,obs:$(pre+'_obs').value.trim(),ck:(old&&old.ck)||{},ckMeta:(old&&old.ckMeta)||{},novMeta:(old&&old.novMeta)||{}}; }
 function openForm(id){ if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } editId=id||null;const c=id?D.find(x=>x.id===id):{}; $('dt').textContent=id?'Editar candidato':'Agregar candidato'; $('f_rol').value=c.rol||'Estudiante';$('f_org').value=c.org||'Consejo de Facultad'; $('f_fac').value=c.fac||'';$('f_prog').value=c.prog||''; fillP('p',c.pri);fillP('s',c.sup);toggleSem();$('dlg').showModal(); }
-async function saveForm(){ if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const pri=readP('p',editId&&D.find(x=>x.id===editId).pri); if(!pri.nombre){toast('Escribe el nombre del candidato principal');return} const rol = $('f_rol').value; const org = $('f_org').value; const fac = $('f_fac').value; const jornada = $('aJornada') ? $('aJornada').value : '1'; if (jornada === '2') { const ganador1 = D.find(c => c.gan && c.rol === rol && c.org === org && c.fac === fac); const vacantes1 = getVacantesPrimeraVuelta(); const esVacante = vacantes1.some(v => v.rol === rol && v.org === org && v.fac === fac); if (ganador1 && !esVacante) { alert("⚠️ Este cargo ya fue ocupado en la primera vuelta."); return; } } const sup=readP('s',editId&&D.find(x=>x.id===editId).sup); const d={rol,org,fac,prog:$('f_prog').value.trim(),pri,sup:sup.nombre?sup:null}; if(editId)Object.assign(D.find(x=>x.id===editId),d);else D.push({id:uid(),votos:0,gan:false,...d}); await save();$('dlg').close();draw();toast('Candidato guardado'); }
+function saveForm(){ if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const pri=readP('p',editId&&D.find(x=>x.id===editId).pri); if(!pri.nombre){toast('Escribe el nombre del candidato principal');return} const rol = $('f_rol').value; const org = $('f_org').value; const fac = $('f_fac').value; const jornada = $('aJornada') ? $('aJornada').value : '1'; if (jornada === '2') { const ganador1 = D.find(c => c.gan && c.rol === rol && c.org === org && c.fac === fac); const vacantes1 = getVacantesPrimeraVuelta(); const esVacante = vacantes1.some(v => v.rol === rol && v.org === org && v.fac === fac); if (ganador1 && !esVacante) { alert("⚠️ Este cargo ya fue ocupado en la primera vuelta."); return; } } const sup=readP('s',editId&&D.find(x=>x.id===editId).sup); const d={rol,org,fac,prog:$('f_prog').value.trim(),pri,sup:sup.nombre?sup:null}; if(editId)Object.assign(D.find(x=>x.id===editId),d);else D.push({id:uid(),votos:0,gan:false,...d}); save();$('dlg').close();draw();toast('Candidato guardado'); }
 
 const mOrg=v=>{const n=norm(v);return n.includes('direct')?'Consejo Directivo':n.includes('acad')?'Consejo Académico':n.includes('posg')?'Comité de Posgrado':(n.includes('facul')||n.includes('consejo'))?'Consejo de Facultad':v};
 const mRol=v=>{const n=norm(v);return n.startsWith('est')?'Estudiante':(n.startsWith('doc')||n.startsWith('prof'))?'Docente':(n.startsWith('egr')||n.startsWith('gra'))?'Egresado':v};
 
-async function importXL(inp){
+function importXL(inp){
  if(SESSION && !puedeEditar('vSeg')){ toast('⛔ Sin permiso'); return; }
  const f=inp.files[0];if(!f)return;
  const r=new FileReader();
- r.onload=async e=>{
+ r.onload=e=>{
    try {
      const wb=XLSX.read(e.target.result,{type:'array'});
      let n=0;
@@ -2726,7 +2695,7 @@ async function importXL(inp){
      limpiarVotosEnBlancoInvalidos();
      inyectarVotosEnBlanco();
      const repetidos = Math.max(0, antesD + n - D.length);
-     await save(); draw();
+     save(); draw();
      const nota = repetidos ? ` (${repetidos} repetidos descartados)` : '';
      alert(`Se cargaron ${n} registros${nota}.`);
      toast(`✅ ${n} fórmulas cargadas${nota}`);
@@ -2760,8 +2729,8 @@ function listaGan(){
  $('gb').innerHTML = L.length ? L.map(c => { const isPosibleGanador = c._isMax; return `<tr class="${isPosibleGanador ? 'posible-ganador' : ''}"><td><div class="pn"><i class="av">${esc(ini(c.pri.nombre))}</i><div><b>${esc(c.pri.nombre)}</b>${c.sup?`<small>Suplente: ${esc(c.sup.nombre)}</small>`:''}</div></div></td><td><span class="chip ${c.rol}">${c.rol}</span></td><td>${esc(c.org)}</td><td>${esc(c.fac)}</td><td><input class="in" type="number" min="0" value="${c.votos||0}" style="width:90px" onchange="setV('${c.id}','votos',+this.value)"></td><td class="c"><input type="checkbox" ${c.gan?'checked':''} style="width:20px;height:20px;accent-color:var(--oscuro)" onchange="toggleGanador('${c.id}', this.checked)"></td></tr>`; }).join('') : '<tr><td colspan="6" class="empty">No hay fórmulas habilitadas.</td></tr>';
  deshabilitarBotonesEdicion();
 }
-async function toggleGanador(id, isChecked) { if(SESSION && !puedeEditar('vAct')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const candidato = D.find(c => c.id === id); if (!candidato) return; if (isChecked) { const ganadorExistente = D.find(c => c.id !== id && c.gan && c.org === candidato.org && c.rol === candidato.rol && (esGlobal(c.org) || norm(c.fac) === norm(candidato.fac))); if (ganadorExistente) { toast(`⚠️ Ya hay un ganador para este cargo: ${ganadorExistente.pri.nombre}.`, 5000); listaGan(); return; } } candidato.gan = isChecked; await save(); listaGan(); }
-async function setV(id,k,v){ if(SESSION && !puedeEditar('vAct')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } D.find(x=>x.id===id)[k]=v; await save(); }
+function toggleGanador(id, isChecked) { if(SESSION && !puedeEditar('vAct')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const candidato = D.find(c => c.id === id); if (!candidato) return; if (isChecked) { const ganadorExistente = D.find(c => c.id !== id && c.gan && c.org === candidato.org && c.rol === candidato.rol && (esGlobal(c.org) || norm(c.fac) === norm(candidato.fac))); if (ganadorExistente) { toast(`⚠️ Ya hay un ganador para este cargo: ${ganadorExistente.pri.nombre}.`, 5000); listaGan(); return; } } candidato.gan = isChecked; save(); listaGan(); }
+function setV(id,k,v){ if(SESSION && !puedeEditar('vAct')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } D.find(x=>x.id===id)[k]=v;save() }
 
 function renderFirmas(){
   $('firmasGrid').innerHTML = FIRMAS.map((f,i)=>`
@@ -2794,11 +2763,11 @@ function renderFirmas(){
   if (typeof actualizarBotonesQR === 'function') actualizarBotonesQR();
 }
 
-async function toggleDelegado(i, isChecked) { FIRMAS[i].esDelegado = isChecked; FIRMAS[i].cargo = ''; await saveFirmas(); renderFirmas(); }
-async function addFirma(){ FIRMAS.push({nombre:'',cargo:'',esDelegado:false}); await saveFirmas(); renderFirmas(); }
-async function delFirma(i){ if(FIRMAS.length<=1){toast('Debe haber al menos una firma');return;} FIRMAS.splice(i,1); await saveFirmas(); renderFirmas(); }
-async function updateFirma(i,k,v){ FIRMAS[i][k]=v; await saveFirmas(); }
-async function inicializarFirmasOficiales() { if (!FIRMAS.some(f => f.esDelegado)) { FIRMAS = CARGOS_DELEGADO.map(cargo => ({nombre: '', cargo: cargo, esDelegado: true})); await saveFirmas(); } }
+function toggleDelegado(i, isChecked) { FIRMAS[i].esDelegado = isChecked; FIRMAS[i].cargo = ''; saveFirmas(); renderFirmas(); }
+function addFirma(){ FIRMAS.push({nombre:'',cargo:'',esDelegado:false}); saveFirmas(); renderFirmas(); }
+function delFirma(i){ if(FIRMAS.length<=1){toast('Debe haber al menos una firma');return;} FIRMAS.splice(i,1); saveFirmas(); renderFirmas(); }
+function updateFirma(i,k,v){ FIRMAS[i][k]=v; saveFirmas(); }
+function inicializarFirmasOficiales() { if (!FIRMAS.some(f => f.esDelegado)) { FIRMAS = CARGOS_DELEGADO.map(cargo => ({nombre: '', cargo: cargo, esDelegado: true})); saveFirmas(); } }
 
 function firmasOrdenadas(firmasDB) {
   const key = s => (s || '').toLowerCase().trim();
@@ -3155,7 +3124,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       select.id = 'selectFirmanteGrupal';
       select.className = 'in';
       select.style.marginBottom = '16px';
-      const listaFirmantes = FIRMAS; // AHORA VIENE DE SUPABASE
+      const listaFirmantes = JSON.parse(localStorage.getItem('firmas_acta_v1') || '[]');
       const opciones = listaFirmantes.map(f => `<option value="${esc(f.nombre)}|${esc(f.cargo || 'Sin cargo')}">${esc(f.nombre)} - ${esc(f.cargo || 'Sin cargo')}</option>`).join('');
       select.innerHTML = opciones
         ? `<option value="">-- Selecciona tu nombre --</option>` + opciones
@@ -3612,11 +3581,11 @@ function renderCronograma(anim){
   $('cronList').innerHTML = cronListaHTML(vista, hoy, true) || `<p class="empty">${CRON.length ? 'No hay actividades en este filtro.' : 'No hay actividades.'}</p>`;
   deshabilitarBotonesEdicion();
 }
-async function addActividad(){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } $('dtAct').textContent = 'Nueva Actividad'; $('a_nombre').value=''; $('a_fecha').value = new Date().toISOString().slice(0,10); $('a_fin').value=''; $('a_resp').value=''; $('a_desc').value=''; $('a_tipo').value='Otro'; $('a_etapa').value='Preelectoral'; $('a_publica').checked=true; $('dlgAct').dataset.editId = ''; $('dlgAct').showModal(); }
-async function editAct(id){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const a = CRON.find(x=>x.id===id); if(!a) return; $('dtAct').textContent = 'Editar Actividad'; $('a_nombre').value = a.nombre; $('a_fecha').value = a.fecha; $('a_fin').value = a.fechaFin || ''; $('a_resp').value = a.responsable || ''; $('a_desc').value = a.desc || ''; $('a_tipo').value = a.tipo || 'Otro'; $('a_etapa').value = a.etapa || 'Preelectoral'; $('a_publica').checked = !!a.publica; $('dlgAct').dataset.editId = id; $('dlgAct').showModal(); }
-async function saveActividad(){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const nombre = $('a_nombre').value.trim(); if(!nombre){ toast('Escribe un nombre'); return; } const fIni = $('a_fecha').value || new Date().toISOString().slice(0,10); let fFin = $('a_fin').value || ''; if(fFin && fFin < fIni){ toast('La fecha de fin no puede ser anterior'); return; } const editId = $('dlgAct').dataset.editId; if(editId) { const a = CRON.find(x=>x.id===editId); if(a) { a.nombre = nombre; a.fecha = fIni; a.fechaFin = fFin; a.responsable = $('a_resp').value.trim(); a.tipo = $('a_tipo').value; a.etapa = $('a_etapa').value; a.desc = $('a_desc').value.trim(); a.publica = $('a_publica').checked; } } else { CRON.push({id:uid(), nombre, fecha:fIni, fechaFin:fFin, responsable:$('a_resp').value.trim(), tipo:$('a_tipo').value, etapa:$('a_etapa').value, desc:$('a_desc').value.trim(), completado:false, motivo:'', publica:$('a_publica').checked, manual:true}); } await saveCron(); $('dlgAct').close(); renderCronograma(); lanzarNotificacion(editId ? 'Actividad actualizada' : 'Actividad creada', nombre); }
-async function toggleAct(id){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const a = CRON.find(x=>x.id===id); if(a){ a.completado = !a.completado; await saveCron(); renderCronograma(false); if(a.completado){ playSound(); toast('✅ Completada'); } } }
-async function delAct(id){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } if(confirm('¿Eliminar esta actividad?')){ CRON = CRON.filter(x=>x.id!==id); await saveCron(); renderCronograma(false); } }
+function addActividad(){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } $('dtAct').textContent = 'Nueva Actividad'; $('a_nombre').value=''; $('a_fecha').value = new Date().toISOString().slice(0,10); $('a_fin').value=''; $('a_resp').value=''; $('a_desc').value=''; $('a_tipo').value='Otro'; $('a_etapa').value='Preelectoral'; $('a_publica').checked=true; $('dlgAct').dataset.editId = ''; $('dlgAct').showModal(); }
+function editAct(id){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const a = CRON.find(x=>x.id===id); if(!a) return; $('dtAct').textContent = 'Editar Actividad'; $('a_nombre').value = a.nombre; $('a_fecha').value = a.fecha; $('a_fin').value = a.fechaFin || ''; $('a_resp').value = a.responsable || ''; $('a_desc').value = a.desc || ''; $('a_tipo').value = a.tipo || 'Otro'; $('a_etapa').value = a.etapa || 'Preelectoral'; $('a_publica').checked = !!a.publica; $('dlgAct').dataset.editId = id; $('dlgAct').showModal(); }
+function saveActividad(){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const nombre = $('a_nombre').value.trim(); if(!nombre){ toast('Escribe un nombre'); return; } const fIni = $('a_fecha').value || new Date().toISOString().slice(0,10); let fFin = $('a_fin').value || ''; if(fFin && fFin < fIni){ toast('La fecha de fin no puede ser anterior'); return; } const editId = $('dlgAct').dataset.editId; if(editId) { const a = CRON.find(x=>x.id===editId); if(a) { a.nombre = nombre; a.fecha = fIni; a.fechaFin = fFin; a.responsable = $('a_resp').value.trim(); a.tipo = $('a_tipo').value; a.etapa = $('a_etapa').value; a.desc = $('a_desc').value.trim(); a.publica = $('a_publica').checked; } } else { CRON.push({id:uid(), nombre, fecha:fIni, fechaFin:fFin, responsable:$('a_resp').value.trim(), tipo:$('a_tipo').value, etapa:$('a_etapa').value, desc:$('a_desc').value.trim(), completado:false, motivo:'', publica:$('a_publica').checked, manual:true}); } saveCron(); $('dlgAct').close(); renderCronograma(); lanzarNotificacion(editId ? 'Actividad actualizada' : 'Actividad creada', nombre); }
+function toggleAct(id){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const a = CRON.find(x=>x.id===id); if(a){ a.completado = !a.completado; saveCron(); renderCronograma(false); if(a.completado){ playSound(); toast('✅ Completada'); } } }
+function delAct(id){ if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } if(confirm('¿Eliminar esta actividad?')){ CRON = CRON.filter(x=>x.id!==id); saveCron(); renderCronograma(false); } }
 async function descargarCronImagen(elementId, nombreArchivo){
   const node = $(elementId);
   if(!node){ toast('❌ No se encontró el cronograma a descargar'); return; }
@@ -3673,7 +3642,7 @@ function etapasDe(lista){ const extra = [...new Set(lista.map(a=>a.etapa))].filt
 const MESES_ES = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
 function parseFechaExcel(raw){ if(raw === null || raw === undefined || raw === '') return ''; if(raw instanceof Date && !isNaN(raw)) return raw.toISOString().slice(0,10); const pad = x => String(x).padStart(2,'0'); const ok = (y,m,d) => (y>1999 && m>=1 && m<=12 && d>=1 && d<=31) ? `${y}-${pad(m)}-${pad(d)}` : ''; if(typeof raw === 'number' || /^\d{5}(\.\d+)?$/.test(String(raw).trim())){ const num = Number(raw); if(num > 20000) return new Date(Math.round((num - 25569) * 864e5)).toISOString().slice(0,10); } const t = norm(String(raw)).replace(/\s+/g,' '); let m; if((m = t.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/))) return ok(+m[1],+m[2],+m[3]); if((m = t.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/))){ let y = +m[3]; if(y < 100) y += 2000; return ok(y,+m[2],+m[1]); } if((m = t.match(/^(\d{1,2})[ \-\/.]+(?:de )?([a-z]{3,})\.?[ \-\/.]+(?:de |del )?(\d{4})/))){ const mes = MESES_ES[m[2]] || Object.entries(MESES_ES).find(([k]) => k.startsWith(m[2].slice(0,3)))?.[1]; if(mes) return ok(+m[3],mes,+m[1]); } return ''; }
 function migrarCron(){ let cambio = false; CRON.forEach(a=>{ const e = normEtapa(a.etapa); if(a.etapa !== e){ a.etapa = e; cambio = true; } if(!TIPOS_CRON.includes(a.tipo)){ a.tipo = inferTipo(a.nombre); cambio = true; } if(!a.fecha){ a.fecha = new Date().toISOString().slice(0,10); cambio = true; } if(a.responsable === undefined){ const m = String(a.desc||'').match(/^Responsable:\s*(.*?)(?:\.\s*Obs:\s*(.*))?$/s); if(m){ a.responsable = (m[1]||'').trim(); a.desc = (m[2]||'').trim(); } else a.responsable = ''; cambio = true; } }); if(cambio) saveCron(); }
-async function importarCronograma(input) { if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, { type: 'array' }); const clean = h => norm(h).replace(/[^a-z0-9]/g, ''); let arr = null, hdr = -1; for (const sn of workbook.SheetNames) { const a2 = XLSX.utils.sheet_to_json(workbook.Sheets[sn], { header: 1, defval: '', raw: true }); for (let i = 0; i < Math.min(a2.length, 15); i++) { const hs = (a2[i] || []).map(clean); if (hs.some(h => h.includes('actividad') || h === 'nombre') && hs.some(h => h.includes('fecha') || h.includes('inicio'))) { arr = a2; hdr = i; break; } } if (arr) break; } if (!arr) { toast('No encontré las columnas "Actividad" y "Fecha"'); input.value=''; return; } const H = arr[hdr].map(clean); const col = (...names) => { for (const n of names) { const i = H.findIndex(h => h.includes(n)); if (i !== -1) return i; } return -1; }; const iEtapa = col('etapa','fase'); const iNom = col('actividad','nombre'); const iResp = col('responsable'); const iIni = col('fechainicio','fechadeinicio','inicio','fecha'); const iFin = col('fechafin','fechadefin','fechafinal','fin','termina'); const iObs = col('estadoobservacion','estado','observacion'); const iPub = col('visibleenpublico','publico','visible'); const get = (r,i) => i === -1 || r[i] === undefined || r[i] === null ? '' : r[i]; const nuevoCron = []; for (let i = hdr + 1; i < arr.length; i++) { const r = arr[i]; if (!r || !r.some(c => String(c).trim() !== '')) continue; const nombre = String(get(r,iNom)).replace(/\s+/g,' ').trim(); if (!nombre) continue; const etapa = normEtapa(get(r,iEtapa)); const resp = String(get(r,iResp)).trim(); const obs = String(get(r,iObs)).trim(); const fecha = parseFechaExcel(get(r,iIni)) || new Date().toISOString().slice(0,10); let fechaFin = parseFechaExcel(get(r,iFin)); if (fechaFin && fechaFin < fecha) fechaFin = fecha; const nobs = norm(obs); const completado = nobs.includes('complet') || nobs.includes('finaliz') || nobs.includes('realizad') || nobs.includes('cerrad'); const publica = ['si','yes','true','1','x','publico'].includes(norm(get(r,iPub)).replace(/[^a-z0-9]/g,'')); nuevoCron.push({id: uid(),nombre,fecha,fechaFin: fechaFin || '',tipo: inferTipo(nombre),etapa,responsable: resp,desc: obs,completado,motivo: nobs.includes('en curso') ? 'En curso' : '',publica}); } if (nuevoCron.length === 0) { toast('No se encontraron actividades válidas'); input.value = ''; return; } const manuales = CRON.filter(a=>a.manual); CRON = nuevoCron.concat(manuales); await saveCron(); renderCronograma(); toast(`✅ ${nuevoCron.length} actividades cargadas`); input.value = ''; } catch (error) { console.error(error); toast('Error al procesar el archivo'); } }; reader.readAsArrayBuffer(file); }
+function importarCronograma(input) { if(SESSION && !puedeEditar('vCron')){ toast('⛔ Sin permiso'); return; } const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, { type: 'array' }); const clean = h => norm(h).replace(/[^a-z0-9]/g, ''); let arr = null, hdr = -1; for (const sn of workbook.SheetNames) { const a2 = XLSX.utils.sheet_to_json(workbook.Sheets[sn], { header: 1, defval: '', raw: true }); for (let i = 0; i < Math.min(a2.length, 15); i++) { const hs = (a2[i] || []).map(clean); if (hs.some(h => h.includes('actividad') || h === 'nombre') && hs.some(h => h.includes('fecha') || h.includes('inicio'))) { arr = a2; hdr = i; break; } } if (arr) break; } if (!arr) { toast('No encontré las columnas "Actividad" y "Fecha"'); input.value=''; return; } const H = arr[hdr].map(clean); const col = (...names) => { for (const n of names) { const i = H.findIndex(h => h.includes(n)); if (i !== -1) return i; } return -1; }; const iEtapa = col('etapa','fase'); const iNom = col('actividad','nombre'); const iResp = col('responsable'); const iIni = col('fechainicio','fechadeinicio','inicio','fecha'); const iFin = col('fechafin','fechadefin','fechafinal','fin','termina'); const iObs = col('estadoobservacion','estado','observacion'); const iPub = col('visibleenpublico','publico','visible'); const get = (r,i) => i === -1 || r[i] === undefined || r[i] === null ? '' : r[i]; const nuevoCron = []; for (let i = hdr + 1; i < arr.length; i++) { const r = arr[i]; if (!r || !r.some(c => String(c).trim() !== '')) continue; const nombre = String(get(r,iNom)).replace(/\s+/g,' ').trim(); if (!nombre) continue; const etapa = normEtapa(get(r,iEtapa)); const resp = String(get(r,iResp)).trim(); const obs = String(get(r,iObs)).trim(); const fecha = parseFechaExcel(get(r,iIni)) || new Date().toISOString().slice(0,10); let fechaFin = parseFechaExcel(get(r,iFin)); if (fechaFin && fechaFin < fecha) fechaFin = fecha; const nobs = norm(obs); const completado = nobs.includes('complet') || nobs.includes('finaliz') || nobs.includes('realizad') || nobs.includes('cerrad'); const publica = ['si','yes','true','1','x','publico'].includes(norm(get(r,iPub)).replace(/[^a-z0-9]/g,'')); nuevoCron.push({id: uid(),nombre,fecha,fechaFin: fechaFin || '',tipo: inferTipo(nombre),etapa,responsable: resp,desc: obs,completado,motivo: nobs.includes('en curso') ? 'En curso' : '',publica}); } if (nuevoCron.length === 0) { toast('No se encontraron actividades válidas'); input.value = ''; return; } const manuales = CRON.filter(a=>a.manual); CRON = nuevoCron.concat(manuales); saveCron(); renderCronograma(); toast(`✅ ${nuevoCron.length} actividades cargadas`); input.value = ''; } catch (error) { console.error(error); toast('Error al procesar el archivo'); } }; reader.readAsArrayBuffer(file); }
 setInterval(()=>{ const hoy = new Date().toISOString().slice(0,10); CRON.forEach(a=>{ if(!a.completado && a.fecha === hoy && !a._notificado){ a._notificado = true; lanzarNotificacion('Recordatorio: '+a.nombre, 'Actividad programada para hoy'); } }); }, 60000);
 
 const fmt = n => Number(n||0).toLocaleString('es-CO');
@@ -3712,9 +3681,9 @@ function renderCensoData() {
   $('tablaCensoDetalle').innerHTML = filas.map((d,i) => `<tr><td class="c">${rankBadge(i)}</td><td><b>${esc(d.fac)}</b></td><td class="c">${fmt(d.est)}</td><td class="c">${fmt(d.doc)}</td><td class="c">${fmt(d.egr)}</td><td class="c" style="color:var(--naranja);font-weight:700;">${fmt(d.inc)}</td><td class="c"><b>${fmt(d.t)}</b></td><td>${barCell(Math.round(d.t/maxT*100), (totalReg?(d.t/totalReg*100).toFixed(1):0)+'%', 'g')}</td></tr>`).join('');
   $('tfootCensoDetalle').innerHTML = `<tr><td></td><td>TOTAL</td><td class="c">${fmt(tEst)}</td><td class="c">${fmt(tDoc)}</td><td class="c">${fmt(tEgr)}</td><td class="c">${fmt(tInc)}</td><td class="c">${fmt(totalReg)}</td><td>100%</td></tr>`;
 }
-async function procesarExcelCenso(input) { if(SESSION && !puedeEditar('vVotantes')){ toast('⛔ Sin permiso'); return; } const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = async function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const rows = XLSX.utils.sheet_to_json(firstSheet, {defval: ''}); if(rows.length === 0) { toast('El archivo está vacío'); return; } CENSO_DATA = []; let totalHab = 0, incCount = 0; rows.forEach(row => { const r = {}; Object.keys(row).forEach(k => { const key = norm(k).replace(/[^a-z]/g, ''); r[key] = row[k]; }); const facStr = normFacultad(String(r['facultad'] || r['dependencia'] || '')); if(!facStr) return; const est = Number(r['estudiantes'] || r['est'] || 0); const doc = Number(r['docentes'] || r['doc'] || 0); const egr = Number(r['egresados'] || r['egr'] || 0); const inc = Number(r['inclusiones'] || r['inc'] || r['presenso'] || 0); const total = est + doc + egr + inc; CENSO_DATA.push({ fac: facStr, est, doc, egr, inc, total }); totalHab += total; incCount += inc; }); await saveCenso(); if(!VOTANTES.totalCenso || VOTANTES.totalCenso === 0) { VOTANTES.totalCenso = totalHab; } VOTANTES.totalHabilitados = totalHab; VOTANTES.fechaCorte = new Date().toISOString(); await saveVotantes(); renderCensoData(); $('statusCenso').textContent = `✅ ${CENSO_DATA.length} registros procesados.`; $('statusCenso').style.color = 'var(--ok)'; lanzarNotificacion('Censo cargado', `${totalHab} habilitados (${incCount} inclusiones).`); input.value = ''; } catch (error) { console.error(error); toast('Error al procesar el archivo.'); } }; reader.readAsArrayBuffer(file); }
+function procesarExcelCenso(input) { if(SESSION && !puedeEditar('vVotantes')){ toast('⛔ Sin permiso'); return; } const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheet = workbook.Sheets[workbook.SheetNames[0]]; const rows = XLSX.utils.sheet_to_json(firstSheet, {defval: ''}); if(rows.length === 0) { toast('El archivo está vacío'); return; } CENSO_DATA = []; let totalHab = 0, incCount = 0; rows.forEach(row => { const r = {}; Object.keys(row).forEach(k => { const key = norm(k).replace(/[^a-z]/g, ''); r[key] = row[k]; }); const facStr = normFacultad(String(r['facultad'] || r['dependencia'] || '')); if(!facStr) return; const est = Number(r['estudiantes'] || r['est'] || 0); const doc = Number(r['docentes'] || r['doc'] || 0); const egr = Number(r['egresados'] || r['egr'] || 0); const inc = Number(r['inclusiones'] || r['inc'] || r['presenso'] || 0); const total = est + doc + egr + inc; CENSO_DATA.push({ fac: facStr, est, doc, egr, inc, total }); totalHab += total; incCount += inc; }); saveCenso(); if(!VOTANTES.totalCenso || VOTANTES.totalCenso === 0) { VOTANTES.totalCenso = totalHab; } VOTANTES.totalHabilitados = totalHab; VOTANTES.fechaCorte = new Date().toISOString(); saveVotantes(); renderCensoData(); $('statusCenso').textContent = `✅ ${CENSO_DATA.length} registros procesados.`; $('statusCenso').style.color = 'var(--ok)'; lanzarNotificacion('Censo cargado', `${totalHab} habilitados (${incCount} inclusiones).`); input.value = ''; } catch (error) { console.error(error); toast('Error al procesar el archivo.'); } }; reader.readAsArrayBuffer(file); }
 function descargarPlantillaCenso() { const data = [['Facultad', 'Estudiantes', 'Docentes', 'Egresados', 'Presenso / Inclusiones'],['Facultad de Ingeniería', 1200, 150, 80, 5],['Facultad de Medicina', 800, 300, 40, 2]]; const ws = XLSX.utils.aoa_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Censo'); XLSX.writeFile(wb, 'plantilla-censo.xlsx'); }
-async function guardarVotantes(){ if(SESSION && !puedeEditar('vVotantes')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const total = Number($('inpTotalCenso').value); const hab = Number($('inpTotalHabilitados').value); if(total < 0 || hab < 0){ toast('No pueden ser negativos'); return; } if(hab > total){ toast('Los habilitados no pueden superar el total'); return; } const now = new Date(); VOTANTES.totalCenso = total; VOTANTES.totalHabilitados = hab; VOTANTES.fechaCorte = now.toISOString(); if(!VOTANTES.historial) VOTANTES.historial = []; VOTANTES.historial.push({fechaCorte: now.toISOString(), totalCenso: total, totalHabilitados: hab}); await saveVotantes(); renderCensoData(); lanzarNotificacion('Censo actualizado', `${hab} habilitados de ${total}.`); }
+function guardarVotantes(){ if(SESSION && !puedeEditar('vVotantes')){ toast('⛔ Sin permiso'); return; } if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; } const total = Number($('inpTotalCenso').value); const hab = Number($('inpTotalHabilitados').value); if(total < 0 || hab < 0){ toast('No pueden ser negativos'); return; } if(hab > total){ toast('Los habilitados no pueden superar el total'); return; } const now = new Date(); VOTANTES.totalCenso = total; VOTANTES.totalHabilitados = hab; VOTANTES.fechaCorte = now.toISOString(); if(!VOTANTES.historial) VOTANTES.historial = []; VOTANTES.historial.push({fechaCorte: now.toISOString(), totalCenso: total, totalHabilitados: hab}); saveVotantes(); renderCensoData(); lanzarNotificacion('Censo actualizado', `${hab} habilitados de ${total}.`); }
 
 function renderAnalitica(){
   const ACT = D.filter(c => ORG_ACTIVOS.includes(c.org));
@@ -3771,7 +3740,7 @@ function expVacantesXL() { const facs = FACULTADES; const obligatorios = {'Conse
 function descargarPlantillaVotos() { const data = [['Tipo', 'Facultad', 'Rol', 'Doc. principal', 'Nombre1', 'Email1', 'Teléfono1', 'Doc. suplente', 'Nombre2', 'Email2', 'Teléfono2', 'Estado', 'Votos'],['Consejo Facultad', 'Facultad de Ingenieria', 'Docente', '4521879813', 'Fidel Andres Perez Ramirez Aristizabal', 'dasffgmirez@unbosque.edu.co', '23443328140', 'Martha Julia Perez Lopez Maldonado', 'lmartha@unbosque.edu.co', '', 'Aprobado', 140]]; const ws = XLSX.utils.aoa_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Plantilla_Votos'); XLSX.writeFile(wb, 'plantilla-carga-votos.xlsx'); }
 function calcularGanadores(){ const grupos = new Map(); D.forEach(c => { if(!ORG_ACTIVOS.includes(c.org)) return; const key = `${c.org}|${esGlobal(c.org) ? '' : norm(c.fac)}|${c.rol}`; if(!grupos.has(key)) grupos.set(key, []); grupos.get(key).push(c); }); let marcados = 0, grupoConVotos = 0; grupos.forEach(arr => { const elegibles = arr.filter(c => { try { return habil(c); } catch(e){ return true; } }); const max = Math.max(0, ...elegibles.map(c => c.votos || 0)); if(max <= 0) return; grupoConVotos++; arr.forEach(c => { c.gan = elegibles.includes(c) && (c.votos || 0) === max; if(c.gan) marcados++; }); }); return {marcados, grupos: grupoConVotos}; }
 function parseVotos(v){ if(typeof v === 'number') return isFinite(v) ? v : 0; let t = String(v ?? '').trim(); if(!t) return 0; if(/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g,''); t = t.replace(/\s/g,'').replace(',', '.'); const n = Number(t.replace(/[^\d.\-]/g,'')); return isFinite(n) ? n : 0; }
-async function procesarArchivosVotos(input) {
+function procesarArchivosVotos(input) {
   if(SESSION && !puedeEditar('vCargaVotos')){ toast('⛔ Sin permiso'); return; }
   if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; }
   const files = [...input.files];
@@ -3787,7 +3756,7 @@ async function procesarArchivosVotos(input) {
     status('⏳ Preparando archivos...', 'var(--naranja)');
     for(let i = 0; i < files.length; i++){ const f = files[i]; const info = {nombre: f.name, filas: 0, actualizados: 0, nuevos: 0, omitidos: 0, votos: 0, error: ''}; status(`⏳ Procesando archivo ${i+1} de ${files.length}: <b>${esc(f.name)}</b>...`, 'var(--naranja)'); await pausa(); try { const rows = await leerArchivo(f); if(rows.length === 0) info.error = 'El archivo no tiene filas'; else procesarFilas(rows, info); } catch(err){ console.error(err); info.error = err.message || 'Error al leer el archivo'; } resumen.archivos.push(info); resumen.leidas += info.filas; resumen.actualizados += info.actualizados; resumen.nuevos += info.nuevos; resumen.omitidos += info.omitidos; resumen.votos += info.votos; }
     let gan = {marcados:0, grupos:0};
-    try { limpiarVotosEnBlancoInvalidos(); gan = calcularGanadores(); await save(); draw(); try { if(typeof renderAnalitica === 'function') renderAnalitica(); } catch(e){} } catch(err){ console.error(err); }
+    try { limpiarVotosEnBlancoInvalidos(); gan = calcularGanadores(); save(); draw(); try { if(typeof renderAnalitica === 'function') renderAnalitica(); } catch(e){} } catch(err){ console.error(err); }
     const procesados = resumen.actualizados + resumen.nuevos;
     const chips = `<span class="tag g">✔ ${procesados} registros procesados</span><span class="tag b">↻ ${resumen.actualizados} actualizados</span><span class="tag p">＋ ${resumen.nuevos} nuevos</span><span class="tag o">⚠ ${resumen.omitidos} omitidos</span><span class="tag t">🗳 ${fmt(resumen.votos)} votos</span><span class="tag g">🏆 ${gan.marcados} ganadores</span>`;
     const detalle = resumen.archivos.map(a => `<div style="font-weight:500;font-size:13px;margin-top:4px;color:${a.error?'#b0332b':'var(--mut)'}">📄 ${esc(a.nombre)} — ${a.error ? esc(a.error) : `${a.filas} filas · ${a.actualizados} actualizados · ${a.nuevos} nuevos · ${a.omitidos} omitidos`}</div>`).join('');
@@ -3804,7 +3773,7 @@ dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.clas
 dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
 dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); const files = e.dataTransfer.files; if(files.length > 0) { $('votosFileInput').files = files; procesarArchivosVotos($('votosFileInput')); } });
 
-async function guardarSoporte() {
+function guardarSoporte() {
   const rol = ROLES[SESSION?.rol];
   const puedeRegistrar = puedeEditar('vSoporte') || SESSION?.rol === 'agente_mesa';
   if(SESSION && !puedeRegistrar){ toast('⛔ Sin permiso'); return; }
@@ -3823,21 +3792,21 @@ async function guardarSoporte() {
   if($('sop_forms').checked) canales.push('Forms');
   const nuevo = {id: uid(),fecha: new Date().toLocaleString('es-CO'),nombre,doc,motivo,canales,gestor,solucionado: $('sop_solucionado').value === 'si',observaciones: $('sop_observaciones').value.trim()};
   SOPORTES.push(nuevo);
-  await saveSoportes();
+  saveSoportes();
   ['sop_nombre','sop_doc','sop_motivo','sop_gestor','sop_observaciones'].forEach(id => $(id).value='');
   ['sop_tel','sop_teams','sop_presencial','sop_correo','sop_whatsapp','sop_forms'].forEach(id => $(id).checked=false);
   $('sop_solucionado').value = 'no';
   renderSoportes();
   toast('✅ Caso registrado');
 }
-async function toggleSoporteSolucionado(id) {
+function toggleSoporteSolucionado(id) {
   const puede = puedeEditar('vSoporte') || SESSION?.rol === 'agente_mesa';
   if(SESSION && !puede){ toast('⛔ Sin permiso'); return; }
   if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; }
   const s = SOPORTES.find(x => x.id === id);
-  if (s) { s.solucionado = !s.solucionado; await saveSoportes(); renderSoportes(); toast(s.solucionado ? '✅ Solucionado' : '⏳ Pendiente'); }
+  if (s) { s.solucionado = !s.solucionado; saveSoportes(); renderSoportes(); toast(s.solucionado ? '✅ Solucionado' : '⏳ Pendiente'); }
 }
-async function editarSoporte(id){
+function editarSoporte(id){
   const puede = puedeEditar('vSoporte') || SESSION?.rol === 'agente_mesa';
   if(SESSION && !puede){ toast('⛔ Sin permiso'); return; }
   if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; }
@@ -3846,7 +3815,7 @@ async function editarSoporte(id){
   const nuevaObs = prompt('Observaciones:', s.observaciones || '');
   if(nuevaObs === null) return;
   s.observaciones = nuevaObs.trim();
-  await saveSoportes(); renderSoportes(); toast('✅ Caso actualizado');
+  saveSoportes(); renderSoportes(); toast('✅ Caso actualizado');
 }
 const CANAL_INFO = {'Teléfono':['📞','b'],'Teams':['💬','p'],'Presencial':['🏢','o'],'Correo':['✉️','t'],'WhatsApp':['🟢','g'],'Forms':['📋','r']};
 const AV_COLORS = ['#0B7A4B','#1f6fd1','#7d3c98','#d9730d','#1a9a86','#d1433a','#5b6b73'];
@@ -3891,19 +3860,19 @@ function renderSoportes() {
   deshabilitarBotonesEdicion();
 }
 function expSoporteXL(){ if(!SOPORTES.length){ toast('No hay casos para exportar'); return; } const rows = SOPORTES.map(x => ({ 'Fecha / Hora':x.fecha, 'Nombre':x.nombre, 'Documento':x.doc, 'Motivo':x.motivo, 'Canales':(x.canales||[]).join(', '), 'Gestionado por':x.gestor||'', 'Estado':x.solucionado?'Solucionado':'Pendiente', 'Observaciones':x.observaciones||'' })); const ws = XLSX.utils.json_to_sheet(rows); ws['!cols'] = [{wch:20},{wch:28},{wch:14},{wch:34},{wch:24},{wch:24},{wch:14},{wch:40}]; const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Soporte'); XLSX.writeFile(wb, 'registro-soporte.xlsx'); }
-async function delSoporte(id) {
+function delSoporte(id) {
   if(SESSION?.rol === 'agente_mesa'){ toast('⛔ No puedes eliminar casos'); return; }
   if(SESSION && !puedeEditar('vSoporte')){ toast('⛔ Sin permiso'); return; }
   if(ELECCIONES_CERRADAS && SESSION?.rol !== 'administrador'){ toast('🔒 Elecciones cerradas'); return; }
-  if(confirm('¿Eliminar este registro?')) { SOPORTES = SOPORTES.filter(x => x.id !== id); await saveSoportes(); renderSoportes(); }
+  if(confirm('¿Eliminar este registro?')) { SOPORTES = SOPORTES.filter(x => x.id !== id); saveSoportes(); renderSoportes(); }
 }
 function descargarPlantillaForms() { const data = [['Nombre Completo', 'Documento', 'Motivo del Soporte', 'Gestor', 'Canales (separados por coma)', 'Solucionado (SI/NO)', 'Observaciones'],['Juan Pérez', '10203040', 'No aparece en el censo', 'Coordinador Electoral', 'WhatsApp, Forms', 'NO', 'Se escaló a sistemas'],['Ana Gómez', '10203041', 'Problema con el voto', 'Soporte Técnico', 'Teléfono, Correo', 'SI', 'Se reinició la contraseña']]; const ws = XLSX.utils.aoa_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Plantilla_Forms'); XLSX.writeFile(wb, 'plantilla-forms-soporte.xlsx'); }
-async function procesarExcelForms(input) {
+function procesarExcelForms(input) {
   if(SESSION?.rol === 'agente_mesa'){ toast('⛔ No tienes permiso para importar Forms'); input.value=''; return; }
   if(SESSION && !puedeEditar('vSoporte')){ toast('⛔ Sin permiso'); return; }
   const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = async function(e) {
+  reader.onload = function(e) {
     try {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array' });
@@ -3929,7 +3898,7 @@ async function procesarExcelForms(input) {
         SOPORTES.push({id: uid(),fecha: new Date().toLocaleString('es-CO'),nombre,doc,motivo,canales: canalesValidos.length > 0 ? canalesValidos : ['Forms'],gestor,solucionado,observaciones: obs});
         count++;
       });
-      if (count > 0) { await saveSoportes(); renderSoportes(); $('statusForms').textContent = `✅ ${count} casos importados.`; lanzarNotificacion('Soporte Forms', `Se importaron ${count} registros.`); }
+      if (count > 0) { saveSoportes(); renderSoportes(); $('statusForms').textContent = `✅ ${count} casos importados.`; lanzarNotificacion('Soporte Forms', `Se importaron ${count} registros.`); }
       else { toast('No se encontraron registros válidos.'); }
       input.value = '';
     } catch (error) { console.error(error); toast('Error al procesar el archivo.'); }
@@ -3945,18 +3914,11 @@ function renderDirectorio() {
   $('tablaGanadores').innerHTML = ganadores.map(c => { const sup = c.sup || {}; const facText = esGlobal(c.org) ? 'N/A' : c.fac; return `<tr><td><b>${esc(c.org)}</b><br><small>${esc(facText)}</small></td><td><span class="chip ${c.rol}">${esc(c.rol)}</span></td><td><b>P: ${esc(c.pri.nombre)}</b><br><small>S: ${esc(sup.nombre || 'Sin suplente')}</small></td><td>P: ${esc(c.pri.doc)}<br><small>S: ${esc(sup.doc || '-')}</small></td><td>P: ${esc(c.pri.email || 'No registra')}<br><small>S: ${esc(sup.email || '-')}</small></td><td>P: ${esc(c.pri.tel || 'No registra')}<br><small>S: ${esc(sup.tel || '-')}</small></td></tr>`; }).join('');
 }
 function expGanadoresXL() { const orgFil = $('gOrgFilter').value; const facFil = $('gFacFilter').value; const ganadores = D.filter(c => c.gan && habil(c) && ORG_ACTIVOS.includes(c.org) && (!orgFil || c.org === orgFil) && (!facFil || c.fac === facFil)); const aoa = [['Órgano', 'Facultad', 'Rol', 'Nombre Principal', 'Documento P', 'Correo P', 'Celular P', 'Nombre Suplente', 'Documento S', 'Correo S', 'Celular S']]; ganadores.forEach(c => { const sup = c.sup || {}; aoa.push([c.org, esGlobal(c.org) ? 'N/A' : c.fac, c.rol, c.pri.nombre, c.pri.doc, c.pri.email || '', c.pri.tel || '', sup.nombre || '', sup.doc || '', sup.email || '', sup.tel || '']); }); const ws = XLSX.utils.aoa_to_sheet(aoa); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Directorio'); XLSX.writeFile(wb, 'directorio-ganadores.xlsx'); toast('Directorio descargado'); }
-async function demo(){ const p=(nombre,doc,email,tel,sem,tot,ck,nov)=>({nombre,doc,email,tel,sem,tot,ck:ck||{},nov:nov||'',obs:''}); D.push({id:uid(),votos:0,gan:false,rol:'Estudiante',org:'Consejo de Facultad',fac:'Facultad de Ingeniería',prog:'Sistemas',pri:p('Ana Pérez','1001','ana@unbosque.edu.co','3001234567','5','10',{sg:'ok',fp:'ok'}),sup:p('Luis Gómez','1002','luis@unbosque.edu.co','3007654321','1','10')},{id:uid(),votos:0,gan:false,rol:'Docente',org:'Consejo Académico',fac:'N/A',prog:'Biología',pri:p('Marta Ruiz','1003','marta@unbosque.edu.co','3101112222','','',{th:'ok'}),sup:p('Jorge León','1006','jorge@unbosque.edu.co','3153334444','','',{th:'ok'},'Renuncia')},{id:uid(),votos:0,gan:false,rol:'Egresado',org:'Comité de Posgrado',fac:'Facultad de Ciencias',prog:'Maestría en Química',pri:p('Carlos Díaz','1004','carlos@unbosque.edu.co','3205556666','','',{eg:'x'}),sup:p('Elena Rojas','1007','elena@unbosque.edu.co','3187778888','','',{eg:'ok'})}); await save(); draw(); }
+function demo(){ const p=(nombre,doc,email,tel,sem,tot,ck,nov)=>({nombre,doc,email,tel,sem,tot,ck:ck||{},nov:nov||'',obs:''}); D.push({id:uid(),votos:0,gan:false,rol:'Estudiante',org:'Consejo de Facultad',fac:'Facultad de Ingeniería',prog:'Sistemas',pri:p('Ana Pérez','1001','ana@unbosque.edu.co','3001234567','5','10',{sg:'ok',fp:'ok'}),sup:p('Luis Gómez','1002','luis@unbosque.edu.co','3007654321','1','10')},{id:uid(),votos:0,gan:false,rol:'Docente',org:'Consejo Académico',fac:'N/A',prog:'Biología',pri:p('Marta Ruiz','1003','marta@unbosque.edu.co','3101112222','','',{th:'ok'}),sup:p('Jorge León','1006','jorge@unbosque.edu.co','3153334444','','',{th:'ok'},'Renuncia')},{id:uid(),votos:0,gan:false,rol:'Egresado',org:'Comité de Posgrado',fac:'Facultad de Ciencias',prog:'Maestría en Química',pri:p('Carlos Díaz','1004','carlos@unbosque.edu.co','3205556666','','',{eg:'x'}),sup:p('Elena Rojas','1007','elena@unbosque.edu.co','3187778888','','',{eg:'ok'})}); save();draw(); }
 
 function descargarRespaldo() { const data = { D, CRON, FIRMAS, VOTANTES, CENSO_DATA, SOPORTES, fecha: new Date().toISOString() }; const a = document.createElement('a'); a.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))); a.setAttribute('download', 'respaldo_elecciones.json'); document.body.appendChild(a); a.click(); a.remove(); toast('Respaldo descargado'); }
-async function guardarYLimpiar() { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } if(!confirm('Esto descarga un respaldo y BORRA todos los datos de Supabase. ¿Continuar?')) return; if(!confirm('¿Estás seguro?')) return; const backup = { D, CRON, FIRMAS, VOTANTES, CENSO_DATA, SOPORTES, ORG_ACTIVOS }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", "respaldo_elecciones.json"); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); 
-  // Limpiar Supabase
-  await supabaseClient.from(CONFIG.tabla_estado).delete().in('clave', Object.values(SYNC_KEYS));
-  toast('Datos borrados de Supabase. Recargando...');
-  setTimeout(() => { window.location.reload(); }, 1500);
-}
-async function importarRespaldo(input) { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = async function(e) { try { const data = JSON.parse(e.target.result); if(data.D) D = data.D; if(data.CRON) CRON = data.CRON; if(data.FIRMAS) FIRMAS = data.FIRMAS; if(data.VOTANTES) VOTANTES = data.VOTANTES; if(data.CENSO_DATA) CENSO_DATA = data.CENSO_DATA; if(data.SOPORTES) SOPORTES = data.SOPORTES; if(data.ORG_ACTIVOS) ORG_ACTIVOS = data.ORG_ACTIVOS; 
-  await save(); await saveCron(); await saveFirmas(); await saveVotantes(); await saveCenso(); await saveSoportes(); await guardarEnSupabase(SYNC_KEYS.org_activos_v1, ORG_ACTIVOS);
-  toast('Datos importados a Supabase. Recargando...'); setTimeout(() => { window.location.reload(); }, 1500); } catch (error) { console.error(error); toast('Error al importar el archivo.'); } input.value = ''; }; reader.readAsText(file); }
+function guardarYLimpiar() { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } if(!confirm('Esto descarga un respaldo y BORRA todos los datos. ¿Continuar?')) return; if(!confirm('¿Estás seguro?')) return; const backup = { D, CRON, FIRMAS, VOTANTES, CENSO_DATA, SOPORTES, ORG_ACTIVOS }; const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup)); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", "respaldo_elecciones.json"); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); localStorage.removeItem(K); localStorage.removeItem(K_CRON); localStorage.removeItem(K_FIRMAS); localStorage.removeItem(K_VOTANTES); localStorage.removeItem(K_CENSO); localStorage.removeItem(K_ORG_ACTIVOS); localStorage.removeItem(K_SOPORTE); idbClear(); toast('Respaldo descargado. Recargando...'); setTimeout(() => { window.location.reload(); }, 1500); }
+function importarRespaldo(input) { if(SESSION?.rol !== 'administrador'){ toast('Solo el administrador'); return; } const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = function(e) { try { const data = JSON.parse(e.target.result); if(data.D) D = data.D; if(data.CRON) CRON = data.CRON; if(data.FIRMAS) FIRMAS = data.FIRMAS; if(data.VOTANTES) VOTANTES = data.VOTANTES; if(data.CENSO_DATA) CENSO_DATA = data.CENSO_DATA; if(data.SOPORTES) SOPORTES = data.SOPORTES; if(data.ORG_ACTIVOS) ORG_ACTIVOS = data.ORG_ACTIVOS; save(); saveCron(); saveFirmas(); saveVotantes(); saveCenso(); saveSoportes(); localStorage.setItem(K_ORG_ACTIVOS, JSON.stringify(ORG_ACTIVOS)); toast('Datos importados. Recargando...'); setTimeout(() => { window.location.reload(); }, 1500); } catch (error) { console.error(error); toast('Error al importar el archivo.'); } input.value = ''; }; reader.readAsText(file); }
 
 (async function verificarTokenReset(){
   const params = new URLSearchParams(window.location.search);
@@ -3984,6 +3946,21 @@ async function importarRespaldo(input) { if(SESSION?.rol !== 'administrador'){ t
     window.history.replaceState({}, '', window.location.pathname);
   }
 })();
+
+normalizarFacultadesGlobal();
+normalizarNombresGlobal();
+document.querySelectorAll('.ck-org').forEach(chk => { chk.checked = ORG_ACTIVOS.includes(chk.value); });
+inyectarVotosEnBlanco(); 
+limpiarVotosEnBlancoInvalidos();
+fillSel();
+draw();
+migrarCron();
+renderCronograma();
+inicializarFirmasOficiales();
+renderFirmas();
+renderCensoData(); 
+renderVacantes();
+renderSoportes();
 
 /* =====================================================================
    PERMISOS: UI de usuarios, vista de cronograma, alcance y solo-lectura
@@ -4141,7 +4118,7 @@ function _guardar(nombre, modulo){
     document.body.classList.add('logged-in'); document.body.classList.remove('logged-out');
     if (SESSION.rol === 'leer') SESSION.rol = 'lectura';
     saveSession();
-    await aplicarSesion();
+    aplicarSesion();
     
     if(supabaseClient){
       try {
@@ -4178,6 +4155,21 @@ function _guardar(nombre, modulo){
 })();
 
 setInterval(async () => { if(SESSION && supabaseClient){ await cargarEstadoElecciones(); actualizarBannerCierre(); } }, 60000);
+
+// Pull periódico para mantener datos sincronizados entre usuarios
+setInterval(async () => {
+  if(!SESSION || !_syncEnabled || document.hidden) return;
+  const changed = await syncPullAll();
+  if(changed){
+    try { fillSel(); } catch(e){}
+    const tabActiva = document.querySelector('main > section:not(.hide)')?.id;
+    if(tabActiva === 'vCron') renderCronograma(false);
+    if(tabActiva === 'vSeg') { aplicarAlcanceSeguimiento(); draw(); }
+    if(tabActiva === 'vVotantes') renderCensoData();
+    if(tabActiva === 'vSoporte') renderSoportes();
+    if(tabActiva === 'vAct') renderFirmas();
+  }
+}, 20000);
 </script>
 </body>
 </html>
