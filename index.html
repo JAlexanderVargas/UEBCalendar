@@ -4143,6 +4143,17 @@ function aplicarModoLectura(){
     if(b.textContent !== txt) b.textContent = txt;
     const ocultar = !(ro && !validadorSeg);
     if(b.hidden !== ocultar) b.hidden = ocultar;
+    if(m.key === 'vCron'){
+      let h = sec.querySelector(':scope > .cron-sync-hint');
+      const mostrar = !!supabaseClient && Array.isArray(CRON) && CRON.length === 0 && !puedeEditar('vCron');
+      if(mostrar && !h){
+        h = document.createElement('div'); h.className = 'ro-banner cron-sync-hint';
+        h.style.cssText = 'background:#fdecea;border-color:#f3b8b2;color:#8f1f16';
+        h.innerHTML = '☁ No llegó ninguna actividad desde la nube. Probablemente el administrador aún no la ha sincronizado o Supabase está bloqueando la lectura. <button class="btn" style="margin-left:auto" onclick="mostrarDiagnosticoSync()">Ver diagnóstico</button>';
+        const b0 = sec.querySelector(':scope > .ro-banner'); if(b0) b0.after(h); else sec.prepend(h);
+      }
+      if(h && h.hidden !== !mostrar) h.hidden = !mostrar;
+    }
     sec.querySelectorAll(_LOCK_SEL).forEach(el => {
       if(el.tagName === 'TEXTAREA') { if(el.readOnly !== ro) el.readOnly = ro; }
       else if(el.disabled !== ro) el.disabled = ro;
