@@ -4258,6 +4258,8 @@ async function _syncSubir(key){
     const raw = JSON.stringify(valor);
     const {error} = await supabaseClient.from(CONFIG.tabla_config).upsert({[CONFIG.col_config_clave]: SYNC_PREFIX+key, [CONFIG.col_config_valor]: raw}, {onConflict: CONFIG.col_config_clave});
     if(error) throw error;
+    const chk = await _syncLeer(key);
+    if(!chk.existe || chk.raw !== raw) throw new Error('La nube NO guardó el cambio (permisos RLS de la tabla «'+CONFIG.tabla_config+'» bloquean escribir/actualizar). Ejecuta supabase_permisos.sql.');
     _syncRemoto[key] = raw; delete _syncSucio[key]; _syncAvisado[key] = false;
     setSyncBadge('ok');
   }catch(e){ _syncSucio[key] = true; _syncAvisar(key, e); }
@@ -4273,7 +4275,7 @@ function syncPush(key, val){
 
 async function syncPullTodo(primera){
   if(!supabaseClient || !SESSION || _syncPulling) return;
-  _syncPulling = true; let cambios = false, fallo = false;
+  _syncPulling = true; let cambios = false, fallo = false; const sinNube = [];
   try{
     setSyncBadge('sync');
     for(const [key, d] of Object.entries(_syncDefs())){
@@ -4282,6 +4284,7 @@ async function syncPullTodo(primera){
       try{ r = await _syncLeer(key); }catch(e){ fallo = true; _syncAvisar(key, e); continue; }
       if(!r.existe){
         if(syncPuedeEscribir(key) && _syncPeso(key, d.get()) > 0) await _syncSubir(key);   // primera vez: se siembra la nube
+        else sinNube.push(d.n);
         continue;
       }
       if(_syncSucio[key] && syncPuedeEscribir(key)){ await _syncSubir(key); continue; }    // había cambios locales sin subir
@@ -4294,10 +4297,69 @@ async function syncPullTodo(primera){
       }
       _syncAplicar(key, d, r.valor); cambios = true;
     }
-    if(!fallo){ _syncListo = true; setSyncBadge('ok'); }
+    if(!fallo){ _syncListo = true; setSyncBadge(Object.keys(_syncSucio).length ? 'err' : 'ok'); }
     if(cambios) refrescarVistas();
+    if(!fallo && primera && SESSION.rol !== 'administrador' && sinNube.some(n => n === 'Cronograma' || n === 'Candidatos') && !window._avisoSinNube){
+      window._avisoSinNube = true;
+      toast('⚠️ La nube todavía NO tiene el cronograma ni los candidatos. El administrador debe entrar con el navegador donde los creó (y haber ejecutado supabase_permisos.sql). Toca el indicador ☁ del menú para ver el diagnóstico.', 'warn');
+      setSyncBadge('err', 'La nube no tiene datos');
+    }
   }catch(e){ setSyncBadge('err', e?.message); }
   finally{ _syncPulling = false; }
+}
+
+
+/* ===== Diagnóstico de sincronización ===== */
+async function mostrarDiagnosticoSync(){
+  let dlg = $('dlgSync');
+  if(!dlg){
+    dlg = document.createElement('dialog'); dlg.id = 'dlgSync';
+    dlg.innerHTML = `<div class="dh"><h3>☁ Diagnóstico de sincronización</h3><button onclick="dlgSync.close()">✕</button></div>
+      <div class="db" id="syncDiagBody"></div>
+      <div class="df"><button class="btn" onclick="mostrarDiagnosticoSync()">🔄 Repetir prueba</button><button class="btn p" id="btnSyncForzar" onclick="syncForzarSubida()">⬆ Subir mis datos a la nube</button><button class="btn" onclick="syncForzarBajada()">⬇ Descargar de la nube</button></div>`;
+    document.body.appendChild(dlg);
+  }
+  if(!dlg.open) dlg.showModal();
+  const body = $('syncDiagBody');
+  const fila = (ok, txt) => `<div style="padding:6px 0;border-bottom:1px solid var(--line)">${ok===true?'✅':ok===false?'❌':'ℹ️'} ${txt}</div>`;
+  let h = '';
+  if(!supabaseClient){ body.innerHTML = fila(false,'No hay conexión con Supabase (revisa SUPABASE_URL / KEY o tu internet).'); return; }
+  body.innerHTML = '<div class="skeleton" style="height:90px"></div>';
+  h += fila(null, `Sesión: <b>${esc(SESSION?.nombre||'')}</b> · rol <b>${esc(SESSION?.rol||'')}</b>`);
+  try{
+    const clave = SYNC_PREFIX+'_prueba';
+    const val = 'ok-'+Date.now();
+    const {error:e1} = await supabaseClient.from(CONFIG.tabla_config).upsert({[CONFIG.col_config_clave]:clave,[CONFIG.col_config_valor]:val},{onConflict:CONFIG.col_config_clave});
+    if(e1) h += fila(false, `<b>No se puede ESCRIBIR</b> en «${CONFIG.tabla_config}»: ${esc(e1.message)}`);
+    else {
+      const {data:rd, error:e2} = await supabaseClient.from(CONFIG.tabla_config).select(CONFIG.col_config_valor).eq(CONFIG.col_config_clave,clave).maybeSingle();
+      if(e2) h += fila(false, `<b>No se puede LEER</b>: ${esc(e2.message)}`);
+      else if(!rd || String(rd[CONFIG.col_config_valor]) !== val) h += fila(false, '<b>Escribir/leer no coincide</b>: las políticas RLS bloquean (o ocultan) los datos. Ejecuta <code>supabase_permisos.sql</code> en Supabase.');
+      else h += fila(true, 'Escritura y lectura en la nube funcionan.');
+    }
+  }catch(e){ h += fila(false, 'Error de conexión: '+esc(e.message||e)); }
+  for(const [key,d] of Object.entries(_syncDefs())){
+    try{
+      const r = await _syncLeer(key);
+      const nl = _syncPeso(key, d.get()), nr = r.existe ? _syncPeso(key, r.valor) : 0;
+      h += fila(r.existe ? (nl===nr?true:null) : false, `<b>${d.n}</b>: este navegador ${nl} · nube ${r.existe ? nr : 'SIN DATOS'}`);
+    }catch(e){ h += fila(false, `<b>${d.n}</b>: ${esc(e.message||e)}`); }
+  }
+  h += `<div class="perm-legend" style="margin-top:10px">Si la nube dice «SIN DATOS», el administrador debe entrar con el navegador donde creó el cronograma y pulsar «Subir mis datos a la nube». Quien lo vea vacío también debe tener la versión nueva del archivo (Ctrl + F5).</div>`;
+  body.innerHTML = h;
+  const bf = $('btnSyncForzar'); if(bf) bf.style.display = (SESSION?.rol === 'administrador' || Object.keys(_syncDefs()).some(syncPuedeEscribir)) ? '' : 'none';
+}
+async function syncForzarSubida(){
+  if(!confirm('Esto REEMPLAZA los datos de la nube con los de ESTE navegador. ¿Continuar?')) return;
+  _syncListo = true;
+  for(const key of Object.keys(_syncDefs())){ if(syncPuedeEscribir(key)) await _syncSubir(key); }
+  toast('⬆ Subida terminada. Revisa el diagnóstico.'); mostrarDiagnosticoSync();
+}
+async function syncForzarBajada(){
+  if(!confirm('Esto REEMPLAZA los datos de este navegador con los de la nube. ¿Continuar?')) return;
+  for(const k of Object.keys(_syncRemoto)) delete _syncRemoto[k];
+  for(const k of Object.keys(_syncSucio)) delete _syncSucio[k];
+  _syncListo = true; await syncPullTodo(false); toast('⬇ Datos descargados de la nube'); mostrarDiagnosticoSync();
 }
 
 let _refrescoTry = 0;
@@ -4326,7 +4388,7 @@ function refrescarVistas(){
 setInterval(() => { if(SESSION && !document.hidden) syncPullTodo(false); }, SYNC_POLL_MS);
 document.addEventListener('visibilitychange', () => { if(!document.hidden && SESSION) syncPullTodo(false); });
 window.addEventListener('online', () => { if(SESSION) syncPullTodo(false); });
-(function(){ const b = document.getElementById('syncBadge'); if(b) b.addEventListener('click', () => { if(SESSION) { toast('☁ Sincronizando…'); syncPullTodo(false); } }); })();
+(function(){ const b = document.getElementById('syncBadge'); if(b) b.addEventListener('click', () => { if(SESSION) mostrarDiagnosticoSync(); }); })();
 
 
 /* ===== Animación de contadores (KPIs) ===== */
