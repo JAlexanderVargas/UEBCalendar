@@ -587,6 +587,70 @@
     font-weight: 700;
     color: var(--petroleo);
   }
+
+  /* ===== FILTROS DENTRO DEL ENCABEZADO (entre el título y el buscador) ===== */
+  .top { position: relative; flex-wrap: wrap; row-gap: .7rem; }
+  .top .brand { flex: none; }
+  .top .barra { position: static; flex: 1 1 420px; min-width: 0; background: transparent; backdrop-filter: none; border: 0; padding: 0; gap: .5rem .7rem; justify-content: flex-start; }
+  .top .barra label { color: #fff; }
+  .top .barra .chk { color: #fff; }
+  .top .search { margin-left: 0; flex: 0 1 240px; }
+  .panel.pl { top: 1rem; max-height: calc(100vh - 2rem); }
+
+  /* ===== COLUMNA IZQUIERDA ===== */
+  .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 1.5rem; align-items: start; max-width: 1800px; margin: 0 auto; padding: 1rem clamp(1rem, 3vw, 2.5rem) 0; position: relative; z-index: 10; }
+  .contenido { min-width: 0; }
+  .contenido .novedades { padding-left: 0; padding-right: 0; padding-top: 0; }
+  .contenido main { padding: 1rem 0 3rem; max-width: none; margin: 0; }
+  .lateral { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; padding-right: .3rem; scrollbar-width: thin; }
+  .lat-sec { margin-bottom: 1.1rem; }
+  .lat-sec > summary { list-style: none; cursor: pointer; font-family: var(--display); font-weight: 700; font-size: 1rem; color: var(--petroleo); padding: .35rem .2rem .55rem; border-bottom: 2px solid var(--lima); margin-bottom: .7rem; display: flex; align-items: center; justify-content: space-between; }
+  .lat-sec > summary::-webkit-details-marker { display: none; }
+  .lat-sec > summary::after { content: '▾'; font-size: .9rem; color: var(--suave); transition: transform .2s; }
+  .lat-sec:not([open]) > summary::after { transform: rotate(-90deg); }
+  .lateral .modulos, .lateral .facs { display: flex; flex-direction: column; gap: .5rem; padding: 0; }
+  .lateral .mod-card { min-height: 56px; width: 100%; padding-right: 2.6rem; }
+  .lateral .mod-card:hover { transform: translateY(-1px); }
+
+  .item { position: relative; --c: var(--lima); }
+  .ext-toggle { position: absolute; top: 0; right: 0; width: 2.5rem; height: 56px; display: grid; place-items: center; border: 0; background: transparent; color: var(--suave); font-size: 1rem; border-radius: 0 10px 10px 0; z-index: 2; }
+  .ext-toggle.todos { color: #fff; }
+  .ext-toggle:hover { color: var(--c); }
+  .ext-toggle span { display: inline-block; transition: transform .2s; }
+  .item.abierto .ext-toggle span { transform: rotate(180deg); }
+  .ext-body { display: none; margin: .35rem 0 .25rem .7rem; padding-left: .6rem; border-left: 3px solid var(--c); max-height: 270px; overflow-y: auto; scrollbar-width: thin; }
+  .item.abierto .ext-body { display: block; }
+  .ext-ev { display: grid; grid-template-columns: auto 1fr; gap: .2rem .55rem; width: 100%; text-align: left; border: 0; background: transparent; padding: .4rem .45rem; border-radius: 8px; font-size: .78rem; line-height: 1.3; align-items: baseline; }
+  .ext-ev:hover { background: color-mix(in srgb, var(--c) 10%, white); }
+  .ext-f { font-weight: 700; color: var(--petroleo); white-space: nowrap; }
+  .ext-t { color: var(--tinta); }
+  .ext-vacio { font-size: .78rem; color: var(--suave); padding: .4rem .45rem; }
+
+  .fac-btn { position: relative; overflow: hidden; width: 100%; text-align: left; display: flex; align-items: center; gap: .7rem; min-height: 56px; padding: .5rem 2.6rem .5rem 1rem; border: 1px solid color-mix(in srgb, var(--c) 35%, white); border-radius: 10px; background: color-mix(in srgb, var(--c) 9%, white); color: var(--tinta); box-shadow: 0 2px 6px rgba(0,0,0,.03); }
+  .fac-btn::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--c); }
+  .fac-btn:hover { border-color: var(--c); transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 22%, transparent); }
+  .fac-btn.on { background: color-mix(in srgb, var(--c) 24%, white); border: 2px solid var(--c); box-shadow: 0 6px 18px color-mix(in srgb, var(--c) 30%, transparent); }
+  .fac-btn .fac-em { flex: none; width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 22%, white); }
+  .fac-btn .txt { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+  .fac-btn b { font-size: .8rem; line-height: 1.15; font-weight: 700; color: var(--tinta); text-transform: none; }
+  .fac-btn .n { font-size: .7rem; font-weight: 600; color: var(--suave); }
+  .fac-btn.inst { --c: var(--petroleo); }
+  .prog-chips { display: flex; flex-wrap: wrap; gap: .3rem; padding: .35rem .2rem .45rem; }
+  .prog-chip { border: 1px solid color-mix(in srgb, var(--c) 40%, white); background: #fff; color: var(--tinta); border-radius: 999px; padding: .15rem .6rem; font-size: .72rem; font-weight: 600; }
+  .prog-chip:hover, .prog-chip.on { background: color-mix(in srgb, var(--c) 22%, white); border-color: var(--c); }
+
+  @media (max-width: 1200px) {
+    .panelwrap { grid-template-columns: 1fr; }
+    .panel.pl { position: static; max-height: none; }
+    .panel.pl .lista-eventos { overflow-y: visible; padding-right: 0; }
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .lateral { position: static; max-height: none; overflow: visible; }
+    .top .barra { flex-basis: 100%; order: 3; }
+    .top .search { flex-basis: 100%; order: 4; }
+  }
+  @media print { .lateral, .top .barra, .top .search, .admin-link { display: none !important; } .layout { display: block; } }
 </style>
 </head>
 <body>
@@ -602,31 +666,7 @@
       <img src="Logo_de_la_Universidad_El_Bosque.png" alt="Logo" class="logo-img">
       <div><b>Calendario Académico</b><small id="inst"></small></div>
     </div>
-    <div class="search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="🔍 Buscar: matrícula, grados, nómina…">
-    </div>
-    <button class="admin-link" onclick="irAdmin()">🔐 Administrar</button>
-  </header>
-
-  <section class="hero">
-    <div class="hero-izq">
-      <div class="titulo-oficina">
-        <span class="to-ic"><img src="Logo_RyC1.png" alt="Logo R&C"></span>
-        <span class="txt">Registro y Control Académico</span>
-      </div>
-      <p class="hoy" id="hoyTxt"></p>
-      <h1 id="heroTit">Calendario académico</h1>
-      <div id="heroProg"></div>
-      <p class="sub" id="heroSub">Fechas de matrículas, clases, grados, posgrados y más, organizadas por semestre, facultad y área.</p>
-    </div>
-    <div class="proximos">
-      <h2>⏰ Lo que viene</h2>
-      <div id="proximos"></div>
-    </div>
-  </section>
-
-  <div class="barra">
+    <div class="barra">
     <select id="fAnio" aria-label="Año"></select>
     <div class="seg" id="fSem">
       <button data-v="">📅 Todo el año</button>
@@ -651,7 +691,42 @@
       <button class="btn" onclick="print()">🖨️ Imprimir</button>
     </div>
   </div>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="🔍 Buscar: matrícula, grados, nómina…">
+    </div>
+    <button class="admin-link" onclick="irAdmin()">🔐 Administrar</button>
+  </header>
 
+  <section class="hero">
+    <div class="hero-izq">
+      <div class="titulo-oficina">
+        <span class="to-ic"><img src="Logo_RyC1.png" alt="Logo R&C"></span>
+        <span class="txt">Registro y Control Académico</span>
+      </div>
+      <p class="hoy" id="hoyTxt"></p>
+      <h1 id="heroTit">Calendario académico</h1>
+      <div id="heroProg"></div>
+      <p class="sub" id="heroSub">Fechas de matrículas, clases, grados, posgrados y más, organizadas por semestre, facultad y área.</p>
+    </div>
+    <div class="proximos">
+      <h2>⏰ Lo que viene</h2>
+      <div id="proximos"></div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <aside class="lateral" id="lateral" aria-label="Categorías y facultades">
+      <details class="lat-sec" open>
+        <summary>🗓️ Calendario por categoría</summary>
+        <div class="modulos" id="modulos"></div>
+      </details>
+      <details class="lat-sec" open>
+        <summary>🏛️ Facultades y departamentos</summary>
+        <div class="facs" id="facs"></div>
+      </details>
+    </aside>
+    <div class="contenido">
   <section class="novedades" id="novedades">
     <div class="novedades-head">
       <h2>📣 Novedades de clases</h2>
@@ -660,9 +735,7 @@
     <div class="nov-grid" id="novGrid"></div>
   </section>
 
-  <div class="modulos" id="modulos"></div>
-
-  <main>
+    <main>
     <div class="panelwrap">
       <section class="panel">
         <div id="vistaCalendario"></div>
@@ -676,6 +749,8 @@
       </section>
     </div>
   </main>
+    </div>
+  </div>
 
   <footer style="background:var(--petroleo);color:rgba(255,255,255,.78);padding:1rem clamp(1rem,4vw,3rem);font-size:.82rem;display:flex;flex-wrap:wrap;gap:.5rem 2rem;">
     <span id="origen"></span><span id="actual"></span>
@@ -1016,7 +1091,7 @@
   function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
 
   // Estado global (incluye el filtro de roles público)
-  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date(), publico: [] };
+  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date(), publico: [], ext: new Set() };
   let listaFiltradaCompleta = [];
 
   function getColores(D, e) {
@@ -1193,12 +1268,37 @@
     }).join('') : '<p style="opacity:0.8; font-size:0.9rem; padding:0.4rem 0; color:#fff;">No hay fechas próximas.</p>';
   }
 
+  const extFila = e => `<button type="button" class="ext-ev" data-id="${esc(e.id)}"><span class="ext-f">${fmtRango(e)}</span><span class="ext-t">${esc(e.titulo)}</span></button>`;
+  const extLista = L => L.length ? L.map(extFila).join('') : '<p class="ext-vacio">Sin fechas con los filtros actuales.</p>';
+  const extBtn = (key, abierto, cls = '') => `<button type="button" class="ext-toggle ${cls}" data-ext="${esc(key)}" aria-expanded="${abierto}" title="Ver / ocultar fechas"><span>▾</span></button>`;
+
   function pintarModulos() {
     const base = filtrar({ sinCat: true }); let i = 0;
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
-    const card = (id, col, ic, nom, n, cls) => `<button class="mod-card ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>`;
-    $('#modulos').innerHTML = card('', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
-      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
+    const item = (key, id, col, ic, nom, lista, cls, tcls) => {
+      const n = lista.length, ab = S.ext.has(key);
+      return `<div class="item ${ab ? 'abierto' : ''}" style="--c:${col}"><button class="mod-card ${cls}" style="--c:${col};--i:${i++}" data-cat="${esc(id)}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>${extBtn(key, ab, tcls)}<div class="ext-body">${extLista(lista)}</div></div>`;
+    };
+    $('#modulos').innerHTML = item('c:todos', '', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base, 'todos ' + (S.cat === '' ? 'on' : ''), 'todos') +
+      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const L = base.filter(e => e.categoria === c.id); return item('c:' + c.id, c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, L, (S.cat === c.id ? 'on ' : '') + (L.length ? '' : 'cero'), ''); }).join('');
+  }
+
+  // Fechas propias de una facultad con los filtros actuales (año, semestre, categoría, rol, búsqueda)
+  function fechasDeFac(fid) {
+    const g = S.grupo, p = S.prog, ins = S.inst;
+    S.grupo = 'f:' + fid; S.prog = ''; S.inst = false;
+    try { return filtrar().filter(e => (e.facultad || []).includes(fid)); } finally { S.grupo = g; S.prog = p; S.inst = ins; }
+  }
+
+  function pintarFacultades() {
+    const cont = $('#facs'); if (!cont) return;
+    const todas = `<button type="button" class="fac-btn inst ${S.grupo === '' ? 'on' : ''}" data-fac="" aria-pressed="${S.grupo === ''}"><span class="fac-em">${em('🏫')}</span><span class="txt"><b>Toda la institución</b></span></button>`;
+    cont.innerHTML = todas + D.facultades.map(f => {
+      const key = 'f:' + f.id, col = f.color || '#007A78', L = fechasDeFac(f.id), n = L.length;
+      const act = S.grupo === key, ab = S.ext.has(key), progs = f.programas || [];
+      const chips = progs.length ? `<div class="prog-chips">${progs.map(p => `<button type="button" class="prog-chip ${act && S.prog === p.id ? 'on' : ''}" data-fprog="${esc(f.id)}|${esc(p.id)}">${esc(p.nombre)}${p.nivel === 'posgrado' ? ' · posgrado' : ''}</button>`).join('')}</div>` : '';
+      return `<div class="item ${ab ? 'abierto' : ''}" style="--c:${col}"><button type="button" class="fac-btn ${act ? 'on' : ''}" data-fac="${esc(f.id)}" aria-pressed="${act}"><span class="fac-em">${em(emojiFac(f))}</span><span class="txt"><b>${esc(f.nombre)}</b><span class="n">${n} ${n === 1 ? 'fecha propia' : 'fechas propias'}</span></span></button>${extBtn(key, ab)}<div class="ext-body">${chips}${extLista(L)}</div></div>`;
+    }).join('');
   }
 
   const NOV_COLOR = { cambio_salon: '#007A78', cancelacion: '#B3261E', modalidad: '#8A5A00', otro: '#5B6F6B' };
@@ -1362,7 +1462,7 @@
 
   function pintarPublico() {
     if (!D) return;
-    pintarEncabezado(); pintarProximos(); pintarProgreso(); pintarModulos(); pintarNovedades();
+    pintarEncabezado(); pintarProximos(); pintarProgreso(); pintarModulos(); pintarFacultades(); pintarNovedades();
     const L = filtrar(); let fest = [];
     if (S.festivos && !S.cat) {
       const m0 = S.sem == 2 ? 6 : 0;
@@ -1486,6 +1586,9 @@
     const pubWrap = $('#fPubWrap');
     if (pubWrap && pubWrap.open && !pubWrap.contains(t)) pubWrap.open = false;
 
+    const tg = t.closest('[data-ext]'); if (tg) { const k = tg.dataset.ext, ab = !S.ext.has(k); ab ? S.ext.add(k) : S.ext.delete(k); tg.setAttribute('aria-expanded', ab); tg.closest('.item').classList.toggle('abierto', ab); return; }
+    const fb = t.closest('[data-fac]'); if (fb) { const g = fb.dataset.fac ? 'f:' + fb.dataset.fac : ''; S.grupo = (g && S.grupo === g) ? '' : g; S.prog = ''; return pintarPublico(); }
+    const fp = t.closest('[data-fprog]'); if (fp) { const [fid, pid] = fp.dataset.fprog.split('|'), g = 'f:' + fid; if (S.grupo === g && S.prog === pid) S.prog = ''; else { S.grupo = g; S.prog = pid; } return pintarPublico(); }
     const mod = t.closest('[data-cat]'); if (mod) { S.cat = mod.dataset.cat; return pintarPublico(); }
     if (t.closest('[data-cerrar]') || t.id === 'velo') return cerrar();
     const ics = t.closest('[data-ics]'); if (ics) return descargarIcs([D.eventos.find(e => e.id === ics.dataset.ics)], 'evento');
