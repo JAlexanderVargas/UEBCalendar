@@ -599,6 +599,18 @@
     body { background: #fff; }
     .hero { background: #fff; padding: 0 0 1rem; }
   }
+  /* Categorías compactas */
+  .modulos { display: flex; flex-wrap: wrap; gap: .4rem; padding-top: .7rem; padding-bottom: .2rem; }
+  .mod-card { min-height: 0; padding: .28rem .8rem .28rem .35rem; border-radius: 999px; gap: .4rem; }
+  .mod-card::before { display: none; }
+  .mod-card:hover { transform: none; box-shadow: 0 3px 10px rgba(0,0,0,.08); }
+  .mod-card .ic { width: 1.5rem; height: 1.5rem; }
+  .mod-card .ic .flaticon { width: .9rem; height: .9rem; }
+  .mod-card .txt { flex-direction: row; align-items: center; gap: .4rem; }
+  .mod-card b { font-size: .8rem; white-space: nowrap; }
+  .mod-card .n { font-size: .68rem; background: rgba(0,0,0,.07); border-radius: 999px; padding: 0 .45rem; }
+  .mod-card.todos .n { background: rgba(255,255,255,.2); color: #fff; }
+  .mod-card.cero { opacity: .55; }
 </style>
 </head>
 <body>
@@ -660,6 +672,7 @@
       <button class="btn" onclick="irHoy()">📍 Hoy</button>
       <button class="btn" onclick="limpiarFiltros()" title="Quitar todos los filtros">🧹 Limpiar</button>
       <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
+      <button class="btn" id="bPlantilla" onclick="descargarPlantilla()" hidden>📄 Descargar plantilla</button>
       <button class="btn" onclick="print()">🖨️ Imprimir</button>
     </div>
   </div>
@@ -770,6 +783,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js" defer></script>
 <script>
   const SUPABASE_URL = 'https://zsgavixppceijbpevgoc.supabase.co'; 
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzZ2F2aXhwcGNlaWpicGV2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTU4NjEsImV4cCI6MjEwOTgzMTg2MX0.YKJAQVRwtm1qofYtQYku2BhO0V_2A5gbaAPniA8aIM8'; 
@@ -779,6 +793,7 @@
   let DB_READY = false;
   let USUARIO_ACTUAL = null;
   let NOVEDADES = [];
+  let CONFIG = {};
   let inactividadTimer = null;
 
   try {
@@ -970,14 +985,16 @@
     if (!dbClient) return null;
     try {
       const lim = q => Promise.race([Promise.resolve(q), new Promise((_, rej) => setTimeout(() => rej(new Error('Tiempo agotado')), 12000))]);
-      const [{ data: cats }, { data: facs }, { data: areas }, { data: pers }, { data: evs }, { data: novs }] = await Promise.all([
+      const [{ data: cats }, { data: facs }, { data: areas }, { data: pers }, { data: evs }, { data: novs }, { data: conf }] = await Promise.all([
         lim(dbClient.from('categorias').select('*')),
         lim(dbClient.from('facultades').select('*, programas(*)')),
         lim(dbClient.from('areas').select('*')),
         lim(dbClient.from('periodos').select('*')),
         lim(dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`)),
-        lim(dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(30))
+        lim(dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(30)),
+        lim(dbClient.from('configuracion').select('*'))
       ]);
+      CONFIG = Object.fromEntries((conf || []).map(c => [c.clave, c.valor]));
       NOVEDADES = novs || [];
 
       return {
@@ -996,7 +1013,7 @@
           facultad: e.evento_facultades ? e.evento_facultades.map(x => x.facultad_id) : [],
           programa: e.evento_programas ? e.evento_programas.map(x => x.programa_id) : [],
           area: e.evento_areas ? e.evento_areas.map(x => x.area_id) : [],
-          publico: e.evento_publicos ? e.evento_publicos.map(x => x.publico) : []
+          publico: e.evento_publicos ? e.evento_publicos.map(x => x.publico) : [], niveles: e.niveles || []
         })) : []
       };
     } catch (e) { console.error("Error al leer de Supabase:", e); return null; }
@@ -1087,7 +1104,7 @@
   function irMes() { const el = $('#m-' + S.ref.getFullYear() + '-' + S.ref.getMonth()), L = $('#vistaLista'); if (el && L) L.scrollTo({ top: el.offsetTop - 4, behavior: 'smooth' }); }
   const ORD = [['general','calendario'],['matricul','documento'],['pregrado','libro'],['posgrado','birrete'],['ceremon','trofeo'],['no ceremon','documento'],['talento','personas'],['otro','estrella']];
 
-  function aniosDisponibles() { const set = new Set(D.periodos.filter(p => p.activo !== false).map(p => +p.id.split('-')[0])); D.eventos.filter(eventoVisiblePublico).forEach(e => { set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
+  function aniosDisponibles() { const set = new Set(D.periodos.filter(p => p.activo !== false).map(p => +p.id.split('-')[0])); D.eventos.filter(eventoVisiblePublico).forEach(e => { if (e.periodo) set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
 
   function filtrar({ sinCat = false, sinPeriodo = false } = {}) {
     const q = norm(S.q);
@@ -1211,7 +1228,7 @@
   function pintarModulos() {
     const base = filtrar({ sinCat: true }); let i = 0;
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
-    const card = (id, col, ic, nom, n, cls) => `<button class="mod-card ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>`;
+    const card = (id, col, ic, nom, n, cls) => `<button class="mod-card ${cls}" title="${esc(nom)}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n" title="${n} ${n === 1 ? 'fecha' : 'fechas'}">${n}</span></span></button>`;
     $('#modulos').innerHTML = card('', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
       D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
   }
@@ -1447,6 +1464,7 @@
       
       ${sec(FLATICONS.birrete, 'Facultades', facs.length ? `<div class="dt-facs-grid">${facsHtml}</div>` : '')}
       
+      ${sec(FLATICONS.libro, 'Nivel', e.niveles && e.niveles.length ? `<div class="dt-chips">${e.niveles.map(x => `<span class="dt-chip">${x === 'posgrado' ? 'Posgrado' : 'Pregrado'}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.libro, 'Programas', progs.length ? `<div class="dt-chips">${progs.map(p => `<span class="dt-chip">${FLATICONS.libro} ${esc(p)}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.personas, 'Áreas administrativas', areas.length ? `<div class="dt-chips">${areas.map(a => `<span class="dt-chip">${em(emojiArea(a))}${esc(a.nombre)}</span>`).join('')}</div>` : '')}
       ${sec(FLATICONS.pin, 'Lugar', lugarBody)}
@@ -1771,6 +1789,8 @@
       <select id="x_grupo">${g}</select>
       <select id="x_est"><option value="">Todos los estados</option><option value="publicado">✅ Publicados</option><option value="borrador">📝 Borradores</option></select>
       ${puede('crear') && !esDocenteOAdmin() ? `<button class="btn pri" data-a="nuevo">${FLATICONS.documento} Nuevo evento</button>` : ''}
+      ${puede('crear') ? `<button class="btn" data-a="plantilla">📄 Plantilla Excel</button><button class="btn" data-a="cargarExcel">📤 Cargar desde Excel</button><input type="file" id="xlsx_in" accept=".xlsx" hidden>` : ''}
+      ${tieneRol(USUARIO_ACTUAL, 'admin') ? `<button class="btn" data-a="togPlantilla" title="Muestra u oculta el botón de descarga en el calendario público">${plantillaPublica() ? '🟢 Plantilla pública: activada' : '⚪ Plantilla pública: desactivada'}</button>` : ''}
     </div>
     <div id="masiva"></div><div class="tw" id="tabla"></div>`;
   }
@@ -1823,6 +1843,7 @@
     const arrProg = Array.isArray(e.programa) ? e.programa : (e.programa ? [e.programa] : []);
     const arrArea = Array.isArray(e.area) ? e.area : (e.area ? [e.area] : []);
     const arrPub = Array.isArray(e.publico) ? e.publico : (e.publico ? [e.publico] : ['Comunidad universitaria']);
+    const arrNiv = Array.isArray(e.niveles) && e.niveles.length ? e.niveles : (id ? [] : ['pregrado']);
     const pers = D.periodos.map(p => p.id);
     if (e.periodo !== 'auto' && !pers.includes(e.periodo)) pers.push(e.periodo);
     const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
@@ -1908,6 +1929,14 @@
       </div>
       
       <div class="fr">
+        <label>Nivel académico (elige uno o ambos)</label>
+        <div style="display:flex; gap:1.4rem; flex-wrap:wrap; padding:.3rem 0;">
+          <label style="display:flex; gap:.4rem; align-items:center; font-weight:500;"><input type="checkbox" id="f_niv_pre" ${arrNiv.includes('pregrado') ? 'checked' : ''}> 🎓 Pregrado</label>
+          <label style="display:flex; gap:.4rem; align-items:center; font-weight:500;"><input type="checkbox" id="f_niv_pos" ${arrNiv.includes('posgrado') ? 'checked' : ''}> 📘 Posgrado</label>
+        </div>
+      </div>
+
+      <div class="fr">
         <label>Estado</label>
         <select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select>
       </div>
@@ -1992,6 +2021,8 @@
     if (!inicio) return toast('Falta la fecha de inicio', true);
     if (fin < inicio) return toast('La fecha final no puede ser antes', true);
     const publico = [...$('#f_pub').selectedOptions].map(o => o.value);
+    const niveles = [$('#f_niv_pre').checked && 'pregrado', $('#f_niv_pos').checked && 'posgrado'].filter(Boolean);
+    if (!niveles.length) return toast('Selecciona pregrado, posgrado o ambos', true);
     const facultad = [...$('#f_fac').selectedOptions].map(o => o.value);
     const programa = [...$('#f_prog').selectedOptions].map(o => o.value);
     const area = [...$('#f_area').selectedOptions].map(o => o.value);
@@ -2002,11 +2033,11 @@
     const enlace = normalizarEnlace(g('f_link'));
     if (g('f_link') && !enlace) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true);
     const lugarEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lugar) ? g('f_lugar_esp') : '';
-    const o = { id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), inicio, fin, periodo, periodo2, horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), facultad, programa, area, publico, lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') };
+    const o = { id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), inicio, fin, periodo, periodo2, horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), facultad, programa, area, publico, lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado'), niveles };
     let avisoCols = [];
     try {
       if (DB_READY) {
-        const payload = { titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, estado: o.estado, updated_at: new Date().toISOString() };
+        const payload = { titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, estado: o.estado, niveles: o.niveles, updated_at: new Date().toISOString() };
         if (id) payload.id = id;
         let ev = null;
         for (let intento = 0; intento < 5 && !ev; intento++) {
@@ -2394,8 +2425,96 @@
     delNov: async i => { if (!confirm('¿Eliminar esta novedad?')) return; const { error } = await dbClient.from('novedades').delete().eq('id', i); if (error) return toast('Error al eliminar', true); registrarLog('Eliminó novedad', i); toast('Novedad eliminada'); ir('novedades', true); }
   };
 
+  // ===== Plantilla Excel: descargar y cargar eventos =====
+  const plantillaPublica = () => CONFIG.plantilla_publica === 'true';
+  const NIVELES_TXT = ['Pregrado', 'Posgrado', 'Pregrado y Posgrado'], ESTADOS_TXT = ['Publicado', 'Borrador'];
+  const COLS_XLS = [['Título *', 38], ['Descripción', 40], ['Categoría *', 24], ['Fecha inicio * (AAAA-MM-DD)', 22], ['Fecha fin (AAAA-MM-DD)', 22], ['Hora inicio (HH:MM)', 14], ['Hora fin (HH:MM)', 14], ['Nivel', 22], ['Facultad (varias separadas por ;)', 34], ['Programa (varios separados por ;)', 34], ['Área administrativa', 28], ['Público', 26], ['Lugar', 26], ['Enlace', 30], ['Estado', 14]];
+
+  async function descargarPlantilla() {
+    if (!window.ExcelJS) return toast('No se pudo cargar el generador de Excel. Revisa tu conexión.', true);
+    const wb = new ExcelJS.Workbook(), ws = wb.addWorksheet('Eventos'), ls = wb.addWorksheet('Listas'), ins = wb.addWorksheet('Instrucciones');
+    const listas = [D.categorias.map(c => c.nombre), ['Toda la institución', ...D.facultades.map(f => f.nombre)], D.areas.map(a => a.nombre), PUBLICOS_ROLES, NIVELES_TXT, ESTADOS_TXT];
+    listas.forEach((l, c) => l.forEach((v, r) => { ls.getCell(r + 1, c + 1).value = v; }));
+    ls.state = 'hidden';
+    ws.columns = COLS_XLS.map(([header, width]) => ({ header, width }));
+    const hr = ws.getRow(1); hr.height = 34; hr.alignment = { vertical: 'middle', wrapText: true };
+    hr.eachCell(c => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF003B36' } }; });
+    ws.views = [{ state: 'frozen', ySplit: 1 }];
+    [4, 5, 6, 7].forEach(n => { ws.getColumn(n).numFmt = '@'; });
+    const letra = n => String.fromCharCode(65 + n);
+    const dv = (col, i, estricta) => { const f = [`Listas!$${letra(i)}$1:$${letra(i)}$${Math.max(listas[i].length, 1)}`]; for (let r = 2; r <= 500; r++) ws.getCell(col + r).dataValidation = { type: 'list', allowBlank: true, formulae: f, showErrorMessage: estricta, errorTitle: 'Valor no válido', error: 'Elige un valor de la lista.' }; };
+    dv('C', 0, true); dv('H', 4, true); dv('I', 1, false); dv('K', 2, true); dv('L', 3, true); dv('O', 5, true);
+    ins.getColumn(1).width = 110;
+    ['CÓMO LLENAR LA PLANTILLA', '1. Llena la hoja "Eventos", una fila por evento. No cambies los títulos de las columnas.', '2. Obligatorios: Título, Categoría y Fecha inicio. Las fechas van como AAAA-MM-DD (ej. 2026-03-15) o DD/MM/AAAA.', '3. Categoría, Nivel, Área, Público y Estado se eligen de la lista desplegable.', '4. Facultad: elige de la lista. Si son varias, escríbelas separadas por punto y coma (;). Vacío = toda la institución.', '5. Programa: escribe el nombre exacto; si son varios, sepáralos con punto y coma (;).', '6. Guarda el archivo como .xlsx y súbelo en el panel de administración (Eventos > Cargar desde Excel).'].forEach((t, i) => { const c = ins.getCell(i + 1, 1); c.value = t; c.alignment = { wrapText: true }; if (!i) c.font = { bold: true, size: 14 }; });
+    const buf = await wb.xlsx.writeBuffer();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    a.download = 'plantilla-eventos.xlsx'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  }
+
+  const cv = c => { let v = c && c.value; if (v == null) return ''; if (v instanceof Date) return v; if (typeof v === 'object') v = v.text ?? v.result ?? (v.richText ? v.richText.map(t => t.text).join('') : ''); return v instanceof Date ? v : String(v ?? '').trim(); };
+  const aFecha = v => { if (v instanceof Date) return v.toISOString().slice(0, 10); const s = String(v).trim(); let m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s); if (m) return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`; m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : ''; };
+  const aHora = v => { if (v instanceof Date) return String(v.getUTCHours()).padStart(2, '0') + ':' + String(v.getUTCMinutes()).padStart(2, '0'); const m = /^(\d{1,2}):(\d{2})/.exec(String(v)); return m ? m[1].padStart(2, '0') + ':' + m[2] : ''; };
+  const partes = v => String(v).split(';').map(x => x.trim()).filter(Boolean);
+
+  async function cargarExcelEventos(file) {
+    if (!puede('crear')) return sinPermiso();
+    if (!window.ExcelJS) return toast('No se pudo cargar el lector de Excel. Revisa tu conexión.', true);
+    try {
+      const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await file.arrayBuffer());
+      const ws = wb.getWorksheet('Eventos') || wb.worksheets[0];
+      const buscar = (arr, n) => arr.find(x => norm(x.nombre) === norm(n));
+      const progs = D.facultades.flatMap(f => f.programas), filas = [], errores = [];
+      ws.eachRow({ includeEmpty: false }, (row, n) => {
+        if (n === 1) return;
+        const c = i => cv(row.getCell(i)), err = m => { errores.push(`Fila ${n}: ${m}`); };
+        const titulo = String(c(1)); if (!titulo) return;
+        const cat = buscar(D.categorias, String(c(3))); if (!cat) return err('categoría no válida');
+        const inicio = aFecha(c(4)); if (!inicio) return err('fecha de inicio no válida');
+        const fin = aFecha(c(5)) || inicio; if (fin < inicio) return err('la fecha fin es anterior al inicio');
+        const nv = norm(c(8)), niveles = nv.includes('posgrado') ? (nv.includes('pregrado') ? ['pregrado', 'posgrado'] : ['posgrado']) : ['pregrado'];
+        const facultad = [], programa = [], area = [], noEnc = [];
+        partes(c(9)).forEach(nm => { if (norm(nm).includes('toda la instit')) return; const f = buscar(D.facultades, nm); f ? facultad.push(f.id) : noEnc.push(nm); });
+        partes(c(10)).forEach(nm => { const p = buscar(progs, nm); p ? programa.push(p.id) : noEnc.push(nm); });
+        partes(c(11)).forEach(nm => { const a = buscar(D.areas, nm); a ? area.push(a.id) : noEnc.push(nm); });
+        if (noEnc.length) return err('no se encontró: ' + noEnc.join(', '));
+        const publico = partes(c(12)).map(p => PUBLICOS_ROLES.find(r => norm(r) === norm(p))).filter(Boolean);
+        if (!publico.length) publico.push('Comunidad universitaria');
+        if (!puedeEnEvento({ facultad, programa, area })) return err('fuera de tus facultades, programas o áreas asignados');
+        const enl = String(c(14)), enlace = enl ? normalizarEnlace(enl) : ''; if (enl && !enlace) return err('enlace no válido');
+        const per1 = periodoAuto(D, inicio), per2 = periodoAuto(D, fin);
+        filas.push({ id: uid(), titulo, descripcion: String(c(2)), categoria: cat.id, periodo: per1, periodo2: per1 !== per2 ? per2 : null, inicio, fin, horaInicio: aHora(c(6)), horaFin: aHora(c(7)), niveles, facultad, programa, area, publico, lugar: String(c(13)), enlace, estado: norm(c(15)) === 'borrador' ? 'borrador' : 'publicado' });
+      });
+      if (!filas.length && !errores.length) return toast('El archivo no tiene eventos para cargar.', true);
+      if (errores.length && !confirm(`Hay ${errores.length} fila(s) con problemas:\n\n${errores.slice(0, 8).join('\n')}${errores.length > 8 ? '\n…' : ''}\n\n¿Cargar solo las ${filas.length} filas correctas?`)) return;
+      if (!filas.length) return;
+      const db = filas.map(o => ({ id: o.id, titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, enlace: o.enlace, estado: o.estado, niveles: o.niveles }));
+      let r = await dbClient.from('eventos').insert(db);
+      if (r.error && /niveles/.test(r.error.message || '')) { db.forEach(x => delete x.niveles); r = await dbClient.from('eventos').insert(db); }
+      if (r.error) throw r.error;
+      for (const [t, campo, k] of [['evento_facultades', 'facultad_id', 'facultad'], ['evento_programas', 'programa_id', 'programa'], ['evento_areas', 'area_id', 'area'], ['evento_publicos', 'publico', 'publico']]) {
+        const datos = filas.flatMap(o => o[k].map(v => ({ evento_id: o.id, [campo]: v })));
+        if (datos.length) { const x = await dbClient.from(t).insert(datos); if (x.error) throw x.error; }
+      }
+      registrarLog('Cargó eventos desde Excel', `${filas.length} evento(s)`);
+      const nd = await leerNube(); if (nd) D = nd;
+      toast(`${FLATICONS.check} ${filas.length} evento(s) cargados${errores.length ? ` · ${errores.length} omitidos` : ''}`); refrescar();
+    } catch (e) { console.error(e); toast('No se pudo cargar el archivo: ' + (e.message || e), true); }
+  }
+
+  async function togPlantilla() {
+    const nuevo = !plantillaPublica();
+    const { error } = await dbClient.from('configuracion').upsert([{ clave: 'plantilla_publica', valor: String(nuevo) }]);
+    if (error) return toast('No se pudo guardar. Ejecuta el SQL de actualización en Supabase (tabla configuracion).', true);
+    CONFIG.plantilla_publica = String(nuevo); registrarLog(nuevo ? 'Activó plantilla pública' : 'Desactivó plantilla pública', '');
+    const bp = $('#bPlantilla'); if (bp) bp.hidden = !nuevo;
+    toast(nuevo ? 'La plantilla ya se puede descargar en el calendario público' : 'Plantilla oculta en el calendario público'); refrescar();
+  }
+  Object.assign(ACC, { plantilla: descargarPlantilla, cargarExcel: () => $('#xlsx_in').click(), togPlantilla });
+  document.addEventListener('change', e => { if (e.target.id === 'xlsx_in' && e.target.files[0]) { const f = e.target.files[0]; e.target.value = ''; cargarExcelEventos(f); } });
+
   const ACC_LIBRES = new Set(['cerrar', 'salir', 'pin', 'guardarEv']);
-  const ACC_PERM = { nuevo: 'crear', dup: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar', resetPin: 'admin', addNov: 'crear', editNov: 'editar', saveNov: 'editar', delNov: 'eliminar' };
+  const ACC_PERM = { nuevo: 'crear', plantilla: 'crear', cargarExcel: 'crear', dup: 'crear', editar: 'editar', del: 'eliminar', tog: 'editar', m_pub: 'editar', m_bor: 'editar', resetPin: 'admin', addNov: 'crear', editNov: 'editar', saveNov: 'editar', delNov: 'eliminar' };
   const permisoAcc = k => ACC_LIBRES.has(k) || puede(ACC_PERM[k] || 'admin');
 
   document.addEventListener('click', e => {
@@ -2463,6 +2582,7 @@
     } catch (err) { console.error(err); }
     if (!D) D = { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
     $('#public-panel').style.display = 'block';
+    { const bp = $('#bPlantilla'); if (bp) bp.hidden = !plantillaPublica(); }
     const per = periodoDe(hoy()), anios = aniosDisponibles();
     S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
     S.sem = per.startsWith(S.anio + '-') ? per.split('-')[1] : '';
