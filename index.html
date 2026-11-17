@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Fechas académicas de la Universidad El Bosque: matrículas, grados, posgrados y más, por semestre, facultad y programa.">
+<meta name="theme-color" content="#003B36">
 <title>Calendario Académico - Universidad El Bosque</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;500;600;700&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;500;600;700&family=Montserrat:wght@800&family=Noto+Color+Emoji&display=swap">
 <style>
   :root {
     --lima: #A6CE39; --verde: #007A78; --petroleo: #003B36; --claro: #C5E86C;
@@ -587,6 +588,17 @@
     font-weight: 700;
     color: var(--petroleo);
   }
+
+  :focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; border-radius: 6px; }
+  .top :focus-visible, .proximos :focus-visible { outline-color: var(--claro); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+  @media print {
+    #tita-container, .top, .barra, #loader, .admin-link, .cajon { display: none !important; }
+    body { background: #fff; }
+    .hero { background: #fff; padding: 0 0 1rem; }
+  }
 </style>
 </head>
 <body>
@@ -957,12 +969,15 @@
   async function leerNube() {
     if (!dbClient) return null;
     try {
-      const { data: cats } = await dbClient.from('categorias').select('*');
-      const { data: facs } = await dbClient.from('facultades').select('*, programas(*)');
-      const { data: areas } = await dbClient.from('areas').select('*');
-      const { data: pers } = await dbClient.from('periodos').select('*');
-      const { data: evs } = await dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`);
-      const { data: novs } = await dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(30);
+      const lim = q => Promise.race([Promise.resolve(q), new Promise((_, rej) => setTimeout(() => rej(new Error('Tiempo agotado')), 12000))]);
+      const [{ data: cats }, { data: facs }, { data: areas }, { data: pers }, { data: evs }, { data: novs }] = await Promise.all([
+        lim(dbClient.from('categorias').select('*')),
+        lim(dbClient.from('facultades').select('*, programas(*)')),
+        lim(dbClient.from('areas').select('*')),
+        lim(dbClient.from('periodos').select('*')),
+        lim(dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`)),
+        lim(dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(30))
+      ]);
       NOVEDADES = novs || [];
 
       return {
@@ -1641,6 +1656,8 @@
     if (!$('#gateOlvidoFields').hidden) return olvideMiPin();
     const pin = $('#pin').value;
     if (pin.length < 6 || pin.length > 15) return toast('El PIN debe tener entre 6 y 15 dígitos', true);
+    const bloqueo = +localStorage.getItem('ubosque_bloqueo') || 0;
+    if (Date.now() < bloqueo) return toast(`Demasiados intentos. Espera ${Math.ceil((bloqueo - Date.now()) / 60000)} min.`, true);
     const user = await verificarPin(pin);
     if (user) {
       USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: user.rol, permisos: user.permisos || [], areas: user.areas_asignadas || [] };
@@ -1653,10 +1670,17 @@
         return;
       }
       
-      localStorage.setItem('ubosque_admin_session', JSON.stringify(USUARIO_ACTUAL));
+      USUARIO_ACTUAL.ts = Date.now(); localStorage.setItem('ubosque_admin_session', JSON.stringify(USUARIO_ACTUAL));
       
       registrarLog('Inicio de sesión', 'Ingresó al sistema'); mostrarAppAdmin();
-    } else { $('#pin').value = ''; toast('PIN incorrecto', true); }
+    localStorage.removeItem('ubosque_intentos'); localStorage.removeItem('ubosque_bloqueo');
+    } else {
+      $('#pin').value = '';
+      const n = (+localStorage.getItem('ubosque_intentos') || 0) + 1;
+      localStorage.setItem('ubosque_intentos', n);
+      if (n >= 5) { localStorage.setItem('ubosque_bloqueo', Date.now() + 5 * 60000); localStorage.removeItem('ubosque_intentos'); toast('Demasiados intentos. Espera 5 minutos.', true); }
+      else toast('PIN incorrecto', true);
+    }
   };
 
   async function actualizarPin(id, pin) {
@@ -2425,7 +2449,9 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
   async function iniciar() {
-    if (DB_READY) { const datos = await leerNube(); if (datos) D = datos; }
+    try {
+      if (DB_READY) { const datos = await leerNube(); if (datos) D = datos; else toast('No se pudo conectar con la base de datos. Revisa que el proyecto de Supabase esté activo (no pausado) y recarga.', true); }
+    } catch (err) { console.error(err); }
     if (!D) D = { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
     $('#public-panel').style.display = 'block';
     const per = periodoDe(hoy()), anios = aniosDisponibles();
@@ -2441,6 +2467,7 @@
     if (sesionGuardada) {
       try {
         USUARIO_ACTUAL = JSON.parse(sesionGuardada);
+        if (!USUARIO_ACTUAL.ts || Date.now() - USUARIO_ACTUAL.ts > 8 * 3600e3) throw new Error('Sesión vencida');
         iniciar();
         setTimeout(() => { document.body.classList.add('en-admin'); irAdmin(); }, 100);
       } catch (e) { localStorage.removeItem('ubosque_admin_session'); iniciar(); }
