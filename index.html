@@ -662,13 +662,13 @@
   .fc-sub { font-size: .78rem; color: var(--suave); }
   .filtros-card .barra { position: static; background: transparent; backdrop-filter: none; border: 0; padding: 0; display: flex; flex-direction: column; gap: .9rem; align-items: stretch; }
   .fc-grupo { display: flex; flex-direction: column; gap: .6rem; }
-  .fc-grupo.fc-fila { flex-direction: row; flex-wrap: wrap; gap: .7rem; }
+  .fc-grupo.fc-fila { flex-direction: column; gap: .6rem; }
   .fc-campo { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
-  .fc-campo.fc-grow { flex: 1 1 200px; }
+  .fc-campo.fc-grow { flex: 0 0 auto; }
   .fc-lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--suave); }
   .filtros-card .barra select { width: 100%; max-width: none; }
   .filtros-card .seg { display: flex; width: 100%; }
-  .filtros-card .seg button { flex: 1; justify-content: center; padding: .4rem .45rem; font-size: .8rem; white-space: nowrap; }
+  .filtros-card .seg button { flex: 1 1 0; min-width: 0; justify-content: center; padding: .4rem .3rem; font-size: .78rem; white-space: nowrap; }
   .filtros-card .filtro-pub > summary { width: 100%; justify-content: flex-start; }
   .filtros-card .filtro-pub .drop { min-width: 100%; }
   .fc-checks { background: var(--fondo); border-radius: 10px; padding: .6rem .8rem; gap: .45rem; }
@@ -677,6 +677,8 @@
   .filtros-card .barra .der .btn { width: 100%; }
   .filtros-card .barra .der #bIcs { grid-column: 1 / -1; background: var(--verde); border-color: var(--verde); color: #fff; }
   .filtros-card .barra .der #bIcs:hover { background: var(--petroleo); border-color: var(--petroleo); color: #fff; }
+  .fc-campo:has(> select[hidden]) { display: none; }
+  .filtros-card .barra .der #bIcs, .filtros-card .barra .der .btn:last-child { grid-column: 1 / -1; }
   .nov-estado { display: inline-block; font-size: .72rem; font-weight: 700; padding: .1rem .55rem; border-radius: 999px; }
   .nov-estado.vig { background: color-mix(in srgb, var(--lima) 30%, white); color: var(--petroleo); }
   .nov-estado.fin { background: var(--fondo); color: var(--suave); border: 1px solid var(--linea); }
@@ -2591,15 +2593,29 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
   async function iniciar() {
-    if (DB_READY) { const datos = await leerNube(); if (datos) D = datos; }
-    if (!D) D = { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
-    $('#public-panel').style.display = 'block';
-    const per = periodoDe(hoy()), anios = aniosDisponibles();
-    S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
-    S.sem = per.startsWith(S.anio + '-') ? per.split('-')[1] : '';
-    if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
-    try { pintarPublico(); } catch (err) { console.error('Error al pintar el calendario:', err); }
-    $('#loader').classList.add('hidden');
+    const vacio = () => ({ institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] });
+    const arrancar = () => {
+      $('#public-panel').style.display = 'block';
+      const per = periodoDe(hoy()), anios = aniosDisponibles();
+      S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
+      S.sem = per.startsWith(S.anio + '-') ? per.split('-')[1] : '';
+      if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
+      try { pintarPublico(); } catch (err) { console.error('Error al pintar el calendario:', err); }
+      $('#loader').classList.add('hidden');
+    };
+    // 1) Mostrar la página de inmediato (nunca se queda en blanco)
+    if (!D) D = vacio();
+    arrancar();
+    // 2) Leer datos con tiempo máximo y repintar al llegar
+    if (DB_READY) {
+      let datos = null;
+      try { datos = await Promise.race([leerNube(), new Promise(r => setTimeout(() => r('timeout'), 15000))]); } catch (err) { console.error('Error leyendo datos:', err); }
+      if (datos && datos !== 'timeout') { D = datos; try { pintarPublico(); } catch (err) { console.error(err); } }
+      else {
+        const sub = document.getElementById('heroSub');
+        if (sub) sub.innerHTML = '⚠️ No se pudo leer la información desde la base de datos (Supabase). Verifica la conexión o que el proyecto esté activo.';
+      }
+    }
   }
 
   if (dbClient) {
