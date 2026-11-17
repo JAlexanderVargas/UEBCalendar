@@ -650,7 +650,42 @@
     .top .barra { flex-basis: 100%; order: 3; }
     .top .search { flex-basis: 100%; order: 4; }
   }
-  @media print { .lateral, .top .barra, .top .search, .admin-link { display: none !important; } .layout { display: block; } }
+  @media print { .filtros-card, .lateral, .top .barra, .top .search, .admin-link { display: none !important; } .layout { display: block; } }
+  /* ===== FILA SUPERIOR: NOVEDADES + FILTROS ===== */
+  .fila-superior { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 1.2rem; align-items: start; }
+  .contenido .novedades { background: #fff; border: 1px solid var(--linea); border-radius: 16px; padding: 1.1rem 1.2rem 1.2rem; box-shadow: 0 6px 20px rgba(0,59,54,.06); border-top: 4px solid var(--lima); }
+  .novedades-head { padding-bottom: .6rem; border-bottom: 1px solid var(--linea); margin-bottom: .9rem; }
+  .nov-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); max-height: 420px; overflow-y: auto; padding-right: .25rem; scrollbar-width: thin; }
+  .filtros-card { background: #fff; border: 1px solid var(--linea); border-radius: 16px; box-shadow: 0 6px 20px rgba(0,59,54,.06); border-top: 4px solid var(--verde); padding: 1.1rem 1.2rem 1.2rem; position: sticky; top: 4.6rem; z-index: 30; }
+  .fc-head { padding-bottom: .6rem; border-bottom: 1px solid var(--linea); margin-bottom: .9rem; }
+  .fc-head h2 { font-family: var(--display); font-size: 1.3rem; color: var(--petroleo); }
+  .fc-sub { font-size: .78rem; color: var(--suave); }
+  .filtros-card .barra { position: static; background: transparent; backdrop-filter: none; border: 0; padding: 0; display: flex; flex-direction: column; gap: .9rem; align-items: stretch; }
+  .fc-grupo { display: flex; flex-direction: column; gap: .6rem; }
+  .fc-grupo.fc-fila { flex-direction: row; flex-wrap: wrap; gap: .7rem; }
+  .fc-campo { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+  .fc-campo.fc-grow { flex: 1 1 200px; }
+  .fc-lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--suave); }
+  .filtros-card .barra select { width: 100%; max-width: none; }
+  .filtros-card .seg { display: flex; width: 100%; }
+  .filtros-card .seg button { flex: 1; justify-content: center; padding: .4rem .45rem; font-size: .8rem; white-space: nowrap; }
+  .filtros-card .filtro-pub > summary { width: 100%; justify-content: flex-start; }
+  .filtros-card .filtro-pub .drop { min-width: 100%; }
+  .fc-checks { background: var(--fondo); border-radius: 10px; padding: .6rem .8rem; gap: .45rem; }
+  .fc-checks .chk { font-size: .85rem; display: flex; gap: .45rem; align-items: center; cursor: pointer; }
+  .filtros-card .barra .der { margin-left: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .filtros-card .barra .der .btn { width: 100%; }
+  .filtros-card .barra .der #bIcs { grid-column: 1 / -1; background: var(--verde); border-color: var(--verde); color: #fff; }
+  .filtros-card .barra .der #bIcs:hover { background: var(--petroleo); border-color: var(--petroleo); color: #fff; }
+  .nov-estado { display: inline-block; font-size: .72rem; font-weight: 700; padding: .1rem .55rem; border-radius: 999px; }
+  .nov-estado.vig { background: color-mix(in srgb, var(--lima) 30%, white); color: var(--petroleo); }
+  .nov-estado.fin { background: var(--fondo); color: var(--suave); border: 1px solid var(--linea); }
+  tr.nov-fin td { opacity: .78; }
+  .lat-sec { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: .2rem .9rem; box-shadow: 0 4px 14px rgba(0,59,54,.05); }
+  .lat-sec > summary { border-bottom: 0; margin-bottom: 0; padding: .7rem .1rem; }
+  .lat-sec[open] > summary { border-bottom: 2px solid var(--lima); margin-bottom: .7rem; }
+  .lat-sec[open] { padding-bottom: .9rem; }
+  @media (max-width: 1250px) { .fila-superior { grid-template-columns: 1fr; } .filtros-card { position: static; order: -1; } }
 </style>
 </head>
 <body>
@@ -666,31 +701,6 @@
       <img src="Logo_de_la_Universidad_El_Bosque.png" alt="Logo" class="logo-img">
       <div><b>Calendario Académico</b><small id="inst"></small></div>
     </div>
-    <div class="barra">
-    <select id="fAnio" aria-label="Año"></select>
-    <div class="seg" id="fSem">
-      <button data-v="">📅 Todo el año</button>
-      <button data-v="1">1er semestre</button>
-      <button data-v="2">2do semestre</button>
-    </div>
-    <select id="fGrupo" aria-label="Facultad o área"></select>
-    <select id="fProg" aria-label="Programa" hidden></select>
-
-    <!-- FILTRO POR ROLES / DIRIGIDO A -->
-    <details class="filtro-pub" id="fPubWrap">
-      <summary id="fPubSummary">👥 Dirigido a: Todos</summary>
-      <div class="drop" id="fPubList"></div>
-    </details>
-
-    <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
-    <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
-    <div class="der">
-      <button class="btn" onclick="irHoy()">📍 Hoy</button>
-      <button class="btn" onclick="limpiarFiltros()" title="Quitar todos los filtros">🧹 Limpiar</button>
-      <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
-      <button class="btn" onclick="print()">🖨️ Imprimir</button>
-    </div>
-  </div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="🔍 Buscar: matrícula, grados, nómina…">
@@ -717,16 +727,17 @@
 
   <div class="layout">
     <aside class="lateral" id="lateral" aria-label="Categorías y facultades">
-      <details class="lat-sec" open>
+      <details class="lat-sec">
         <summary>🗓️ Calendario por categoría</summary>
         <div class="modulos" id="modulos"></div>
       </details>
-      <details class="lat-sec" open>
+      <details class="lat-sec">
         <summary>🏛️ Facultades y departamentos</summary>
         <div class="facs" id="facs"></div>
       </details>
     </aside>
     <div class="contenido">
+  <div class="fila-superior">
   <section class="novedades" id="novedades">
     <div class="novedades-head">
       <h2>📣 Novedades de clases</h2>
@@ -734,6 +745,42 @@
     </div>
     <div class="nov-grid" id="novGrid"></div>
   </section>
+    <aside class="filtros-card" aria-label="Filtros del calendario">
+      <div class="fc-head"><h2>🎛️ Filtros</h2><span class="fc-sub">Personaliza lo que ves en el calendario</span></div>
+      <div class="barra">
+        <div class="fc-grupo fc-fila">
+          <div class="fc-campo"><label class="fc-lbl" for="fAnio">Año</label><select id="fAnio" aria-label="Año"></select></div>
+          <div class="fc-campo fc-grow"><span class="fc-lbl">Periodo</span>
+            <div class="seg" id="fSem">
+              <button data-v="">📅 Todo el año</button>
+              <button data-v="1">1er semestre</button>
+              <button data-v="2">2do semestre</button>
+            </div>
+          </div>
+        </div>
+        <div class="fc-grupo">
+          <div class="fc-campo"><label class="fc-lbl" for="fGrupo">Facultad o área</label><select id="fGrupo" aria-label="Facultad o área"></select></div>
+          <div class="fc-campo"><select id="fProg" aria-label="Programa" hidden></select></div>
+          <div class="fc-campo"><span class="fc-lbl">Dirigido a</span>
+            <details class="filtro-pub" id="fPubWrap">
+              <summary id="fPubSummary">👥 Dirigido a: Todos</summary>
+              <div class="drop" id="fPubList"></div>
+            </details>
+          </div>
+        </div>
+        <div class="fc-grupo fc-checks">
+          <label class="chk"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
+          <label class="chk"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
+        </div>
+        <div class="der">
+          <button class="btn" onclick="irHoy()">📍 Hoy</button>
+          <button class="btn" onclick="limpiarFiltros()" title="Quitar todos los filtros">🧹 Limpiar</button>
+          <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
+          <button class="btn" onclick="print()">🖨️ Imprimir</button>
+        </div>
+      </div>
+    </aside>
+  </div>
 
     <main>
     <div class="panelwrap">
@@ -1037,7 +1084,7 @@
       const { data: areas } = await dbClient.from('areas').select('*');
       const { data: pers } = await dbClient.from('periodos').select('*');
       const { data: evs } = await dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`);
-      const { data: novs } = await dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(30);
+      const { data: novs } = await dbClient.from('novedades').select('*').gte('fecha', hoy()).order('fecha', { ascending: true }).limit(60);
       NOVEDADES = novs || [];
 
       return {
@@ -1303,10 +1350,22 @@
 
   const NOV_COLOR = { cambio_salon: '#007A78', cancelacion: '#B3261E', modalidad: '#8A5A00', otro: '#5B6F6B' };
   const NOV_TAG = { cambio_salon: 'Cambio de salón', cancelacion: 'Cancelación', modalidad: 'Cambio de modalidad', otro: 'Aviso' };
+  // Una novedad es vigente hasta que termina su fecha/hora. Después deja de verse en la vista pública,
+  // pero permanece en el historial del administrador (no se borra de la base de datos).
+  function novVigente(n) {
+    const hoyIso = hoy();
+    if (!n || !n.fecha) return false;
+    if (n.fecha > hoyIso) return true;
+    if (n.fecha < hoyIso) return false;
+    const fin = String(n.hora_fin || n.hora_inicio || '').slice(0, 5);
+    if (!fin) return true; // sin hora: vigente todo el día
+    const a = new Date();
+    return `${String(a.getHours()).padStart(2, '0')}:${String(a.getMinutes()).padStart(2, '0')}` <= fin;
+  }
+  setInterval(() => { try { pintarNovedades(); } catch (_) {} }, 60000);
   function pintarNovedades() {
     const cont = $('#novGrid'); if (!cont) return;
-    const hoyIso = hoy();
-    const lista = NOVEDADES.filter(n => n.fecha >= hoyIso).slice(0, 8);
+    const lista = NOVEDADES.filter(novVigente).sort((x, y) => String(x.fecha).localeCompare(String(y.fecha)) || String(x.hora_inicio || '').localeCompare(String(y.hora_inicio || ''))).slice(0, 12);
     $('#novCount').textContent = lista.length;
     cont.innerHTML = lista.length
       ? lista.map(n => {
@@ -2179,23 +2238,27 @@
       </div>
     </div>
 
+    <h2 style="font-family:var(--display);color:var(--petroleo);margin:1.2rem 0 .3rem;">🗂️ Historial de novedades</h2>
+    <p style="color:var(--suave);font-size:.85rem;margin-bottom:.7rem;">Las novedades que ya cumplieron su fecha y hora dejan de mostrarse al público, pero se conservan aquí.</p>
     <div class="tw">
       <table>
-        <thead><tr><th>Fecha</th><th>Tipo</th><th>Título</th><th>Facultad / Programa</th><th>Ubicación</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>Fecha</th><th>Estado</th><th>Tipo</th><th>Título</th><th>Facultad / Programa</th><th>Ubicación</th><th>Acciones</th></tr></thead>
         <tbody>
           ${NOVEDADES.map(n => {
             const facs = (n.facultad_ids || []).map(id => D.facultades.find(f => String(f.id) === String(id))).filter(Boolean);
             const progs = [];
             (n.programa_ids || []).forEach(id => { for (const f of D.facultades) { const p = f.programas.find(x => String(x.id) === String(id)); if (p) progs.push(p.nombre); } });
-            return `<tr>
-              <td>${fmtFecha(n.fecha)}</td>
+            const vig = novVigente(n);
+            return `<tr class="${vig ? '' : 'nov-fin'}">
+              <td>${fmtFecha(n.fecha)}${n.hora_inicio ? `<br><span style="font-size:.78rem;color:var(--suave)">🕒 ${String(n.hora_inicio).slice(0,5)}${n.hora_fin ? '–' + String(n.hora_fin).slice(0,5) : ''}</span>` : ''}</td>
+              <td><span class="nov-estado ${vig ? 'vig' : 'fin'}">${vig ? '● Vigente' : '✓ Finalizada'}</span></td>
               <td><span class="chip">${NOV_TAG[n.tipo] || 'Aviso'}</span></td>
               <td><b>${esc(n.titulo)}</b>${n.detalle ? `<br><span style="font-size:.8rem;color:var(--suave)">${esc(n.detalle)}</span>` : ''}</td>
               <td style="font-size:.82rem;">${[...facs.map(f => emojiFac(f) + ' ' + esc(f.nombre)), ...progs.map(p => '📚 ' + esc(p))].join('<br>') || '<i style="color:var(--suave)">—</i>'}</td>
               <td style="font-size:.82rem;">${esc(n.salon || '')}${n.piso ? '<br><span style="color:var(--suave)">' + esc(n.piso) + '</span>' : ''}</td>
               <td><div class="acc"><button class="btn sm" data-a="editNov" data-i="${n.id}">${FLATICONS.editar} Editar</button><button class="btn sm pel" data-a="delNov" data-i="${n.id}">${FLATICONS.basura}</button></div></td>
             </tr>`;
-          }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--suave);padding:1.5rem;">Sin novedades.</td></tr>'}
+          }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--suave);padding:1.5rem;">Sin novedades.</td></tr>'}
         </tbody>
       </table>
     </div>`;
