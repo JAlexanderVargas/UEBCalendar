@@ -587,107 +587,6 @@
     font-weight: 700;
     color: var(--petroleo);
   }
-
-  /* ===== FILTROS DENTRO DEL ENCABEZADO (entre el título y el buscador) ===== */
-  .top { position: relative; flex-wrap: wrap; row-gap: .7rem; }
-  .top .brand { flex: none; }
-  .top .barra { position: static; flex: 1 1 420px; min-width: 0; background: transparent; backdrop-filter: none; border: 0; padding: 0; gap: .5rem .7rem; justify-content: flex-start; }
-  .top .barra label { color: #fff; }
-  .top .barra .chk { color: #fff; }
-  .top .search { margin-left: 0; flex: 0 1 240px; }
-  .panel.pl { top: 1rem; max-height: calc(100vh - 2rem); }
-
-  /* ===== COLUMNA IZQUIERDA ===== */
-  .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 1.5rem; align-items: start; max-width: 1800px; margin: 0 auto; padding: 1rem clamp(1rem, 3vw, 2.5rem) 0; position: relative; z-index: 10; }
-  .contenido { min-width: 0; }
-  .contenido .novedades { padding-left: 0; padding-right: 0; padding-top: 0; }
-  .contenido main { padding: 1rem 0 3rem; max-width: none; margin: 0; }
-  .lateral { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; padding-right: .3rem; scrollbar-width: thin; }
-  .lat-sec { margin-bottom: 1.1rem; }
-  .lat-sec > summary { list-style: none; cursor: pointer; font-family: var(--display); font-weight: 700; font-size: 1rem; color: var(--petroleo); padding: .35rem .2rem .55rem; border-bottom: 2px solid var(--lima); margin-bottom: .7rem; display: flex; align-items: center; justify-content: space-between; }
-  .lat-sec > summary::-webkit-details-marker { display: none; }
-  .lat-sec > summary::after { content: '▾'; font-size: .9rem; color: var(--suave); transition: transform .2s; }
-  .lat-sec:not([open]) > summary::after { transform: rotate(-90deg); }
-  .lateral .modulos, .lateral .facs { display: flex; flex-direction: column; gap: .5rem; padding: 0; }
-  .lateral .mod-card { min-height: 56px; width: 100%; padding-right: 2.6rem; }
-  .lateral .mod-card:hover { transform: translateY(-1px); }
-
-  .item { position: relative; --c: var(--lima); }
-  .ext-toggle { position: absolute; top: 0; right: 0; width: 2.5rem; height: 56px; display: grid; place-items: center; border: 0; background: transparent; color: var(--suave); font-size: 1rem; border-radius: 0 10px 10px 0; z-index: 2; }
-  .ext-toggle.todos { color: #fff; }
-  .ext-toggle:hover { color: var(--c); }
-  .ext-toggle span { display: inline-block; transition: transform .2s; }
-  .item.abierto .ext-toggle span { transform: rotate(180deg); }
-  .ext-body { display: none; margin: .35rem 0 .25rem .7rem; padding-left: .6rem; border-left: 3px solid var(--c); max-height: 270px; overflow-y: auto; scrollbar-width: thin; }
-  .item.abierto .ext-body { display: block; }
-  .ext-ev { display: grid; grid-template-columns: auto 1fr; gap: .2rem .55rem; width: 100%; text-align: left; border: 0; background: transparent; padding: .4rem .45rem; border-radius: 8px; font-size: .78rem; line-height: 1.3; align-items: baseline; }
-  .ext-ev:hover { background: color-mix(in srgb, var(--c) 10%, white); }
-  .ext-f { font-weight: 700; color: var(--petroleo); white-space: nowrap; }
-  .ext-t { color: var(--tinta); }
-  .ext-vacio { font-size: .78rem; color: var(--suave); padding: .4rem .45rem; }
-
-  .fac-btn { position: relative; overflow: hidden; width: 100%; text-align: left; display: flex; align-items: center; gap: .7rem; min-height: 56px; padding: .5rem 2.6rem .5rem 1rem; border: 1px solid color-mix(in srgb, var(--c) 35%, white); border-radius: 10px; background: color-mix(in srgb, var(--c) 9%, white); color: var(--tinta); box-shadow: 0 2px 6px rgba(0,0,0,.03); }
-  .fac-btn::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--c); }
-  .fac-btn:hover { border-color: var(--c); transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 22%, transparent); }
-  .fac-btn.on { background: color-mix(in srgb, var(--c) 24%, white); border: 2px solid var(--c); box-shadow: 0 6px 18px color-mix(in srgb, var(--c) 30%, transparent); }
-  .fac-btn .fac-em { flex: none; width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 22%, white); }
-  .fac-btn .txt { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
-  .fac-btn b { font-size: .8rem; line-height: 1.15; font-weight: 700; color: var(--tinta); text-transform: none; }
-  .fac-btn .n { font-size: .7rem; font-weight: 600; color: var(--suave); }
-  .fac-btn.inst { --c: var(--petroleo); }
-  .prog-chips { display: flex; flex-wrap: wrap; gap: .3rem; padding: .35rem .2rem .45rem; }
-  .prog-chip { border: 1px solid color-mix(in srgb, var(--c) 40%, white); background: #fff; color: var(--tinta); border-radius: 999px; padding: .15rem .6rem; font-size: .72rem; font-weight: 600; }
-  .prog-chip:hover, .prog-chip.on { background: color-mix(in srgb, var(--c) 22%, white); border-color: var(--c); }
-
-  @media (max-width: 1200px) {
-    .panelwrap { grid-template-columns: 1fr; }
-    .panel.pl { position: static; max-height: none; }
-    .panel.pl .lista-eventos { overflow-y: visible; padding-right: 0; }
-  }
-  @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
-    .lateral { position: static; max-height: none; overflow: visible; }
-    .top .barra { flex-basis: 100%; order: 3; }
-    .top .search { flex-basis: 100%; order: 4; }
-  }
-  @media print { .filtros-card, .lateral, .top .barra, .top .search, .admin-link { display: none !important; } .layout { display: block; } }
-  /* ===== FILA SUPERIOR: NOVEDADES + FILTROS ===== */
-  .fila-superior { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 1.2rem; align-items: start; }
-  .contenido .novedades { background: #fff; border: 1px solid var(--linea); border-radius: 16px; padding: 1.1rem 1.2rem 1.2rem; box-shadow: 0 6px 20px rgba(0,59,54,.06); border-top: 4px solid var(--lima); }
-  .novedades-head { padding-bottom: .6rem; border-bottom: 1px solid var(--linea); margin-bottom: .9rem; }
-  .nov-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); max-height: 420px; overflow-y: auto; padding-right: .25rem; scrollbar-width: thin; }
-  .filtros-card { background: #fff; border: 1px solid var(--linea); border-radius: 16px; box-shadow: 0 6px 20px rgba(0,59,54,.06); border-top: 4px solid var(--verde); padding: 1.1rem 1.2rem 1.2rem; position: sticky; top: 4.6rem; z-index: 30; }
-  .fc-head { padding-bottom: .6rem; border-bottom: 1px solid var(--linea); margin-bottom: .9rem; }
-  .fc-head h2 { font-family: var(--display); font-size: 1.3rem; color: var(--petroleo); }
-  .fc-sub { font-size: .78rem; color: var(--suave); }
-  .filtros-card .barra { position: static; background: transparent; backdrop-filter: none; border: 0; padding: 0; display: flex; flex-direction: column; gap: .9rem; align-items: stretch; }
-  .fc-grupo { display: flex; flex-direction: column; gap: .6rem; }
-  .fc-grupo.fc-fila { flex-direction: column; gap: .6rem; }
-  .fc-campo { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
-  .fc-campo.fc-grow { flex: 0 0 auto; }
-  .fc-lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--suave); }
-  .filtros-card .barra select { width: 100%; max-width: none; }
-  .filtros-card .seg { display: flex; width: 100%; }
-  .filtros-card .seg button { flex: 1 1 0; min-width: 0; justify-content: center; padding: .4rem .3rem; font-size: .78rem; white-space: nowrap; }
-  .filtros-card .filtro-pub > summary { width: 100%; justify-content: flex-start; }
-  .filtros-card .filtro-pub .drop { min-width: 100%; }
-  .fc-checks { background: var(--fondo); border-radius: 10px; padding: .6rem .8rem; gap: .45rem; }
-  .fc-checks .chk { font-size: .85rem; display: flex; gap: .45rem; align-items: center; cursor: pointer; }
-  .filtros-card .barra .der { margin-left: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-  .filtros-card .barra .der .btn { width: 100%; }
-  .filtros-card .barra .der #bIcs { grid-column: 1 / -1; background: var(--verde); border-color: var(--verde); color: #fff; }
-  .filtros-card .barra .der #bIcs:hover { background: var(--petroleo); border-color: var(--petroleo); color: #fff; }
-  .fc-campo:has(> select[hidden]) { display: none; }
-  .filtros-card .barra .der #bIcs, .filtros-card .barra .der .btn:last-child { grid-column: 1 / -1; }
-  .nov-estado { display: inline-block; font-size: .72rem; font-weight: 700; padding: .1rem .55rem; border-radius: 999px; }
-  .nov-estado.vig { background: color-mix(in srgb, var(--lima) 30%, white); color: var(--petroleo); }
-  .nov-estado.fin { background: var(--fondo); color: var(--suave); border: 1px solid var(--linea); }
-  tr.nov-fin td { opacity: .78; }
-  .lat-sec { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: .2rem .9rem; box-shadow: 0 4px 14px rgba(0,59,54,.05); }
-  .lat-sec > summary { border-bottom: 0; margin-bottom: 0; padding: .7rem .1rem; }
-  .lat-sec[open] > summary { border-bottom: 2px solid var(--lima); margin-bottom: .7rem; }
-  .lat-sec[open] { padding-bottom: .9rem; }
-  @media (max-width: 1250px) { .fila-superior { grid-template-columns: 1fr; } .filtros-card { position: static; order: -1; } }
 </style>
 </head>
 <body>
@@ -727,19 +626,32 @@
     </div>
   </section>
 
-  <div class="layout">
-    <aside class="lateral" id="lateral" aria-label="Categorías y facultades">
-      <details class="lat-sec">
-        <summary>🗓️ Calendario por categoría</summary>
-        <div class="modulos" id="modulos"></div>
-      </details>
-      <details class="lat-sec">
-        <summary>🏛️ Facultades y departamentos</summary>
-        <div class="facs" id="facs"></div>
-      </details>
-    </aside>
-    <div class="contenido">
-  <div class="fila-superior">
+  <div class="barra">
+    <select id="fAnio" aria-label="Año"></select>
+    <div class="seg" id="fSem">
+      <button data-v="">📅 Todo el año</button>
+      <button data-v="1">1er semestre</button>
+      <button data-v="2">2do semestre</button>
+    </div>
+    <select id="fGrupo" aria-label="Facultad o área"></select>
+    <select id="fProg" aria-label="Programa" hidden></select>
+
+    <!-- FILTRO POR ROLES / DIRIGIDO A -->
+    <details class="filtro-pub" id="fPubWrap">
+      <summary id="fPubSummary">👥 Dirigido a: Todos</summary>
+      <div class="drop" id="fPubList"></div>
+    </details>
+
+    <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
+    <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
+    <div class="der">
+      <button class="btn" onclick="irHoy()">📍 Hoy</button>
+      <button class="btn" onclick="limpiarFiltros()" title="Quitar todos los filtros">🧹 Limpiar</button>
+      <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
+      <button class="btn" onclick="print()">🖨️ Imprimir</button>
+    </div>
+  </div>
+
   <section class="novedades" id="novedades">
     <div class="novedades-head">
       <h2>📣 Novedades de clases</h2>
@@ -747,44 +659,10 @@
     </div>
     <div class="nov-grid" id="novGrid"></div>
   </section>
-    <aside class="filtros-card" aria-label="Filtros del calendario">
-      <div class="fc-head"><h2>🎛️ Filtros</h2><span class="fc-sub">Personaliza lo que ves en el calendario</span></div>
-      <div class="barra">
-        <div class="fc-grupo fc-fila">
-          <div class="fc-campo"><label class="fc-lbl" for="fAnio">Año</label><select id="fAnio" aria-label="Año"></select></div>
-          <div class="fc-campo fc-grow"><span class="fc-lbl">Periodo</span>
-            <div class="seg" id="fSem">
-              <button data-v="">📅 Todo el año</button>
-              <button data-v="1">1er semestre</button>
-              <button data-v="2">2do semestre</button>
-            </div>
-          </div>
-        </div>
-        <div class="fc-grupo">
-          <div class="fc-campo"><label class="fc-lbl" for="fGrupo">Facultad o área</label><select id="fGrupo" aria-label="Facultad o área"></select></div>
-          <div class="fc-campo"><select id="fProg" aria-label="Programa" hidden></select></div>
-          <div class="fc-campo"><span class="fc-lbl">Dirigido a</span>
-            <details class="filtro-pub" id="fPubWrap">
-              <summary id="fPubSummary">👥 Dirigido a: Todos</summary>
-              <div class="drop" id="fPubList"></div>
-            </details>
-          </div>
-        </div>
-        <div class="fc-grupo fc-checks">
-          <label class="chk"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
-          <label class="chk"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
-        </div>
-        <div class="der">
-          <button class="btn" onclick="irHoy()">📍 Hoy</button>
-          <button class="btn" onclick="limpiarFiltros()" title="Quitar todos los filtros">🧹 Limpiar</button>
-          <button class="btn" id="bIcs">📥 Añadir a mi calendario</button>
-          <button class="btn" onclick="print()">🖨️ Imprimir</button>
-        </div>
-      </div>
-    </aside>
-  </div>
 
-    <main>
+  <div class="modulos" id="modulos"></div>
+
+  <main>
     <div class="panelwrap">
       <section class="panel">
         <div id="vistaCalendario"></div>
@@ -798,8 +676,6 @@
       </section>
     </div>
   </main>
-    </div>
-  </div>
 
   <footer style="background:var(--petroleo);color:rgba(255,255,255,.78);padding:1rem clamp(1rem,4vw,3rem);font-size:.82rem;display:flex;flex-wrap:wrap;gap:.5rem 2rem;">
     <span id="origen"></span><span id="actual"></span>
@@ -1086,7 +962,7 @@
       const { data: areas } = await dbClient.from('areas').select('*');
       const { data: pers } = await dbClient.from('periodos').select('*');
       const { data: evs } = await dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`);
-      const { data: novs } = await dbClient.from('novedades').select('*').gte('fecha', hoy()).order('fecha', { ascending: true }).limit(60);
+      const { data: novs } = await dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(30);
       NOVEDADES = novs || [];
 
       return {
@@ -1140,7 +1016,7 @@
   function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3200); }
 
   // Estado global (incluye el filtro de roles público)
-  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date(), publico: [], ext: new Set() };
+  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date(), publico: [] };
   let listaFiltradaCompleta = [];
 
   function getColores(D, e) {
@@ -1317,57 +1193,20 @@
     }).join('') : '<p style="opacity:0.8; font-size:0.9rem; padding:0.4rem 0; color:#fff;">No hay fechas próximas.</p>';
   }
 
-  const extFila = e => `<button type="button" class="ext-ev" data-id="${esc(e.id)}"><span class="ext-f">${fmtRango(e)}</span><span class="ext-t">${esc(e.titulo)}</span></button>`;
-  const extLista = L => L.length ? L.map(extFila).join('') : '<p class="ext-vacio">Sin fechas con los filtros actuales.</p>';
-  const extBtn = (key, abierto, cls = '') => `<button type="button" class="ext-toggle ${cls}" data-ext="${esc(key)}" aria-expanded="${abierto}" title="Ver / ocultar fechas"><span>▾</span></button>`;
-
   function pintarModulos() {
     const base = filtrar({ sinCat: true }); let i = 0;
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
-    const item = (key, id, col, ic, nom, lista, cls, tcls) => {
-      const n = lista.length, ab = S.ext.has(key);
-      return `<div class="item ${ab ? 'abierto' : ''}" style="--c:${col}"><button class="mod-card ${cls}" style="--c:${col};--i:${i++}" data-cat="${esc(id)}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>${extBtn(key, ab, tcls)}<div class="ext-body">${extLista(lista)}</div></div>`;
-    };
-    $('#modulos').innerHTML = item('c:todos', '', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base, 'todos ' + (S.cat === '' ? 'on' : ''), 'todos') +
-      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const L = base.filter(e => e.categoria === c.id); return item('c:' + c.id, c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, L, (S.cat === c.id ? 'on ' : '') + (L.length ? '' : 'cero'), ''); }).join('');
-  }
-
-  // Fechas propias de una facultad con los filtros actuales (año, semestre, categoría, rol, búsqueda)
-  function fechasDeFac(fid) {
-    const g = S.grupo, p = S.prog, ins = S.inst;
-    S.grupo = 'f:' + fid; S.prog = ''; S.inst = false;
-    try { return filtrar().filter(e => (e.facultad || []).includes(fid)); } finally { S.grupo = g; S.prog = p; S.inst = ins; }
-  }
-
-  function pintarFacultades() {
-    const cont = $('#facs'); if (!cont) return;
-    const todas = `<button type="button" class="fac-btn inst ${S.grupo === '' ? 'on' : ''}" data-fac="" aria-pressed="${S.grupo === ''}"><span class="fac-em">${em('🏫')}</span><span class="txt"><b>Toda la institución</b></span></button>`;
-    cont.innerHTML = todas + D.facultades.map(f => {
-      const key = 'f:' + f.id, col = f.color || '#007A78', L = fechasDeFac(f.id), n = L.length;
-      const act = S.grupo === key, ab = S.ext.has(key), progs = f.programas || [];
-      const chips = progs.length ? `<div class="prog-chips">${progs.map(p => `<button type="button" class="prog-chip ${act && S.prog === p.id ? 'on' : ''}" data-fprog="${esc(f.id)}|${esc(p.id)}">${esc(p.nombre)}${p.nivel === 'posgrado' ? ' · posgrado' : ''}</button>`).join('')}</div>` : '';
-      return `<div class="item ${ab ? 'abierto' : ''}" style="--c:${col}"><button type="button" class="fac-btn ${act ? 'on' : ''}" data-fac="${esc(f.id)}" aria-pressed="${act}"><span class="fac-em">${em(emojiFac(f))}</span><span class="txt"><b>${esc(f.nombre)}</b><span class="n">${n} ${n === 1 ? 'fecha propia' : 'fechas propias'}</span></span></button>${extBtn(key, ab)}<div class="ext-body">${chips}${extLista(L)}</div></div>`;
-    }).join('');
+    const card = (id, col, ic, nom, n, cls) => `<button class="mod-card ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>`;
+    $('#modulos').innerHTML = card('', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
+      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
   }
 
   const NOV_COLOR = { cambio_salon: '#007A78', cancelacion: '#B3261E', modalidad: '#8A5A00', otro: '#5B6F6B' };
   const NOV_TAG = { cambio_salon: 'Cambio de salón', cancelacion: 'Cancelación', modalidad: 'Cambio de modalidad', otro: 'Aviso' };
-  // Una novedad es vigente hasta que termina su fecha/hora. Después deja de verse en la vista pública,
-  // pero permanece en el historial del administrador (no se borra de la base de datos).
-  function novVigente(n) {
-    const hoyIso = hoy();
-    if (!n || !n.fecha) return false;
-    if (n.fecha > hoyIso) return true;
-    if (n.fecha < hoyIso) return false;
-    const fin = String(n.hora_fin || n.hora_inicio || '').slice(0, 5);
-    if (!fin) return true; // sin hora: vigente todo el día
-    const a = new Date();
-    return `${String(a.getHours()).padStart(2, '0')}:${String(a.getMinutes()).padStart(2, '0')}` <= fin;
-  }
-  setInterval(() => { try { pintarNovedades(); } catch (_) {} }, 60000);
   function pintarNovedades() {
     const cont = $('#novGrid'); if (!cont) return;
-    const lista = NOVEDADES.filter(novVigente).sort((x, y) => String(x.fecha).localeCompare(String(y.fecha)) || String(x.hora_inicio || '').localeCompare(String(y.hora_inicio || ''))).slice(0, 12);
+    const hoyIso = hoy();
+    const lista = NOVEDADES.filter(n => n.fecha >= hoyIso).slice(0, 8);
     $('#novCount').textContent = lista.length;
     cont.innerHTML = lista.length
       ? lista.map(n => {
@@ -1523,7 +1362,7 @@
 
   function pintarPublico() {
     if (!D) return;
-    pintarEncabezado(); pintarProximos(); pintarProgreso(); pintarModulos(); pintarFacultades(); pintarNovedades();
+    pintarEncabezado(); pintarProximos(); pintarProgreso(); pintarModulos(); pintarNovedades();
     const L = filtrar(); let fest = [];
     if (S.festivos && !S.cat) {
       const m0 = S.sem == 2 ? 6 : 0;
@@ -1647,9 +1486,6 @@
     const pubWrap = $('#fPubWrap');
     if (pubWrap && pubWrap.open && !pubWrap.contains(t)) pubWrap.open = false;
 
-    const tg = t.closest('[data-ext]'); if (tg) { const k = tg.dataset.ext, ab = !S.ext.has(k); ab ? S.ext.add(k) : S.ext.delete(k); tg.setAttribute('aria-expanded', ab); tg.closest('.item').classList.toggle('abierto', ab); return; }
-    const fb = t.closest('[data-fac]'); if (fb) { const g = fb.dataset.fac ? 'f:' + fb.dataset.fac : ''; S.grupo = (g && S.grupo === g) ? '' : g; S.prog = ''; return pintarPublico(); }
-    const fp = t.closest('[data-fprog]'); if (fp) { const [fid, pid] = fp.dataset.fprog.split('|'), g = 'f:' + fid; if (S.grupo === g && S.prog === pid) S.prog = ''; else { S.grupo = g; S.prog = pid; } return pintarPublico(); }
     const mod = t.closest('[data-cat]'); if (mod) { S.cat = mod.dataset.cat; return pintarPublico(); }
     if (t.closest('[data-cerrar]') || t.id === 'velo') return cerrar();
     const ics = t.closest('[data-ics]'); if (ics) return descargarIcs([D.eventos.find(e => e.id === ics.dataset.ics)], 'evento');
@@ -2240,27 +2076,23 @@
       </div>
     </div>
 
-    <h2 style="font-family:var(--display);color:var(--petroleo);margin:1.2rem 0 .3rem;">🗂️ Historial de novedades</h2>
-    <p style="color:var(--suave);font-size:.85rem;margin-bottom:.7rem;">Las novedades que ya cumplieron su fecha y hora dejan de mostrarse al público, pero se conservan aquí.</p>
     <div class="tw">
       <table>
-        <thead><tr><th>Fecha</th><th>Estado</th><th>Tipo</th><th>Título</th><th>Facultad / Programa</th><th>Ubicación</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>Fecha</th><th>Tipo</th><th>Título</th><th>Facultad / Programa</th><th>Ubicación</th><th>Acciones</th></tr></thead>
         <tbody>
           ${NOVEDADES.map(n => {
             const facs = (n.facultad_ids || []).map(id => D.facultades.find(f => String(f.id) === String(id))).filter(Boolean);
             const progs = [];
             (n.programa_ids || []).forEach(id => { for (const f of D.facultades) { const p = f.programas.find(x => String(x.id) === String(id)); if (p) progs.push(p.nombre); } });
-            const vig = novVigente(n);
-            return `<tr class="${vig ? '' : 'nov-fin'}">
-              <td>${fmtFecha(n.fecha)}${n.hora_inicio ? `<br><span style="font-size:.78rem;color:var(--suave)">🕒 ${String(n.hora_inicio).slice(0,5)}${n.hora_fin ? '–' + String(n.hora_fin).slice(0,5) : ''}</span>` : ''}</td>
-              <td><span class="nov-estado ${vig ? 'vig' : 'fin'}">${vig ? '● Vigente' : '✓ Finalizada'}</span></td>
+            return `<tr>
+              <td>${fmtFecha(n.fecha)}</td>
               <td><span class="chip">${NOV_TAG[n.tipo] || 'Aviso'}</span></td>
               <td><b>${esc(n.titulo)}</b>${n.detalle ? `<br><span style="font-size:.8rem;color:var(--suave)">${esc(n.detalle)}</span>` : ''}</td>
               <td style="font-size:.82rem;">${[...facs.map(f => emojiFac(f) + ' ' + esc(f.nombre)), ...progs.map(p => '📚 ' + esc(p))].join('<br>') || '<i style="color:var(--suave)">—</i>'}</td>
               <td style="font-size:.82rem;">${esc(n.salon || '')}${n.piso ? '<br><span style="color:var(--suave)">' + esc(n.piso) + '</span>' : ''}</td>
               <td><div class="acc"><button class="btn sm" data-a="editNov" data-i="${n.id}">${FLATICONS.editar} Editar</button><button class="btn sm pel" data-a="delNov" data-i="${n.id}">${FLATICONS.basura}</button></div></td>
             </tr>`;
-          }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--suave);padding:1.5rem;">Sin novedades.</td></tr>'}
+          }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--suave);padding:1.5rem;">Sin novedades.</td></tr>'}
         </tbody>
       </table>
     </div>`;
@@ -2593,29 +2425,15 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
   async function iniciar() {
-    const vacio = () => ({ institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] });
-    const arrancar = () => {
-      $('#public-panel').style.display = 'block';
-      const per = periodoDe(hoy()), anios = aniosDisponibles();
-      S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
-      S.sem = per.startsWith(S.anio + '-') ? per.split('-')[1] : '';
-      if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
-      try { pintarPublico(); } catch (err) { console.error('Error al pintar el calendario:', err); }
-      $('#loader').classList.add('hidden');
-    };
-    // 1) Mostrar la página de inmediato (nunca se queda en blanco)
-    if (!D) D = vacio();
-    arrancar();
-    // 2) Leer datos con tiempo máximo y repintar al llegar
-    if (DB_READY) {
-      let datos = null;
-      try { datos = await Promise.race([leerNube(), new Promise(r => setTimeout(() => r('timeout'), 15000))]); } catch (err) { console.error('Error leyendo datos:', err); }
-      if (datos && datos !== 'timeout') { D = datos; try { pintarPublico(); } catch (err) { console.error(err); } }
-      else {
-        const sub = document.getElementById('heroSub');
-        if (sub) sub.innerHTML = '⚠️ No se pudo leer la información desde la base de datos (Supabase). Verifica la conexión o que el proyecto esté activo.';
-      }
-    }
+    if (DB_READY) { const datos = await leerNube(); if (datos) D = datos; }
+    if (!D) D = { institucion: 'Universidad El Bosque', actualizado: new Date().toISOString(), categorias: [], facultades: [], areas: [], periodos: [], eventos: [] };
+    $('#public-panel').style.display = 'block';
+    const per = periodoDe(hoy()), anios = aniosDisponibles();
+    S.anio = anios.includes(+per.split('-')[0]) ? +per.split('-')[0] : anios[anios.length - 1] || new Date().getFullYear();
+    S.sem = per.startsWith(S.anio + '-') ? per.split('-')[1] : '';
+    if (S.anio !== new Date().getFullYear()) S.ref = new Date(S.anio, 0, 1);
+    try { pintarPublico(); } catch (err) { console.error('Error al pintar el calendario:', err); }
+    $('#loader').classList.add('hidden');
   }
 
   if (dbClient) {
