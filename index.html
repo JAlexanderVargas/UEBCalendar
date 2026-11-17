@@ -2449,6 +2449,15 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
 
   async function iniciar() {
+    try { await iniciarInterno(); }
+    catch (err) {
+      console.error('Error al iniciar:', err);
+      const m = document.getElementById('error-msg'), bx = document.getElementById('error-box');
+      if (m && bx) { m.textContent = 'No se pudo preparar el calendario: ' + (err && err.message ? err.message : err); bx.hidden = false; }
+    }
+    finally { $('#loader').classList.add('hidden'); }
+  }
+  async function iniciarInterno() {
     try {
       if (DB_READY) { const datos = await leerNube(); if (datos) D = datos; else toast('No se pudo conectar con la base de datos. Revisa que el proyecto de Supabase esté activo (no pausado) y recarga.', true); }
     } catch (err) { console.error(err); }
