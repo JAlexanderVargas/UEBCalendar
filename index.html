@@ -313,6 +313,9 @@
   
   .cat-pill { font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 99px; background: color-mix(in srgb, var(--c-cat) 15%, white); color: var(--c-cat); border: 1px solid color-mix(in srgb, var(--c-cat) 30%, white); text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.2rem;}
   .cat-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--c-cat); display: inline-block;}
+  /* Texto de la categoría siempre legible: color de la categoría oscurecido sobre fondo claro */
+  .ev .cat-pill { background: color-mix(in srgb, var(--c-cat) 18%, white); color: color-mix(in srgb, var(--c-cat) 38%, #111); border-color: color-mix(in srgb, var(--c-cat) 55%, white); }
+  .ev.festivo .cat-pill { background: #fff; color: var(--rojo); }
 
   .ev-bottom { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--suave); }
   .info-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--fondo); padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid var(--linea); font-weight: 600; color: var(--tinta); }
