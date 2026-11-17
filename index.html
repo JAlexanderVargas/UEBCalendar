@@ -848,7 +848,7 @@
   const diaSem = e => { const a = parse(e.inicio), f = finDe(e); return e.inicio === f ? DIAS_L[a.getDay()] : DIAS_C[a.getDay()] + ' – ' + DIAS_C[parse(f).getDay()]; };
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&','<':'<','>':'>','"':'"',"'":'''}[c]));
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const pad = n => String(n).padStart(2, '0');
   const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -911,6 +911,12 @@
     const cat = catDe(D, e.categoria);
     const catNom = norm(cat ? cat.nombre : '');
     const niveles = new Set();
+
+    // 0. Nivel marcado explícitamente (check Pregrado / Posgrado) tiene prioridad
+    if (Array.isArray(e.nivel) && e.nivel.length) {
+      e.nivel.forEach(n => niveles.add(n === 'posgrado' ? 'posgrado' : 'pregrado'));
+      return niveles.has('pregrado') && niveles.has('posgrado') ? 'pregrado y posgrado' : (niveles.has('posgrado') ? 'posgrado' : 'pregrado');
+    }
 
     // 1. Revisar programas explícitamente seleccionados
     if (progs.length) {
@@ -2085,6 +2091,14 @@
         </div>
       </div>
       
+      <div class="fr">
+        <label>Nivel / modalidad del evento <span style="font-weight:400; color:var(--suave);">(se agrega al título: «Inicio de prematrícula pregrado»; marca ambos para «pregrado y posgrado»; sin marcar, se detecta por facultad o programa)</span></label>
+        <div style="display:flex; gap:1.2rem; flex-wrap:wrap;">
+          <label style="font-weight:600;"><input type="checkbox" id="f_niv_pre" onchange="actualizarPreviewTituloModal()" ${/pregrado/.test(norm(e.titulo || '')) ? 'checked' : ''}> 📘 Pregrado</label>
+          <label style="font-weight:600;"><input type="checkbox" id="f_niv_pos" onchange="actualizarPreviewTituloModal()" ${/posgrado/.test(norm(e.titulo || '')) ? 'checked' : ''}> 🎓 Posgrado</label>
+        </div>
+      </div>
+
       <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="3">${esc(e.descripcion)}</textarea></div>
       
       <div class="fr2">
@@ -2196,6 +2210,13 @@
     setTimeout(() => $('#f_titulo').focus(), 50);
   }
 
+  function nivelesMarcados() {
+    const n = [];
+    if ($('#f_niv_pre') && $('#f_niv_pre').checked) n.push('pregrado');
+    if ($('#f_niv_pos') && $('#f_niv_pos').checked) n.push('posgrado');
+    return n;
+  }
+
   window.actualizarPreviewTituloModal = function() {
     const titEl = $('#f_titulo');
     const prevEl = $('#f_titulo_preview');
@@ -2204,7 +2225,8 @@
       titulo: titEl.value.trim(),
       categoria: $('#f_cat') ? $('#f_cat').value : '',
       facultad: $('#f_fac') ? [...$('#f_fac').selectedOptions].map(o => o.value) : [],
-      programa: $('#f_prog') ? [...$('#f_prog').selectedOptions].map(o => o.value) : []
+      programa: $('#f_prog') ? [...$('#f_prog').selectedOptions].map(o => o.value) : [],
+      nivel: nivelesMarcados()
     };
     prevEl.textContent = tituloInteligente(mockEv) || '—';
   };
@@ -2287,7 +2309,7 @@
     const enlace = normalizarEnlace(g('f_link'));
     if (g('f_link') && !enlace) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true);
     const lugarEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lugar) ? g('f_lugar_esp') : '';
-    const titulo = tituloInteligente({ titulo: tituloRaw, categoria: g('f_cat'), facultad, programa });
+    const titulo = tituloInteligente({ titulo: tituloRaw, categoria: g('f_cat'), facultad, programa, nivel: nivelesMarcados() });
     const o = { id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), inicio, fin, periodo, periodo2, horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), facultad, programa, area, publico, lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') };
     let avisoCols = [];
     try {
