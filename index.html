@@ -3233,7 +3233,16 @@
     if (a === 'delProg') { if (confirm('¿Eliminar este programa?')) { await dbClient.from('programas').delete().eq('id', i); registrarLog('Eliminó programa', i); D = await leerNube(); toast('Programa eliminado'); refrescar(); } }
     if (a === 'addArea') { const n = $('#na_nom').value.trim(); if (!n) return toast('Escribe un nombre', true); await dbClient.from('areas').insert([{ id: nuevoId(n, D.areas), nombre: n }]); registrarLog('Creó área', n); D = await leerNube(); toast('Área agregada'); refrescar(); }
     if (a === 'delArea') { if (confirm('¿Eliminar área?')) { await dbClient.from('areas').delete().eq('id', i); registrarLog('Eliminó área', i); D = await leerNube(); toast('Área eliminada'); refrescar(); } }
-    if (a === 'addCat') { const n = $('#nc_nom').value.trim(); if (!n) return toast('Escribe un nombre', true); await dbClient.from('categorias').insert([{ id: nuevoId(n, D.categorias), nombre: n, color: $('#nc_col').value }]); registrarLog('Creó categoría', n); D = await leerNube(); toast('Categoría agregada'); refrescar(); }
+    if (a === 'addCat') {
+      const n = $('#nc_nom').value.trim(); if (!n) return toast('Escribe un nombre', true);
+      const id = nuevoId(n, D.categorias);
+      const r = await dbClient.from('categorias').insert([{ id, nombre: n, color: $('#nc_col').value }]).select();
+      if (r.error) { console.error('addCat', r.error); return toast('No se pudo crear la categoría: ' + (r.error.message || r.error.code), true); }
+      registrarLog('Creó categoría', n);
+      const nuevos = await leerNube(); if (nuevos) D = nuevos;
+      if (!D.categorias.some(c => c.id === id)) return toast('Supabase no guardó la categoría (revisa las políticas RLS de la tabla categorias: debe permitir INSERT y SELECT).', true);
+      toast('Categoría agregada'); refrescar();
+    }
     if (a === 'delCat') { if (confirm('¿Eliminar categoría?')) { await dbClient.from('categorias').delete().eq('id', i); registrarLog('Eliminó categoría', i); D = await leerNube(); toast('Categoría eliminada'); refrescar(); } }
     if (a === 'bajarJson') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(D, null, 2)], { type: 'application/json' })); a.download = 'respaldo-calendario.json'; a.click(); }
   });
