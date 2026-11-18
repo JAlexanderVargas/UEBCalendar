@@ -2607,7 +2607,7 @@
       salon: (ubic === 'Otro' && ubicEsp) ? ubicEsp : (ubic || null),
       ubicacion: (ubic && ubic !== 'Otro') ? (ubicEsp || null) : null,
       piso: $('#nv_piso').value.trim() || null, enlace: enlace || null,
-      detalle: $('#nv_detalle').value.trim() || null,
+      detalle: $('#nv_detalle').value.trim() || '',
       facultad_ids: [...$('#nv_fac').selectedOptions].map(o => o.value),
       programa_ids: [...$('#nv_prog').selectedOptions].map(o => o.value),
       area_ids: [...$('#nv_area').selectedOptions].map(o => o.value)
