@@ -654,6 +654,30 @@
     body { background: #fff; }
     .hero { background: #fff; padding: 0 0 1rem; }
   }
+
+  /* ===== Capa premium ===== */
+  body { background: radial-gradient(1200px 500px at 85% -10%, rgba(166,206,57,.14), transparent 60%), radial-gradient(900px 500px at -10% 10%, rgba(0,122,120,.10), transparent 55%), var(--fondo); }
+  .btn { border-radius: 12px; transition: transform .2s, box-shadow .25s, filter .2s; position: relative; overflow: hidden; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -8px rgba(0,59,54,.35); }
+  .btn:active { transform: translateY(0) scale(.97); }
+  .btn.pri { background: linear-gradient(135deg, var(--verde), #00938f 55%, var(--petroleo)); background-size: 200% 100%; color: #fff; border: 0; }
+  .btn.pri:hover { background-position: 100% 0; filter: saturate(1.15); }
+  .btn.peligro { background: linear-gradient(135deg, #d93a30, var(--rojo)); color: #fff; border: 0; }
+  .btn.warn { background: var(--rojo-fondo); color: var(--rojo); border: 1px solid #f3b8b4; }
+  .btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%); transform: translateX(-120%); transition: transform .6s; }
+  .btn:hover::after { transform: translateX(120%); }
+  .caja, .tw { border-radius: 18px; box-shadow: 0 1px 0 rgba(255,255,255,.8) inset, 0 12px 30px -18px rgba(0,59,54,.35); border: 1px solid rgba(220,229,225,.9); backdrop-filter: blur(6px); }
+  .tw table tbody tr { transition: background .2s, transform .2s; }
+  .tw table tbody tr:hover { background: linear-gradient(90deg, rgba(166,206,57,.14), rgba(0,122,120,.05)); }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--verde) !important; box-shadow: 0 0 0 4px rgba(0,122,120,.15); transition: box-shadow .2s; }
+  .ev { transition: transform .25s, box-shadow .3s; }
+  .ev:hover { transform: translateY(-3px) scale(1.005); box-shadow: 0 18px 34px -18px rgba(0,59,54,.45); }
+  .masiva-bar { margin-bottom: .9rem; padding: .7rem .9rem; background: linear-gradient(135deg, #fff, #f3faf5); border: 1px solid var(--linea); border-radius: 14px; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; color: var(--tinta); box-shadow: 0 10px 24px -18px rgba(0,59,54,.5); animation: panelIn .35s ease-out; }
+  .masiva-n { margin-right: auto; font-weight: 700; } .masiva-n.suave { color: var(--suave); font-weight: 600; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-thumb { background: linear-gradient(var(--verde), var(--lima)); border-radius: 10px; border: 2px solid var(--fondo); }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .caja, .tools, .cards { animation: panelIn .45s ease-out both; }
+  @media (prefers-reduced-motion: reduce) { .caja, .tools, .cards, .masiva-bar, .btn::after { animation: none; transition: none; } }
 </style>
 </head>
 <body>
@@ -1159,7 +1183,7 @@
         areas: [...(areas || [])].sort(porNombre),
         periodos: pers || [],
         eventos: evs ? evs.map(e => ({
-          id: e.id, titulo: e.titulo, descripcion: e.descripcion || '', categoria: e.categoria_id,
+          id: e.id, titulo: e.titulo, descripcion: e.descripcion || '', categoria: e.categoria_id, subcategoria: e.subcategoria || '',
           periodo: e.periodo_id, periodo2: e.periodo2_id, inicio: e.fecha_inicio, fin: e.fecha_fin || e.fecha_inicio,
           horaInicio: e.hora_inicio || '', horaFin: e.hora_fin || '',
           lugar: e.lugar || '', lugarEsp: e.lugar_especifico || '', piso: e.piso || '', enlace: e.enlace || '',
@@ -1566,7 +1590,7 @@
 
     return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
       <div class="fecha-block"><b>${d.getDate()}</b><span class="mes">${MESES_C[d.getMonth()]}</span><span class="dia-sem">${diaSem(e)}</span></div>
-      <div class="ev-content"><div class="ev-top"><h3>${esc(titMostrado)}</h3><span class="cat-pill">${esc(c.nombre)}</span></div><div class="ev-bottom">${horaHtml}${ambitoHtml}${lugarHtml}${infoExtraHtml}${linkHtml}${msHtml}</div></div>
+      <div class="ev-content"><div class="ev-top"><h3>${esc(titMostrado)}</h3><span class="cat-pill">${esc(c.nombre)}${e.subcategoria ? ' · ' + esc(e.subcategoria) : ''}</span></div><div class="ev-bottom">${horaHtml}${ambitoHtml}${lugarHtml}${infoExtraHtml}${linkHtml}${msHtml}</div></div>
       <div class="estado-block"><span class="estado ${st.c}">${st.t}</span></div>
     </article>`;
   }
@@ -2066,11 +2090,21 @@
     }).sort((a, b) => a.inicio.localeCompare(b.inicio));
   }
   
+  function barraMasiva(L, pEd, pElim) {
+    const n = SEL.size, nF = L.filter(puedeEnEvento).length;
+    return `<div class="masiva-bar">${n ? `<b class="masiva-n">${n} seleccionado${n > 1 ? 's' : ''}</b>` : `<span class="masiva-n suave">${nF} evento${nF === 1 ? '' : 's'} en la lista</span>`}
+      ${pEd && n ? `<button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button>` : ''}
+      ${pElim && n ? `<button class="btn sm warn" data-a="m_del">${FLATICONS.basura} Eliminar seleccionados (${n})</button>` : ''}
+      ${pElim && nF ? `<button class="btn sm peligro" data-a="m_delall">${FLATICONS.basura} Eliminar todos (${nF})</button>` : ''}</div>`;
+  }
+
   function pintarTabla() {
     ['q', 'per', 'cat', 'grupo', 'est'].forEach(k => { const el = $('#x_' + k); if (el) el.value = F[k]; });
     const L = eventosFiltrados();
     const pEd = puede('editar'), pEl = puede('eliminar');
-    $('#masiva').innerHTML = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button></div>` : '';
+    const pElim = puede('eliminar');
+    $('#masiva').innerHTML = (pEd && SEL.size) || (pElim && L.length) ? barraMasiva(L, pEd, pElim) : '';
+    const _vieja = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button></div>` : '';
     $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.filter(puedeEnEvento).every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
       L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}<td style="white-space:nowrap">${fmtRango(e)}</td><td><div class="tt">${esc(tituloInteligente(e))}</div>${chipCatAdmin(e.categoria)}</td><td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido">⏸</span>' : ''}</td><td>${pEd && puedeEnEvento(e) ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>` : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td><td><div class="acc">${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}${puede('crear') && puedeEnEvento(e) ? `<button class="btn sm" data-a="dup" data-i="${e.id}" title="Crear copia">📄 Duplicar</button>` : ''}${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}</div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
@@ -2124,7 +2158,8 @@
       <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="3">${esc(e.descripcion)}</textarea></div>
       
       <div class="fr2">
-        <div class="fr"><label>Categoría</label><select id="f_cat" onchange="actualizarPreviewTituloModal()">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
+        <div class="fr"><label>Categoría</label><select id="f_cat" onchange="actualizarPreviewTituloModal(); pintarSubcats()">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
+        <div class="fr"><label>Subcategoría <span style="font-weight:400; color:var(--suave);">(opcional)</span></label><select id="f_subcat" data-sel="${esc(e.subcategoria || '')}"></select></div>
         <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div>
       </div>
       
@@ -2232,6 +2267,15 @@
     setTimeout(() => $('#f_titulo').focus(), 50);
   }
 
+  function subcatsDe(id) { const c = D.categorias.find(x => x.id === id); const v = c && c.subcategorias; return Array.isArray(v) ? v : (typeof v === 'string' && v ? v.split(',').map(x => x.trim()).filter(Boolean) : []); }
+  window.pintarSubcats = function() {
+    const sel = $('#f_subcat'); if (!sel) return;
+    const lista = subcatsDe($('#f_cat').value), actual = sel.dataset.sel || sel.value;
+    sel.innerHTML = '<option value="">— Sin subcategoría —</option>' + lista.map(x => `<option value="${esc(x)}" ${x === actual ? 'selected' : ''}>${esc(x)}</option>`).join('');
+    sel.dataset.sel = ''; sel.closest('.fr').style.display = lista.length ? '' : 'none';
+  };
+  setTimeout(() => new MutationObserver(() => { const s2 = document.querySelector('#f_subcat'); if (s2 && !s2.dataset.init) { s2.dataset.init = 1; pintarSubcats(); } }).observe(document.body, { childList: true, subtree: true }), 0);
+
   function nivelesMarcados() {
     const n = [];
     if ($('#f_niv_pre') && $('#f_niv_pre').checked) n.push('pregrado');
@@ -2332,11 +2376,11 @@
     if (g('f_link') && !enlace) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true);
     const lugarEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lugar) ? g('f_lugar_esp') : '';
     const titulo = tituloInteligente({ titulo: tituloRaw, categoria: g('f_cat'), facultad, programa, nivel: nivelesMarcados() });
-    const o = { id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), inicio, fin, periodo, periodo2, horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), facultad, programa, area, publico, lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') };
+    const o = { id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), subcategoria: g('f_subcat'), inicio, fin, periodo, periodo2, horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), facultad, programa, area, publico, lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') };
     let avisoCols = [];
     try {
       if (DB_READY) {
-        const payload = { titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, estado: o.estado, updated_at: new Date().toISOString() };
+        const payload = { titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, subcategoria: o.subcategoria || null, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, estado: o.estado, updated_at: new Date().toISOString() };
         if (id) payload.id = id;
         let ev = null;
         for (let intento = 0; intento < 5 && !ev; intento++) {
@@ -2794,8 +2838,8 @@
     <div class="caja"><h2>Agregar categoría</h2>
       <div style="display:flex; gap:.6rem;"><input id="nc_nom" placeholder="Nombre de la categoría" style="flex:1; padding:.55rem .8rem; border:1px solid var(--linea); border-radius:10px;"><input type="color" id="nc_col" value="#2e7d32" style="width:48px; height:40px; border:1px solid var(--linea); border-radius:10px; padding:2px; cursor:pointer;"><button class="btn pri" data-a="addCat">${FLATICONS.check} Agregar</button></div>
     </div>
-    <div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Eventos</th><th></th></tr></thead><tbody>` +
-      D.categorias.map(c => { const n = D.eventos.filter(e => e.categoria === c.id).length; return `<tr><td><input type="color" value="${c.color}" data-cat="${c.id}" data-c="color" style="width:36px; height:36px; border:1px solid var(--linea); border-radius:8px; padding:2px; cursor:pointer;"></td><td><input value="${esc(c.nombre)}" data-cat="${c.id}" data-c="nombre" style="width:100%; border:1px solid var(--linea); border-radius:8px; padding:.4rem .6rem;"></td><td>${n}</td><td style="text-align:right">${n ? `<span style="color:var(--suave);font-size:.82rem;">En uso</span>` : `<button class="btn sm pel" data-a="delCat" data-i="${c.id}">${FLATICONS.basura} Eliminar</button>`}</td></tr>`; }).join('') +
+    <div class="tw"><table><thead><tr><th>Color</th><th>Nombre</th><th>Subcategorías (separadas por coma)</th><th>Eventos</th><th></th></tr></thead><tbody>` +
+      D.categorias.map(c => { const n = D.eventos.filter(e => e.categoria === c.id).length; return `<tr><td><input type="color" value="${c.color}" data-cat="${c.id}" data-c="color" style="width:36px; height:36px; border:1px solid var(--linea); border-radius:8px; padding:2px; cursor:pointer;"></td><td><input value="${esc(c.nombre)}" data-cat="${c.id}" data-c="nombre" style="width:100%; border:1px solid var(--linea); border-radius:8px; padding:.4rem .6rem;"></td><td><input value="${esc(subcatsDe(c.id).join(', '))}" placeholder="Ej: Directivo, Académico, Administrativo, Decanos" data-cat="${c.id}" data-c="subcategorias" style="width:100%; border:1px solid var(--linea); border-radius:8px; padding:.4rem .6rem;"></td><td>${n}</td><td style="text-align:right">${n ? `<span style="color:var(--suave);font-size:.82rem;">En uso</span>` : `<button class="btn sm pel" data-a="delCat" data-i="${c.id}">${FLATICONS.basura} Eliminar</button>`}</td></tr>`; }).join('') +
     '</tbody></table></div>';
   }
 
@@ -3060,6 +3104,18 @@
         D = await leerNube(); toast(nuevoEst === 'publicado' ? `${FLATICONS.check} Publicado` : `${FLATICONS.documento} En borrador`); pintarTabla();
       }
     }
+    if (a === 'm_del' || a === 'm_delall') {
+      if (!puede('eliminar')) return sinPermiso();
+      const base = a === 'm_del' ? [...SEL].map(id => D.eventos.find(x => x.id === id)).filter(Boolean) : eventosFiltrados();
+      const ids = base.filter(puedeEnEvento).map(x => x.id);
+      if (!ids.length) return sinArea();
+      const ok = a === 'm_del' ? confirm(`¿Eliminar ${ids.length} evento(s) seleccionado(s)? Esta acción no se puede deshacer.`) : (prompt(`Vas a eliminar ${ids.length} evento(s) de la lista actual (según los filtros aplicados).\nEscribe ELIMINAR para confirmar:`) || '').trim().toUpperCase() === 'ELIMINAR';
+      if (!ok) return;
+      const { error } = await dbClient.from('eventos').delete().in('id', ids);
+      if (error) return toast('Error al eliminar: ' + error.message, true);
+      registrarLog('Eliminó eventos masivamente', `${ids.length} eventos`);
+      D = await leerNube(); SEL.clear(); pintarTabla(); toast(`${FLATICONS.basura} ${ids.length} eventos eliminados`);
+    }
     if (a === 'm_pub' || a === 'm_bor') {
       if (!puede('editar')) return sinPermiso();
       const nuevoEst = a === 'm_pub' ? 'publicado' : 'borrador';
@@ -3198,7 +3254,7 @@
     if (t.dataset.fac && !t.dataset.prog) { await dbClient.from('facultades').update({ [t.dataset.c]: t.value }).eq('id', t.dataset.fac); registrarLog('Editó facultad', t.dataset.fac); D = await leerNube(); toast('Actualizado'); }
     if (t.dataset.prog) { await dbClient.from('programas').update({ [t.dataset.c]: t.value }).eq('id', t.dataset.prog); registrarLog('Editó programa', t.dataset.prog); D = await leerNube(); toast('Actualizado'); }
     if (t.dataset.area) { await dbClient.from('areas').update({ nombre: t.value }).eq('id', t.dataset.area); registrarLog('Editó área', t.dataset.area); D = await leerNube(); toast('Actualizado'); }
-    if (t.dataset.cat && t.dataset.c) { await dbClient.from('categorias').update({ [t.dataset.c]: t.value }).eq('id', t.dataset.cat); registrarLog('Editó categoría', t.dataset.cat); D = await leerNube(); toast('Actualizado'); }
+    if (t.dataset.cat && t.dataset.c) { const val = t.dataset.c === 'subcategorias' ? t.value.split(',').map(x => x.trim()).filter(Boolean) : t.value; const rs = await dbClient.from('categorias').update({ [t.dataset.c]: val }).eq('id', t.dataset.cat); if (rs.error && t.dataset.c === 'subcategorias') return toast('Falta la columna en Supabase. Ejecuta: ALTER TABLE categorias ADD COLUMN subcategorias jsonb DEFAULT \'[]\'; ALTER TABLE eventos ADD COLUMN subcategoria text;', true); registrarLog('Editó categoría', t.dataset.cat); D = await leerNube(); toast('Actualizado'); }
     if (t.id === 'l_user' || t.id === 'l_acc') pintarLogs();
   });
   document.addEventListener('input', ev => {
