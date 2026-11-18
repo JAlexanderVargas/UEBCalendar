@@ -2160,7 +2160,7 @@
       <div class="fr2">
         <div class="fr"><label>Categoría</label><select id="f_cat" onchange="actualizarPreviewTituloModal(); pintarSubcats()">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
         <div class="fr"><label>Subcategoría <span style="font-weight:400; color:var(--suave);">(opcional)</span></label><select id="f_subcat" data-sel="${esc(e.subcategoria || '')}"></select></div>
-        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select></div>
+        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select><div id="f_per_hint" style="font-size:.82rem;margin-top:.4rem;color:var(--tinta);"></div></div>
       </div>
       
       <div class="fr2">
@@ -2267,6 +2267,26 @@
     setTimeout(() => $('#f_titulo').focus(), 50);
   }
 
+  function periodosDeRango(ini, fin) {
+    if (!ini) return [];
+    fin = fin && fin >= ini ? fin : ini;
+    const a = periodoAuto(D, ini), b = periodoAuto(D, fin);
+    const [ya, sa] = a.split('-').map(Number), [yb, sb] = b.split('-').map(Number);
+    const out = []; let y = ya, h = sa, guard = 0;
+    while ((y < yb || (y === yb && h <= sb)) && guard++ < 12) { out.push(y + '-' + h); if (h === 1) h = 2; else { h = 1; y++; } }
+    return out.length ? out : [a];
+  }
+  window.actualizarHintPeriodo = function() {
+    const hint = $('#f_per_hint'); if (!hint) return;
+    const ini = $('#f_ini').value, fin = $('#f_fin').value;
+    if (!ini && !fin) { hint.innerHTML = ''; return; }
+    const ps = periodosDeRango(ini || fin, fin || ini), sel = $('#f_per').value;
+    const manual = sel !== 'auto' && !ps.includes(sel);
+    hint.innerHTML = `<span style="display:inline-flex;gap:.35rem;flex-wrap:wrap;align-items:center;">🎯 Semestre${ps.length > 1 ? 's' : ''} detectado${ps.length > 1 ? 's' : ''}: ${ps.map(p => `<b style="background:var(--verde);color:#fff;padding:.1rem .55rem;border-radius:99px;">${esc(nombrePeriodo(p))}</b>`).join('')}</span>${manual ? `<div style="color:var(--rojo);margin-top:.25rem;">⚠ Elegiste otro semestre manualmente; elige «Detectar por la fecha» para usar el detectado.</div>` : ''}`;
+  };
+  document.addEventListener('input', ev => { if (ev.target && (ev.target.id === 'f_ini' || ev.target.id === 'f_fin' || ev.target.id === 'f_per')) actualizarHintPeriodo(); });
+  document.addEventListener('change', ev => { if (ev.target && ev.target.id === 'f_ini' || ev.target.id === 'f_fin') { const sp = $('#f_per'); if (sp && sp.value !== 'auto' && !periodosDeRango($('#f_ini').value, $('#f_fin').value).includes(sp.value)) sp.value = 'auto'; actualizarHintPeriodo(); } });
+
   function subcatsDe(id) { const c = D.categorias.find(x => x.id === id); const v = c && c.subcategorias; return Array.isArray(v) ? v : (typeof v === 'string' && v ? v.split(',').map(x => x.trim()).filter(Boolean) : []); }
   window.pintarSubcats = function() {
     const sel = $('#f_subcat'); if (!sel) return;
@@ -2274,7 +2294,7 @@
     sel.innerHTML = '<option value="">— Sin subcategoría —</option>' + lista.map(x => `<option value="${esc(x)}" ${x === actual ? 'selected' : ''}>${esc(x)}</option>`).join('');
     sel.dataset.sel = ''; sel.closest('.fr').style.display = lista.length ? '' : 'none';
   };
-  setTimeout(() => new MutationObserver(() => { const s2 = document.querySelector('#f_subcat'); if (s2 && !s2.dataset.init) { s2.dataset.init = 1; pintarSubcats(); } }).observe(document.body, { childList: true, subtree: true }), 0);
+  setTimeout(() => new MutationObserver(() => { const s2 = document.querySelector('#f_subcat'); if (s2 && !s2.dataset.init) { s2.dataset.init = 1; pintarSubcats(); actualizarHintPeriodo(); } }).observe(document.body, { childList: true, subtree: true }), 0);
 
   function nivelesMarcados() {
     const n = [];
@@ -2370,7 +2390,7 @@
     const area = [...$('#f_area').selectedOptions].map(o => o.value);
     if (!puedeEnEvento({ facultad, programa, area })) return toast('Asigna el evento solo a tus facultades, programas o áreas asignadas (al menos una)', true);
     let periodo = g('f_per'), periodo2 = null;
-    if (periodo === 'auto') { const per1 = periodoAuto(D, inicio); const per2 = periodoAuto(D, fin); periodo = per1; if (per1 !== per2) periodo2 = per2; }
+    if (periodo === 'auto') { const ps = periodosDeRango(inicio, fin); periodo = ps[0]; if (ps.length > 1) periodo2 = ps[ps.length - 1]; }
     const lugar = g('f_lugar');
     const enlace = normalizarEnlace(g('f_link'));
     if (g('f_link') && !enlace) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true);
