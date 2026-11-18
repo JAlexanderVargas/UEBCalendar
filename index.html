@@ -866,7 +866,6 @@
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzZ2F2aXhwcGNlaWpicGV2Z29jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQyNTU4NjEsImV4cCI6MjEwOTgzMTg2MX0.YKJAQVRwtm1qofYtQYku2BhO0V_2A5gbaAPniA8aIM8'; 
 
   let dbClient = null;
-  let ULTIMO_ERROR_DB = 0;
   let D = null;
   let DB_READY = false;
   let USUARIO_ACTUAL = null;
@@ -875,52 +874,13 @@
 
   try {
     if (!window.supabase) throw new Error("El SDK de Supabase no se cargó.");
-    dbClient = conAvisos(window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY));
+    dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     DB_READY = true;
   } catch (e) {
     console.error("Error inicializando Supabase:", e);
     document.getElementById('error-msg').textContent = "Error de conexión: " + e.message;
     document.getElementById('error-box').hidden = false;
     document.getElementById('loader').classList.add('hidden');
-  }
-
-  /* ========== AVISOS DE ERROR AL GUARDAR EN LA BASE DE DATOS ========== */
-  function mensajeDb(err) {
-    const m = String((err && (err.message || err.code)) || err || '');
-    if (/invalid input syntax for type uuid/i.test(m)) return 'La base de datos todavía tiene identificadores tipo UUID. Ejecuta el SQL «calendario_supabase.sql» en Supabase (SQL Editor) y vuelve a intentar.';
-    if (/row-level security|violates row/i.test(m)) return 'Supabase no permite guardar en esta tabla (políticas RLS). Ejecuta el SQL «calendario_supabase.sql».';
-    if (/Could not find the .* column|schema cache/i.test(m)) return 'Falta una columna en Supabase. Ejecuta el SQL «calendario_supabase.sql» para completarla.';
-    return m;
-  }
-  function conAvisos(cli) {
-    const ESCRIBE = ['insert', 'update', 'upsert', 'delete'];
-    const envolver = (qb, esEscritura) => new Proxy(qb, {
-      get(t, prop) {
-        if (prop === 'then') {
-          return (ok, ko) => t.then(res => {
-            if (esEscritura && res && res.error && !/Could not find the '[^']+' column/.test(res.error.message || '') && !/pin_temporal|emoji/i.test(res.error.message || '')) {
-              console.error('Error de base de datos:', res.error);
-              ULTIMO_ERROR_DB = Date.now();
-              toast('No se guardó en la base de datos: ' + mensajeDb(res.error), true);
-            }
-            return ok ? ok(res) : res;
-          }, ko);
-        }
-        const v = t[prop];
-        if (typeof v !== 'function') return v;
-        return (...a) => {
-          const out = v.apply(t, a);
-          return out && typeof out === 'object' && typeof out.then === 'function' ? envolver(out, esEscritura || ESCRIBE.includes(prop)) : out;
-        };
-      }
-    });
-    return new Proxy(cli, {
-      get(t, prop) {
-        if (prop === 'from') return tabla => envolver(t.from(tabla), false);
-        const v = t[prop];
-        return typeof v === 'function' ? v.bind(t) : v;
-      }
-    });
   }
 
   const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -1237,45 +1197,6 @@
     } catch (e) { console.error("Error al leer de Supabase:", e); return null; }
   }
 
-  /* ========== SINCRONIZACIÓN EN VIVO CON SUPABASE ========== */
-  let SINCRONIZANDO = false;
-  async function sincronizarDesdeNube() {
-    if (SINCRONIZANDO || !dbClient) return;
-    SINCRONIZANDO = true;
-    try {
-      const nuevos = await leerNube();
-      if (!nuevos) return;
-      const antes = JSON.stringify({ c: D && D.categorias, f: D && D.facultades, a: D && D.areas, p: D && D.periodos, e: D && D.eventos });
-      const ahora = JSON.stringify({ c: nuevos.categorias, f: nuevos.facultades, a: nuevos.areas, p: nuevos.periodos, e: nuevos.eventos });
-      const novedadesCambiaron = true;
-      if (antes === ahora && !novedadesCambiaron) return;
-      D = nuevos;
-      for (const id of [...SEL]) if (!D.eventos.some(e => e.id === id)) SEL.delete(id);
-      const escribiendo = document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) && document.activeElement.closest('#admin-panel-inner');
-      if (USUARIO_ACTUAL && document.body.classList.contains('en-admin')) {
-        if (escribiendo) return;
-        if (P === 'eventos') pintarTabla(); else if (P !== 'usuarios' && P !== 'logs' && P !== 'novedades') refrescar();
-      } else if (!document.body.classList.contains('en-admin')) {
-        pintarPublico();
-      }
-    } catch (e) { console.error('Sincronización:', e); }
-    finally { SINCRONIZANDO = false; }
-  }
-  function iniciarSincronizacion() {
-    if (!dbClient || window._syncIniciada) return;
-    window._syncIniciada = true;
-    let t = null;
-    const pedir = () => { clearTimeout(t); t = setTimeout(sincronizarDesdeNube, 800); };
-    try {
-      const ch = dbClient.channel('calendario-sync');
-      ['categorias', 'facultades', 'programas', 'areas', 'periodos', 'eventos', 'evento_facultades', 'evento_programas', 'evento_areas', 'evento_publicos', 'novedades']
-        .forEach(tb => ch.on('postgres_changes', { event: '*', schema: 'public', table: tb }, pedir));
-      ch.subscribe();
-    } catch (e) { console.warn('Tiempo real no disponible, se usará revisión periódica.', e); }
-    setInterval(() => { if (!document.hidden) sincronizarDesdeNube(); }, 45000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) pedir(); });
-  }
-
   async function registrarLog(accion, detalle) {
     if (!dbClient || !USUARIO_ACTUAL) return;
     try {
@@ -1302,7 +1223,7 @@
     if (error) return false;
     return count > 0;
   }
-  function toast(m, err) { if (!err && Date.now() - ULTIMO_ERROR_DB < 5000) return; const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3400); }
+  function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3400); }
 
   const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date(), publico: [] };
   let listaFiltradaCompleta = [];
@@ -2172,7 +2093,6 @@
   function barraMasiva(L, pEd, pElim) {
     const n = SEL.size, nF = L.filter(puedeEnEvento).length;
     return `<div class="masiva-bar">${n ? `<b class="masiva-n">${n} seleccionado${n > 1 ? 's' : ''}</b>` : `<span class="masiva-n suave">${nF} evento${nF === 1 ? '' : 's'} en la lista</span>`}
-      ${pEd && n > 1 ? `<button class="btn sm pri" data-a="m_edit">✏️ Editar seleccionados (${n})</button>` : ''}
       ${pEd && n ? `<button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button>` : ''}
       ${pElim && n ? `<button class="btn sm warn" data-a="m_del">${FLATICONS.basura} Eliminar seleccionados (${n})</button>` : ''}
       ${pElim && nF ? `<button class="btn sm peligro" data-a="m_delall">${FLATICONS.basura} Eliminar todos (${nF})</button>` : ''}</div>`;
@@ -2192,45 +2112,10 @@
 
   let DUP = null;
   const tomarDup = () => { const d = DUP; DUP = null; return d; };
-  let BULK = null;   // ids de los eventos que se editan juntos
-  let SNAP = null;   // valores del formulario al abrirlo (para saber qué cambió)
-  const VARIOS = '__varios__';
-  const LUGARES_ESP = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
 
-  function leerFormulario() {
-    const g = i => { const el = $('#' + i); return el ? String(el.value || '').trim() : ''; };
-    const ms = i => { const el = $('#' + i); return el ? [...el.selectedOptions].map(o => o.value) : []; };
-    return { titulo: g('f_titulo'), descripcion: g('f_desc'), categoria: g('f_cat'), subcategoria: g('f_subcat'), periodo: g('f_per'),
-      inicio: g('f_ini'), fin: g('f_fin'), horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), lugar: g('f_lugar'), lugarEsp: g('f_lugar_esp'),
-      piso: g('f_piso'), enlace: g('f_link'), estado: g('f_estado'), nivel: nivelesMarcados().join(','),
-      publico: ms('f_pub'), facultad: ms('f_fac'), programa: ms('f_prog'), area: ms('f_area') };
-  }
-
-  // Valor común de un campo en varios eventos (o VARIOS si no coinciden)
-  function mezclarEventos(evs) {
-    const comun = (f) => { const v0 = f(evs[0]); return evs.every(e => JSON.stringify(f(e)) === JSON.stringify(v0)) ? v0 : VARIOS; };
-    const inter = k => evs.map(e => e[k] || []).reduce((a, b) => a.filter(x => b.includes(x)));
-    const m = {
-      id: '', titulo: comun(e => e.titulo), descripcion: comun(e => e.descripcion || ''), categoria: comun(e => e.categoria), subcategoria: comun(e => e.subcategoria || ''),
-      periodo: comun(e => e.periodo + '|' + (e.periodo2 || '')), inicio: comun(e => e.inicio), fin: comun(e => (e.fin && e.fin !== e.inicio ? e.fin : '')),
-      horaInicio: comun(e => e.horaInicio || ''), horaFin: comun(e => e.horaFin || ''), lugar: comun(e => e.lugar || ''), lugarEsp: comun(e => e.lugarEsp || ''),
-      piso: comun(e => e.piso || ''), enlace: comun(e => e.enlace || ''), estado: comun(e => e.estado || 'publicado'),
-      facultad: inter('facultad'), programa: inter('programa'), area: inter('area'), publico: inter('publico')
-    };
-    if (m.periodo !== VARIOS) m.periodo = evs[0].periodo;
-    return m;
-  }
-
-  function modalEvento(id, idsMasivo) {
-    BULK = null; SNAP = null;
-    let eventosMasivo = [];
-    if (idsMasivo && idsMasivo.length > 1) {
-      eventosMasivo = idsMasivo.map(x => D.eventos.find(ev => ev.id === x)).filter(Boolean).filter(puedeEnEvento);
-      if (eventosMasivo.length < 2) return sinArea();
-      BULK = eventosMasivo.map(x => x.id); id = null;
-    }
+  function modalEvento(id) {
     if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
-    const e = BULK ? mezclarEventos(eventosMasivo) : id ? D.eventos.find(x => x.id === id) : DUP ? tomarDup() : {
+    const e = id ? D.eventos.find(x => x.id === id) : DUP ? tomarDup() : {
       titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto',
       horaInicio: '', horaFin: '',
       facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado'
@@ -2240,19 +2125,16 @@
     const arrArea = Array.isArray(e.area) ? e.area : (e.area ? [e.area] : []);
     const arrPub = Array.isArray(e.publico) ? e.publico : (e.publico ? [e.publico] : ['Comunidad universitaria']);
     const pers = D.periodos.map(p => p.id);
-    if (e.periodo !== 'auto' && e.periodo !== VARIOS && !pers.includes(e.periodo)) pers.push(e.periodo);
-    const varios = k => (BULK && e[k] === VARIOS) ? `<option value="${VARIOS}" selected>— Varios valores (no cambiar) —</option>` : '';
-    const vv = k => (BULK && e[k] === VARIOS) ? '' : esc(e[k]);
+    if (e.periodo !== 'auto' && !pers.includes(e.periodo)) pers.push(e.periodo);
     const lugaresConExtra = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'];
     const esLugarEspecial = lugaresConExtra.includes(e.lugar);
 
     $('#modal').innerHTML = `<div class="mod">
-      <h2>${BULK ? `${FLATICONS.editar} Editar ${BULK.length} eventos a la vez` : id ? `${FLATICONS.editar} Editar evento` : `${FLATICONS.documento} Nuevo evento`}</h2>
-      ${BULK ? `<div style="background:#eef6ff;border:1px solid #bcd7f5;border-radius:10px;padding:.6rem .8rem;margin-bottom:.9rem;font-size:.88rem;">Lo que cambies aquí se aplica a los <b>${BULK.length} eventos seleccionados</b>. Los campos que dejes como están (o que digan «Varios valores») no se tocan.</div>` : ''}
+      <h2>${id ? `${FLATICONS.editar} Editar evento` : `${FLATICONS.documento} Nuevo evento`}</h2>
       
       <div class="fr">
         <label>¿Qué pasa? * <span style="font-weight:400; color:var(--suave);">(Escribe o elige una frase académica predeterminada)</span></label>
-        <input id="f_titulo" list="frases_acad_list" value="${vv('titulo')}" placeholder="${BULK && e.titulo === VARIOS ? '(Varios títulos: déjalo vacío para conservarlos)' : 'Ej: Inicio de prematrícula, Inicio de clases, Cambios de grupo...'}">
+        <input id="f_titulo" list="frases_acad_list" value="${esc(e.titulo)}" placeholder="Ej: Inicio de prematrícula, Inicio de clases, Cambios de grupo...">
         <datalist id="frases_acad_list">
           ${FRASES_ACADEMICAS.map(f => `<option value="${esc(f)}">`).join('')}
         </datalist>
@@ -2260,7 +2142,7 @@
           ${['Inicio de clases', 'Inicio de prematrícula', 'Cambios de grupo', 'Matrícula ordinaria', 'Matrícula extraordinaria', 'Adición y cancelación de asignaturas', 'Entrega de notas finales', 'Grados solemnes'].map(f => `<button type="button" class="frase-chip" data-frase="${esc(f)}">${esc(f)}</button>`).join('')}
         </div>
         <div class="preview-titulo-box" id="f_titulo_preview_box">
-          <span>✨ Vista previa del título público: <b id="f_titulo_preview">${esc(BULK && e.titulo === VARIOS ? '—' : (tituloInteligente(e) || '—'))}</b></span>
+          <span>✨ Vista previa del título público: <b id="f_titulo_preview">${esc(tituloInteligente(e) || '—')}</b></span>
           <button type="button" class="btn sm" id="btn_aplicar_sufijo" title="Integrar nivel directamente al texto">Aplicar nivel al texto</button>
         </div>
       </div>
@@ -2268,28 +2150,28 @@
       <div class="fr">
         <label>Nivel / modalidad del evento <span style="font-weight:400; color:var(--suave);">(se agrega al título: «Inicio de prematrícula pregrado»; marca ambos para «pregrado y posgrado»; sin marcar, se detecta por facultad o programa)</span></label>
         <div style="display:flex; gap:1.2rem; flex-wrap:wrap;">
-          <label style="font-weight:600;"><input type="checkbox" id="f_niv_pre" onchange="actualizarPreviewTituloModal()" ${/pregrado/.test(norm(e.titulo === VARIOS ? '' : (e.titulo || ''))) ? 'checked' : ''}> 📘 Pregrado</label>
-          <label style="font-weight:600;"><input type="checkbox" id="f_niv_pos" onchange="actualizarPreviewTituloModal()" ${/posgrado/.test(norm(e.titulo === VARIOS ? '' : (e.titulo || ''))) ? 'checked' : ''}> 🎓 Posgrado</label>
+          <label style="font-weight:600;"><input type="checkbox" id="f_niv_pre" onchange="actualizarPreviewTituloModal()" ${/pregrado/.test(norm(e.titulo || '')) ? 'checked' : ''}> 📘 Pregrado</label>
+          <label style="font-weight:600;"><input type="checkbox" id="f_niv_pos" onchange="actualizarPreviewTituloModal()" ${/posgrado/.test(norm(e.titulo || '')) ? 'checked' : ''}> 🎓 Posgrado</label>
         </div>
       </div>
 
-      <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="3" placeholder="${BULK && e.descripcion === VARIOS ? '(Varias descripciones: déjalo vacío para conservarlas)' : ''}">${vv('descripcion')}</textarea></div>
+      <div class="fr"><label>Detalles</label><textarea id="f_desc" rows="3">${esc(e.descripcion)}</textarea></div>
       
       <div class="fr2">
-        <div class="fr"><label>Categoría</label><select id="f_cat" onchange="actualizarPreviewTituloModal(); pintarSubcats()">${varios('categoria')}${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
+        <div class="fr"><label>Categoría</label><select id="f_cat" onchange="actualizarPreviewTituloModal(); pintarSubcats()">${D.categorias.map(c => opt(c.id, c.nombre, c.id === e.categoria)).join('')}</select></div>
         <div class="fr"><label>Subcategoría <span style="font-weight:400; color:var(--suave);">(opcional)</span></label><select id="f_subcat" data-sel="${esc(e.subcategoria || '')}"></select></div>
-        <div class="fr"><label>Semestre</label><select id="f_per">${varios('periodo')}${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select><div id="f_per_hint" style="font-size:.82rem;margin-top:.4rem;color:var(--tinta);"></div></div>
+        <div class="fr"><label>Semestre</label><select id="f_per">${opt('auto', 'Detectar por la fecha', e.periodo === 'auto')}${pers.sort().map(p => opt(p, nombrePeriodo(p) + (periodoActivo(p) ? '' : ' (suspendido)'), p === e.periodo)).join('')}</select><div id="f_per_hint" style="font-size:.82rem;margin-top:.4rem;color:var(--tinta);"></div></div>
       </div>
       
       <div class="fr2">
-        <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${vv('inicio')}"></div>
-        <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${BULK ? vv('fin') : (e.fin && e.fin !== e.inicio ? e.fin : '')}"></div>
+        <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div>
+        <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div>
       </div>
       <div id="f_fechas_hint" style="font-size:.8rem;color:var(--suave);margin:-.4rem 0 .6rem;"></div>
       
       <div class="fr2">
-        <div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${vv('horaInicio')}"></div>
-        <div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${vv('horaFin')}"></div>
+        <div class="fr"><label>Hora inicio (Opcional)</label><input type="time" id="f_hora_ini" value="${e.horaInicio || ''}"></div>
+        <div class="fr"><label>Hora fin (Opcional)</label><input type="time" id="f_hora_fin" value="${e.horaFin || ''}"></div>
       </div>
       
       <div class="fr">
@@ -2322,7 +2204,7 @@
         <div class="fr">
           <label>Bloque / Ubicación</label>
           <select id="f_lugar" onchange="toggleLugarEsp()">
-            ${varios('lugar')}<option value="">-- Seleccionar --</option>
+            <option value="">-- Seleccionar --</option>
             <optgroup label="Bloques">
               ${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}" ${e.lugar === 'Bloque ' + l ? 'selected' : ''}>Bloque ${l}</option>`).join('')}
             </optgroup>
@@ -2339,23 +2221,23 @@
         </div>
         <div class="fr" id="f_lugar_esp_wrap" ${esLugarEspecial ? '' : 'hidden'}>
           <label>Especifique ubicación</label>
-          <input id="f_lugar_esp" value="${vv('lugarEsp')}" placeholder="Escriba el lugar...">
+          <input id="f_lugar_esp" value="${esc(e.lugarEsp || '')}" placeholder="Escriba el lugar...">
         </div>
       </div>
       
       <div class="fr2">
-        <div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${vv('piso')}" placeholder="Ej: Piso 2"></div>
-        <div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${vv('enlace')}" placeholder="https://..."></div>
+        <div class="fr"><label>Piso (Opcional)</label><input id="f_piso" value="${esc(e.piso || '')}" placeholder="Ej: Piso 2"></div>
+        <div class="fr"><label>Enlace de reunión o página (Opcional)</label><input id="f_link" value="${esc(e.enlace)}" placeholder="https://..."></div>
       </div>
       
       <div class="fr">
         <label>Estado</label>
-        <select id="f_estado">${varios('estado')}${opt('publicado', 'Publicado', e.estado !== VARIOS && e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select>
+        <select id="f_estado">${opt('publicado', 'Publicado', e.estado !== 'borrador')}${opt('borrador', 'Borrador', e.estado === 'borrador')}</select>
       </div>
       
       <div style="display:flex; justify-content:flex-end; gap:.8rem; margin-top:1.5rem;">
         <button class="btn" data-a="cerrar">Cancelar</button>
-        <button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} ${BULK ? `Aplicar a los ${BULK.length} eventos` : 'Guardar evento'}</button>
+        <button class="btn pri" data-a="guardarEv" data-i="${id || ''}">${FLATICONS.guardar} Guardar evento</button>
       </div>
     </div>`;
 
@@ -2382,7 +2264,6 @@
       });
     }
     aplicarModoFechas();
-    if (BULK) { pintarSubcats(); actualizarHintPeriodo(); SNAP = leerFormulario(); }
     setTimeout(() => $('#f_titulo').focus(), 50);
   }
 
@@ -2457,7 +2338,7 @@
     $('#f_lugar_esp_wrap').hidden = !['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(val);
   }
 
-  const cerrarModal = () => { BULK = null; SNAP = null; $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
+  const cerrarModal = () => { $('#modal').classList.remove('on'); $('#modal').innerHTML = ''; };
 
   const RX_INICIO = /\b(inici\w*|comienz\w*|empiez\w*|empieza\w*|apertur\w*|abre|abren|arranc\w*)\b/;
   const RX_FIN = /\b(fin|finaliz\w*|termin\w*|cierr\w*|cierre|culmin\w*|venc\w*)\b/;
@@ -2467,7 +2348,6 @@
     return i && f ? 'ambos' : i ? 'inicio' : f ? 'fin' : 'libre';
   }
   function aplicarModoFechas() {
-    if (BULK) { const h = $('#f_fechas_hint'); if (h) h.textContent = ''; return; }
     const m = modoFechas(($('#f_titulo').value || '') + ' ' + ($('#f_desc').value || ''));
     const cfg = {
       libre:  { ini: [true, true],  fin: [true, false] },
@@ -2490,73 +2370,7 @@
     }[m];
   }
 
-  const filaEvento = o => ({ titulo: o.titulo, descripcion: o.descripcion || '', categoria_id: o.categoria, subcategoria: o.subcategoria || null, periodo_id: o.periodo, periodo2_id: o.periodo2 || null,
-    fecha_inicio: o.inicio, fecha_fin: o.fin || o.inicio, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar || '', lugar_especifico: o.lugarEsp || '',
-    piso: o.piso || '', enlace: o.enlace || '', estado: o.estado || 'publicado', updated_at: new Date().toISOString() });
-
-  async function guardarEventosMasivo() {
-    if (!puede('editar')) return sinPermiso();
-    const evs = (BULK || []).map(x => D.eventos.find(ev => ev.id === x)).filter(Boolean);
-    if (evs.length < 2 || !SNAP) { cerrarModal(); return; }
-    const act = leerFormulario();
-    const cambio = k => Array.isArray(act[k]) ? [...act[k]].sort().join('|') !== [...SNAP[k]].sort().join('|') : act[k] !== SNAP[k];
-    const cambios = Object.keys(act).filter(cambio);
-    if (!cambios.length) return toast('No cambiaste nada. Modifica al menos un campo para aplicarlo a todos.', true);
-    const hay = k => cambios.includes(k);
-    if (hay('titulo') && !act.titulo) return toast('El nombre del evento no puede quedar vacío', true);
-    let enlaceN = '';
-    if (hay('enlace') && act.enlace) { enlaceN = normalizarEnlace(act.enlace); if (!enlaceN) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true); }
-    const nivel = nivelesMarcados();
-    const unicos = a => [...new Set(a)];
-    const nuevos = [];
-    for (const e of evs) {
-      const n = { ...e, facultad: [...(e.facultad || [])], programa: [...(e.programa || [])], area: [...(e.area || [])], publico: [...(e.publico || [])] };
-      ['descripcion', 'categoria', 'horaInicio', 'horaFin', 'piso', 'estado'].forEach(k => { if (hay(k)) n[k] = act[k]; });
-      if (hay('categoria') || hay('subcategoria')) n.subcategoria = act.subcategoria || '';
-      if (hay('enlace')) n.enlace = enlaceN;
-      if (hay('lugar')) n.lugar = act.lugar;
-      if (hay('lugar') || hay('lugarEsp')) n.lugarEsp = LUGARES_ESP.includes(n.lugar) ? (hay('lugarEsp') || hay('lugar') ? act.lugarEsp : n.lugarEsp) : '';
-      // fechas
-      if (hay('inicio')) n.inicio = act.inicio;
-      if (hay('fin')) n.fin = act.fin || n.inicio;
-      if (!n.fin || n.fin < n.inicio) { if (hay('inicio') && !hay('fin')) n.fin = n.inicio; }
-      if (n.fin < n.inicio) return toast(`La fecha final queda antes de la inicial en «${e.titulo}». Revisa las fechas.`, true);
-      // semestre
-      if (hay('inicio') || hay('fin') || hay('periodo')) {
-        if (act.periodo === 'auto' || (!hay('periodo') && (hay('inicio') || hay('fin')))) { const ps = periodosDeRango(n.inicio, n.fin); n.periodo = ps[0]; n.periodo2 = ps.length > 1 ? ps[ps.length - 1] : null; }
-        else if (hay('periodo') && act.periodo !== VARIOS) { n.periodo = act.periodo; n.periodo2 = null; }
-      }
-      // listas: solo se agrega o quita lo que cambió, sin borrar lo demás de cada evento
-      ['publico', 'facultad', 'programa', 'area'].forEach(k => {
-        if (!hay(k)) return;
-        const quitar = SNAP[k].filter(x => !act[k].includes(x)), poner = act[k].filter(x => !SNAP[k].includes(x));
-        n[k] = unicos([...n[k].filter(x => !quitar.includes(x)), ...poner]);
-      });
-      // título
-      if (hay('titulo') || hay('nivel')) n.titulo = tituloInteligente({ titulo: hay('titulo') ? act.titulo : e.titulo, categoria: n.categoria, facultad: n.facultad, programa: n.programa, nivel });
-      if (!puedeEnEvento(n)) return sinArea();
-      nuevos.push(n);
-    }
-    try {
-      for (const n of nuevos) {
-        const r = await dbClient.from('eventos').update(filaEvento(n)).eq('id', n.id);
-        if (r.error) throw r.error;
-        const hijas = [['publico', 'evento_publicos', 'publico'], ['facultad', 'evento_facultades', 'facultad_id'], ['programa', 'evento_programas', 'programa_id'], ['area', 'evento_areas', 'area_id']];
-        for (const [k, tabla, col] of hijas) {
-          if (!hay(k)) continue;
-          const d = await dbClient.from(tabla).delete().eq('evento_id', n.id); if (d.error) throw d.error;
-          if (n[k].length) { const i = await dbClient.from(tabla).insert(n[k].map(v => ({ evento_id: n.id, [col]: v }))); if (i.error) throw i.error; }
-        }
-      }
-      registrarLog('Editó eventos masivamente', `${nuevos.length} eventos · campos: ${cambios.join(', ')}`);
-      const nd = await leerNube(); if (nd) D = nd;
-      SEL.clear(); cerrarModal(); pintarTabla();
-      toast(`${FLATICONS.check} Cambios aplicados a ${nuevos.length} eventos`);
-    } catch (e) { console.error(e); toast('Error al aplicar los cambios: ' + mensajeDb(e), true); }
-  }
-
   async function guardarEvento(id) {
-    if (BULK) return guardarEventosMasivo();
     if (id ? !puede('editar') : !puede('crear')) return sinPermiso();
     if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
     const g = i => $('#' + i).value.trim();
@@ -2597,15 +2411,19 @@
           delete payload[m[1]]; avisoCols.push(m[1]);
         }
         if (!ev) throw new Error('No se pudo guardar el evento');
-        for (const [tabla, col, lista] of [['evento_facultades', 'facultad_id', facultad], ['evento_programas', 'programa_id', programa], ['evento_areas', 'area_id', area], ['evento_publicos', 'publico', publico]]) {
-          const d = await dbClient.from(tabla).delete().eq('evento_id', ev.id); if (d.error) throw d.error;
-          if (lista.length) { const i = await dbClient.from(tabla).insert(lista.map(v => ({ evento_id: ev.id, [col]: v }))); if (i.error) throw i.error; }
-        }
+        await dbClient.from('evento_facultades').delete().eq('evento_id', ev.id);
+        await dbClient.from('evento_programas').delete().eq('evento_id', ev.id);
+        await dbClient.from('evento_areas').delete().eq('evento_id', ev.id);
+        await dbClient.from('evento_publicos').delete().eq('evento_id', ev.id);
+        if (facultad.length) await dbClient.from('evento_facultades').insert(facultad.map(f => ({ evento_id: ev.id, facultad_id: f })));
+        if (programa.length) await dbClient.from('evento_programas').insert(programa.map(p => ({ evento_id: ev.id, programa_id: p })));
+        if (area.length) await dbClient.from('evento_areas').insert(area.map(a => ({ evento_id: ev.id, area_id: a })));
+        if (publico.length) await dbClient.from('evento_publicos').insert(publico.map(p => ({ evento_id: ev.id, publico: p })));
         registrarLog(id ? 'Editó evento' : 'Creó evento', titulo);
         const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos;
       }
       toast(avisoCols.length ? `Evento guardado, pero sin: ${avisoCols.join(', ')}. Ejecuta el SQL de actualización en Supabase.` : `${FLATICONS.check} Evento guardado`, !!avisoCols.length); cerrarModal(); refrescar();
-    } catch (e) { console.error(e); toast('Error al guardar: ' + (mensajeDb(e) || 'revisa la conexión'), true); }
+    } catch (e) { console.error(e); toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true); }
   }
 
   async function eliminarEventoAdmin(id) {
@@ -3290,8 +3108,7 @@
     const a = ac.dataset.a, i = ac.dataset.i;
     
     if (a === 'nuevo') return puede('crear') ? modalEvento() : sinPermiso();
-    if (a === 'editar') { if (!puede('editar')) return sinPermiso(); return (SEL.size > 1 && SEL.has(i)) ? modalEvento(null, [...SEL]) : modalEvento(i); }
-    if (a === 'm_edit') { if (!puede('editar')) return sinPermiso(); return modalEvento(null, [...SEL]); }
+    if (a === 'editar') return puede('editar') ? modalEvento(i) : sinPermiso();
     if (a === 'dup') { if (!puede('crear')) return sinPermiso(); const o = D.eventos.find(x => x.id === i); if (!o) return; if (!puedeEnEvento(o)) return sinArea(); DUP = { ...o, id: '', titulo: o.titulo + ' (copia)', estado: 'borrador' }; return modalEvento(); }
     if (a === 'cerrar') return cerrarModal();
     if (a === 'guardarEv') return guardarEvento(i || null);
@@ -3302,12 +3119,6 @@
       if (e) {
         if (!puedeEnEvento(e)) return sinArea();
         const nuevoEst = e.estado === 'borrador' ? 'publicado' : 'borrador';
-        if (SEL.size > 1 && SEL.has(i)) {
-          const ids = [...SEL].filter(id => { const o = D.eventos.find(x => x.id === id); return o && puedeEnEvento(o); });
-          await dbClient.from('eventos').update({ estado: nuevoEst, updated_at: new Date().toISOString() }).in('id', ids);
-          registrarLog(nuevoEst === 'publicado' ? 'Publicó eventos masivamente' : 'Pasó a borrador masivamente', `${ids.length} eventos`);
-          D = await leerNube(); SEL.clear(); pintarTabla(); return toast(`${FLATICONS.check} Estado cambiado en ${ids.length} eventos`);
-        }
         await dbClient.from('eventos').update({ estado: nuevoEst }).eq('id', i);
         registrarLog(nuevoEst === 'publicado' ? 'Publicó evento' : 'Pasó a borrador', e.titulo);
         D = await leerNube(); toast(nuevoEst === 'publicado' ? `${FLATICONS.check} Publicado` : `${FLATICONS.documento} En borrador`); pintarTabla();
@@ -3446,7 +3257,7 @@
       const n = $('#nc_nom').value.trim(); if (!n) return toast('Escribe un nombre', true);
       const id = nuevoId(n, D.categorias);
       const r = await dbClient.from('categorias').insert([{ id, nombre: n, color: $('#nc_col').value }]).select();
-      if (r.error) { console.error('addCat', r.error); return toast('No se pudo crear la categoría: ' + mensajeDb(r.error), true); }
+      if (r.error) { console.error('addCat', r.error); return toast('No se pudo crear la categoría: ' + (r.error.message || r.error.code), true); }
       registrarLog('Creó categoría', n);
       const nuevos = await leerNube(); if (nuevos) D = nuevos;
       if (!D.categorias.some(c => c.id === id)) return toast('Supabase no guardó la categoría (revisa las políticas RLS de la tabla categorias: debe permitir INSERT y SELECT).', true);
@@ -3516,7 +3327,6 @@
       pintarPublico();
     }
     hideLoader();
-    iniciarSincronizacion();
   })();
 </script>
 </body>
