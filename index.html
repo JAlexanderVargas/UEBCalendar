@@ -1247,6 +1247,7 @@
     if (progs.length) progs.forEach(pid => { const f = D.facultades.find(x => x.programas.some(p => p.id === pid)); const p = f && f.programas.find(x => x.id === pid); if (p) nombres.push(p.nombre); });
     areas.forEach(aid => { const a = D.areas.find(x => x.id === aid); if (a) nombres.push(a.nombre); });
     if (!nombres.length) return 'Toda la institución';
+    if (facs.length > 3) return `${facs.length} facultades`;
     return nombres.join(', ');
   }
 
@@ -1283,7 +1284,22 @@
 
   function aniosDisponibles() { const set = new Set(D.periodos.filter(p => p.activo !== false).map(p => +p.id.split('-')[0])); D.eventos.filter(eventoVisiblePublico).forEach(e => { set.add(+e.periodo.split('-')[0]); if (e.periodo2) set.add(+e.periodo2.split('-')[0]); }); return [...set].sort(); }
 
-  function filtrar({ sinCat = false, sinPeriodo = false } = {}) {
+  const GRP = {};
+  function agruparRepetidos(L) {
+    const mapa = new Map(), out = [];
+    const fid = S.grupo && S.grupo.startsWith('f:') ? S.grupo.slice(2) : '';
+    L.forEach(e => {
+      if (!(e.facultad || []).length) { out.push(e); return; }
+      const k = [norm(e.titulo), e.inicio, finDe(e), e.categoria, e.subcategoria || '', e.horaInicio, e.horaFin, e.lugar, e.lugarEsp, e.enlace, (e.area || []).join(','), (e.publico || []).slice().sort().join(',')].join('|');
+      const g = mapa.get(k);
+      if (!g) { const c = { ...e, facultad: fid && e.facultad.includes(fid) ? [fid] : [...e.facultad], programa: [...(e.programa || [])], _ids: [e.id] }; mapa.set(k, c); out.push(c); GRP[e.id] = c; }
+      else { e.facultad.forEach(f => { if (!g.facultad.includes(f) && !fid) g.facultad.push(f); }); (e.programa || []).forEach(x => { if (!g.programa.includes(x)) g.programa.push(x); }); g._ids.push(e.id); }
+    });
+    return out;
+  }
+  function filtrar(opts) { return agruparRepetidos(filtrarBase(opts)); }
+
+  function filtrarBase({ sinCat = false, sinPeriodo = false } = {}) {
     const q = norm(S.q);
     return D.eventos.filter(e => {
       if (e.estado === 'borrador') return false;
@@ -1678,7 +1694,7 @@
       $('#velo').classList.add('on'); $('#cajon').classList.add('on');
       return;
     }
-    const e = D.eventos.find(x => x.id === id); if (!e) return;
+    const e = GRP[id] || D.eventos.find(x => x.id === id); if (!e) return;
     const st = estadoDe(e);
     const { facColor, catColor, icono } = getColores(D, e);
     const titMostrado = tituloInteligente(e);
@@ -2090,10 +2106,53 @@
     }).sort((a, b) => a.inicio.localeCompare(b.inicio));
   }
   
+  window.abrirEdicionMasiva = function() {
+    const ids = [...SEL].map(id => D.eventos.find(x => x.id === id)).filter(e => e && puedeEnEvento(e)).map(e => e.id);
+    if (!ids.length) return toast('Selecciona al menos un evento', true);
+    const fila = (k, t, campo) => `<div style="display:grid;grid-template-columns:auto 1fr;gap:.6rem;align-items:start;margin-bottom:.8rem;"><label style="font-weight:700;display:flex;gap:.4rem;align-items:center;white-space:nowrap;"><input type="checkbox" id="me_c_${k}"> ${t}</label>${campo}</div>`;
+    const css = 'width:100%;padding:.45rem .6rem;border:1px solid var(--linea);border-radius:8px;';
+    const ov = document.createElement('div'); ov.id = 'me_ov';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,40,36,.55);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    ov.innerHTML = `<div style="background:#fff;border-radius:20px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:1.5rem;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:panelIn .3s ease-out;">
+      <h2 style="font-family:var(--display);margin:0 0 .3rem;">✏️ Editar ${ids.length} evento${ids.length > 1 ? 's' : ''}</h2>
+      <p style="color:var(--suave);margin:0 0 1rem;font-size:.9rem;">Marca solo lo que quieres cambiar; se aplicará a todos los seleccionados.</p>
+      ${fila('cat', 'Categoría', `<select id="me_cat" style="${css}">${D.categorias.map(c => opt(c.id, c.nombre, false)).join('')}</select>`)}
+      ${fila('sub', 'Subcategoría', `<input id="me_sub" placeholder="Ej: Directivo (vacío = quitar)" style="${css}">`)}
+      ${fila('est', 'Estado', `<select id="me_est" style="${css}">${opt('publicado', 'Publicado', true)}${opt('borrador', 'Borrador', false)}</select>`)}
+      ${fila('fac', 'Facultades', `<select id="me_fac" multiple size="6" style="${css}">${D.facultades.map(f => opt(f.id, f.nombre, false)).join('')}</select>`)}
+      ${fila('hor', 'Horario', `<div style="display:flex;gap:.5rem;"><input type="time" id="me_hi" style="${css}"><input type="time" id="me_hf" style="${css}"></div>`)}
+      ${fila('lug', 'Lugar', `<input id="me_lug" style="${css}">`)}
+      ${fila('enl', 'Enlace', `<input id="me_enl" placeholder="https://..." style="${css}">`)}
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;"><button class="btn" id="me_cancel">Cancelar</button><button class="btn pri" id="me_ok">Aplicar a ${ids.length}</button></div></div>`;
+    document.body.appendChild(ov);
+    $('#me_cancel').onclick = () => ov.remove();
+    $('#me_ok').onclick = async () => {
+      const on = k => $('#me_c_' + k).checked, row = {};
+      if (on('cat')) row.categoria_id = $('#me_cat').value;
+      if (on('sub')) row.subcategoria = $('#me_sub').value.trim() || null;
+      if (on('est')) row.estado = $('#me_est').value;
+      if (on('hor')) { row.hora_inicio = $('#me_hi').value || null; row.hora_fin = $('#me_hf').value || null; }
+      if (on('lug')) row.lugar = $('#me_lug').value.trim();
+      if (on('enl')) { const u = normalizarEnlace($('#me_enl').value); if ($('#me_enl').value.trim() && !u) return toast('El enlace no es válido', true); row.enlace = u; }
+      const facs = on('fac') ? [...$('#me_fac').selectedOptions].map(o => o.value) : null;
+      if (!Object.keys(row).length && facs === null) return toast('Marca al menos un campo para cambiar', true);
+      $('#me_ok').disabled = true;
+      try {
+        if (Object.keys(row).length) { row.updated_at = new Date().toISOString(); const r = await dbClient.from('eventos').update(row).in('id', ids); if (r.error) throw r.error; }
+        if (facs !== null) {
+          const d = await dbClient.from('evento_facultades').delete().in('evento_id', ids); if (d.error) throw d.error;
+          if (facs.length) { const i2 = await dbClient.from('evento_facultades').insert(ids.flatMap(eid => facs.map(f => ({ evento_id: eid, facultad_id: f })))); if (i2.error) throw i2.error; }
+        }
+        registrarLog('Editó eventos masivamente', `${ids.length} eventos`);
+        const nd = await leerNube(); if (nd) D = nd; ov.remove(); SEL.clear(); pintarTabla(); toast(`✅ ${ids.length} eventos actualizados`);
+      } catch (err) { $('#me_ok').disabled = false; toast('Error: ' + (err.message || err), true); }
+    };
+  };
+
   function barraMasiva(L, pEd, pElim) {
     const n = SEL.size, nF = L.filter(puedeEnEvento).length;
     return `<div class="masiva-bar">${n ? `<b class="masiva-n">${n} seleccionado${n > 1 ? 's' : ''}</b>` : `<span class="masiva-n suave">${nF} evento${nF === 1 ? '' : 's'} en la lista</span>`}
-      ${pEd && n ? `<button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button>` : ''}
+      ${pEd && n ? `<button class="btn sm pri" data-a="m_edit">✏️ Editar seleccionados</button><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button>` : ''}
       ${pElim && n ? `<button class="btn sm warn" data-a="m_del">${FLATICONS.basura} Eliminar seleccionados (${n})</button>` : ''}
       ${pElim && nF ? `<button class="btn sm peligro" data-a="m_delall">${FLATICONS.basura} Eliminar todos (${nF})</button>` : ''}</div>`;
   }
@@ -3124,6 +3183,7 @@
         D = await leerNube(); toast(nuevoEst === 'publicado' ? `${FLATICONS.check} Publicado` : `${FLATICONS.documento} En borrador`); pintarTabla();
       }
     }
+    if (a === 'm_edit') { if (!puede('editar')) return sinPermiso(); return abrirEdicionMasiva(); }
     if (a === 'm_del' || a === 'm_delall') {
       if (!puede('eliminar')) return sinPermiso();
       const base = a === 'm_del' ? [...SEL].map(id => D.eventos.find(x => x.id === id)).filter(Boolean) : eventosFiltrados();
@@ -3255,7 +3315,7 @@
     if (a === 'delArea') { if (confirm('¿Eliminar área?')) { await dbClient.from('areas').delete().eq('id', i); registrarLog('Eliminó área', i); D = await leerNube(); toast('Área eliminada'); refrescar(); } }
     if (a === 'addCat') {
       const n = $('#nc_nom').value.trim(); if (!n) return toast('Escribe un nombre', true);
-      const id = nuevoId(n, D.categorias);
+      const id = uid();
       const r = await dbClient.from('categorias').insert([{ id, nombre: n, color: $('#nc_col').value }]).select();
       if (r.error) { console.error('addCat', r.error); return toast('No se pudo crear la categoría: ' + (r.error.message || r.error.code), true); }
       registrarLog('Creó categoría', n);
