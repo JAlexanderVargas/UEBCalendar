@@ -2351,7 +2351,7 @@
       <div class="fr">
         <label>Dirigido a (Selección múltiple)</label>
         <select id="f_pub" multiple class="multi-select" size="5">
-          ${['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'].map(p => `<option value="${p}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${p}</option>`).join('')}
+          ${[...PUBLICOS_ROLES, ...arrPub.filter(x => !PUBLICOS_ROLES.includes(x))].map(p => `<option value="${esc(p)}" ${arrPub.includes(p) ? 'selected' : ''}>${emojiPub(p)} ${esc(p)}</option>`).join('')}
         </select>
       </div>
       
