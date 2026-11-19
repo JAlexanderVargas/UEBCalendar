@@ -678,6 +678,21 @@
   @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .caja, .tools, .cards { animation: panelIn .45s ease-out both; }
   @media (prefers-reduced-motion: reduce) { .caja, .tools, .cards, .masiva-bar, .btn::after { animation: none; transition: none; } }
+
+  .stat.kpi { border-top: 4px solid var(--g); } .stat.kpi b { background: linear-gradient(135deg, var(--g), var(--lima)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .barras-mes { display: grid; grid-template-columns: repeat(12, 1fr); gap: .35rem; height: 170px; align-items: end; }
+  .barras-mes > div { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+  .barras-mes i { width: 100%; background: linear-gradient(var(--lima), var(--verde)); border-radius: 8px 8px 3px 3px; min-height: 3px; transition: height .6s; }
+  .barras-mes small { font-size: .62rem; color: var(--suave); margin-top: .25rem; } .barras-mes b { position: absolute; top: 0; font-size: .7rem; }
+  .dona { width: 130px; height: 130px; border-radius: 50%; display: grid; place-items: center; position: relative; }
+  .dona::after { content: ''; position: absolute; inset: 24px; background: #fff; border-radius: 50%; } .dona span { position: relative; z-index: 1; font-weight: 800; font-size: 1.4rem; }
+  .cfg-fila { display: flex; justify-content: space-between; align-items: center; padding: .45rem 0; border-top: 1px solid var(--linea); font-size: .9rem; gap: .6rem; }
+  .sw { position: relative; width: 44px; height: 24px; flex: none; } .sw input { opacity: 0; width: 100%; height: 100%; position: absolute; inset: 0; margin: 0; cursor: pointer; z-index: 2; }
+  .sw span { position: absolute; inset: 0; background: #cdd8d3; border-radius: 99px; transition: .25s; } .sw span::after { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .25s; box-shadow: 0 2px 4px rgba(0,0,0,.25); }
+  .sw input:checked + span { background: linear-gradient(135deg, var(--verde), var(--lima)); } .sw input:checked + span::after { transform: translateX(20px); }
+  .chips-cfg { display: flex; flex-wrap: wrap; gap: .4rem; } .chip-cfg { background: color-mix(in srgb, var(--verde) 12%, #fff); border: 1px solid color-mix(in srgb, var(--verde) 30%, #fff); border-radius: 99px; padding: .25rem .7rem; font-size: .84rem; }
+  .chip-cfg.bloq { background: #f1f4f2; border-color: var(--linea); color: var(--suave); } .chip-cfg button { border: 0; background: none; color: var(--rojo); font-weight: 800; cursor: pointer; }
+  .nov-card:hover { transform: translateY(-3px); box-shadow: 0 16px 30px -18px rgba(0,59,54,.5); } .nov-card { transition: transform .25s, box-shadow .3s; }
 </style>
 </head>
 <body>
@@ -836,6 +851,7 @@
       <button class="it admin-only" data-p="facultades">🏛️ Facultades y programas</button>
       <button class="it admin-only" data-p="areas">🗂️ Áreas administrativas</button>
       <button class="it admin-only" data-p="categorias">🏷️ Categorías</button>
+      <button class="it admin-only" data-p="config">⚙️ Listas y Estado</button>
       <div class="sep admin-only">Seguridad</div>
       <button class="it admin-only" data-p="usuarios">👥 Usuarios y Accesos</button>
       <button class="it admin-only" data-p="logs">📜 Logs del Sistema</button>
@@ -914,7 +930,9 @@
   const periodoAuto = (D, fecha) => { const p = D.periodos.find(p => p.inicio <= fecha && fecha <= p.fin); return p ? p.id : periodoDe(fecha); };
   const nombrePeriodo = id => { if(!id) return ''; const [a, s] = id.split('-'); return `${a} · Semestre ${s}`; };
   const periodoActivo = id => { const p = ((typeof D !== 'undefined' && D && D.periodos) || []).find(x => x.id === id); return !p || p.activo !== false; };
-  const eventoVisiblePublico = e => periodoActivo(e.periodo) || (!!e.periodo2 && periodoActivo(e.periodo2));
+  const eventoVisiblePublico = e => (periodoActivo(e.periodo) || (!!e.periodo2 && periodoActivo(e.periodo2))) && catEvActiva(e) && entidadesActivas(e);
+  const catEvActiva = e => esAct(D.categorias.find(x => x.id === e.categoria));
+  const entidadesActivas = e => { const fs = e.facultad || [], as = e.area || []; if (fs.length && !fs.some(id => esAct(D.facultades.find(x => x.id === id)))) return false; if (as.length && !as.some(id => esAct(D.areas.find(x => x.id === id)))) return false; return true; };
   const catDe = (D, id) => D.categorias.find(c => c.id === id) || { id, nombre: id, color: '#6b7280' };
   const slug = s => norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 24) || 'x';
   const nuevoId = (s, lista) => { const b = slug(s); let i = b, n = 2; while (lista.some(x => x.id === i)) i = b + '_' + n++; return i; };
@@ -1099,6 +1117,11 @@
 
   // Lista fija de roles/públicos para el filtro "Dirigido a"
   const PUBLICOS_ROLES = ['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'];
+  const PUB_BASE = [...PUBLICOS_ROLES], MOD_BASE = ['presencial', 'virtual', 'híbrida'];
+  let OPCS = [];
+  const opcionesLista = (lista, base) => [...base, ...OPCS.filter(o => o.lista === lista && o.activo !== false).map(o => o.valor).filter(v => !base.includes(v))];
+  function aplicarOpciones() { const l = opcionesLista('publico', PUB_BASE); PUBLICOS_ROLES.length = 0; PUBLICOS_ROLES.push(...l); }
+  const esAct = x => !x || x.activo !== false;
 
   /* ========== GESTIÓN DE EXTENSIONES DE FACULTADES (NUBE + RESPALDO LOCAL) ========== */
   const EXT_LS_KEY = 'ubosque_fac_extensiones_v1';
@@ -1168,6 +1191,7 @@
         lim(dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(200))
       ]);
       NOVEDADES = novs || [];
+      try { const ro = await dbClient.from('listas_opciones').select('*').order('orden', { ascending: true }); OPCS = ro.error ? [] : (ro.data || []); aplicarOpciones(); } catch (_) {}
       const extLocal = leerExtensionesLocal();
 
       return {
@@ -1354,7 +1378,7 @@
     $('#heroTit').textContent = S.sem ? `${S.anio} · Semestre ${S.sem}` : `Año académico ${S.anio}`;
     $('#fAnio').innerHTML = aniosDisponibles().map(a => `<option ${a === S.anio ? 'selected' : ''}>${a}</option>`).join('');
     $$('#fSem button').forEach(b => b.classList.toggle('on', b.dataset.v === String(S.sem)));
-    let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('') + '</optgroup>';
+    let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.filter(esAct).map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('') + '</optgroup>';
     $('#fGrupo').innerHTML = g;
     const f = S.grupo.startsWith('f:') ? D.facultades.find(x => x.id === S.grupo.slice(2)) : null;
     const fp = $('#fProg'); fp.hidden = !f;
@@ -1430,7 +1454,7 @@
     const rk = c => { const n = norm(c.nombre); if (n.includes('no ceremon')) return 5; const k = ORD.findIndex(o => o[0] !== 'no ceremon' && n.includes(o[0])); return k < 0 ? 6.5 : k; };
     const card = (id, col, ic, nom, n, cls) => `<button class="mod-card ${cls}" style="--c:${col};--i:${i++}" data-cat="${id}"><span class="ic">${ic}</span><span class="txt"><b>${esc(nom)}</b><span class="n">${n} ${n === 1 ? 'fecha' : 'fechas'}</span></span></button>`;
     $('#modulos').innerHTML = card('', 'var(--petroleo)', FLATICONS.calendario, 'Todo el calendario', base.length, 'todos ' + (S.cat === '' ? 'on' : '')) +
-      D.categorias.map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
+      D.categorias.filter(esAct).map(c => ({ c, r: rk(c) })).sort((a, b) => a.r - b.r).map(({ c, r }) => { const n = base.filter(e => e.categoria === c.id).length; return card(c.id, c.color, FLATICONS[Number.isInteger(r) ? ORD[r][1] : 'estrella'], c.nombre, n, (S.cat === c.id ? 'on ' : '') + (n ? '' : 'cero')); }).join('');
   }
 
   /* ========== COLUMNA IZQUIERDA DE FACULTADES Y MODAL DE EXTENSIONES ========== */
@@ -1445,7 +1469,7 @@
       cont.innerHTML = '<p style="color:var(--suave); font-size:.82rem;">Sin facultades registradas.</p>';
       return;
     }
-    cont.innerHTML = D.facultades.map(f => {
+    cont.innerHTML = D.facultades.filter(esAct).map(f => {
       const exts = Array.isArray(f.extensiones) ? f.extensiones : [];
       const active = S.grupo === 'f:' + f.id;
       const nEv = contarEventosFac(f);
@@ -1507,11 +1531,36 @@
 
   const NOV_COLOR = { cambio_salon: '#007A78', cancelacion: '#B3261E', modalidad: '#8A5A00', otro: '#5B6F6B' };
   const NOV_TAG = { cambio_salon: 'Cambio de salón', cancelacion: 'Cancelación', modalidad: 'Cambio de modalidad', otro: 'Aviso' };
+  window.abrirNovedad = function(id) {
+    const n = NOVEDADES.find(x => String(x.id) === String(id)); if (!n) return;
+    const c = NOV_COLOR[n.tipo] || NOV_COLOR.otro, d = parse(n.fecha);
+    const facs = (n.facultad_ids || []).map(x => D.facultades.find(f => String(f.id) === String(x))).filter(Boolean);
+    const progs = []; (n.programa_ids || []).forEach(x => { for (const f of D.facultades) { const p = f.programas.find(y => String(y.id) === String(x)); if (p) progs.push(p.nombre); } });
+    const hora = n.hora_inicio ? `${String(n.hora_inicio).slice(0, 5)}${n.hora_fin ? ' – ' + String(n.hora_fin).slice(0, 5) : ''}` : '';
+    const L = infoEnlace(n.enlace), LI = infoEnlace(n.inscripcion_enlace);
+    const fila = (ic, k, v) => v ? `<div style="display:flex;gap:.7rem;padding:.65rem 0;border-top:1px solid var(--linea);"><span style="font-size:1.2rem">${ic}</span><div><div style="font-size:.76rem;color:var(--suave);font-weight:700;text-transform:uppercase;letter-spacing:.04em;">${k}</div><div>${v}</div></div></div>` : '';
+    const pr = n.prioridad === 'urgente' ? '🚨 Urgente' : n.prioridad === 'importante' ? '⭐ Importante' : '';
+    $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button>
+      <div style="background:linear-gradient(135deg,${c},color-mix(in srgb,${c} 55%,#000));color:#fff;border-radius:16px;padding:1.2rem;margin:.6rem 0 1rem;">
+        <div style="font-size:.8rem;font-weight:700;opacity:.9;">${NOV_TAG[n.tipo] || 'Aviso'}${pr ? ' · ' + pr : ''}</div>
+        <h2 style="font-family:var(--display);margin:.3rem 0;line-height:1.15;">${esc(n.titulo)}</h2>
+        <div style="opacity:.95;">📅 ${d.getDate()} ${MESES_C[d.getMonth()]} ${d.getFullYear()}${n.fecha_fin && n.fecha_fin !== n.fecha ? ' → vigente hasta ' + esc(n.fecha_fin) : ''}</div></div>
+      ${n.detalle ? `<p style="font-weight:600;">${esc(n.detalle)}</p>` : ''}
+      ${n.info_completa ? `<p style="white-space:pre-wrap;color:var(--tinta);">${esc(n.info_completa)}</p>` : ''}
+      ${fila('📚', 'Materia', esc(n.materia || ''))}${fila('👩‍🏫', 'Docente', esc(n.docente || ''))}${fila('🕒', 'Horario', hora)}${fila('💻', 'Modalidad', esc(n.modalidad || ''))}
+      ${fila('📍', 'Lugar', esc([n.sede, n.salon, n.ubicacion, n.piso].filter(Boolean).join(' · ')))}${fila('👥', 'Cupo', esc(n.cupo || ''))}${fila('💲', 'Costo', esc(n.costo || ''))}${fila('✅', 'Requisitos', esc(n.requisitos || ''))}
+      ${fila('🎓', 'Facultades', facs.map(f => `${emojiFac(f)} ${esc(f.nombre)}`).join('<br>'))}${fila('📘', 'Programas', progs.map(esc).join('<br>'))}
+      ${fila('🙋', 'Contacto', [n.contacto_nombre, n.contacto_correo ? `<a href="mailto:${esc(n.contacto_correo)}">${esc(n.contacto_correo)}</a>` : '', esc(n.contacto_telefono || '')].filter(Boolean).join(' · '))}
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem;">${L ? pillEnlace(L) : ''}${LI ? pillEnlace(LI) : ''}</div>`;
+    $('#velo').classList.add('on'); $('#cajon').classList.add('on');
+  };
+  document.addEventListener('click', ev => { const t = ev.target.closest('[data-nov]'); if (t && !ev.target.closest('a')) abrirNovedad(t.dataset.nov); });
+
   function pintarNovedades() {
     const cont = $('#novGrid'); if (!cont) return;
     const hoyIso = hoy();
     // Cuando una novedad vence (fecha < hoy), se oculta de la vista pública
-    const lista = NOVEDADES.filter(n => n.fecha >= hoyIso).slice(0, 8);
+    const lista = NOVEDADES.filter(n => (n.fecha_fin || n.fecha) >= hoyIso).slice(0, 8);
     $('#novCount').textContent = lista.length;
     cont.innerHTML = lista.length
       ? lista.map(n => {
@@ -1522,7 +1571,7 @@
           const progs = [];
           (n.programa_ids || []).forEach(id => { for (const f of D.facultades) { const p = f.programas.find(x => String(x.id) === String(id)); if (p) progs.push(p.nombre); } });
           const L = infoEnlace(n.enlace);
-          return `<article class="nov-card" style="--c:${c}">
+          return `<article class="nov-card" data-nov="${n.id}" tabindex="0" style="--c:${c};cursor:pointer;">
             <div class="nov-top"><span class="nov-tag">${NOV_TAG[n.tipo] || 'Aviso'}</span><span>${d.getDate()} ${MESES_C[d.getMonth()]}</span></div>
             <h3>${esc(n.titulo)}</h3>
             ${n.detalle ? `<p>${esc(n.detalle)}</p>` : ''}
@@ -2022,7 +2071,7 @@
 
   async function ir(p, conservar) {
     if (!USUARIO_ACTUAL) return;
-    const PANELES = { resumen: pResumen, eventos: pEventos, novedades: pNovedades, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar };
+    const PANELES = { resumen: pResumen, eventos: pEventos, novedades: pNovedades, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar, config: pConfig };
     const isDocenteOAdmin = esDocenteOAdmin();
     const tieneCalendario = tienePermisoCalendario();
     
@@ -2041,6 +2090,24 @@
   const encabezado = (t, s) => `<h1 class="pt">${t}</h1><p class="ps">${s}</p>`;
   const chipCatAdmin = id => { const c = catDe(D, id); return `<span class="chip"><i style="background:${c.color}"></i>${esc(c.nombre)}</span>`; };
   const usadosPeriodo = id => D.eventos.filter(e => e.periodo === id).length;
+
+  function resumenExtra() {
+    const h = hoy(), pub = D.eventos.filter(e => e.estado !== 'borrador'), y = new Date().getFullYear();
+    const d7 = new Date(); d7.setDate(d7.getDate() + 7); const s7 = d7.toISOString().slice(0, 10);
+    const hoyN = pub.filter(e => e.inicio <= h && finDe(e) >= h).length, sem = pub.filter(e => e.inicio >= h && e.inicio <= s7).length;
+    const novV = NOVEDADES.filter(n => (n.fecha_fin || n.fecha) >= h).length, sus = [...D.categorias, ...D.facultades, ...D.areas].filter(x => x.activo === false).length;
+    const meses = Array.from({ length: 12 }, (_, m) => pub.filter(e => e.inicio.slice(0, 4) == y && +e.inicio.slice(5, 7) === m + 1).length), mx = Math.max(1, ...meses);
+    const porCat = D.categorias.map(c => ({ c, n: pub.filter(e => e.categoria === c.id).length })).filter(x => x.n).sort((a, b) => b.n - a.n), tot = porCat.reduce((a, x) => a + x.n, 0) || 1;
+    let acc = 0; const cono = porCat.map(x => { const ini = acc / tot * 100; acc += x.n; return `${x.c.color} ${ini}% ${acc / tot * 100}%`; }).join(',') || '#e5ece8 0 100%';
+    const porFac = D.facultades.map(f => ({ f, n: pub.filter(e => (e.facultad || []).includes(f.id)).length })).sort((a, b) => b.n - a.n).slice(0, 8), mf = Math.max(1, ...porFac.map(x => x.n));
+    const kp = (ic, n, t, g) => `<div class="stat kpi" style="--g:${g}"><b>${n}</b><span>${ic} ${t}</span></div>`;
+    return `<div class="cards" style="margin-top:1.2rem;">${kp('🔥', hoyN, 'eventos activos hoy', '#e65100')}${kp('⏳', sem, 'inician en 7 días', '#007A78')}${kp('📢', novV, 'novedades vigentes', '#6a1b9a')}${kp('⏸️', sus, 'elementos suspendidos', '#b3261e')}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin-top:1.2rem;">
+      <div class="caja"><h2>📈 Eventos por mes ${y}</h2><div class="barras-mes">${meses.map((n, m) => `<div title="${n} eventos"><i style="height:${n / mx * 100}%"></i><small>${MESES_C[m]}</small><b>${n || ''}</b></div>`).join('')}</div></div>
+      <div class="caja"><h2>🍩 Por categoría</h2><div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;"><div class="dona" style="background:conic-gradient(${cono})"><span>${tot === 1 && !porCat.length ? 0 : tot}</span></div><div style="flex:1;min-width:150px;font-size:.88rem;">${porCat.slice(0, 7).map(x => `<div style="display:flex;gap:.4rem;align-items:center;margin:.2rem 0;"><i style="width:11px;height:11px;border-radius:50%;background:${x.c.color}"></i>${esc(x.c.nombre)} <b style="margin-left:auto">${x.n}</b></div>`).join('')}</div></div></div>
+      <div class="caja"><h2>🎓 Top facultades</h2>${porFac.map(x => `<div style="margin:.5rem 0;"><div style="display:flex;justify-content:space-between;font-size:.88rem;"><span>${esc(x.f.nombre)}</span><b>${x.n}</b></div><div style="height:8px;background:#e8efeb;border-radius:9px;overflow:hidden;"><i style="display:block;height:100%;width:${x.n / mf * 100}%;background:linear-gradient(90deg,var(--verde),var(--lima));border-radius:9px;"></i></div></div>`).join('')}</div>
+    </div>`;
+  }
 
   function pResumen() {
     const pub = D.eventos.filter(e => e.estado !== 'borrador'), bor = D.eventos.length - pub.length;
@@ -2064,6 +2131,7 @@
       <div class="caja"><h2>${FLATICONS.chart} Eventos por semestre</h2>${barras || '<p style="text-align:center; color:var(--suave);">Aún no hay semestres.</p>'}</div>
       <div><div class="caja"><h2>${FLATICONS.calendario} Próximas fechas</h2>${prox.map(e => `<div style="display:flex; gap:.8rem; padding:.55rem 0; border-top:1px solid var(--linea); font-size:.9rem; color:var(--tinta);"><b style="min-width:84px; color:var(--verde);">${fmtRango(e)}</b><span>${esc(tituloInteligente(e))}</span></div>`).join('') || '<p style="text-align:center; color:var(--suave);">Sin fechas próximas.</p>'}</div></div>
     </div>
+    ${resumenExtra()}
     ${puede('crear') && !esDocenteOAdmin() ? `<button class="btn pri" data-a="nuevo" style="margin-top:1rem;">${FLATICONS.documento} Agregar evento</button>` : ''}`;
   }
 
@@ -2116,6 +2184,11 @@
     ov.innerHTML = `<div style="background:#fff;border-radius:20px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:1.5rem;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:panelIn .3s ease-out;">
       <h2 style="font-family:var(--display);margin:0 0 .3rem;">✏️ Editar ${ids.length} evento${ids.length > 1 ? 's' : ''}</h2>
       <p style="color:var(--suave);margin:0 0 1rem;font-size:.9rem;">Marca solo lo que quieres cambiar; se aplicará a todos los seleccionados.</p>
+      ${fila('tit', 'Nombre', `<input id="me_tit" placeholder="Nuevo nombre para todos" style="${css}">`)}
+      ${fila('pre', 'Agregar al nombre', `<div style="display:flex;gap:.5rem;"><input id="me_pre" placeholder="Prefijo" style="${css}"><input id="me_suf" placeholder="Sufijo (ej. pregrado)" style="${css}"></div>`)}
+      ${fila('des', 'Descripción', `<textarea id="me_des" rows="2" style="${css}"></textarea>`)}
+      ${fila('fec', 'Fechas', `<div style="display:flex;gap:.5rem;"><input type="date" id="me_fi" style="${css}"><input type="date" id="me_ff" style="${css}"></div>`)}
+      ${fila('pis', 'Piso / Salón', `<input id="me_pis" style="${css}">`)}
       ${fila('cat', 'Categoría', `<select id="me_cat" style="${css}">${D.categorias.map(c => opt(c.id, c.nombre, false)).join('')}</select>`)}
       ${fila('sub', 'Subcategoría', `<input id="me_sub" placeholder="Ej: Directivo (vacío = quitar)" style="${css}">`)}
       ${fila('est', 'Estado', `<select id="me_est" style="${css}">${opt('publicado', 'Publicado', true)}${opt('borrador', 'Borrador', false)}</select>`)}
@@ -2134,11 +2207,24 @@
       if (on('hor')) { row.hora_inicio = $('#me_hi').value || null; row.hora_fin = $('#me_hf').value || null; }
       if (on('lug')) row.lugar = $('#me_lug').value.trim();
       if (on('enl')) { const u = normalizarEnlace($('#me_enl').value); if ($('#me_enl').value.trim() && !u) return toast('El enlace no es válido', true); row.enlace = u; }
+      if (on('des')) row.descripcion = $('#me_des').value.trim();
+      if (on('pis')) row.piso = $('#me_pis').value.trim();
+      if (on('tit') && $('#me_tit').value.trim()) row.titulo = $('#me_tit').value.trim();
+      const porEvento = on('pre') || on('fec');
       const facs = on('fac') ? [...$('#me_fac').selectedOptions].map(o => o.value) : null;
-      if (!Object.keys(row).length && facs === null) return toast('Marca al menos un campo para cambiar', true);
+      if (!Object.keys(row).length && facs === null && !porEvento) return toast('Marca al menos un campo para cambiar', true);
       $('#me_ok').disabled = true;
       try {
-        if (Object.keys(row).length) { row.updated_at = new Date().toISOString(); const r = await dbClient.from('eventos').update(row).in('id', ids); if (r.error) throw r.error; }
+        if (porEvento) {
+          const pre = on('pre') ? $('#me_pre').value.trim() : '', suf = on('pre') ? $('#me_suf').value.trim() : '';
+          for (const eid of ids) {
+            const ev = D.eventos.find(x => x.id === eid), r1 = { ...row, updated_at: new Date().toISOString() };
+            if (!on('tit')) r1.titulo = ev.titulo;
+            if (on('pre')) r1.titulo = [pre, r1.titulo, suf].filter(Boolean).join(' ');
+            if (on('fec')) { const fi = $('#me_fi').value || ev.inicio, ff = $('#me_ff').value || (ev.fin && ev.fin >= fi ? ev.fin : fi); r1.fecha_inicio = fi; r1.fecha_fin = ff; const ps = periodosDeRango(fi, ff); r1.periodo_id = ps[0]; r1.periodo2_id = ps.length > 1 ? ps[ps.length - 1] : null; }
+            const u = await dbClient.from('eventos').update(r1).eq('id', eid); if (u.error) throw u.error;
+          }
+        } else if (Object.keys(row).length) { row.updated_at = new Date().toISOString(); const r = await dbClient.from('eventos').update(row).in('id', ids); if (r.error) throw r.error; }
         if (facs !== null) {
           const d = await dbClient.from('evento_facultades').delete().in('evento_id', ids); if (d.error) throw d.error;
           if (facs.length) { const i2 = await dbClient.from('evento_facultades').insert(ids.flatMap(eid => facs.map(f => ({ evento_id: eid, facultad_id: f })))); if (i2.error) throw i2.error; }
@@ -2516,8 +2602,8 @@
       ...['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => 'Bloque ' + l)];
 
     const novsFiltradas = NOVEDADES.filter(n => {
-      if (NF.estado === 'vigente' && n.fecha < hoyIso) return false;
-      if (NF.estado === 'vencida' && n.fecha >= hoyIso) return false;
+      if (NF.estado === 'vigente' && (n.fecha_fin || n.fecha) < hoyIso) return false;
+      if (NF.estado === 'vencida' && (n.fecha_fin || n.fecha) >= hoyIso) return false;
       if (NF.q) {
         const { facs, progs, areas } = ambitoNovedad(n);
         const txt = norm(`${n.titulo} ${n.detalle || ''} ${n.materia || ''} ${n.creado_por || ''} ${facs.map(f=>f.nombre).join(' ')} ${progs.join(' ')} ${areas.map(a=>a.nombre).join(' ')}`);
@@ -2526,7 +2612,7 @@
       return true;
     });
 
-    const vigentesCount = NOVEDADES.filter(n => n.fecha >= hoyIso).length;
+    const vigentesCount = NOVEDADES.filter(n => (n.fecha_fin || n.fecha) >= hoyIso).length;
     const vencidasCount = NOVEDADES.length - vigentesCount;
 
     return encabezado('📣 Novedades de clases', 'Publica cambios de salón, cancelaciones, cambios de modalidad u otros avisos. Las novedades vencidas se ocultan automáticamente del portal público, pero permanecen visibles aquí para trazabilidad.') + `
@@ -2542,7 +2628,7 @@
       </div>
       <div class="fr2">
         <div class="fr"><label>Docente</label><input id="nv_docente" placeholder="Nombre del docente"></div>
-        <div class="fr"><label>Modalidad</label><select id="nv_modal"><option value="">—</option><option>presencial</option><option>virtual</option><option>híbrida</option></select></div>
+        <div class="fr"><label>Modalidad</label><select id="nv_modal"><option value="">—</option>${opcionesLista('modalidad', MOD_BASE).map(m => `<option>${esc(m)}</option>`).join('')}</select></div>
       </div>
       <div class="fr2">
         <div class="fr"><label>Hora inicio</label><input type="time" id="nv_hi"></div>
@@ -2581,7 +2667,20 @@
         <div class="fr"><label>Piso</label><input id="nv_piso" placeholder="Ej: Piso 2"></div>
         <div class="fr"><label>Enlace (Teams / Meet / Zoom)</label><input id="nv_enlace" placeholder="https://..."></div>
       </div>
-      <div class="fr"><label>Detalle</label><input id="nv_detalle" placeholder="Descripción breve del cambio"></div>
+      <div class="fr"><label>Resumen (se ve en la tarjeta)</label><input id="nv_detalle" placeholder="Descripción breve del cambio"></div>
+      <div class="fr"><label>Información completa (se ve al dar clic)</label><textarea id="nv_info" rows="4" placeholder="Detalles, instrucciones, pasos, observaciones…" style="width:100%;padding:.55rem .8rem;border:1px solid var(--linea);border-radius:10px;"></textarea></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem;">
+        <div class="fr"><label>Vigente hasta</label><input type="date" id="nv_ffin"></div>
+        <div class="fr"><label>Prioridad</label><select id="nv_prio"><option value="normal">Normal</option><option value="importante">⭐ Importante</option><option value="urgente">🚨 Urgente</option></select></div>
+        <div class="fr"><label>Sede / campus</label><input id="nv_sede" placeholder="Ej: Sede Chía"></div>
+        <div class="fr"><label>Cupo</label><input id="nv_cupo" placeholder="Ej: 30 personas"></div>
+        <div class="fr"><label>Costo</label><input id="nv_costo" placeholder="Ej: Gratuito"></div>
+        <div class="fr"><label>Enlace de inscripción</label><input id="nv_insc" placeholder="https://…"></div>
+        <div class="fr"><label>Contacto</label><input id="nv_cnom" placeholder="Nombre de contacto"></div>
+        <div class="fr"><label>Correo de contacto</label><input id="nv_cmail" type="email"></div>
+        <div class="fr"><label>Teléfono / extensión</label><input id="nv_ctel"></div>
+      </div>
+      <div class="fr"><label>Requisitos / a tener en cuenta</label><textarea id="nv_req" rows="2" style="width:100%;padding:.55rem .8rem;border:1px solid var(--linea);border-radius:10px;"></textarea></div>
       <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
         <button class="btn pri" data-a="addNov">💾 Publicar novedad</button>
       </div>
@@ -2601,7 +2700,7 @@
         <thead><tr><th>Fecha / Estado</th><th>Tipo</th><th>Título</th><th>Facultad / Programa / Área</th><th>Creado por</th><th>Ubicación</th><th>Acciones</th></tr></thead>
         <tbody>
           ${novsFiltradas.map(n => {
-            const vencida = n.fecha < hoyIso;
+            const vencida = (n.fecha_fin || n.fecha) < hoyIso;
             const { facs, progs, areas } = ambitoNovedad(n);
             const destinos = [
               ...facs.map(f => `${emojiFac(f)} ${esc(f.nombre)}`),
@@ -2653,6 +2752,7 @@
     $('#nv_piso').value = n.piso || '';
     $('#nv_enlace').value = n.enlace || '';
     $('#nv_detalle').value = n.detalle || '';
+    [['nv_info','info_completa'],['nv_ffin','fecha_fin'],['nv_prio','prioridad'],['nv_sede','sede'],['nv_cupo','cupo'],['nv_costo','costo'],['nv_insc','inscripcion_enlace'],['nv_cnom','contacto_nombre'],['nv_cmail','contacto_correo'],['nv_ctel','contacto_telefono'],['nv_req','requisitos']].forEach(([id, k]) => { const el = $('#' + id); if (el) el.value = n[k] || (id === 'nv_prio' ? 'normal' : ''); });
     const facs = (n.facultad_ids || []).map(String);
     [...$('#nv_fac').options].forEach(o => o.selected = facs.includes(o.value));
     actualizarProgsNov(n.programa_ids || []);
@@ -2687,6 +2787,9 @@
       ubicacion: (ubic && ubic !== 'Otro') ? (ubicEsp || null) : null,
       piso: $('#nv_piso').value.trim() || null, enlace: enlace || null,
       detalle: $('#nv_detalle').value.trim() || '',
+      info_completa: $('#nv_info').value.trim() || null, fecha_fin: $('#nv_ffin').value || null, prioridad: $('#nv_prio').value, sede: $('#nv_sede').value.trim() || null,
+      cupo: $('#nv_cupo').value.trim() || null, costo: $('#nv_costo').value.trim() || null, inscripcion_enlace: normalizarEnlace($('#nv_insc').value) || null,
+      contacto_nombre: $('#nv_cnom').value.trim() || null, contacto_correo: $('#nv_cmail').value.trim() || null, contacto_telefono: $('#nv_ctel').value.trim() || null, requisitos: $('#nv_req').value.trim() || null,
       facultad_ids: [...$('#nv_fac').selectedOptions].map(o => o.value),
       programa_ids: [...$('#nv_prog').selectedOptions].map(o => o.value),
       area_ids: [...$('#nv_area').selectedOptions].map(o => o.value)
@@ -2902,6 +3005,25 @@
       </div>
     </div>`;
     $('#modal').classList.add('on');
+  }
+
+  function pConfig() {
+    const sw = (t, id, on) => `<label class="sw"><input type="checkbox" data-a="toggle" data-t="${t}" data-i="${id}" ${on !== false ? 'checked' : ''}><span></span></label>`;
+    const fila = (t, x, ex = '') => `<div class="cfg-fila"><span>${ex}${esc(x.nombre)}</span>${sw(t, x.id, x.activo)}</div>`;
+    const bloque = (tit, t, arr) => `<div class="caja"><h2>${tit}</h2>${arr.map(x => fila(t, x)).join('') || '<p style="color:var(--suave)">Sin registros.</p>'}</div>`;
+    const lista = (l, tit, base) => `<div class="caja"><h2>${tit}</h2><div class="chips-cfg">${base.map(v => `<span class="chip-cfg bloq">${esc(v)}</span>`).join('')}${OPCS.filter(o => o.lista === l).map(o => `<span class="chip-cfg">${esc(o.valor)} <button data-a="delOpc" data-i="${o.id}" title="Eliminar">×</button></span>`).join('')}</div>
+      <div style="display:flex;gap:.5rem;margin-top:.8rem;"><input id="op_${l}" placeholder="Nueva opción…" style="flex:1;padding:.5rem .8rem;border:1px solid var(--linea);border-radius:10px;"><button class="btn pri" data-a="addOpc" data-l="${l}">➕ Agregar</button></div></div>`;
+    const progs = D.facultades.flatMap(f => f.programas.map(pr => ({ ...pr, nombre: pr.nombre + ' · ' + f.nombre })));
+    return encabezado('⚙️ Listas y Estado', 'Crea opciones para las listas desplegables y habilita o suspende facultades, programas, áreas y categorías (lo suspendido se oculta del portal público).') + `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;">
+      ${lista('publico', '🎯 Opciones de «Dirigido a»', PUB_BASE)}
+      ${lista('modalidad', '💻 Modalidades (novedades)', MOD_BASE)}
+      <div class="caja"><h2>🧪 Usuario de prueba</h2><p style="font-size:.86rem;color:var(--suave);">Crea un acceso temporal con PIN aleatorio para probar un perfil.</p>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;"><select id="tu_rol" style="padding:.5rem;border:1px solid var(--linea);border-radius:10px;">${Object.keys(DESC_ROL).map(r => `<option>${r}</option>`).join('')}</select><button class="btn pri" data-a="mkTest">🧪 Crear usuario de prueba</button></div><div id="tu_res" style="margin-top:.8rem;"></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;margin-top:1.2rem;">
+      ${bloque('🏷️ Categorías', 'categorias', D.categorias)}${bloque('🎓 Facultades', 'facultades', D.facultades)}${bloque('📚 Programas', 'programas', progs)}${bloque('🏢 Áreas', 'areas', D.areas)}
+    </div>`;
   }
 
   function pAreas() {
@@ -3182,6 +3304,24 @@
         registrarLog(nuevoEst === 'publicado' ? 'Publicó evento' : 'Pasó a borrador', e.titulo);
         D = await leerNube(); toast(nuevoEst === 'publicado' ? `${FLATICONS.check} Publicado` : `${FLATICONS.documento} En borrador`); pintarTabla();
       }
+    }
+    if (a === 'toggle') {
+      const r = await dbClient.from(ac.dataset.t).update({ activo: ac.checked }).eq('id', i);
+      if (r.error) { ac.checked = !ac.checked; return toast('Falta la columna "activo". Ejecuta el SQL actualizado en Supabase.', true); }
+      const nd = await leerNube(); if (nd) D = nd; return toast(ac.checked ? '✅ Habilitado' : '⏸️ Suspendido');
+    }
+    if (a === 'addOpc') {
+      const l = ac.dataset.l, v = ($('#op_' + l).value || '').trim(); if (!v) return toast('Escribe un valor', true);
+      const r = await dbClient.from('listas_opciones').insert([{ lista: l, valor: v, activo: true }]);
+      if (r.error) return toast('Falta la tabla listas_opciones. Ejecuta el SQL actualizado en Supabase.', true);
+      const nd = await leerNube(); if (nd) D = nd; return refrescar();
+    }
+    if (a === 'delOpc') { await dbClient.from('listas_opciones').delete().eq('id', i); const nd = await leerNube(); if (nd) D = nd; return refrescar(); }
+    if (a === 'mkTest') {
+      const pin = String(Math.floor(100000 + Math.random() * 900000)), rol = $('#tu_rol').value, nombre = '🧪 Prueba ' + rol + ' ' + pin.slice(-3);
+      try { await crearUsuario({ nombre, pin, rol, correo: null, permisos: ['crear', 'editar'], areas_asignadas: [] }); $('#tu_res').innerHTML = `<div style="background:#eaf7ee;border:1px solid #b7e1c1;border-radius:12px;padding:.7rem;">✅ <b>${esc(nombre)}</b><br>PIN: <b style="font-size:1.2rem;letter-spacing:2px;">${pin}</b></div>`; registrarLog('Creó usuario de prueba', nombre); }
+      catch (err) { toast('No se pudo crear: ' + (err.message || err), true); }
+      return;
     }
     if (a === 'm_edit') { if (!puede('editar')) return sinPermiso(); return abrirEdicionMasiva(); }
     if (a === 'm_del' || a === 'm_delall') {
