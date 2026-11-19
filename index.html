@@ -1195,12 +1195,24 @@
     if (!dbClient) return null;
     try {
       const lim = q => Promise.race([Promise.resolve(q), new Promise((_, rej) => setTimeout(() => rej(new Error('Tiempo agotado')), 12000))]);
+      // Supabase devuelve máximo 1000 filas por consulta: se piden por páginas hasta traer todos los eventos
+      const traerEventos = async () => {
+        let todos = [], desde = 0;
+        for (let g = 0; g < 40; g++) {
+          const r = await lim(dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`).order('fecha_inicio', { ascending: true }).order('id', { ascending: true }).range(desde, desde + 999));
+          if (r.error || !r.data) return todos.length ? { data: todos } : { data: null, error: r.error };
+          todos = todos.concat(r.data);
+          if (r.data.length < 1000) break;
+          desde += 1000;
+        }
+        return { data: todos };
+      };
       const [{ data: cats }, { data: facs }, { data: areas }, { data: pers }, { data: evs }, { data: novs }] = await Promise.all([
         lim(dbClient.from('categorias').select('*')),
         lim(dbClient.from('facultades').select('*, programas(*)')),
         lim(dbClient.from('areas').select('*')),
         lim(dbClient.from('periodos').select('*')),
-        lim(dbClient.from('eventos').select(`*, evento_facultades(facultad_id), evento_programas(programa_id), evento_areas(area_id), evento_publicos(publico)`)),
+        traerEventos(),
         lim(dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(200))
       ]);
       NOVEDADES = novs || [];
