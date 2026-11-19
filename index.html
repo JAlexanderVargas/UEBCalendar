@@ -1325,6 +1325,10 @@
   function agruparRepetidos(L) {
     const mapa = new Map(), out = [];
     const fid = S.grupo && S.grupo.startsWith('f:') ? S.grupo.slice(2) : '';
+    const kf = e => [norm(e.titulo), e.inicio, finDe(e), e.categoria, e.subcategoria || '', e.horaInicio, e.horaFin, e.lugar, e.lugarEsp, e.enlace, (e.area || []).join(','), (e.publico || []).slice().sort().join(',')].join('|');
+    const gen = new Set(), esp = new Set(); L.forEach(e => ((e.facultad || []).length ? esp : gen).add(kf(e)));
+    // Sin filtro de facultad: se muestra el general y se ocultan sus copias por facultad; con filtro: se muestra el de la facultad y se oculta el general
+    L = L.filter(e => (e.facultad || []).length ? !(!fid && gen.has(kf(e))) : !(fid && esp.has(kf(e))));
     L.forEach(e => {
       if (!(e.facultad || []).length) { out.push(e); return; }
       const k = [norm(e.titulo), e.inicio, finDe(e), e.categoria, e.subcategoria || '', e.horaInicio, e.horaFin, e.lugar, e.lugarEsp, e.enlace, (e.area || []).join(','), (e.publico || []).slice().sort().join(',')].join('|');
