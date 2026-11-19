@@ -702,13 +702,41 @@
   .emo-in { width: 2.6rem; text-align: center; border: 1px dashed var(--linea); border-radius: 8px; padding: .15rem; font-size: 1.05rem; background: #fff; font-family: var(--emoji-font), var(--texto); }
   .bulk-mini { display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin: .3rem 0 .6rem; font-size: .84rem; }
   .fl-fecha { display: inline-flex; align-items: center; gap: .3rem; font-size: .82rem; color: var(--suave); }
+
+  /* ===== Capa premium 2 ===== */
+  :root { --sombra-s: 0 1px 2px rgba(0,59,54,.06), 0 8px 22px -14px rgba(0,59,54,.35); --sombra-m: 0 18px 40px -20px rgba(0,59,54,.5); }
+  #loader { background: radial-gradient(800px 500px at 50% 35%, #fff, var(--fondo) 70%); }
+  .ld-wrap svg { filter: drop-shadow(0 14px 22px rgba(0,122,120,.25)); animation: ldFloat 3s ease-in-out infinite; }
+  .ld-fill { animation: ldFill 2.4s cubic-bezier(.6,0,.3,1) infinite; }
+  @keyframes ldFill { 0% { transform: translateY(0); } 85%, 100% { transform: translateY(-122px); } }
+  @keyframes ldFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .ld-t { font-family: var(--display); font-weight: 700; font-size: 1.1rem; color: var(--petroleo); margin: .6rem 0 0; letter-spacing: .01em; }
+  .ld-s { color: var(--suave); font-weight: 600; font-size: .85rem; margin: 0; animation: ldPulse 1.4s ease-in-out infinite; }
+  .ld-bar { width: 170px; height: 5px; border-radius: 9px; background: #dbe7e1; overflow: hidden; } .ld-bar i { display: block; height: 100%; width: 40%; border-radius: 9px; background: linear-gradient(90deg, var(--verde), var(--lima)); animation: ldBar 1.3s ease-in-out infinite; }
+  @keyframes ldBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } } @keyframes ldPulse { 50% { opacity: .45; } }
+  .admin-nav .it { transition: transform .2s, background .25s, color .25s, box-shadow .25s; } .admin-nav .it:hover { transform: translateX(4px); } .admin-nav .it.on { box-shadow: 0 10px 22px -12px rgba(0,122,120,.7); }
+  .stat { transition: transform .3s, box-shadow .3s; border-radius: 18px; box-shadow: var(--sombra-s); } .stat:hover { transform: translateY(-5px); box-shadow: var(--sombra-m); }
+  .ev:nth-child(1) { animation-delay: 0s, 0s; } .ev:nth-child(2) { animation-delay: .04s, 0s; } .ev:nth-child(3) { animation-delay: .08s, 0s; } .ev:nth-child(4) { animation-delay: .12s, 0s; }
+  .pt { background: linear-gradient(90deg, var(--petroleo), var(--verde), var(--lima)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: fondoFluir 8s ease-in-out infinite; }
+  .barra-g { height: 9px; background: #e8efeb; border-radius: 9px; overflow: hidden; } .barra-g i { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg, var(--verde), var(--lima)); animation: barGrow .9s cubic-bezier(.2,.8,.2,1) both; transform-origin: left; }
+  @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .grid-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.2rem; margin-top: 1.2rem; }
+  .badge.off { background: #FDE8E7; color: #B3261E; } .chip-cfg.off { opacity: .55; text-decoration: line-through; } .chip-cfg button { margin-left: .25rem; padding: 0 .15rem; color: var(--suave); } .chip-cfg button:hover { color: var(--verde); }
+  .sticky-bar { position: sticky; top: .5rem; z-index: 20; backdrop-filter: blur(8px); } .est-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem; }
+  .est-card summary { cursor: pointer; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; list-style: none; } .est-card .mini { margin-left: auto; font-size: .76rem; color: var(--suave); }
+  .est-prog { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .4rem .2rem; border-top: 1px solid var(--linea); font-size: .88rem; transition: background .2s; } .est-prog:hover { background: color-mix(in srgb, var(--lima) 12%, transparent); }
+  .ov-modal { position: fixed; inset: 0; background: rgba(0,40,36,.55); backdrop-filter: blur(5px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem; animation: panelIn .25s ease-out; }
+  .ov-box { background: #fff; border-radius: 22px; max-width: 760px; width: 100%; max-height: 92vh; overflow: auto; padding: 1.5rem; box-shadow: 0 30px 70px -20px rgba(0,0,0,.55); animation: scaleIn .3s ease-out; }
+  .ov-box .fr { margin-bottom: .7rem; } .ov-box .fr label { display: block; font-weight: 700; font-size: .8rem; margin-bottom: .2rem; } .ov-box input, .ov-box select, .ov-box textarea { width: 100%; padding: .5rem .7rem; border: 1px solid var(--linea); border-radius: 10px; font: inherit; }
+  .g2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 .9rem; }
+  .aranda-box { border: 1.5px dashed #6A1B9A; background: linear-gradient(135deg, #faf5fd, #fff); border-radius: 14px; padding: .9rem; margin-top: .5rem; }
 </style>
 </head>
 <body>
 
 <div id="tita-container"></div>
 
-<div id="loader"><div class="spinner"></div><p style="color:var(--suave); font-weight:600;">Cargando calendario...</p></div>
+<div id="loader"><div class="ld-wrap"><svg viewBox="0 0 120 120" width="132" height="132" aria-label="Registro y Control Académico"><defs><clipPath id="ldc"><rect class="ld-fill" x="0" y="120" width="120" height="122"/></clipPath><linearGradient id="ldg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#007A78"/><stop offset="1" stop-color="#A6CE39"/></linearGradient></defs><circle cx="60" cy="60" r="54" fill="none" stroke="#DCE5E1" stroke-width="5"/><circle cx="60" cy="60" r="44" fill="none" stroke="#DCE5E1" stroke-width="1.5" stroke-dasharray="4 4"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="#DCE5E1">RYC</text><g clip-path="url(#ldc)"><circle cx="60" cy="60" r="54" fill="#EAF4D6" stroke="url(#ldg)" stroke-width="5"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="url(#ldg)">RYC</text></g></svg></div><p class="ld-t">Registro y Control Académico</p><div class="ld-bar"><i></i></div><p class="ld-s">Cargando calendario…</p></div>
 <div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
 
 <div id="public-panel" style="position:relative; z-index:10;">
@@ -862,6 +890,8 @@
       <button class="it admin-only" data-p="facultades">🏛️ Facultades y programas</button>
       <button class="it admin-only" data-p="areas">🗂️ Áreas administrativas</button>
       <button class="it admin-only" data-p="categorias">🏷️ Categorías</button>
+      <button class="it admin-only" data-p="estructura">🏛️ Estructura</button>
+      <button class="it" data-p="soporte">🛠️ Soporte</button>
       <button class="it admin-only" data-p="config">⚙️ Listas y Estado</button>
       <div class="sep admin-only">Seguridad</div>
       <button class="it admin-only" data-p="usuarios">👥 Usuarios y Accesos</button>
@@ -948,6 +978,12 @@
   const slug = s => norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 24) || 'x';
   const nuevoId = (s, lista) => { const b = slug(s); let i = b, n = 2; while (lista.some(x => x.id === i)) i = b + '_' + n++; return i; };
   const opt = (v, t, sel) => `<option value="${esc(v)}" ${sel ? 'selected' : ''}>${esc(t)}</option>`;
+  const marcaPrueba = () => (USUARIO_ACTUAL && USUARIO_ACTUAL.tipo_usuario === 'prueba') ? { es_prueba: true, prueba_de: String(USUARIO_ACTUAL.id) } : {};
+  async function limpiarPrueba(ids, borrarUsuarios) { for (const t of ['eventos', 'novedades', 'tickets']) { try { await enLotes(ids, c => dbClient.from(t).delete().in('prueba_de', c)); } catch (_) {} } if (borrarUsuarios) await enLotes(ids, c => dbClient.from('usuarios_admin').delete().in('id', c)); }
+  async function autoLimpiezaPrueba() { if (window._apr) return; window._apr = true; try { const r = await dbClient.from('usuarios_admin').select('id,vence,tipo_usuario').eq('tipo_usuario', 'prueba'); const v = (r.data || []).filter(u => u.vence && String(u.vence).slice(0, 10) < hoy()).map(u => String(u.id)); if (v.length) await limpiarPrueba(v, true); } catch (_) {} }
+  const barrasG = (arr, g) => { const mx = Math.max(1, ...arr.map(x => x[1])); return arr.map(x => `<div style="margin:.5rem 0;"><div style="display:flex;justify-content:space-between;font-size:.88rem;gap:.5rem;"><span>${x[0]}</span><b>${x[1]}</b></div><div class="barra-g"><i style="width:${x[1] / mx * 100}%;${g ? 'background:' + g : ''}"></i></div></div>`).join('') || '<p style="color:var(--suave)">Sin datos.</p>'; };
+  const donaG = items => { const tot = items.reduce((a, x) => a + x.n, 0), tt = tot || 1; let ac = 0; const cono = items.filter(x => x.n).map(x => { const i = ac / tt * 100; ac += x.n; return `${x.c} ${i}% ${ac / tt * 100}%`; }).join(',') || '#e5ece8 0 100%'; return `<div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;"><div class="dona" style="background:conic-gradient(${cono})"><span>${tot}</span></div><div style="flex:1;min-width:150px;font-size:.88rem;">${items.map(x => `<div style="display:flex;gap:.4rem;align-items:center;margin:.2rem 0;"><i style="width:11px;height:11px;border-radius:50%;background:${x.c}"></i>${x.l} <b style="margin-left:auto">${x.n}</b></div>`).join('')}</div></div>`; };
+  const cuenta = (arr, f) => { const m = {}; arr.forEach(x => { const k = f(x); m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
   async function enLotes(ids, fn, n = 40) { for (let i = 0; i < ids.length; i += n) { const r = await fn(ids.slice(i, i + n)); if (r && r.error) return r; } return { error: null }; }
   const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
@@ -1131,7 +1167,8 @@
   const PUBLICOS_ROLES = ['Comunidad universitaria', 'Estudiantes', 'Administrativos', 'Docentes', 'Egresados', 'Facultades', 'Programas', 'Áreas administrativas'];
   const PUB_BASE = [...PUBLICOS_ROLES], MOD_BASE = ['presencial', 'virtual', 'híbrida'];
   let OPCS = [];
-  const opcionesLista = (lista, base) => [...base, ...OPCS.filter(o => o.lista === lista && o.activo !== false).map(o => o.valor).filter(v => !base.includes(v))];
+  const opcionesLista = (lista, base) => { const rows = OPCS.filter(o => o.lista === lista); if (!rows.length || lista === 'tipo_novedad') return [...base, ...rows.filter(o => o.activo !== false).map(o => o.valor).filter(v => !base.includes(v))]; return rows.filter(o => o.activo !== false).map(o => o.valor); };
+  const chipsLista = (l, base) => { const rows = OPCS.filter(o => o.lista === l); if (l === 'tipo_novedad' || !rows.length) return base.map(v => `<span class="chip-cfg bloq">${esc(v)}</span>`).join('') + rows.map(o => `<span class="chip-cfg">${esc(o.valor)} <button data-a="delOpc" data-i="${o.id}" title="Eliminar">×</button></span>`).join(''); return rows.map(o => `<span class="chip-cfg ${o.activo === false ? 'off' : ''}">${esc(o.valor)}<button data-a="renOpc" data-i="${o.id}" title="Renombrar">✎</button><button data-a="togOpc" data-i="${o.id}" title="${o.activo === false ? 'Habilitar' : 'Suspender'}">${o.activo === false ? '▶' : '⏸'}</button><button data-a="delOpc" data-i="${o.id}" title="Eliminar">×</button></span>`).join(''); };
   function aplicarOpciones() { const l = opcionesLista('publico', PUB_BASE); PUBLICOS_ROLES.length = 0; PUBLICOS_ROLES.push(...l); }
   const esAct = x => !x || x.activo !== false;
 
@@ -1216,7 +1253,7 @@
         lim(dbClient.from('novedades').select('*').order('fecha', { ascending: false }).limit(200))
       ]);
       NOVEDADES = novs || [];
-      try { const ro = await dbClient.from('listas_opciones').select('*').order('orden', { ascending: true }); OPCS = ro.error ? [] : (ro.data || []); aplicarOpciones(); } catch (_) {}
+      try { const ro = await dbClient.from('listas_opciones').select('*').order('orden', { ascending: true }); OPCS = ro.error ? [] : (ro.data || []); if (!ro.error) { for (const [l, b] of [['publico', PUB_BASE], ['modalidad', MOD_BASE]]) { if (!OPCS.some(o => o.lista === l)) await dbClient.from('listas_opciones').insert(b.map((v, i) => ({ lista: l, valor: v, activo: true, orden: i }))); } const r2 = await dbClient.from('listas_opciones').select('*').order('orden', { ascending: true }); if (!r2.error) OPCS = r2.data || OPCS; } aplicarOpciones(); } catch (_) {}
       const extLocal = leerExtensionesLocal();
 
       return {
@@ -2047,7 +2084,7 @@
     const user = await verificarPin(pin);
     if (user && (user.activo === false || (user.vence && String(user.vence).slice(0, 10) < hoy()))) return toast('Este usuario está suspendido o su acceso temporal venció. Contacta al administrador.', true);
     if (user) {
-      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: user.rol, permisos: user.permisos || [], areas: user.areas_asignadas || [] };
+      USUARIO_ACTUAL = { id: user.id, nombre: user.nombre, rol: user.rol, permisos: user.permisos || [], areas: user.areas_asignadas || [], tipo_usuario: user.tipo_usuario || 'real' };
       $('#pin').value = '';
       if (user.pin_temporal) {
         USUARIO_ACTUAL = null; window._reset_user_id = user.id; window._reset_verificado = true; window._reset_pin_actual = pin;
@@ -2102,11 +2139,11 @@
 
   async function ir(p, conservar) {
     if (!USUARIO_ACTUAL) return;
-    const PANELES = { resumen: pResumen, eventos: pEventos, novedades: pNovedades, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar, config: pConfig };
+    const PANELES = { resumen: pResumen, eventos: pEventos, novedades: pNovedades, periodos: pPeriodos, facultades: pFacultades, areas: pAreas, categorias: pCategorias, usuarios: pUsuarios, logs: pLogs, publicar: pPublicar, config: pConfig, estructura: pEstructura, soporte: pSoporte };
     const isDocenteOAdmin = esDocenteOAdmin();
     const tieneCalendario = tienePermisoCalendario();
     
-    if (!PANELES[p] || (p !== 'resumen' && p !== 'novedades' && isDocenteOAdmin && !tieneCalendario && p !== 'eventos') || (p !== 'resumen' && p !== 'eventos' && p !== 'novedades' && !tieneRol(USUARIO_ACTUAL, 'admin') && !isDocenteOAdmin)) p = (isDocenteOAdmin && !tieneCalendario) ? 'novedades' : 'resumen';
+    if (!PANELES[p] || (p !== 'resumen' && p !== 'soporte' && p !== 'novedades' && isDocenteOAdmin && !tieneCalendario && p !== 'eventos') || (p !== 'resumen' && p !== 'soporte' && p !== 'eventos' && p !== 'novedades' && !tieneRol(USUARIO_ACTUAL, 'admin') && !isDocenteOAdmin)) p = (isDocenteOAdmin && !tieneCalendario) ? 'novedades' : 'resumen';
     
     P = p; SEL.clear();
     $$('.admin-nav .it').forEach(b => b.classList.toggle('on', b.dataset.p === p));
@@ -2134,21 +2171,24 @@
     const prox = pub.filter(e => finDe(e) >= h).sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 8);
     const porArea = D.areas.map(a => ({ a, n: pub.filter(e => (e.area || []).includes(a.id)).length })).filter(x => x.n).sort((a, b) => b.n - a.n).slice(0, 6);
     const tipoN = {}; NOVEDADES.forEach(n => { const k = NOV_TAG[n.tipo] || n.tipo || 'Aviso'; tipoN[k] = (tipoN[k] || 0) + 1; }); const tn = Object.entries(tipoN).sort((a, b) => b[1] - a[1]), mt = Math.max(1, ...tn.map(x => x[1]));
+    const sub = cuenta(pub.filter(e => e.subcategoria), e => e.subcategoria);
     const tabla = `<div class="caja" style="grid-column:1/-1"><h2>🗓️ Próximos eventos</h2><div class="tw"><table><thead><tr><th>Fecha</th><th>Evento</th><th>Categoría</th><th>Alcance</th></tr></thead><tbody>${prox.map(e => { const c = catDe(D, e.categoria); return `<tr><td>${esc(e.inicio)}</td><td><b>${esc(e.titulo)}</b></td><td>${c.emoji ? esc(c.emoji) + ' ' : ''}${esc(c.nombre)}</td><td>${esc(ambito(D, e))}</td></tr>`; }).join('') || '<tr><td colspan="4">Sin eventos próximos</td></tr>'}</tbody></table></div></div>`;
-    const barrasX = (arr, f) => arr.map(x => `<div style="margin:.5rem 0;"><div style="display:flex;justify-content:space-between;font-size:.88rem;"><span>${f(x)}</span><b>${x.n ?? x[1]}</b></div><div style="height:8px;background:#e8efeb;border-radius:9px;overflow:hidden;"><i style="display:block;height:100%;width:${(x.n ?? x[1]) / (arr === tn ? mt : Math.max(1, ...arr.map(y => y.n))) * 100}%;background:linear-gradient(90deg,#6a1b9a,#ec407a);border-radius:9px;"></i></div></div>`).join('') || '<p style="color:var(--suave)">Sin datos.</p>';
+    const barrasX = (arr, f) => arr.map(x => `<div style="margin:.5rem 0;"><div style="display:flex;justify-content:space-between;font-size:.88rem;"><span>${f(x)}</span><b>${x.n ?? x[1]}</b></div><div style="height:8px;background:#e8efeb;border-radius:9px;overflow:hidden;"><i style="display:block;height:100%;width:${(x.n ?? x[1]) / Math.max(1, ...arr.map(y => y.n ?? y[1])) * 100}%;background:linear-gradient(90deg,#6a1b9a,#ec407a);border-radius:9px;"></i></div></div>`).join('') || '<p style="color:var(--suave)">Sin datos.</p>';
     const kp = (ic, n, t, g) => `<div class="stat kpi" style="--g:${g}"><b>${n}</b><span>${ic} ${t}</span></div>`;
-    return `<div class="cards" style="margin-top:1.2rem;">${kp('🔥', hoyN, 'eventos activos hoy', '#e65100')}${kp('⏳', sem, 'inician en 7 días', '#007A78')}${kp('📢', novV, 'novedades vigentes', '#6a1b9a')}${kp('⏸️', sus, 'elementos suspendidos', '#b3261e')}</div>
+    return `<div class="cards" style="margin-top:1.2rem;">${kp('🔥', hoyN, 'eventos activos hoy', '#e65100')}${kp('⏳', sem, 'inician en 7 días', '#007A78')}${kp('📢', novV, 'novedades vigentes', '#6a1b9a')}${kp('⏸️', sus, 'elementos suspendidos', '#b3261e')}${kp('🧩', sub.length, 'subcategorías en uso', '#AD1457')}</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.2rem;margin-top:1.2rem;">
       <div class="caja"><h2>📈 Eventos por mes ${y}</h2><div class="barras-mes">${meses.map((n, m) => `<div title="${n} eventos"><i style="height:${n / mx * 100}%"></i><small>${MESES_C[m]}</small><b>${n || ''}</b></div>`).join('')}</div></div>
       <div class="caja"><h2>🍩 Por categoría</h2><div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;"><div class="dona" style="background:conic-gradient(${cono})"><span>${tot === 1 && !porCat.length ? 0 : tot}</span></div><div style="flex:1;min-width:150px;font-size:.88rem;">${porCat.slice(0, 7).map(x => `<div style="display:flex;gap:.4rem;align-items:center;margin:.2rem 0;"><i style="width:11px;height:11px;border-radius:50%;background:${x.c.color}"></i>${esc(x.c.nombre)} <b style="margin-left:auto">${x.n}</b></div>`).join('')}</div></div></div>
       <div class="caja"><h2>🎓 Top facultades</h2>${porFac.map(x => `<div style="margin:.5rem 0;"><div style="display:flex;justify-content:space-between;font-size:.88rem;"><span>${esc(x.f.nombre)}</span><b>${x.n}</b></div><div style="height:8px;background:#e8efeb;border-radius:9px;overflow:hidden;"><i style="display:block;height:100%;width:${x.n / mf * 100}%;background:linear-gradient(90deg,var(--verde),var(--lima));border-radius:9px;"></i></div></div>`).join('')}</div>
       <div class="caja"><h2>🏢 Eventos por área</h2>${barrasX(porArea, x => emojiArea(x.a) + ' ' + esc(x.a.nombre))}</div>
+      <div class="caja"><h2>🧩 Eventos por subcategoría</h2>${barrasX(sub, x => esc(x[0]))}</div>
       <div class="caja"><h2>📢 Novedades por tipo</h2>${barrasX(tn, x => esc(x[0]))}</div>
       ${tabla}
     </div>`;
   }
 
   function pResumen() {
+    autoLimpiezaPrueba();
     const pub = D.eventos.filter(e => e.estado !== 'borrador'), bor = D.eventos.length - pub.length;
     const progs = D.facultades.reduce((n, f) => n + f.programas.length, 0);
     const h = hoy();
@@ -2591,7 +2631,7 @@
     let avisoCols = [];
     try {
       if (DB_READY) {
-        const payload = { titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, subcategoria: o.subcategoria || null, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, estado: o.estado, updated_at: new Date().toISOString() };
+        const payload = { ...marcaPrueba(), titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, subcategoria: o.subcategoria || null, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, estado: o.estado, updated_at: new Date().toISOString() };
         if (id) payload.id = id;
         let ev = null;
         for (let intento = 0; intento < 5 && !ev; intento++) {
@@ -2832,6 +2872,7 @@
       salon: (ubic === 'Otro' && ubicEsp) ? ubicEsp : (ubic || null),
       ubicacion: (ubic && ubic !== 'Otro') ? (ubicEsp || null) : null,
       piso: $('#nv_piso').value.trim() || null, enlace: enlace || null,
+      ...marcaPrueba(),
       detalle: $('#nv_detalle').value.trim() || '',
       info_completa: $('#nv_info').value.trim() || null, fecha_fin: $('#nv_ffin').value || null, prioridad: $('#nv_prio').value, sede: $('#nv_sede').value.trim() || null,
       cupo: $('#nv_cupo').value.trim() || null, costo: $('#nv_costo').value.trim() || null, inscripcion_enlace: normalizarEnlace($('#nv_insc').value) || null,
@@ -3058,7 +3099,7 @@
     const emo = (t, x) => t === 'facultades' ? emojiFac(x) : t === 'areas' ? emojiArea(x) : (x.emoji || (t === 'categorias' ? '🏷️' : '📘'));
     const fila = (t, x) => `<div class="cfg-fila"><label style="display:flex;gap:.5rem;align-items:center;flex:1;min-width:0;"><input type="checkbox" class="csel" data-t="${t}" data-i="${x.id}"><input class="emo-in" value="${esc(emo(t, x))}" maxlength="4" data-emo-t="${t}" data-emo-i="${x.id}" title="Cambiar emoji"><span>${esc(x.nombre)}${x.activo === false ? ' <small style="color:var(--rojo)">⏸ suspendido</small>' : ''}</span></label>${sw(t, x.id, x.activo)}</div>`;
     const bloque = (tit, t, arr) => `<div class="caja"><h2>${tit}</h2><div class="bulk-mini"><label><input type="checkbox" data-a="selAll" data-t="${t}"> Todos</label><button class="btn sm" data-a="cBulk" data-op="on" data-t="${t}">✅ Habilitar</button><button class="btn sm" data-a="cBulk" data-op="off" data-t="${t}">⏸️ Suspender</button><button class="btn sm warn" data-a="cBulk" data-op="del" data-t="${t}">🗑 Eliminar</button></div>${arr.map(x => fila(t, x)).join('') || '<p style="color:var(--suave)">Sin registros.</p>'}</div>`;
-    const lista = (l, tit, base) => `<div class="caja"><h2>${tit}</h2><div class="chips-cfg">${base.map(v => `<span class="chip-cfg bloq">${esc(v)}</span>`).join('')}${OPCS.filter(o => o.lista === l).map(o => `<span class="chip-cfg">${esc(o.valor)} <button data-a="delOpc" data-i="${o.id}" title="Eliminar">×</button></span>`).join('')}</div>
+    const lista = (l, tit, base) => `<div class="caja"><h2>${tit}</h2><div class="chips-cfg">${chipsLista(l, base)}</div>
       <div style="display:flex;gap:.5rem;margin-top:.8rem;"><input id="op_${l}" placeholder="Nueva opción…" style="flex:1;padding:.5rem .8rem;border:1px solid var(--linea);border-radius:10px;"><button class="btn pri" data-a="addOpc" data-l="${l}">➕ Agregar</button></div></div>`;
     const progs = D.facultades.flatMap(f => f.programas.map(pr => ({ ...pr, nombre: pr.nombre + ' · ' + f.nombre })));
     return encabezado('⚙️ Listas y Estado', 'Crea opciones para las listas desplegables y habilita o suspende facultades, programas, áreas y categorías (lo suspendido se oculta del portal público).') + `
@@ -3067,12 +3108,110 @@
       ${lista('modalidad', '💻 Modalidades (novedades)', MOD_BASE)}
       ${lista('tipo_novedad', '🏷️ Tipos de novedad', ['Cambio de salón', 'Cancelación de clase', 'Cambio de modalidad', 'Otro aviso'])}
       <div class="caja"><h2>🧪 Usuario de prueba</h2><p style="font-size:.86rem;color:var(--suave);">Acceso temporal con PIN aleatorio: indica la persona asignada y el día en que se suspende.</p>
-        <div style="display:grid;gap:.5rem;"><input id="tu_persona" placeholder="Nombre de la persona asignada" style="padding:.5rem .8rem;border:1px solid var(--linea);border-radius:10px;"><div style="display:flex;gap:.5rem;flex-wrap:wrap;"><select id="tu_rol" style="padding:.5rem;border:1px solid var(--linea);border-radius:10px;">${Object.keys(DESC_ROL).map(r => `<option>${r}</option>`).join('')}</select><label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;">Se suspende el <input type="date" id="tu_vence" style="padding:.45rem;border:1px solid var(--linea);border-radius:10px;"></label></div><button class="btn pri" data-a="mkTest">🧪 Crear usuario temporal</button></div><div id="tu_res" style="margin-top:.8rem;"></div></div>
+        <div style="display:grid;gap:.5rem;"><input id="tu_persona" placeholder="Nombre de la persona asignada" style="padding:.5rem .8rem;border:1px solid var(--linea);border-radius:10px;"><div style="display:flex;gap:.5rem;flex-wrap:wrap;"><select id="tu_rol" style="padding:.5rem;border:1px solid var(--linea);border-radius:10px;">${Object.keys(DESC_ROL).map(r => `<option>${r}</option>`).join('')}</select><select id="tu_tipo" style="padding:.5rem;border:1px solid var(--linea);border-radius:10px;"><option value="prueba">🧪 De prueba (sus datos se borran)</option><option value="real">✅ Real temporal (sus cambios quedan)</option></select><label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;">Se suspende el <input type="date" id="tu_vence" style="padding:.45rem;border:1px solid var(--linea);border-radius:10px;"></label></div><button class="btn pri" data-a="mkTest">🧪 Crear usuario temporal</button></div><div id="tu_res" style="margin-top:.8rem;"></div></div>
+      <div class="caja"><h2>🧹 Datos de prueba</h2><p style="font-size:.86rem;color:var(--suave);">Lo que crean los usuarios <b>de prueba</b> (eventos, novedades, tickets) se marca y se borra solo cuando vence su acceso. También puedes limpiarlo ahora.</p><div style="display:flex;gap:.5rem;flex-wrap:wrap;"><button class="btn" data-a="cleanTest" data-u="0">🧹 Borrar datos de prueba</button><button class="btn warn" data-a="cleanTest" data-u="1">🗑 Borrar datos y usuarios de prueba</button></div></div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;margin-top:1.2rem;">
       ${bloque('🏷️ Categorías', 'categorias', D.categorias)}${bloque('🎓 Facultades', 'facultades', D.facultades)}${bloque('📚 Programas', 'programas', progs)}${bloque('🏢 Áreas', 'areas', D.areas)}
     </div>`;
   }
+
+  // ===== Estructura académica =====
+  const actualizarEstN = () => { const e = $('#est_n'); if (e) e.textContent = `${$$('.psel:checked').length} programa(s) · ${$$('.fsel:checked').length} facultad(es) seleccionados`; };
+  document.addEventListener('change', ev => { if (ev.target.classList && (ev.target.classList.contains('psel') || ev.target.classList.contains('fsel'))) actualizarEstN(); });
+  function pEstructura() {
+    const facs = [...D.facultades].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+    const opts = facs.map(f => `<option value="${esc(f.id)}">${esc(f.nombre)}</option>`).join('');
+    const nivB = n => `<span class="badge" style="background:${n === 'posgrado' ? '#EDE7F6;color:#4527A0' : '#E3F2FD;color:#0D47A1'}">${n === 'posgrado' ? '🎓 Posgrado' : '📘 Pregrado'}</span>`;
+    return encabezado('🏛️ Estructura académica', 'Facultades en orden alfabético. Marca facultades o programas y aplica acciones en lote: mover de facultad, cambiar nivel, renombrar, suspender o eliminar.') + `
+    <div class="masiva-bar sticky-bar">
+      <b class="masiva-n" id="est_n">0 programa(s) · 0 facultad(es) seleccionados</b>
+      <select id="est_dest"><option value="">Mover programas a…</option>${opts}</select><button class="btn sm pri" data-a="eMover">📦 Mover</button>
+      <select id="est_niv"><option value="">Cambiar nivel…</option><option value="pregrado">📘 Pregrado</option><option value="posgrado">🎓 Posgrado</option></select><button class="btn sm" data-a="eNivel">Aplicar</button>
+      <button class="btn sm" data-a="eRen">✏️ Renombrar…</button><button class="btn sm" data-a="eEst" data-op="on">✅ Habilitar</button><button class="btn sm" data-a="eEst" data-op="off">⏸️ Suspender</button><button class="btn sm peligro" data-a="eDel">🗑 Eliminar</button>
+    </div>
+    <div class="est-grid">${facs.map(f => `<details class="caja est-card" open><summary><input type="checkbox" class="fsel" data-i="${esc(f.id)}" title="Seleccionar facultad"> <span style="font-size:1.3rem">${emojiFac(f)}</span> <b>${esc(f.nombre)}</b>${f.activo === false ? ' <span class="badge off">⏸ Suspendida</span>' : ''} <small style="color:var(--suave)">${f.programas.length} programas</small><label class="mini"><input type="checkbox" data-a="eSelFac" data-i="${esc(f.id)}"> todos sus programas</label></summary>
+      ${[...f.programas].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')).map(pr => `<div class="est-prog"><label><input type="checkbox" class="psel" data-i="${esc(pr.id)}"> ${esc(pr.nombre)}</label>${nivB(pr.nivel)}${pr.activo === false ? '<span class="badge off">⏸ Suspendido</span>' : ''}</div>`).join('') || '<p style="color:var(--suave)">Sin programas.</p>'}</details>`).join('')}</div>`;
+  }
+
+  // ===== Soporte / Mesa de servicio =====
+  let TK = [], SF = { q: '', estado: '', prio: '', aranda: '' };
+  const TK_ESTADOS = [['abierto', '🔵 Abierto'], ['en_proceso', '🟠 En proceso'], ['pendiente', '🟣 Pendiente'], ['resuelto', '🟢 Resuelto'], ['cerrado', '⚫ Cerrado']];
+  const TK_PRIO = [['baja', '🟢 Baja'], ['media', '🟡 Media'], ['alta', '🟠 Alta'], ['critica', '🔴 Crítica']];
+  const TK_TIPOS = [['incidente', '🛑 Incidente'], ['requerimiento', '📝 Requerimiento'], ['consulta', '❓ Consulta'], ['mejora', '💡 Mejora'], ['error_datos', '🧮 Error de datos']];
+  const TK_MODULOS = ['Calendario público', 'Eventos', 'Novedades', 'Usuarios y permisos', 'Facultades y programas', 'Base de datos', 'Reportes', 'Otro'];
+  const TK_CANALES = ['Web', 'Correo', 'Teléfono', 'Presencial', 'Aranda'];
+  const SLA_DIAS = { baja: 10, media: 5, alta: 2, critica: 1 };
+  const lbl = (arr, v) => (arr.find(x => x[0] === v) || [v, v || '—'])[1];
+  const tkCerrado = t => ['resuelto', 'cerrado'].includes(t.estado);
+  const tkVencido = t => !tkCerrado(t) && t.fecha_limite && String(t.fecha_limite).slice(0, 10) < hoy();
+  const fechaMas = d => { const x = new Date(); x.setDate(x.getDate() + d); return iso(x); };
+
+  async function pSoporte() {
+    const r = await dbClient.from('tickets').select('*').order('created_at', { ascending: false }).limit(1000);
+    const cab = encabezado('🛠️ Soporte · Mesa de servicio', 'Registra y da seguimiento a incidentes, requerimientos y consultas del calendario, con seguimiento del caso en ARANDA.');
+    if (r.error) return cab + '<div class="caja"><h2>Falta crear las tablas de soporte</h2><p>Ejecuta <b>supabase_actualizacion_4.sql</b> en el SQL Editor de Supabase y recarga.</p></div>';
+    TK = r.data || [];
+    const ab = TK.filter(t => !tkCerrado(t)), res = TK.filter(t => t.fecha_resolucion), ar = TK.filter(t => t.aranda_caso);
+    const prom = res.length ? Math.round(res.reduce((a, t) => a + (new Date(t.fecha_resolucion) - new Date(t.created_at)), 0) / res.length / 36e5) : 0;
+    const kp = (ic, n, t, g) => `<div class="stat kpi" style="--g:${g}"><b>${n}</b><span>${ic} ${t}</span></div>`;
+    const meses = []; for (let i = 5; i >= 0; i--) { const d = new Date(); d.setMonth(d.getMonth() - i); meses.push(d.toISOString().slice(0, 7)); }
+    const porMes = meses.map(m => [m, TK.filter(t => String(t.created_at).slice(0, 7) === m).length]);
+    const cols = ['#1565C0', '#EF6C00', '#6A1B9A', '#2E7D32', '#546E7A'];
+    const venc = TK.filter(tkVencido).sort((a, b) => String(a.fecha_limite).localeCompare(String(b.fecha_limite))).slice(0, 8);
+    return cab + `
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;"><button class="btn pri" data-a="tkNew">➕ Nuevo ticket</button></div>
+    <div class="cards">${kp('🎫', TK.length, 'tickets en total', '#007A78')}${kp('📂', ab.length, 'abiertos', '#1565C0')}${kp('⏰', TK.filter(tkVencido).length, 'vencidos (SLA)', '#B3261E')}${kp('🔴', ab.filter(t => t.prioridad === 'critica').length, 'críticos abiertos', '#C62828')}${kp('✅', res.length, 'resueltos', '#2E7D32')}${kp('⏱️', prom + ' h', 'tiempo prom. resolución', '#EF6C00')}${kp('🔗', ar.length, 'con caso ARANDA', '#6A1B9A')}${kp('📊', (TK.length ? Math.round(ar.length / TK.length * 100) : 0) + '%', 'escalados a ARANDA', '#AD1457')}</div>
+    <div class="grid-g">
+      <div class="caja"><h2>📌 Por estado</h2>${donaG(TK_ESTADOS.map(([k, l], i) => ({ l, n: TK.filter(t => t.estado === k).length, c: cols[i] })))}</div>
+      <div class="caja"><h2>🚦 Por prioridad</h2>${barrasG(TK_PRIO.map(([k, l]) => [l, TK.filter(t => t.prioridad === k).length]), 'linear-gradient(90deg,#EF6C00,#C62828)')}</div>
+      <div class="caja"><h2>🗂️ Por tipo</h2>${barrasG(cuenta(TK, t => lbl(TK_TIPOS, t.tipo)))}</div>
+      <div class="caja"><h2>🧩 Por módulo afectado</h2>${barrasG(cuenta(TK, t => esc(t.modulo || 'Sin módulo')).slice(0, 8), 'linear-gradient(90deg,#1565C0,#00ACC1)')}</div>
+      <div class="caja"><h2>📈 Tickets por mes</h2>${barrasG(porMes, 'linear-gradient(90deg,#6A1B9A,#EC407A)')}</div>
+      <div class="caja"><h2>🔗 ARANDA</h2>${donaG([{ l: 'Con caso ARANDA', n: ar.length, c: '#6A1B9A' }, { l: 'Sin caso ARANDA', n: TK.length - ar.length, c: '#CFD8DC' }])}<h3 style="margin:1rem 0 .3rem;font-size:.95rem;">Estado en ARANDA</h3>${barrasG(cuenta(ar, t => esc(t.aranda_estado || 'Sin estado')), 'linear-gradient(90deg,#6A1B9A,#EC407A)')}</div>
+      <div class="caja"><h2>🙋 Top solicitantes</h2>${barrasG(cuenta(TK, t => esc(t.solicitante || 'Sin nombre')).slice(0, 6))}</div>
+      <div class="caja"><h2>🎓 Por facultad</h2>${barrasG(cuenta(TK.filter(t => t.facultad_id), t => { const f = D.facultades.find(x => x.id === t.facultad_id); return f ? emojiFac(f) + ' ' + esc(f.nombre) : esc(t.facultad_id); }).slice(0, 6), 'linear-gradient(90deg,var(--verde),var(--lima))')}</div>
+    </div>
+    <div class="caja" style="margin-top:1.2rem;"><h2>⏰ Vencidos / críticos para atender</h2><div class="tw"><table><thead><tr><th>#</th><th>Ticket</th><th>Prioridad</th><th>Venció</th><th>Asignado</th><th>ARANDA</th></tr></thead><tbody>${venc.map(t => `<tr><td>#${t.numero}</td><td><b>${esc(t.titulo)}</b></td><td>${lbl(TK_PRIO, t.prioridad)}</td><td>${esc(String(t.fecha_limite).slice(0, 10))}</td><td>${esc(t.asignado_a || '—')}</td><td>${esc(t.aranda_caso || '—')}</td></tr>`).join('') || '<tr><td colspan="6">🎉 Sin tickets vencidos</td></tr>'}</tbody></table></div></div>
+    <div class="caja" style="margin-top:1.2rem;"><h2>🔗 Casos escalados a ARANDA</h2><div class="tw"><table><thead><tr><th>Caso ARANDA</th><th>Estado ARANDA</th><th>Ticket</th><th>Estado</th><th>Enlace</th></tr></thead><tbody>${ar.slice(0, 12).map(t => `<tr><td><b>${esc(t.aranda_caso)}</b></td><td>${esc(t.aranda_estado || '—')}</td><td>#${t.numero} ${esc(t.titulo)}</td><td>${lbl(TK_ESTADOS, t.estado)}</td><td>${t.aranda_url ? `<a href="${esc(t.aranda_url)}" target="_blank" rel="noopener">Abrir ↗</a>` : '—'}</td></tr>`).join('') || '<tr><td colspan="5">Aún no hay casos ARANDA registrados</td></tr>'}</tbody></table></div></div>
+    <div class="caja" style="margin-top:1.2rem;"><h2>🎫 Todos los tickets</h2>
+      <div class="tools"><input id="s_q" placeholder="🔎 Buscar por título, solicitante o caso ARANDA…"><select id="s_estado"><option value="">Todos los estados</option>${TK_ESTADOS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select><select id="s_prio"><option value="">Todas las prioridades</option>${TK_PRIO.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select><select id="s_aranda"><option value="">ARANDA: todos</option><option value="si">Con caso ARANDA</option><option value="no">Sin caso ARANDA</option></select></div>
+      <div class="masiva-bar"><span class="masiva-n suave">Selecciona tickets en la tabla</span><select id="tk_est_b">${TK_ESTADOS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select><button class="btn sm" data-a="tkEstado">Cambiar estado</button><button class="btn sm" data-a="tkAsig">👤 Asignar a…</button><button class="btn sm peligro" data-a="tkDel">🗑 Eliminar seleccionados</button></div>
+      <div class="tw" id="tk_tabla">${tablaTickets()}</div></div>`;
+  }
+  function tkFiltrados() { const q = norm(SF.q); return TK.filter(t => (!SF.estado || t.estado === SF.estado) && (!SF.prio || t.prioridad === SF.prio) && (!SF.aranda || (SF.aranda === 'si') === !!t.aranda_caso) && (!q || norm([t.titulo, t.solicitante, t.aranda_caso, t.descripcion].join(' ')).includes(q))); }
+  function tablaTickets() { const L = tkFiltrados(); return `<table><thead><tr><th><input type="checkbox" data-a="tkSelAll"></th><th>#</th><th>Ticket</th><th>Tipo</th><th>Prioridad</th><th>Estado</th><th>Solicitante</th><th>Asignado</th><th>Límite SLA</th><th>ARANDA</th><th></th></tr></thead><tbody>${L.map(t => `<tr style="${tkVencido(t) ? 'background:#fbf3f2;' : ''}"><td><input type="checkbox" class="tsel" data-i="${t.id}"></td><td>#${t.numero}</td><td><b>${esc(t.titulo)}</b><br><small style="color:var(--suave)">${esc(t.modulo || '')}</small></td><td>${lbl(TK_TIPOS, t.tipo)}</td><td>${lbl(TK_PRIO, t.prioridad)}</td><td>${lbl(TK_ESTADOS, t.estado)}</td><td>${esc(t.solicitante || '—')}</td><td>${esc(t.asignado_a || '—')}</td><td>${t.fecha_limite ? esc(String(t.fecha_limite).slice(0, 10)) : '—'}${tkVencido(t) ? ' ⚠️' : ''}</td><td>${t.aranda_caso ? '🔗 ' + esc(t.aranda_caso) : '—'}</td><td><button class="btn sm" data-a="tkEdit" data-i="${t.id}">✏️</button></td></tr>`).join('') || '<tr><td colspan="11">Sin tickets con esos filtros</td></tr>'}</tbody></table>`; }
+  document.addEventListener('input', ev => { const id = ev.target.id; if (['s_q', 's_estado', 's_prio', 's_aranda'].includes(id)) { SF[id.slice(2)] = ev.target.value; const t = $('#tk_tabla'); if (t) t.innerHTML = tablaTickets(); } });
+
+  window.abrirTicket = function(id) {
+    const t = id ? TK.find(x => String(x.id) === String(id)) : null, v = k => esc((t && t[k]) || '');
+    const sel = (idc, arr, cur) => `<select id="${idc}">${arr.map(x => { const k = Array.isArray(x) ? x[0] : x, l = Array.isArray(x) ? x[1] : x; return `<option value="${esc(k)}" ${k === cur ? 'selected' : ''}>${esc(l)}</option>`; }).join('')}</select>`;
+    const ov = document.createElement('div'); ov.id = 'tk_ov'; ov.className = 'ov-modal';
+    ov.innerHTML = `<div class="ov-box"><h2 style="font-family:var(--display);margin:0 0 .8rem;">${t ? '✏️ Ticket #' + t.numero : '➕ Nuevo ticket'}</h2>
+      <div class="fr"><label>Título *</label><input id="tk_tit" value="${v('titulo')}"></div>
+      <div class="fr"><label>Descripción</label><textarea id="tk_des" rows="3">${v('descripcion')}</textarea></div>
+      <div class="g2"><div class="fr"><label>Tipo</label>${sel('tk_tipo', TK_TIPOS, t ? t.tipo : 'incidente')}</div><div class="fr"><label>Módulo afectado</label>${sel('tk_mod', TK_MODULOS, t ? t.modulo : 'Eventos')}</div>
+      <div class="fr"><label>Prioridad</label>${sel('tk_pri', TK_PRIO, t ? t.prioridad : 'media')}</div><div class="fr"><label>Estado</label>${sel('tk_est', TK_ESTADOS, t ? t.estado : 'abierto')}</div>
+      <div class="fr"><label>Canal</label>${sel('tk_can', TK_CANALES, t ? t.canal : 'Web')}</div><div class="fr"><label>Fecha límite (SLA)</label><input type="date" id="tk_lim" value="${t && t.fecha_limite ? esc(String(t.fecha_limite).slice(0, 10)) : fechaMas(SLA_DIAS.media)}"></div>
+      <div class="fr"><label>Solicitante *</label><input id="tk_sol" value="${v('solicitante')}"></div><div class="fr"><label>Correo</label><input id="tk_cor" type="email" value="${v('solicitante_correo')}"></div>
+      <div class="fr"><label>Teléfono / ext.</label><input id="tk_tel" value="${v('solicitante_telefono')}"></div><div class="fr"><label>Asignado a</label><input id="tk_asi" value="${v('asignado_a')}"></div>
+      <div class="fr"><label>Facultad</label><select id="tk_fac"><option value="">—</option>${[...D.facultades].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')).map(f => `<option value="${esc(f.id)}" ${t && t.facultad_id === f.id ? 'selected' : ''}>${esc(f.nombre)}</option>`).join('')}</select></div>
+      <div class="fr"><label>Área</label><select id="tk_are"><option value="">—</option>${D.areas.map(a => `<option value="${esc(a.id)}" ${t && t.area_id === a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('')}</select></div></div>
+      <div class="fr"><label>Solución / respuesta</label><textarea id="tk_sol2" rows="2">${v('solucion')}</textarea></div>
+      <div class="aranda-box"><b>🔗 Campo ARANDA</b><div class="g2"><div class="fr"><label>N.º de caso ARANDA</label><input id="tk_ac" value="${v('aranda_caso')}" placeholder="Ej: 245871"></div><div class="fr"><label>Estado en ARANDA</label><input id="tk_ae" value="${v('aranda_estado')}" placeholder="Ej: En proceso"></div></div><div class="fr"><label>Enlace al caso en ARANDA</label><input id="tk_au" value="${v('aranda_url')}" placeholder="https://…"></div></div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;"><button class="btn" id="tk_cancel">Cancelar</button><button class="btn pri" id="tk_ok">💾 Guardar</button></div></div>`;
+    document.body.appendChild(ov);
+    $('#tk_pri').onchange = () => { if (!t) $('#tk_lim').value = fechaMas(SLA_DIAS[$('#tk_pri').value] || 5); };
+    $('#tk_cancel').onclick = () => ov.remove();
+    $('#tk_ok').onclick = async () => {
+      const titulo = $('#tk_tit').value.trim(), sol = $('#tk_sol').value.trim(); if (!titulo || !sol) return toast('Título y solicitante son obligatorios', true);
+      const est = $('#tk_est').value, row = { titulo, descripcion: $('#tk_des').value.trim(), tipo: $('#tk_tipo').value, modulo: $('#tk_mod').value, prioridad: $('#tk_pri').value, estado: est, canal: $('#tk_can').value, fecha_limite: $('#tk_lim').value || null, solicitante: sol, solicitante_correo: $('#tk_cor').value.trim() || null, solicitante_telefono: $('#tk_tel').value.trim() || null, asignado_a: $('#tk_asi').value.trim() || null, facultad_id: $('#tk_fac').value || null, area_id: $('#tk_are').value || null, solucion: $('#tk_sol2').value.trim() || null, aranda_caso: $('#tk_ac').value.trim() || null, aranda_estado: $('#tk_ae').value.trim() || null, aranda_url: normalizarEnlace($('#tk_au').value) || null, updated_at: new Date().toISOString() };
+      row.fecha_resolucion = ['resuelto', 'cerrado'].includes(est) ? ((t && t.fecha_resolucion) || new Date().toISOString()) : null;
+      const r = t ? await dbClient.from('tickets').update(row).eq('id', t.id) : await dbClient.from('tickets').insert([{ ...row, creado_por: USUARIO_ACTUAL.nombre, ...marcaPrueba() }]);
+      if (r.error) return toast('No se pudo guardar: ' + r.error.message, true);
+      registrarLog(t ? 'Editó ticket' : 'Creó ticket', titulo); ov.remove(); toast('✅ Ticket guardado'); ir('soporte', true);
+    };
+  };
 
   function pAreas() {
     return encabezado(`${FLATICONS.personas} Áreas administrativas`, 'Dependencias de la institución (Tesorería, Bienestar, Registro…).') + `
@@ -3162,7 +3301,7 @@
         const venc = u.vence && String(u.vence).slice(0, 10) < hoy(), susp = u.activo === false || venc;
         return `<tr style="${susp ? 'opacity:.6;background:#fbf3f2;' : ''}">
           <td>${esYo ? '' : `<input type="checkbox" class="usel" data-i="${u.id}">`}</td>
-          <td><b>${esc(u.nombre)}</b>${u.es_temporal || u.vence ? ` <span class="badge" style="background:#FFF3D6;color:#8A5A00;">⏳ Temporal${u.vence ? ' · vence ' + esc(String(u.vence).slice(0, 10)) : ''}</span>` : ''}${susp ? ' <span class="badge" style="background:#FDE8E7;color:#B3261E;">⏸ Suspendido</span>' : ''}${esYo ? ' <span class="badge" style="background:#E1F2B8;color:#2f4a00;">Tú</span>' : ''}</td>
+          <td><b>${esc(u.nombre)}</b>${u.es_temporal || u.vence ? ` <span class="badge" style="background:#FFF3D6;color:#8A5A00;">${u.tipo_usuario === 'prueba' ? '🧪 Prueba' : '⏳ Temporal real'}${u.vence ? ' · vence ' + esc(String(u.vence).slice(0, 10)) : ''}</span>` : ''}${susp ? ' <span class="badge" style="background:#FDE8E7;color:#B3261E;">⏸ Suspendido</span>' : ''}${esYo ? ' <span class="badge" style="background:#E1F2B8;color:#2f4a00;">Tú</span>' : ''}</td>
           <td style="font-size:0.85rem;">${esc(u.correo || '—')}</td>
           <td>${rolesU.map(r => `<span class="badge" style="background:#E6F2F1; color:#007A78; margin:1px;">${ROLES[r] || r}</span>`).join('')}</td>
           <td style="font-size:0.85rem;">${rolesU.includes('admin') ? 'Todos' : (permsU.length ? permsU.map(p => PERM_TXT[p] || p).join(', ') : 'Solo novedades')}</td>
@@ -3391,17 +3530,52 @@
       registrarLog('Eliminó novedades en lote', `${ids.length}`); toast(`🗑 ${ids.length} eliminadas`); return ir('novedades');
     }
     if (a === 'mkTest') {
-      const persona = ($('#tu_persona').value || '').trim(), vence = $('#tu_vence').value, rol = $('#tu_rol').value;
+      const persona = ($('#tu_persona').value || '').trim(), vence = $('#tu_vence').value, rol = $('#tu_rol').value, tipo = $('#tu_tipo').value;
       if (!persona) return toast('Escribe el nombre de la persona asignada', true);
       if (!vence) return toast('Elige la fecha en que se suspende', true);
-      const pin = String(Math.floor(100000 + Math.random() * 900000)), nombre = '🧪 ' + persona;
+      const pin = String(Math.floor(100000 + Math.random() * 900000)), nombre = (tipo === 'prueba' ? '🧪 ' : '⏳ ') + persona;
       try {
-        let r = { nombre, pin, rol, correo: null, permisos: ['crear', 'editar'], areas_asignadas: [], vence, es_temporal: true, activo: true };
-        try { await crearUsuario(r); } catch (e1) { if (!/vence|es_temporal|activo/i.test(e1.message || '')) throw e1; throw new Error('Faltan columnas en usuarios_admin (vence, es_temporal, activo). Ejecuta el SQL actualizado.'); }
+        let r = { nombre, pin, rol, correo: null, permisos: ['crear', 'editar'], areas_asignadas: [], vence, es_temporal: true, activo: true, tipo_usuario: tipo };
+        try { await crearUsuario(r); } catch (e1) { if (!/vence|es_temporal|activo|tipo_usuario/i.test(e1.message || '')) throw e1; throw new Error('Faltan columnas en usuarios_admin (vence, es_temporal, activo, tipo_usuario). Ejecuta el SQL actualizado.'); }
         $('#tu_res').innerHTML = `<div style="background:#eaf7ee;border:1px solid #b7e1c1;border-radius:12px;padding:.7rem;">✅ <b>${esc(nombre)}</b> · ${esc(ROLES[rol] || rol)}<br>Se suspende el <b>${esc(vence)}</b><br>PIN: <b style="font-size:1.2rem;letter-spacing:2px;">${pin}</b></div>`; registrarLog('Creó usuario temporal', `${nombre} hasta ${vence}`);
       } catch (err) { toast(err.message || String(err), true); }
       return;
     }
+    if (a === 'tkNew') return abrirTicket();
+    if (a === 'tkEdit') return abrirTicket(i);
+    if (a === 'tkSelAll') { $$('.tsel').forEach(c => c.checked = ac.checked); return; }
+    if (a === 'tkEstado' || a === 'tkAsig' || a === 'tkDel') {
+      const ids = $$('.tsel:checked').map(c => c.dataset.i); if (!ids.length) return toast('Marca al menos un ticket', true);
+      let r;
+      if (a === 'tkDel') { if (!confirm(`¿Eliminar ${ids.length} ticket(s)?`)) return; r = await enLotes(ids, c => dbClient.from('tickets').delete().in('id', c)); }
+      else if (a === 'tkAsig') { const n = prompt('Asignar los tickets seleccionados a:'); if (!n) return; r = await enLotes(ids, c => dbClient.from('tickets').update({ asignado_a: n.trim(), updated_at: new Date().toISOString() }).in('id', c)); }
+      else { const e = $('#tk_est_b').value, cerr = ['resuelto', 'cerrado'].includes(e); r = await enLotes(ids, c => dbClient.from('tickets').update({ estado: e, fecha_resolucion: cerr ? new Date().toISOString() : null, updated_at: new Date().toISOString() }).in('id', c)); }
+      if (r.error) return toast('Error: ' + r.error.message, true); toast(`✅ ${ids.length} ticket(s) actualizados`); return ir('soporte', true);
+    }
+    if (a === 'cleanTest') {
+      const del = ac.dataset.u === '1'; if (!confirm(del ? '¿Borrar TODOS los datos y usuarios de prueba?' : '¿Borrar los datos creados por usuarios de prueba?')) return;
+      const r = await dbClient.from('usuarios_admin').select('id').eq('tipo_usuario', 'prueba'); if (r.error) return toast('Falta la columna tipo_usuario. Ejecuta el SQL actualizado.', true);
+      const ids = (r.data || []).map(x => String(x.id)); if (!ids.length) return toast('No hay usuarios de prueba');
+      await limpiarPrueba(ids, del); registrarLog('Limpió datos de prueba', `${ids.length} usuarios`); const nd = await leerNube(); if (nd) D = nd; return toast('🧹 Datos de prueba eliminados');
+    }
+    if (a === 'renOpc' || a === 'togOpc') {
+      const o = OPCS.find(x => String(x.id) === String(i)); if (!o) return;
+      if (a === 'togOpc') { const r = await dbClient.from('listas_opciones').update({ activo: o.activo === false }).eq('id', i); if (r.error) return toast('Error: ' + r.error.message, true); }
+      else { const nv = (prompt('Nuevo nombre para «' + o.valor + '»:', o.valor) || '').trim(); if (!nv || nv === o.valor) return; const r = await dbClient.from('listas_opciones').update({ valor: nv }).eq('id', i); if (r.error) return toast('No se pudo renombrar: ' + r.error.message, true); if (o.lista === 'publico') await dbClient.from('evento_publicos').update({ publico: nv }).eq('publico', o.valor); if (o.lista === 'modalidad') await dbClient.from('novedades').update({ modalidad: nv }).eq('modalidad', o.valor); }
+      const nd = await leerNube(); if (nd) D = nd; return refrescar();
+    }
+    if (['eSelFac', 'eMover', 'eNivel', 'eRen', 'eEst', 'eDel'].includes(a)) {
+      const selP = $$('.psel:checked').map(c => c.dataset.i), selF = $$('.fsel:checked').map(c => c.dataset.i);
+      const fin = async m => { const nd = await leerNube(); if (nd) D = nd; await refrescar(); toast(m); };
+      if (a === 'eSelFac') { const f = D.facultades.find(x => String(x.id) === String(i)); (f ? f.programas : []).forEach(pr => { const c = $('.psel[data-i="' + pr.id + '"]'); if (c) c.checked = ac.checked; }); return actualizarEstN(); }
+      if (a === 'eMover') { const dest = $('#est_dest').value; if (!selP.length) return toast('Marca programas', true); if (!dest) return toast('Elige la facultad destino', true); const r = await enLotes(selP, c => dbClient.from('programas').update({ facultad_id: dest }).in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true); registrarLog('Movió programas', `${selP.length} → ${dest}`); return fin(`📦 ${selP.length} programa(s) movidos`); }
+      if (a === 'eNivel') { const nv = $('#est_niv').value; if (!selP.length || !nv) return toast('Marca programas y elige el nivel', true); const r = await enLotes(selP, c => dbClient.from('programas').update({ nivel: nv }).in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true); registrarLog('Cambió nivel de programas', `${selP.length} → ${nv}`); return fin(`✅ Nivel actualizado en ${selP.length}`); }
+      if (a === 'eRen') { if (!selP.length) return toast('Marca programas', true); const bus = prompt('Texto a buscar en los nombres:'); if (!bus) return; const nuevo = prompt('Reemplazar por (puede quedar vacío):', ''); if (nuevo === null) return; let n = 0; for (const id of selP) { const pr = D.facultades.flatMap(f => f.programas).find(x => String(x.id) === String(id)); if (!pr) continue; const nn = pr.nombre.split(bus).join(nuevo).replace(/\s+/g, ' ').trim(); if (nn && nn !== pr.nombre) { await dbClient.from('programas').update({ nombre: nn }).eq('id', id); n++; } } registrarLog('Renombró programas', `${n}`); return fin(`✏️ ${n} programa(s) renombrados`); }
+      if (!selP.length && !selF.length) return toast('Marca programas o facultades', true);
+      if (a === 'eEst') { const on = ac.dataset.op === 'on'; if (selP.length) await enLotes(selP, c => dbClient.from('programas').update({ activo: on }).in('id', c)); if (selF.length) await enLotes(selF, c => dbClient.from('facultades').update({ activo: on }).in('id', c)); registrarLog(on ? 'Habilitó estructura' : 'Suspendió estructura', `${selP.length} programas, ${selF.length} facultades`); return fin(on ? '✅ Habilitado' : '⏸️ Suspendido'); }
+      if (a === 'eDel') { if (!confirm(`¿Eliminar ${selP.length} programa(s) y ${selF.length} facultad(es)? Al eliminar una facultad se eliminan también sus programas.`)) return; if (selP.length) await enLotes(selP, c => dbClient.from('programas').delete().in('id', c)); if (selF.length) { const r = await enLotes(selF, c => dbClient.from('facultades').delete().in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true); } registrarLog('Eliminó estructura', `${selP.length} programas, ${selF.length} facultades`); return fin('🗑 Eliminado'); }
+    }
+    if (a === 'limpiarF') { Object.keys(F).forEach(k => F[k] = ''); SEL.clear(); return ir('eventos'); }
     if (a === 'm_edit') { if (!puede('editar')) return sinPermiso(); return abrirEdicionMasiva(); }
     if (a === 'm_del' || a === 'm_delall') {
       if (!puede('eliminar')) return sinPermiso();
@@ -3587,8 +3761,8 @@
       try {
         const s = JSON.parse(sesGuardada);
         if (s && s.id && (Date.now() - (s.ts || 0) < 43200000)) {
-          const { data: ud } = await dbClient.from('usuarios_admin').select('id,nombre,rol,permisos,areas_asignadas').eq('id', s.id).maybeSingle();
-          if (ud) { USUARIO_ACTUAL = { ...s, nombre: ud.nombre, rol: ud.rol, permisos: ud.permisos || [], areas: ud.areas_asignadas || [] }; localStorage.setItem('ubosque_admin_session', JSON.stringify(USUARIO_ACTUAL)); }
+          const { data: ud } = await dbClient.from('usuarios_admin').select('*').eq('id', s.id).maybeSingle();
+          if (ud) { USUARIO_ACTUAL = { ...s, nombre: ud.nombre, rol: ud.rol, permisos: ud.permisos || [], areas: ud.areas_asignadas || [], tipo_usuario: ud.tipo_usuario || 'real' }; localStorage.setItem('ubosque_admin_session', JSON.stringify(USUARIO_ACTUAL)); }
           else localStorage.removeItem('ubosque_admin_session');
         } else {
           localStorage.removeItem('ubosque_admin_session');
