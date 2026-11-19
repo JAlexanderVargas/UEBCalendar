@@ -730,13 +730,28 @@
   .ov-box .fr { margin-bottom: .7rem; } .ov-box .fr label { display: block; font-weight: 700; font-size: .8rem; margin-bottom: .2rem; } .ov-box input, .ov-box select, .ov-box textarea { width: 100%; padding: .5rem .7rem; border: 1px solid var(--linea); border-radius: 10px; font: inherit; }
   .g2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 .9rem; }
   .aranda-box { border: 1.5px dashed #6A1B9A; background: linear-gradient(135deg, #faf5fd, #fff); border-radius: 14px; padding: .9rem; margin-top: .5rem; }
+
+  /* ===== Arreglo de animaciones de tarjetas y loader grande ===== */
+  .mod-card { background: #fff; animation: cardIn .55s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * 45ms); }
+  .mod-card.cero { opacity: 1; background: #fbfcfb; } .mod-card.cero b { color: #5b6f6b; } .mod-card.cero .ic { filter: grayscale(.55); }
+  .mod-card:hover { transform: translateY(-4px) scale(1.02); }
+  .mod-card.on { animation: cardIn .5s cubic-bezier(.2,.8,.2,1) backwards, cardGlow 2.8s ease-in-out .6s infinite; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes cardGlow { 0%, 100% { box-shadow: 0 6px 18px color-mix(in srgb, var(--c) 22%, transparent); } 50% { box-shadow: 0 12px 30px color-mix(in srgb, var(--c) 42%, transparent); } }
+  .ld-wrap { animation: ldBreath 2.6s ease-in-out infinite; } .ld-wrap svg { width: min(74vw, 400px); height: auto; }
+  .ld-orbit, .ld-ring { transform-box: view-box; transform-origin: 50% 50%; } .ld-orbit { animation: ldSpin 3s linear infinite; } .ld-ring { stroke: #A6CE39; stroke-dasharray: 9 13; animation: ldSpin 10s linear infinite reverse; }
+  @keyframes ldSpin { to { transform: rotate(360deg); } } @keyframes ldBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+  .ld-t { font-size: clamp(1.2rem, 3.4vw, 1.7rem); } .ld-bar { width: min(60vw, 280px); height: 6px; }
+  .ver-it { border: 1px solid var(--linea); border-radius: 14px; padding: .7rem .9rem; margin-bottom: .6rem; background: #fff; } .ver-it.act { border-color: #66BB6A; background: #F4FBF5; }
+  .ver-top { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; font-size: .86rem; } .ver-n { background: var(--verde); color: #fff; border-radius: 99px; padding: .05rem .6rem; } .ver-f { color: var(--suave); }
+  .ver-it ul { margin: .5rem 0 0 1.1rem; padding: 0; font-size: .84rem; } .ver-it li s { color: #B3261E; opacity: .8; } .ver-s { margin-top: .4rem; font-size: .84rem; color: var(--suave); }
 </style>
 </head>
 <body>
 
 <div id="tita-container"></div>
 
-<div id="loader"><div class="ld-wrap"><svg viewBox="0 0 120 120" width="132" height="132" aria-label="Registro y Control Académico"><defs><clipPath id="ldc"><rect class="ld-fill" x="0" y="120" width="120" height="122"/></clipPath><linearGradient id="ldg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#007A78"/><stop offset="1" stop-color="#A6CE39"/></linearGradient></defs><circle cx="60" cy="60" r="54" fill="none" stroke="#DCE5E1" stroke-width="5"/><circle cx="60" cy="60" r="44" fill="none" stroke="#DCE5E1" stroke-width="1.5" stroke-dasharray="4 4"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="#DCE5E1">RYC</text><g clip-path="url(#ldc)"><circle cx="60" cy="60" r="54" fill="#EAF4D6" stroke="url(#ldg)" stroke-width="5"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="url(#ldg)">RYC</text></g></svg></div><p class="ld-t">Registro y Control Académico</p><div class="ld-bar"><i></i></div><p class="ld-s">Cargando calendario…</p></div>
+<div id="loader"><div class="ld-wrap"><svg viewBox="0 0 120 120" aria-label="Registro y Control Académico"><defs><clipPath id="ldc"><rect class="ld-fill" x="0" y="120" width="120" height="122"/></clipPath><linearGradient id="ldg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#007A78"/><stop offset="1" stop-color="#A6CE39"/></linearGradient></defs><circle cx="60" cy="60" r="54" fill="none" stroke="#DCE5E1" stroke-width="5"/><circle class="ld-ring" cx="60" cy="60" r="58.5" fill="none" stroke-width="1.6"/><g class="ld-orbit"><circle cx="60" cy="1.6" r="3.4" fill="#A6CE39"/></g><circle cx="60" cy="60" r="44" fill="none" stroke="#DCE5E1" stroke-width="1.5" stroke-dasharray="4 4"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="#DCE5E1">RYC</text><g clip-path="url(#ldc)"><circle cx="60" cy="60" r="54" fill="#EAF4D6" stroke="url(#ldg)" stroke-width="5"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="url(#ldg)">RYC</text></g></svg></div><p class="ld-t">Registro y Control Académico</p><div class="ld-bar"><i></i></div><p class="ld-s">Cargando calendario…</p></div>
 <div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
 
 <div id="public-panel" style="position:relative; z-index:10;">
@@ -2337,7 +2352,7 @@
     $('#masiva').innerHTML = (pEd && SEL.size) || (pElim && L.length) ? barraMasiva(L, pEd, pElim) : '';
     const _vieja = pEd && SEL.size ? `<div class="masiva" style="margin-bottom:0.8rem; padding:0.6rem; background:#fff; border:1px solid var(--linea); border-radius:10px; display:flex; gap:0.5rem; align-items:center; color:var(--tinta);"><b>${SEL.size} seleccionado${SEL.size > 1 ? 's' : ''}</b><button class="btn sm" data-a="m_pub">${FLATICONS.check} Publicar</button><button class="btn sm" data-a="m_bor">${FLATICONS.documento} Pasar a borrador</button></div>` : '';
     $('#tabla').innerHTML = L.length ? `<table><thead><tr>${pEd ? `<th><input type="checkbox" data-ch="todos" ${L.filter(puedeEnEvento).every(e => SEL.has(e.id)) ? 'checked' : ''}></th>` : ''}<th>Fecha</th><th>Evento</th><th>Dirigido a</th><th>Semestre</th><th>Estado</th><th></th></tr></thead><tbody>` +
-      L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}<td style="white-space:nowrap">${fmtRango(e)}</td><td><div class="tt">${esc(tituloInteligente(e))}</div>${chipCatAdmin(e.categoria)}</td><td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido">⏸</span>' : ''}</td><td>${pEd && puedeEnEvento(e) ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>` : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td><td><div class="acc">${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}${puede('crear') && puedeEnEvento(e) ? `<button class="btn sm" data-a="dup" data-i="${e.id}" title="Crear copia">📄 Duplicar</button>` : ''}${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}</div></td></tr>`).join('') + '</tbody></table>'
+      L.map(e => `<tr>${pEd ? `<td>${puedeEnEvento(e) ? `<input type="checkbox" data-ch="sel" data-i="${e.id}" ${SEL.has(e.id) ? 'checked' : ''}>` : ''}</td>` : ''}<td style="white-space:nowrap">${fmtRango(e)}</td><td><div class="tt">${esc(tituloInteligente(e))}</div>${chipCatAdmin(e.categoria)}</td><td>${esc(ambito(D, e))}</td><td style="white-space:nowrap">${nombrePeriodo(e.periodo)}${e.periodo2 ? ' y ' + nombrePeriodo(e.periodo2) : ''}${!eventoVisiblePublico(e) ? ' <span class="chip" title="Semestre suspendido">⏸</span>' : ''}</td><td>${pEd && puedeEnEvento(e) ? `<button class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" data-a="tog" data-i="${e.id}">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</button>` : `<span class="est ${e.estado === 'borrador' ? 'bor' : 'pub'}" style="cursor:default">${e.estado === 'borrador' ? '📝 Borrador' : '✅ Publicado'}</span>`}</td><td><div class="acc"><button class="btn sm" data-a="hist" data-i="${e.id}" title="Historial de versiones">🕘</button>${pEd && puedeEnEvento(e) ? `<button class="btn sm" data-a="editar" data-i="${e.id}">${FLATICONS.editar} Editar</button>` : ''}${puede('crear') && puedeEnEvento(e) ? `<button class="btn sm" data-a="dup" data-i="${e.id}" title="Crear copia">📄 Duplicar</button>` : ''}${pEl && puedeEnEvento(e) ? `<button class="btn sm pel" data-a="del" data-i="${e.id}">${FLATICONS.basura} Eliminar</button>` : ''}</div></td></tr>`).join('') + '</tbody></table>'
       : '<div style="text-align:center; color:var(--suave); padding:2.5rem 1rem;">No hay eventos con estos filtros.</div>';
   }
 
@@ -2346,7 +2361,7 @@
 
   function modalEvento(id) {
     if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
-    const e = id ? D.eventos.find(x => x.id === id) : DUP ? tomarDup() : {
+    const e = id ? (tomarRestaurar(id) || D.eventos.find(x => x.id === id)) : DUP ? tomarDup() : {
       titulo: '', descripcion: '', categoria: D.categorias[0]?.id || 'general', inicio: hoy(), fin: '', periodo: 'auto',
       horaInicio: '', horaFin: '',
       facultad: [], programa: [], area: [], publico: [], lugar: '', lugarEsp: '', piso: '', enlace: '', estado: 'publicado'
@@ -2601,6 +2616,36 @@
     }[m];
   }
 
+  // ===== Historial de versiones y control de duplicados de eventos =====
+  let RESTAURAR = null;
+  const tomarRestaurar = id => { if (RESTAURAR && RESTAURAR.id === id) { const x = { ...D.eventos.find(e => e.id === id), ...RESTAURAR.datos }; RESTAURAR = null; return x; } return null; };
+  const CAMPOS_EV = [['titulo', 'Título'], ['descripcion', 'Descripción'], ['categoria', 'Categoría'], ['subcategoria', 'Subcategoría'], ['inicio', 'Fecha de inicio'], ['fin', 'Fecha final'], ['horaInicio', 'Hora de inicio'], ['horaFin', 'Hora final'], ['lugar', 'Lugar'], ['lugarEsp', 'Lugar específico'], ['piso', 'Piso / salón'], ['enlace', 'Enlace'], ['estado', 'Estado'], ['facultad', 'Facultades'], ['programa', 'Programas'], ['area', 'Áreas'], ['publico', 'Dirigido a']];
+  const snapEv = e => { const o = {}; CAMPOS_EV.forEach(([k]) => { const v = e[k]; o[k] = Array.isArray(v) ? v.map(String).sort() : (v ?? ''); }); if (!o.fin) o.fin = o.inicio; return o; };
+  const valTxt = (k, v) => k === 'categoria' ? ((D.categorias.find(c => c.id === v) || {}).nombre || v) : Array.isArray(v) ? (v.map(x => k === 'facultad' ? ((D.facultades.find(f => String(f.id) === x) || {}).nombre || x) : x).join(', ') || '—') : (v === '' ? '—' : String(v));
+  const difEv = (a, b) => CAMPOS_EV.filter(([k]) => JSON.stringify(a[k] ?? '') !== JSON.stringify(b[k] ?? '')).map(([k, l]) => ({ k, l, antes: valTxt(k, a[k]), despues: valTxt(k, b[k]) }));
+  const claveEv = e => { const x = snapEv(e); return JSON.stringify([norm(x.titulo), norm(x.descripcion), x.categoria, norm(x.subcategoria), x.inicio, x.fin, x.horaInicio, x.horaFin, norm(x.lugar), norm(x.lugarEsp), norm(x.piso), String(x.enlace).trim(), x.facultad, x.programa, x.area, x.publico]); };
+  async function registrarVersion(evId, prev, nuevo, accion) {
+    try {
+      const c = await dbClient.from('evento_historial').select('id', { count: 'exact', head: true }).eq('evento_id', evId);
+      if (c.error) return; let n = c.count || 0;
+      if (!n && prev) { await dbClient.from('evento_historial').insert([{ evento_id: evId, version: 1, accion: 'original', usuario: 'Antes de los cambios', resumen: 'Estado inicial', datos: snapEv(prev) }]); n = 1; }
+      const cambios = prev ? difEv(snapEv(prev), snapEv(nuevo)).map(x => x.l) : [];
+      await dbClient.from('evento_historial').insert([{ evento_id: evId, version: n + 1, accion, usuario: USUARIO_ACTUAL ? USUARIO_ACTUAL.nombre : '', resumen: cambios.join(', '), datos: snapEv(nuevo) }]);
+    } catch (_) {}
+  }
+  window.abrirHistorial = async function(id) {
+    const ev = D.eventos.find(x => x.id === id); if (!ev) return;
+    const r = await dbClient.from('evento_historial').select('*').eq('evento_id', id).order('version', { ascending: true });
+    const ov = document.createElement('div'); ov.className = 'ov-modal';
+    const rows = r.data || [], act = JSON.stringify(snapEv(ev));
+    const ic = { original: '📄 Original', creado: '🆕 Creado', editado: '✏️ Editado', restaurado: '↩️ Restaurado' };
+    const items = rows.map((h, i) => { const dif = i ? difEv(rows[i - 1].datos, h.datos) : []; const esAct = JSON.stringify(snapEv(h.datos)) === act;
+      return `<div class="ver-it ${esAct ? 'act' : ''}"><div class="ver-top"><b class="ver-n">v${h.version}</b><span>${ic[h.accion] || h.accion}</span><span class="ver-f">${esc(new Date(h.created_at).toLocaleString('es-CO'))}</span><span>👤 ${esc(h.usuario || '—')}</span>${esAct ? '<span class="badge" style="background:#E3F6E8;color:#1B6B34;">✅ Versión actual</span>' : `<button class="btn sm pri" data-rv="${i}" style="margin-left:auto;">↩ Restaurar</button>`}</div>${dif.length ? '<ul>' + dif.map(d => `<li><b>${esc(d.l)}:</b> <s>${esc(d.antes)}</s> → ${esc(d.despues)}</li>`).join('') + '</ul>' : `<div class="ver-s">${h.accion === 'creado' ? 'Evento creado' : esc(h.resumen || 'Sin cambios en los campos')}</div>`}</div>`; }).reverse().join('');
+    ov.innerHTML = `<div class="ov-box"><h2 style="font-family:var(--display);margin:0 0 .2rem;">🕘 Historial de versiones</h2><p style="color:var(--suave);margin:0 0 1rem;font-size:.9rem;">${esc(ev.titulo)} · ${esc(ev.inicio)}</p>${r.error ? '<p>Falta crear la tabla del historial. Ejecuta <b>supabase_actualizacion_5.sql</b> en Supabase.</p>' : (items || '<p>Este evento aún no tiene cambios registrados. El historial empieza con la próxima modificación.</p>')}<div style="text-align:right;margin-top:1rem;"><button class="btn" id="hv_close">Cerrar</button></div></div>`;
+    document.body.appendChild(ov); $('#hv_close').onclick = () => ov.remove();
+    ov.querySelectorAll('[data-rv]').forEach(b => b.onclick = () => { const h = rows[+b.dataset.rv]; RESTAURAR = { id, datos: h.datos }; window._restauradoId = id; ov.remove(); toast('Revisa los datos de la versión v' + h.version + ' y pulsa Guardar para restaurarla'); modalEvento(id); });
+  };
+
   async function guardarEvento(id) {
     if (id ? !puede('editar') : !puede('crear')) return sinPermiso();
     if (id) { const o0 = D.eventos.find(x => x.id === id); if (o0 && !puedeEnEvento(o0)) return sinArea(); }
@@ -2628,6 +2673,9 @@
     const lugarEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lugar) ? g('f_lugar_esp') : '';
     const titulo = tituloInteligente({ titulo: tituloRaw, categoria: g('f_cat'), facultad, programa, nivel: nivelesMarcados() });
     const o = { id: id || uid(), titulo, descripcion: g('f_desc'), categoria: g('f_cat'), subcategoria: g('f_subcat'), inicio, fin, periodo, periodo2, horaInicio: g('f_hora_ini'), horaFin: g('f_hora_fin'), facultad, programa, area, publico, lugar, lugarEsp, piso: g('f_piso'), enlace, estado: g('f_estado') };
+    const dup = D.eventos.find(x => x.id !== o.id && claveEv(x) === claveEv(o));
+    if (dup) return toast(`Ya existe un evento idéntico: «${dup.titulo}» (${dup.inicio}). Cambia algún dato —por ejemplo «Dirigido a»— para poder guardarlo.`, true);
+    const prevEv = id ? D.eventos.find(x => x.id === id) : null, accionH = id ? (window._restauradoId === id ? 'restaurado' : 'editado') : 'creado'; window._restauradoId = null;
     let avisoCols = [];
     try {
       if (DB_READY) {
@@ -2650,6 +2698,7 @@
         if (programa.length) await dbClient.from('evento_programas').insert(programa.map(p => ({ evento_id: ev.id, programa_id: p })));
         if (area.length) await dbClient.from('evento_areas').insert(area.map(a => ({ evento_id: ev.id, area_id: a })));
         if (publico.length) await dbClient.from('evento_publicos').insert(publico.map(p => ({ evento_id: ev.id, publico: p })));
+        await registrarVersion(ev.id, prevEv, o, accionH);
         registrarLog(id ? 'Editó evento' : 'Creó evento', titulo);
         const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos;
       }
@@ -3575,6 +3624,7 @@
       if (a === 'eEst') { const on = ac.dataset.op === 'on'; if (selP.length) await enLotes(selP, c => dbClient.from('programas').update({ activo: on }).in('id', c)); if (selF.length) await enLotes(selF, c => dbClient.from('facultades').update({ activo: on }).in('id', c)); registrarLog(on ? 'Habilitó estructura' : 'Suspendió estructura', `${selP.length} programas, ${selF.length} facultades`); return fin(on ? '✅ Habilitado' : '⏸️ Suspendido'); }
       if (a === 'eDel') { if (!confirm(`¿Eliminar ${selP.length} programa(s) y ${selF.length} facultad(es)? Al eliminar una facultad se eliminan también sus programas.`)) return; if (selP.length) await enLotes(selP, c => dbClient.from('programas').delete().in('id', c)); if (selF.length) { const r = await enLotes(selF, c => dbClient.from('facultades').delete().in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true); } registrarLog('Eliminó estructura', `${selP.length} programas, ${selF.length} facultades`); return fin('🗑 Eliminado'); }
     }
+    if (a === 'hist') return abrirHistorial(i);
     if (a === 'limpiarF') { Object.keys(F).forEach(k => F[k] = ''); SEL.clear(); return ir('eventos'); }
     if (a === 'm_edit') { if (!puede('editar')) return sinPermiso(); return abrirEdicionMasiva(); }
     if (a === 'm_del' || a === 'm_delall') {
