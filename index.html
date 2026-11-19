@@ -948,6 +948,7 @@
   const slug = s => norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 24) || 'x';
   const nuevoId = (s, lista) => { const b = slug(s); let i = b, n = 2; while (lista.some(x => x.id === i)) i = b + '_' + n++; return i; };
   const opt = (v, t, sel) => `<option value="${esc(v)}" ${sel ? 'selected' : ''}>${esc(t)}</option>`;
+  async function enLotes(ids, fn, n = 40) { for (let i = 0; i < ids.length; i += n) { const r = await fn(ids.slice(i, i + n)); if (r && r.error) return r; } return { error: null }; }
   const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
 
   /* ========== FRASES ACADÉMICAS PREDETERMINADAS ========== */
@@ -2253,9 +2254,9 @@
             if (on('fec')) { const fi = $('#me_fi').value || ev.inicio, ff = $('#me_ff').value || (ev.fin && ev.fin >= fi ? ev.fin : fi); r1.fecha_inicio = fi; r1.fecha_fin = ff; const ps = periodosDeRango(fi, ff); r1.periodo_id = ps[0]; r1.periodo2_id = ps.length > 1 ? ps[ps.length - 1] : null; }
             const u = await dbClient.from('eventos').update(r1).eq('id', eid); if (u.error) throw u.error;
           }
-        } else if (Object.keys(row).length) { row.updated_at = new Date().toISOString(); const r = await dbClient.from('eventos').update(row).in('id', ids); if (r.error) throw r.error; }
+        } else if (Object.keys(row).length) { row.updated_at = new Date().toISOString(); const r = await enLotes(ids, c => dbClient.from('eventos').update(row).in('id', c)); if (r.error) throw r.error; }
         if (facs !== null) {
-          const d = await dbClient.from('evento_facultades').delete().in('evento_id', ids); if (d.error) throw d.error;
+          const d = await enLotes(ids, c => dbClient.from('evento_facultades').delete().in('evento_id', c)); if (d.error) throw d.error;
           if (facs.length) { const i2 = await dbClient.from('evento_facultades').insert(ids.flatMap(eid => facs.map(f => ({ evento_id: eid, facultad_id: f })))); if (i2.error) throw i2.error; }
         }
         registrarLog('Editó eventos masivamente', `${ids.length} eventos`);
@@ -3355,22 +3356,22 @@
     if (a === 'cBulk') {
       const t = ac.dataset.t, ids = $$('.csel[data-t="' + t + '"]:checked').map(c => c.dataset.i);
       if (!ids.length) return toast('Marca al menos un elemento', true);
-      if (ac.dataset.op === 'del') { if (!confirm(`¿Eliminar ${ids.length} elemento(s)? Esta acción no se puede deshacer.`)) return; const r = await dbClient.from(t).delete().in('id', ids); if (r.error) return toast('Error: ' + r.error.message, true); registrarLog('Eliminó en lote', `${ids.length} de ${t}`); }
-      else { const r = await dbClient.from(t).update({ activo: ac.dataset.op === 'on' }).in('id', ids); if (r.error) return toast('Falta la columna "activo". Ejecuta el SQL actualizado.', true); registrarLog(ac.dataset.op === 'on' ? 'Habilitó en lote' : 'Suspendió en lote', `${ids.length} de ${t}`); }
+      if (ac.dataset.op === 'del') { if (!confirm(`¿Eliminar ${ids.length} elemento(s)? Esta acción no se puede deshacer.`)) return; const r = await enLotes(ids, c => dbClient.from(t).delete().in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true); registrarLog('Eliminó en lote', `${ids.length} de ${t}`); }
+      else { const r = await enLotes(ids, c => dbClient.from(t).update({ activo: ac.dataset.op === 'on' }).in('id', c)); if (r.error) return toast('Falta la columna "activo". Ejecuta el SQL actualizado.', true); registrarLog(ac.dataset.op === 'on' ? 'Habilitó en lote' : 'Suspendió en lote', `${ids.length} de ${t}`); }
       const nd = await leerNube(); if (nd) D = nd; refrescar(); return toast(`✅ ${ids.length} actualizado(s)`);
     }
     if (a === 'uSelAll') { $$('.usel').forEach(c => c.checked = ac.checked); return; }
     if (a === 'uBulk') {
       const ids = $$('.usel:checked').map(c => c.dataset.i); if (!ids.length) return toast('Marca al menos un usuario', true);
-      if (ac.dataset.op === 'del') { if (!confirm(`¿Eliminar ${ids.length} usuario(s)?`)) return; const r = await dbClient.from('usuarios_admin').delete().in('id', ids); if (r.error) return toast('Error: ' + r.error.message, true); registrarLog('Eliminó usuarios en lote', `${ids.length} usuarios`); }
-      else { const r = await dbClient.from('usuarios_admin').update({ activo: ac.dataset.op === 'on' }).in('id', ids); if (r.error) return toast('Falta la columna "activo" en usuarios_admin. Ejecuta el SQL actualizado.', true); registrarLog(ac.dataset.op === 'on' ? 'Reactivó usuarios' : 'Suspendió usuarios', `${ids.length} usuarios`); }
+      if (ac.dataset.op === 'del') { if (!confirm(`¿Eliminar ${ids.length} usuario(s)?`)) return; const r = await enLotes(ids, c => dbClient.from('usuarios_admin').delete().in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true); registrarLog('Eliminó usuarios en lote', `${ids.length} usuarios`); }
+      else { const r = await enLotes(ids, c => dbClient.from('usuarios_admin').update({ activo: ac.dataset.op === 'on' }).in('id', c)); if (r.error) return toast('Falta la columna "activo" en usuarios_admin. Ejecuta el SQL actualizado.', true); registrarLog(ac.dataset.op === 'on' ? 'Reactivó usuarios' : 'Suspendió usuarios', `${ids.length} usuarios`); }
       toast(`✅ ${ids.length} usuario(s) actualizados`); return ir('usuarios');
     }
     if (a === 'nSelAll') { $$('.nsel').forEach(c => c.checked = ac.checked); return; }
     if (a === 'nBulk') {
       const ids = $$('.nsel:checked').map(c => c.dataset.i); if (!ids.length) return toast('Marca al menos una novedad', true);
       if (!confirm(`¿Eliminar ${ids.length} novedad(es)?`)) return;
-      const r = await dbClient.from('novedades').delete().in('id', ids); if (r.error) return toast('Error: ' + r.error.message, true);
+      const r = await enLotes(ids, c => dbClient.from('novedades').delete().in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true);
       registrarLog('Eliminó novedades en lote', `${ids.length}`); toast(`🗑 ${ids.length} eliminadas`); return ir('novedades');
     }
     if (a === 'mkTest') {
@@ -3393,7 +3394,7 @@
       if (!ids.length) return sinArea();
       const ok = a === 'm_del' ? confirm(`¿Eliminar ${ids.length} evento(s) seleccionado(s)? Esta acción no se puede deshacer.`) : (prompt(`Vas a eliminar ${ids.length} evento(s) de la lista actual (según los filtros aplicados).\nEscribe ELIMINAR para confirmar:`) || '').trim().toUpperCase() === 'ELIMINAR';
       if (!ok) return;
-      const { error } = await dbClient.from('eventos').delete().in('id', ids);
+      const { error } = await enLotes(ids, c => dbClient.from('eventos').delete().in('id', c));
       if (error) return toast('Error al eliminar: ' + error.message, true);
       registrarLog('Eliminó eventos masivamente', `${ids.length} eventos`);
       D = await leerNube(); SEL.clear(); pintarTabla(); toast(`${FLATICONS.basura} ${ids.length} eventos eliminados`);
@@ -3403,7 +3404,7 @@
       const nuevoEst = a === 'm_pub' ? 'publicado' : 'borrador';
       const ids = [...SEL].filter(id => { const o = D.eventos.find(x => x.id === id); return o && puedeEnEvento(o); });
       if (!ids.length) return sinArea();
-      await dbClient.from('eventos').update({ estado: nuevoEst }).in('id', ids);
+      await enLotes(ids, c => dbClient.from('eventos').update({ estado: nuevoEst }).in('id', c));
       registrarLog(nuevoEst === 'publicado' ? 'Publicó eventos masivamente' : 'Pasó a borrador masivamente', `${ids.length} eventos`);
       D = await leerNube(); SEL.clear(); pintarTabla(); toast(`${FLATICONS.check} Actualizados`);
     }
