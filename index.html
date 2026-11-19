@@ -150,22 +150,21 @@
   /* ========== TITA (decorative) ========== */
   /* Tita: grande, decorativa, gesticulación suave (sin desplazarse por la pantalla) */
   #tita-container {
-    position: fixed;
-    bottom: 0; right: 0;
-    width: min(42vw, 420px); height: min(42vw, 420px);
+    position: fixed; inset: 0;
+    width: 100vw; height: 100vh; height: 100dvh;
     pointer-events: none; z-index: 5;
-    display: flex; align-items: flex-end; justify-content: flex-end;
-    overflow: visible;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
   }
   .tita-img {
-    width: 100%; height: auto;
-    opacity: 0.72;
-    transform-origin: 70% 85%;
+    width: 100%; height: 100%; object-fit: contain; object-position: center;
+    opacity: 0.2;
+    transform-origin: 50% 60%;
     filter: drop-shadow(0 12px 28px rgba(0,59,54,0.2));
     animation: titaGesto 5.5s ease-in-out infinite;
   }
   [data-theme="dark"] .tita-img {
-    opacity: 0.35;
+    opacity: 0.14;
     filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45)) brightness(1.15);
   }
   /* Gestos suaves: ligera inclinación + “respiración” de expresión (NO rebote por la pantalla) */
@@ -177,9 +176,6 @@
     80% { transform: rotate(-2.2deg) scale(1.005); }
   }
   body.en-admin #tita-container { display: none; }
-  @media (max-width: 820px) {
-    #tita-container { width: min(48vw, 220px); height: min(48vw, 220px); }
-  }
   @media (prefers-reduced-motion: reduce) {
     .tita-img { animation: none !important; }
   }
@@ -4017,7 +4013,7 @@ let dbClient = null;
     const perManual = ($('#mv_per') || {}).value;
     const desc = ($('#mv_desc') || {}).value?.trim() || '';
 
-    let ok = 0, fail = 0;
+    let ok = 0, fail = 0, ultimoError = '';
     for (const c of combos) {
       const titulo = (suf && c.pub) ? `${tit} · ${c.pub}` : tit;
       const id = uid();
@@ -4037,23 +4033,33 @@ let dbClient = null;
         updated_at: new Date().toISOString()
       };
       try {
-        let r = await dbClient.from('eventos').insert([payload]).select().single();
-        if (r.error && /organizador|subcategoria|piso/i.test(r.error.message || '')) {
-          delete payload.organizador; delete payload.subcategoria; delete payload.piso;
-          r = await dbClient.from('eventos').insert([payload]).select().single();
+        payload.lugar_especifico = '';
+        let ev = null, errIns = null;
+        for (let intento = 0; intento < 8 && !ev; intento++) {
+          const r = await dbClient.from('eventos').insert([payload]).select().single();
+          if (!r.error) { ev = r.data; break; }
+          errIns = r.error;
+          const m = /Could not find the '([^']+)' column of 'eventos'/.exec(r.error.message || '');
+          if (!m || !(m[1] in payload)) break;
+          delete payload[m[1]];
         }
-        if (r.error) { fail++; console.error(r.error); continue; }
-        const eid = r.data.id;
-        if (c.pub) await dbClient.from('evento_publicos').insert([{ evento_id: eid, publico: c.pub }]);
-        if (facs.length) await dbClient.from('evento_facultades').insert(facs.map(f => ({ evento_id: eid, facultad_id: f })));
-        if (areas.length) await dbClient.from('evento_areas').insert(areas.map(a => ({ evento_id: eid, area_id: a })));
+        if (!ev) { fail++; ultimoError = (errIns && errIns.message) || 'Error desconocido'; console.error(errIns); continue; }
+        const eid = ev.id;
+        const hijos = [];
+        if (c.pub) hijos.push(dbClient.from('evento_publicos').insert([{ evento_id: eid, publico: c.pub }]));
+        if (facs.length) hijos.push(dbClient.from('evento_facultades').insert(facs.map(f => ({ evento_id: eid, facultad_id: f }))));
+        if (areas.length) hijos.push(dbClient.from('evento_areas').insert(areas.map(a => ({ evento_id: eid, area_id: a }))));
+        for (const h of await Promise.all(hijos)) if (h.error) { ultimoError = h.error.message; console.error(h.error); }
         ok++;
       } catch (e) { fail++; console.error(e); }
     }
     registrarLog('Creó eventos masivos', `${ok}/${combos.length}: ${tit}`);
-    D = await leerNube();
-    toast(ok ? `✅ ${ok} evento(s) creados` + (fail ? ` · ${fail} fallaron` : '') : 'No se pudo crear ningún evento', !ok);
-    if (ok) ir('eventos', true);
+    const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos;
+    toast(ok ? `✅ ${ok} evento(s) creados` + (fail ? ` · ${fail} fallaron (${esc(ultimoError)})` : '') : 'No se pudo crear ningún evento: ' + esc(ultimoError), !ok || !!fail);
+    if (ok) {
+      Object.assign(F, { q: '', per: '', cat: '', est: '', grupo: '', desde: '', hasta: '', niv: '', creador: '' });
+      ir('eventos', true);
+    }
   }
 
   async function pSoporte() {
