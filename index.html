@@ -4098,6 +4098,28 @@ let dbClient = null;
     const perManual = ($('#mv_per') || {}).value;
     const desc = ($('#mv_desc') || {}).value?.trim() || '';
 
+    // Asegurar que existan los semestres (periodos) que usarán los eventos: la BD los exige (llave foránea)
+    {
+      const necesarios = new Set();
+      for (const c of combos) {
+        if (perManual && perManual !== 'auto') { necesarios.add(perManual); continue; }
+        const ps = periodosDeRango(c.ini, c.fin || c.ini);
+        if (ps[0]) necesarios.add(ps[0]);
+        if (ps.length > 1) necesarios.add(ps[ps.length - 1]);
+      }
+      const faltan = [...necesarios].filter(id => !D.periodos.some(p => p.id === id)).sort();
+      if (faltan.length) {
+        if (!confirm(`Estos semestres no existen todavía: ${faltan.map(nombrePeriodo).join(', ')}.\n\n¿Crearlos automáticamente (con fechas estándar) para poder crear los eventos?`)) return toast('Cancelado: faltan los semestres ' + faltan.join(', '), true);
+        for (const id of faltan) {
+          const [anio, sem] = id.split('-').map(Number);
+          const { error } = await dbClient.from('periodos').insert([{ id, nombre: `${anio} - Semestre ${sem}`, inicio: `${anio}-${sem === 1 ? '01-15' : '07-15'}`, fin: `${anio}-${sem === 1 ? '06-30' : '12-15'}`, activo: true }]);
+          if (error) return toast(`No se pudo crear el semestre ${id}: ${esc(error.message)}`, true);
+          registrarLog('Creó semestre', id + ' (automático desde eventos masivos)');
+        }
+        const nd = await leerNube(); if (nd) D = nd;
+      }
+    }
+
     let ok = 0, fail = 0, ultimoError = '';
     let n = 0;
     for (const c of combos) {
