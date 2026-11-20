@@ -274,6 +274,17 @@
   .theme-toggle { font-size: 1.05rem; padding: 0.42rem 0.7rem; }
 
   /* ========== HERO ========== */
+  /* Tita dentro de la franja verde lima */
+  .hero > .hero-tita {
+    position: absolute; top: -22%; left: 50%; translate: -50% 0;
+    height: 150%; width: auto; max-width: none;
+    opacity: 0.55; mix-blend-mode: multiply;
+    pointer-events: none; z-index: 0;
+    animation: titaGesto 5.5s ease-in-out infinite;
+  }
+  [data-theme="dark"] .hero > .hero-tita { opacity: 0.3; mix-blend-mode: normal; filter: brightness(1.2); }
+  .hero > .hero-izq, .hero > .proximos { position: relative; z-index: 1; }
+  @media (prefers-reduced-motion: reduce) { .hero > .hero-tita { animation: none !important; } }
   .hero {
     background: linear-gradient(145deg, var(--lima) 0%, color-mix(in srgb, var(--lima) 88%, #fff) 100%);
     position: relative; overflow: hidden;
@@ -481,7 +492,7 @@
   .nov-actions { display: flex; gap: 0.4rem; justify-content: flex-end; margin-top: 0.6rem; }
 
   /* ========== MÓDULOS / CATEGORÍAS ========== */
-  .modulos { padding: 1rem clamp(1rem, 4vw, 2.8rem) 0.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 0.85rem; position: relative; z-index: 10; }
+  .modulos { padding: 0; display: flex; flex-direction: column; gap: 0.5rem; position: relative; z-index: 10; }
   .mod-card {
     position: relative; overflow: hidden; text-align: left;
     border: 1px solid var(--linea); background: var(--superficie); color: var(--tinta);
@@ -537,6 +548,16 @@
   main { flex: 1; padding: 1rem clamp(1rem, 3vw, 2.2rem) 3rem; max-width: 1640px; width: 100%; margin: 0 auto; position: relative; z-index: 10; }
 
   /* ========== LAYOUT 3 COLUMNAS ========== */
+
+  /* Columna izquierda: categorías + facultades en una sola columna con scroll propio */
+  .colizq { position: sticky; top: 130px; max-height: calc(100vh - 150px); overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding-right: 0.25rem; min-width: 0; }
+  .panel.pcat { background: var(--superficie); border: 1px solid var(--linea); border-radius: 16px; padding: 0.95rem; box-shadow: var(--sombra-s); flex: none; }
+  .colizq .panel.pfac { position: static; max-height: none; flex: none; }
+  .colizq .fac-sidebar-list { overflow: visible; }
+  .colizq .mod-card { min-height: 54px; padding: 0.5rem 0.75rem; gap: 0.65rem; }
+  .colizq .mod-card:hover { transform: translateX(3px); }
+  .colizq .mod-card b { font-size: 0.86rem; }
+  .colizq .mod-card .ic { flex: none; }
   .panelwrap { display: grid; grid-template-columns: 265px 1.25fr 1fr; gap: 1.3rem; align-items: start; }
   .panel { min-width: 0; }
   .panel.pfac {
@@ -1293,6 +1314,8 @@
   /* RESPONSIVE */
   @media (max-width: 1180px) {
     .panelwrap { grid-template-columns: 1fr; }
+    .colizq { position: static; max-height: none; overflow: visible; padding-right: 0; }
+    .modulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); }
     .panel.pl, .panel.pfac { position: static; max-height: none; }
     .panel.pl .lista-eventos, .fac-sidebar-list { overflow-y: visible; padding-right: 0; }
     .fac-sidebar-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
@@ -1343,6 +1366,7 @@
   </header>
 
   <section class="hero">
+    <img class="hero-tita" src="cara_tita.png" alt="" aria-hidden="true">
     <div class="hero-izq">
       <div class="titulo-oficina">
         <span class="to-ic"><img src="Logo_RyC1.png" alt="Logo R&C"></span>
@@ -1393,11 +1417,17 @@
     <div class="nov-grid" id="novGrid"></div>
   </section>
 
-  <div class="modulos" id="modulos"></div>
-
   <main>
     <div class="panelwrap">
       <!-- NUEVA COLUMNA IZQUIERDA CON LAS FACULTADES Y SUS EXTENSIONES -->
+      <div class="colizq">
+      <aside class="panel pcat" aria-label="Categorías de eventos">
+        <div class="phead">
+          <h2>🗂️ Categorías</h2>
+          <span>Filtrar</span>
+        </div>
+        <div class="modulos" id="modulos"></div>
+      </aside>
       <aside class="panel pfac" aria-label="Facultades y extensiones">
         <div class="phead">
           <h2>🏛️ Facultades</h2>
@@ -1405,6 +1435,7 @@
         </div>
         <div id="vistaFacultadesIzq" class="fac-sidebar-list"></div>
       </aside>
+      </div>
 
       <section class="panel">
         <div id="vistaCalendario"></div>
@@ -2261,7 +2292,6 @@ let dbClient = null;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
   };
   document.addEventListener('change', async ev => {
-    if (ev.target && (ev.target.name === 'mv_modo' || ev.target.name === 'mv_pub' || ev.target.name === 'mv_facsel')) { if (typeof mvActualizarPreview === 'function') mvActualizarPreview(); }
  const t = ev.target; if (!t.dataset || !t.dataset.emoT) return; const v = t.value.trim(); const r = await dbClient.from(t.dataset.emoT).update({ emoji: v || null }).eq('id', t.dataset.emoI); if (r.error) return toast('Falta la columna "emoji". Ejecuta el SQL actualizado.', true); const nd = await leerNube(); if (nd) D = nd; toast('Emoji actualizado ' + v); });
   document.addEventListener('click', ev => { const t = ev.target.closest('[data-nov]'); if (t && !ev.target.closest('a')) abrirNovedad(t.dataset.nov); });
 
@@ -2793,6 +2823,7 @@ let dbClient = null;
     if (P !== p || !USUARIO_ACTUAL) return;
     $('#admin-panel-inner').innerHTML = html;
     if (p === 'eventos') pintarTabla();
+    if (p === 'masivos') mvActualizarPreview();
     if (p === 'logs') pintarLogs();
     if (!conservar) scrollTo(0, 0);
   }
@@ -3848,142 +3879,99 @@ let dbClient = null;
   function pMasivos() {
     if (!puede('crear')) return encabezado('📦 Eventos masivos', 'Sin permiso para crear eventos.');
     const cats = D.categorias.map(c => `<option value="${esc(c.id)}">${esc(c.nombre)}</option>`).join('');
-    const pubs = PUBLICOS_ROLES.map(p => `<label class="mv-chk"><input type="checkbox" name="mv_pub" value="${esc(p)}"> ${em(emojiPub(p))} ${esc(p)}</label>`).join('');
-    const facOpts = D.facultades.map(f => `<option value="${esc(f.id)}">${esc(f.nombre)}</option>`).join('');
     const areaOpts = D.areas.map(a => `<option value="${esc(a.id)}">${esc(a.nombre)}</option>`).join('');
     const perOpts = D.periodos.map(p => `<option value="${esc(p.id)}">${esc(nombrePeriodo(p.id))}</option>`).join('');
-    return encabezado('📦 Creación masiva de eventos', 'Repite el mismo evento con distintos públicos y/o muchas fechas, sin cargar uno por uno en la base de datos.') + `
+    const bloques = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}">Bloque ${l}</option>`).join('');
+    const subs = [...new Set(D.categorias.flatMap(c => c.subcategorias || []))].map(x => `<option value="${esc(x)}">`).join('');
+    const facs = D.facultades.filter(esAct).map(f => `<label class="mv-chk"><input type="checkbox" name="mv_facsel" value="${esc(f.id)}" checked> ${esc(f.nombre)}</label>`).join('');
+    return encabezado('📦 Creación masiva de eventos', 'Define uno o varios eventos con todas sus fechas; el sistema los multiplica por facultad y por público sin que repitas datos.') + `
     <style>
       .mv-chk { display:flex; align-items:center; gap:.4rem; padding:.28rem .45rem; border-radius:8px; font-size:.88rem; }
       .mv-chk:hover { background: var(--fondo); }
-      .mv-modo { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:1rem; }
-      .mv-modo label { display:flex; align-items:center; gap:.4rem; padding:.55rem .9rem; border:1px solid var(--linea); border-radius:12px; background:var(--superficie); cursor:pointer; font-weight:600; font-size:.9rem; }
-      .mv-modo label:has(input:checked) { border-color: var(--verde); background: color-mix(in srgb, var(--lima) 18%, var(--superficie)); }
-      #mv_fechas_lista { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.5rem; }
-      .mv-fecha-chip { display:inline-flex; align-items:center; gap:.35rem; background:var(--fondo); border:1px solid var(--linea); border-radius:99px; padding:.25rem .65rem; font-size:.85rem; font-weight:600; }
-      .mv-fecha-chip button { border:0; background:none; color:var(--rojo); font-weight:800; cursor:pointer; }
+      .mv-opt { display:flex; align-items:flex-start; gap:.5rem; padding:.55rem .8rem; border:1px solid var(--linea); border-radius:12px; background:var(--superficie); cursor:pointer; font-size:.9rem; margin-bottom:.4rem; }
+      .mv-opt:has(input:checked) { border-color: var(--verde); background: color-mix(in srgb, var(--lima) 18%, var(--superficie)); }
+      .mv-opt small { display:block; color:var(--suave); font-weight:400; }
+      .mv-opt b { font-weight:700; }
     </style>
-
+    <div id="mv_root">
     <div class="caja">
-      <h2>0 · Modo de creación</h2>
-      <div class="mv-modo">
-        <label><input type="radio" name="mv_modo" value="pub" checked> 👥 Mismo evento · varios «Dirigido a»</label>
-        <label><input type="radio" name="mv_modo" value="fechas"> 📅 Mismo evento · muchas fechas</label>
-        <label><input type="radio" name="mv_modo" value="ambos"> 🔁 Combinado (públicos × fechas)</label>
-        <label><input type="radio" name="mv_modo" value="fac"> 🏛️ Plantillas × facultades (un evento por facultad)</label>
-      </div>
-      <p style="font-size:.86rem;color:var(--suave);">Elige cómo se multiplica el evento. En <b>combinado</b> se crea un registro por cada público y cada fecha.</p>
+      <h2>1 · Eventos a crear</h2>
+      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Cada tarjeta es un evento distinto. Pega <b>todas sus fechas</b> (una por línea o separadas por coma; vale <code>2027-02-10</code>, <code>10/02/2027</code> o un rango <code>2027-04-14 → 2027-04-15</code>) o usa el selector para ir sumándolas.</p>
+      <datalist id="mv_subs">${subs}</datalist>
+      <div id="mv_plant">${mvFilaPl()}</div>
+      <button class="btn sm pri" type="button" data-a="mvAddPl">➕ Agregar otro evento</button>
     </div>
 
     <div class="caja">
-      <h2>1 · Datos base (igual que el formulario de eventos)</h2>
-      <div class="fr"><label>Título *</label><input id="mv_tit" placeholder="Ej: Inducción de estudiantes / Matrícula ordinaria"></div>
-      <div class="fr"><label>Descripción</label><textarea id="mv_desc" rows="3" placeholder="Detalle del evento…"></textarea></div>
+      <h2>2 · Alcance: ¿para quién se crea?</h2>
+      <h3 style="font-size:1rem;margin:.2rem 0 .5rem;">Facultades</h3>
+      <label class="mv-opt"><input type="radio" name="mv_facmodo" value="ninguna" checked><span><b>Institucional</b><small>Sin facultad específica (toda la institución).</small></span></label>
+      <label class="mv-opt"><input type="radio" name="mv_facmodo" value="copias"><span><b>Una copia por cada facultad marcada</b><small>Ej.: 12 fechas × 12 facultades = 144 eventos, cada uno con su facultad.</small></span></label>
+      <label class="mv-opt"><input type="radio" name="mv_facmodo" value="junto"><span><b>Un solo evento con todas las facultades marcadas</b><small>Un evento por fecha que lista varias facultades a la vez.</small></span></label>
+      <div id="mv_facbox">
+        <div style="display:flex;gap:.5rem;margin:.6rem 0 .5rem;flex-wrap:wrap;align-items:center;">
+          <button class="btn sm" type="button" data-a="mvFacAll">Todas</button>
+          <button class="btn sm" type="button" data-a="mvFacNone">Ninguna</button>
+          <span id="mv_fcount" style="font-size:.88rem;color:var(--suave);"></span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.2rem;max-height:260px;overflow:auto;border:1px solid var(--linea);border-radius:12px;padding:.55rem;">${facs}</div>
+      </div>
+      <h3 style="font-size:1rem;margin:1.1rem 0 .4rem;">Áreas administrativas <span style="font-weight:400;color:var(--suave);">(opcional, se asignan a todos)</span></h3>
+      <select id="mv_area" multiple class="multi-select" size="4">${areaOpts}</select>
+    </div>
+
+    <div class="caja">
+      <h2>3 · Datos comunes a todos</h2>
       <div class="fr2">
         <div class="fr"><label>Categoría</label><select id="mv_cat">${cats}</select></div>
-        <div class="fr"><label>Subcategoría</label><input id="mv_sub" placeholder="Opcional"></div>
+        <div class="fr"><label>Semestre</label><select id="mv_per"><option value="auto">Detectar por fecha</option>${perOpts}</select></div>
       </div>
       <div class="fr2">
-        <div class="fr"><label>Organizador / Unidad</label><input id="mv_org" placeholder="Registro y Control, Decanatura…"></div>
-        <div class="fr"><label>Semestre (opcional)</label><select id="mv_per"><option value="auto">Detectar por fecha</option>${perOpts}</select></div>
+        <div class="fr"><label>Bloque / Ubicación</label><select id="mv_lug"><option value="">-- Seleccionar --</option><optgroup label="Bloques">${bloques}</optgroup><optgroup label="Especiales"><option>Auditorio Principal o Central</option><option>Auditorio Fundadores</option><option>Clínicas Odontológicas</option><option>Sistema Académico en Línea (SALA)</option><option>SAUCE</option><option>Sede Chía</option><option>Otro</option></optgroup></select></div>
+        <div class="fr" id="mv_lugesp_wrap" hidden><label>Especifique ubicación</label><input id="mv_lugesp" placeholder="Escriba el lugar…"></div>
       </div>
       <div class="fr2">
-        <div class="fr"><label>Fecha base (inicio) *</label><input type="date" id="mv_ini" value="${hoy()}"></div>
-        <div class="fr"><label>Fecha fin (si es rango en un solo día base)</label><input type="date" id="mv_fin"></div>
+        <div class="fr"><label>Piso (opcional)</label><input id="mv_piso" placeholder="Ej: Piso 2"></div>
+        <div class="fr"><label>Enlace (opcional)</label><input id="mv_enl" placeholder="https://…"></div>
       </div>
       <div class="fr2">
-        <div class="fr"><label>Hora inicio</label><input type="time" id="mv_hi"></div>
-        <div class="fr"><label>Hora fin</label><input type="time" id="mv_hf"></div>
-      </div>
-      <div class="fr2">
-        <div class="fr"><label>Lugar</label><input id="mv_lug" placeholder="Auditorio Principal, SALA, Zoom…"></div>
-        <div class="fr"><label>Lugar específico / piso</label><input id="mv_piso" placeholder="Piso 2 · Salón 201"></div>
-      </div>
-      <div class="fr2">
-        <div class="fr"><label>Enlace</label><input id="mv_enl" placeholder="https://…"></div>
+        <div class="fr"><label>Organizador / Unidad responsable</label><input id="mv_org" placeholder="Registro y Control, Decanatura…"></div>
         <div class="fr"><label>Estado</label><select id="mv_est"><option value="publicado">Publicado</option><option value="borrador">Borrador</option></select></div>
       </div>
-      <div class="fr2">
-        <div class="fr"><label>Facultades (opcional, múltiple)</label>
-          <select id="mv_fac" multiple class="multi-select" size="4">${facOpts}</select>
-        </div>
-        <div class="fr"><label>Áreas administrativas (opcional)</label>
-          <select id="mv_area" multiple class="multi-select" size="4">${areaOpts}</select>
-        </div>
-      </div>
-    </div>
-
-    <div class="caja" id="mv_box_pub">
-      <h2>2 · Dirigido a</h2>
-      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Si no marcas ninguno, se crea el evento <b>sin público específico</b> (una vez por fecha).</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.2rem;max-height:300px;overflow:auto;border:1px solid var(--linea);border-radius:12px;padding:.55rem;">
-        ${pubs}
-      </div>
-      <div style="display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap;">
-        <button class="btn sm" type="button" data-a="mvSelAll">Seleccionar todos</button>
-        <button class="btn sm" type="button" data-a="mvSelNone">Quitar todos</button>
-        <span id="mv_count" style="align-self:center;font-size:.88rem;color:var(--suave);">0 seleccionados</span>
-      </div>
-      <label style="display:flex;align-items:center;gap:.5rem;font-weight:600;margin-top:.8rem;"><input type="checkbox" id="mv_sufijo" checked> Añadir el público al título («… · Estudiante»)</label>
-    </div>
-
-    <div class="caja" id="mv_box_fechas">
-      <h2>3 · Fechas adicionales</h2>
-      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.5rem;">Además de la fecha base, agrega más días (mismo evento, misma información, distinta fecha). Útil para ciclos, jornadas o fechas de matrícula repetidas.</p>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:flex-end;">
-        <div class="fr" style="margin:0;"><label>Nueva fecha</label><input type="date" id="mv_fecha_add"></div>
-        <div class="fr" style="margin:0;"><label>Fin (opcional)</label><input type="date" id="mv_fecha_add_fin"></div>
-        <button class="btn sm pri" type="button" data-a="mvAddFecha">➕ Agregar fecha</button>
-      </div>
-      <div id="mv_fechas_lista"></div>
-      <p style="font-size:.8rem;color:var(--suave);margin-top:.5rem;">La fecha base del bloque 1 siempre se incluye. Aquí solo sumas las demás.</p>
-    </div>
-
-    <div class="caja" id="mv_box_fac">
-      <h2>3b · Plantillas × facultades</h2>
-      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Solo para el modo <b>Plantillas × facultades</b>: cada plantilla se crea <b>una vez por cada facultad marcada</b>, con esa facultad asignada (como la inducción por facultad). En este modo se usan estas plantillas en lugar del título, fechas y «Dirigido a» de los bloques 1 a 3; el resto de datos del bloque 1 (categoría, semestre, hora, lugar, enlace, estado, organizador) se aplican a todas.</p>
-      <div id="mv_plant">${mvFilaPl()}</div>
-      <button class="btn sm pri" type="button" data-a="mvAddPl">➕ Agregar otra plantilla</button>
-      <h3 style="font-size:1rem;margin:1rem 0 .4rem;">Facultades</h3>
-      <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;">
-        <button class="btn sm" type="button" data-a="mvFacAll">Todas</button>
-        <button class="btn sm" type="button" data-a="mvFacNone">Ninguna</button>
-        <span id="mv_fcount" style="font-size:.88rem;color:var(--suave);"></span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.2rem;max-height:260px;overflow:auto;border:1px solid var(--linea);border-radius:12px;padding:.55rem;">
-        ${D.facultades.filter(esAct).map(f => `<label class="mv-chk"><input type="checkbox" name="mv_facsel" value="${esc(f.id)}" checked> ${esc(f.nombre)}</label>`).join('')}
-      </div>
-      <label style="display:flex;align-items:center;gap:.5rem;font-weight:600;margin-top:.8rem;"><input type="checkbox" id="mv_fac_sufijo" checked> Añadir el nombre de la facultad al título («… - Facultad de X»)</label>
-      <label style="display:flex;align-items:center;gap:.5rem;font-weight:600;margin-top:.4rem;"><input type="checkbox" id="mv_fac_skip" checked> Omitir los que ya existen (mismo título, fecha y facultad)</label>
     </div>
 
     <div class="caja">
-      <h2>4 · Crear</h2>
-      <p id="mv_preview" style="font-size:.9rem;color:var(--suave);margin-bottom:.8rem;">Selecciona opciones para ver cuántos eventos se generarán.</p>
+      <h2>4 · Opciones y crear</h2>
+      <label class="mv-opt"><input type="checkbox" id="mv_fac_sufijo" checked><span><b>Añadir la facultad al título</b><small>«Comité administrativo - Facultad de X» (solo con «una copia por facultad»).</small></span></label>
+      <label class="mv-opt"><input type="checkbox" id="mv_split_pub"><span><b>Separar por público</b><small>Crea un evento por cada «Dirigido a» marcado (añade « · Público» al título). Si no, un solo evento con todos los públicos.</small></span></label>
+      <label class="mv-opt"><input type="checkbox" id="mv_skip" checked><span><b>Omitir los que ya existen</b><small>Mismo título, fecha y facultad: permite repetir la corrida sin duplicar.</small></span></label>
+      <p id="mv_preview" style="font-size:.9rem;color:var(--suave);margin:.8rem 0;"></p>
       <button class="btn pri" data-a="mvCrear">🚀 Crear eventos masivos</button>
+    </div>
     </div>`;
   }
 
-  document.addEventListener('input', ev => { const c = ev.target && ev.target.classList; if (c && (c.contains('pl-fechas') || c.contains('pl-ini') || c.contains('pl-fin')) && typeof mvActualizarPreview === 'function') mvActualizarPreview(); });
-  function mvFilaPl(v) {
-    v = v || {};
-    const pubs = '<option value="">— Sin público específico —</option>' + PUBLICOS_ROLES.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
-    return `<div class="mv-pl" style="border:1px solid var(--linea);border-radius:12px;padding:.7rem .8rem;margin-bottom:.6rem;background:var(--fondo);">
+  function mvFilaPl() {
+    const pubs = PUBLICOS_ROLES.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    return `<div class="mv-pl" style="border:1px solid var(--linea);border-radius:12px;padding:.8rem .9rem;margin-bottom:.7rem;background:var(--fondo);">
       <div class="fr2">
-        <div class="fr"><label>Título de la plantilla *</label><input class="pl-tit" placeholder="Ej: Inducción estudiantes primer semestre"></div>
-        <div class="fr"><label>Subcategoría</label><input class="pl-sub" placeholder="Ej: Estudiantes"></div>
+        <div class="fr"><label>Título *</label><input class="pl-tit" placeholder="Ej: Comité administrativo / Inducción docentes"></div>
+        <div class="fr"><label>Subcategoría (opcional)</label><input class="pl-sub" list="mv_subs" placeholder="Ej: Docentes"></div>
+      </div>
+      <div class="fr"><label>Fechas * <small class="pl-fcount" style="color:var(--suave);font-weight:400;"></small></label>
+        <textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-15"></textarea>
+        <div style="display:flex;gap:.5rem;align-items:center;margin-top:.35rem;font-size:.85rem;color:var(--suave);">➕ Sumar fecha: <input type="date" class="pl-addf" style="max-width:170px;"></div>
       </div>
       <div class="fr2">
-        <div class="fr"><label>Fecha inicio *</label><input type="date" class="pl-ini"></div>
-        <div class="fr"><label>Fecha fin (opcional)</label><input type="date" class="pl-fin"></div>
+        <div class="fr"><label>Hora inicio (opcional)</label><input type="time" class="pl-hi"></div>
+        <div class="fr"><label>Hora fin (opcional)</label><input type="time" class="pl-hf"></div>
       </div>
       <div class="fr2">
-        <div class="fr"><label>Dirigido a</label><select class="pl-pub">${pubs}</select></div>
+        <div class="fr"><label>Dirigido a (opcional, múltiple)</label><select class="pl-pub multi-select" multiple size="4">${pubs}</select></div>
         <div class="fr"><label>Nivel (opcional)</label><select class="pl-niv"><option value="">—</option><option value="Pregrado">Pregrado</option><option value="Posgrado">Posgrado</option></select></div>
       </div>
-      <div class="fr"><label>Más fechas (opcional) · una por línea o separadas por coma</label><textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-15&#10;(también vale 10/05/2027)"></textarea><small class="pl-fcount" style="color:var(--suave);"></small></div>
-      <div class="fr"><label>Descripción (se añade « - Facultad» si lo marcas abajo)</label><input class="pl-desc" placeholder="Jornada de inducción…"></div>
-      <button class="btn sm peligro" type="button" data-a="mvDelPl">🗑 Quitar plantilla</button>
+      <div class="fr"><label>Descripción / detalles (opcional)</label><textarea class="pl-desc" rows="2" placeholder="Detalle del evento…"></textarea></div>
+      <button class="btn sm peligro" type="button" data-a="mvDelPl">🗑 Quitar este evento</button>
     </div>`;
   }
   function mvParseFechas(txt) {
@@ -3992,113 +3980,87 @@ let dbClient = null;
     String(txt || '').split(/[\n;,]+/).forEach(l => {
       const t = (l.match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.]\d{1,2}[\/.]\d{4}/g) || []).map(iso);
       if (!t.length) return;
-      const ini = t[0], fin = t[1] && t[1] >= t[0] ? t[1] : t[0];
-      out.push({ ini, fin });
+      out.push({ ini: t[0], fin: t[1] && t[1] >= t[0] ? t[1] : t[0] });
     });
-    return out;
+    const vistos = new Set();
+    return out.filter(f => { const k = f.ini + '|' + f.fin; if (vistos.has(k)) return false; vistos.add(k); return true; }).sort((a, b) => a.ini.localeCompare(b.ini));
   }
   function mvLeerPlantillas() {
     return [...document.querySelectorAll('#mv_plant .mv-pl')].map(r => {
       const g = c => (r.querySelector('.' + c) || {}).value?.trim() || '';
-      const ini = g('pl-ini'), fin = g('pl-fin');
-      const fechas = [];
-      const add = f => { if (!fechas.some(x => x.ini === f.ini && x.fin === f.fin)) fechas.push(f); };
-      if (ini) add({ ini, fin: fin && fin >= ini ? fin : ini });
-      mvParseFechas(g('pl-fechas')).forEach(add);
-      fechas.sort((a, b) => a.ini.localeCompare(b.ini));
-      return { tit: g('pl-tit'), sub: g('pl-sub'), ini, fin, fechas, pub: g('pl-pub'), niv: g('pl-niv'), desc: g('pl-desc') };
+      return {
+        tit: g('pl-tit'), sub: g('pl-sub'), niv: g('pl-niv'), desc: g('pl-desc'), hi: g('pl-hi') || null, hf: g('pl-hf') || null,
+        fechas: mvParseFechas(g('pl-fechas')),
+        pubs: [...(r.querySelector('.pl-pub') ? r.querySelector('.pl-pub').selectedOptions : [])].map(o => o.value)
+      };
     });
   }
-  window._mvFechasExtra = [];
+  function mvConfig() {
+    const facModo = (document.querySelector('input[name="mv_facmodo"]:checked') || {}).value || 'ninguna';
+    const facSel = [...document.querySelectorAll('input[name="mv_facsel"]:checked')].map(c => c.value);
+    return { facModo, facSel, split: !!($('#mv_split_pub') || {}).checked };
+  }
   function mvActualizarPreview() {
-    const modo = (document.querySelector('input[name="mv_modo"]:checked') || {}).value || 'pub';
-    const pubs = [...document.querySelectorAll('input[name="mv_pub"]:checked')].map(c => c.value);
-    const nFacSel = document.querySelectorAll('input[name="mv_facsel"]:checked').length;
-    const plsP = typeof mvLeerPlantillas === 'function' ? mvLeerPlantillas() : [];
-    const nPl = plsP.length, nFechasPl = plsP.reduce((t, p) => t + p.fechas.length, 0);
-    document.querySelectorAll('#mv_plant .mv-pl').forEach((r, i) => { const c = r.querySelector('.pl-fcount'); if (c) c.textContent = (plsP[i] ? plsP[i].fechas.length : 0) + ' fecha(s) en total'; });
-    const nFec = 1 + (window._mvFechasExtra || []).length;
-    let total = 1;
-    if (modo === 'pub') total = Math.max(1, pubs.length);
-    else if (modo === 'fechas') total = nFec;
-    else if (modo === 'fac') total = nFechasPl * nFacSel;
-    else total = Math.max(1, pubs.length) * nFec;
-    const el = document.getElementById('mv_preview');
-    if (el) el.innerHTML = `Se generarán aproximadamente <b style="color:var(--petroleo);font-size:1.1rem;">${total}</b> evento(s)` +
-      (modo === 'ambos' ? ` (${Math.max(1, pubs.length)} públicos × ${nFec} fechas)` : '') +
-      (modo === 'fac' ? ` (${nFechasPl} fecha(s) en ${nPl} plantilla(s) × ${nFacSel} facultad(es))` : '') + '.';
-    const cnt = document.getElementById('mv_count');
-    if (cnt) cnt.textContent = pubs.length + ' seleccionados';
-    const fc = document.getElementById('mv_fcount');
-    if (fc) fc.textContent = nFacSel + ' facultad(es) marcada(s)';
-    const boxP = document.getElementById('mv_box_pub');
-    const boxF = document.getElementById('mv_box_fechas');
-    const boxL = document.getElementById('mv_box_fac');
-    if (boxP) boxP.style.opacity = (modo === 'fechas' || modo === 'fac') ? '0.4' : '1';
-    if (boxF) boxF.style.opacity = (modo === 'pub' || modo === 'fac') ? '0.4' : '1';
-    if (boxL) boxL.style.opacity = modo === 'fac' ? '1' : '0.4';
+    const el = document.getElementById('mv_preview'); if (!el) return;
+    const pls = mvLeerPlantillas(), cfg = mvConfig();
+    const nFac = cfg.facModo === 'copias' ? Math.max(cfg.facSel.length, 0) : 1;
+    let total = 0;
+    document.querySelectorAll('#mv_plant .mv-pl').forEach((r, i) => {
+      const pl = pls[i], c = r.querySelector('.pl-fcount'); if (c) c.textContent = `· ${pl.fechas.length} fecha(s)`;
+      total += pl.fechas.length * (cfg.split ? Math.max(pl.pubs.length, 1) : 1) * nFac;
+    });
+    el.innerHTML = `Se generarán <b style="color:var(--petroleo);font-size:1.1rem;">${total}</b> evento(s)` + (cfg.facModo === 'copias' ? ` (× ${nFac} facultad(es))` : '') + '.';
+    const fc = document.getElementById('mv_fcount'); if (fc) fc.textContent = cfg.facSel.length + ' facultad(es) marcada(s)';
+    const fb = document.getElementById('mv_facbox'); if (fb) fb.style.opacity = cfg.facModo === 'ninguna' ? '0.4' : '1';
+    const sp = document.getElementById('mv_fac_sufijo'); if (sp) sp.disabled = cfg.facModo !== 'copias';
   }
-  function mvPintarFechas() {
-    const box = document.getElementById('mv_fechas_lista');
-    if (!box) return;
-    box.innerHTML = (window._mvFechasExtra || []).map((f, i) =>
-      `<span class="mv-fecha-chip">${esc(f.ini)}${f.fin && f.fin !== f.ini ? ' → ' + esc(f.fin) : ''} <button type="button" data-a="mvDelFecha" data-i="${i}">×</button></span>`
-    ).join('');
+  document.addEventListener('input', ev => { if (ev.target && ev.target.closest && ev.target.closest('#mv_root')) mvActualizarPreview(); });
+  document.addEventListener('change', ev => {
+    const t = ev.target; if (!t || !t.closest || !t.closest('#mv_root')) return;
+    if (t.classList.contains('pl-addf') && t.value) {
+      const ta = t.closest('.mv-pl').querySelector('.pl-fechas');
+      ta.value = (ta.value.trim() ? ta.value.trim() + '\n' : '') + t.value; t.value = '';
+    }
+    if (t.id === 'mv_lug') { const w = $('#mv_lugesp_wrap'); if (w) w.hidden = !['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(t.value); }
     mvActualizarPreview();
-  }
+  });
 
   async function crearEventosMasivos() {
     if (!puede('crear')) return sinPermiso();
-    const modo = (document.querySelector('input[name="mv_modo"]:checked') || {}).value || 'pub';
-    let tit = ($('#mv_tit') || {}).value?.trim();
-    const iniBase = ($('#mv_ini') || {}).value;
-    const combos = [];
-    if (modo === 'fac') {
-      const pls = mvLeerPlantillas();
-      const facIds = [...document.querySelectorAll('input[name="mv_facsel"]:checked')].map(c => c.value);
-      if (!facIds.length) return toast('Marca al menos una facultad', true);
-      if (pls.some(pl => !pl.tit || !pl.fechas.length)) return toast('Cada plantilla necesita título y al menos una fecha', true);
-      if (pls.some(pl => pl.fin && pl.ini && pl.fin < pl.ini)) return toast('Una plantilla tiene la fecha fin antes del inicio', true);
-      const conSuf = ($('#mv_fac_sufijo') || {}).checked, omitir = ($('#mv_fac_skip') || {}).checked;
-      let omitidos = 0;
-      for (const pl of pls) for (const fec of pl.fechas) for (const fid of facIds) {
-        const f = D.facultades.find(x => String(x.id) === String(fid)); if (!f) continue;
-        const titulo = conSuf ? `${pl.tit} - ${f.nombre}` : pl.tit;
-        if (omitir && D.eventos.some(x => norm(x.titulo) === norm(titulo) && x.inicio === fec.ini && (x.facultad || []).map(String).includes(String(fid)))) { omitidos++; continue; }
-        combos.push({ pub: pl.pub || null, ini: fec.ini, fin: fec.fin, tituloFinal: titulo, descFinal: pl.desc ? (conSuf ? `${pl.desc} - ${f.nombre}` : pl.desc) : null, subFinal: pl.sub || null, nivFinal: pl.niv || null, facId: fid });
-      }
-      window._mvOmitidos = omitidos;
-      tit = pls.map(pl => pl.tit).join(' / ');
-      if (!combos.length) return toast(omitidos ? `Todos los eventos (${omitidos}) ya existen; no se creó nada` : 'No hay combinaciones para crear', !omitidos);
-    } else {
-      if (!tit || !iniBase) return toast('Título y fecha base son obligatorios', true);
-      let pubs = [...document.querySelectorAll('input[name="mv_pub"]:checked')].map(c => c.value);
-      if (!pubs.length) pubs = [null];
-      const fechas = [{ ini: iniBase, fin: ($('#mv_fin') || {}).value || iniBase }];
-      if (modo !== 'pub') fechas.push(...(window._mvFechasExtra || []));
-      const pubList = modo === 'fechas' ? (pubs[0] === null ? [null] : pubs) : pubs;
-      const fecList = modo === 'pub' ? [fechas[0]] : fechas;
-      for (const pub of pubList) for (const fec of fecList) combos.push({ pub, ...fec });
-    }
-    if (!combos.length) return toast('No hay combinaciones para crear', true);
-    if (!confirm(`Se crearán ${combos.length} evento(s)${modo === 'fac' ? '' : ` con el título base «${tit}»`}${modo === 'fac' && window._mvOmitidos ? ` (se omiten ${window._mvOmitidos} ya existentes)` : ''}. ¿Continuar?`)) return;
+    const pls = mvLeerPlantillas(), cfg = mvConfig();
+    if (pls.some(pl => !pl.tit)) return toast('Cada evento necesita un título', true);
+    if (pls.some(pl => !pl.fechas.length)) return toast('Cada evento necesita al menos una fecha válida', true);
+    if (cfg.facModo !== 'ninguna' && !cfg.facSel.length) return toast('Marca al menos una facultad (o elige «Institucional»)', true);
+    const conSufFac = ($('#mv_fac_sufijo') || {}).checked, omitir = ($('#mv_skip') || {}).checked;
 
-    const cat = ($('#mv_cat') || {}).value;
-    const sub = ($('#mv_sub') || {}).value?.trim() || null;
+    const combos = []; let omitidos = 0;
+    for (const pl of pls) for (const fec of pl.fechas) {
+      const pubList = cfg.split && pl.pubs.length ? pl.pubs.map(p => [p]) : [pl.pubs];
+      const facList = cfg.facModo === 'copias' ? cfg.facSel : [null];
+      for (const pubs of pubList) for (const fid of facList) {
+        const f = fid ? D.facultades.find(x => String(x.id) === String(fid)) : null;
+        let titulo = pl.tit, desc = pl.desc;
+        if (cfg.split && pubs.length === 1) titulo += ' · ' + pubs[0];
+        if (f && conSufFac) { titulo += ' - ' + f.nombre; if (desc) desc += ' - ' + f.nombre; }
+        const facs = cfg.facModo === 'copias' ? (fid ? [fid] : []) : (cfg.facModo === 'junto' ? cfg.facSel : []);
+        if (omitir && D.eventos.some(x => norm(x.titulo) === norm(titulo) && x.inicio === fec.ini && (!fid || (x.facultad || []).map(String).includes(String(fid))) && (!pubs.length || pubs.every(p => (x.publico || []).includes(p))))) { omitidos++; continue; }
+        combos.push({ titulo, desc, sub: pl.sub, niv: pl.niv, hi: pl.hi, hf: pl.hf, pubs, facs, ini: fec.ini, fin: fec.fin });
+      }
+    }
+    if (!combos.length) return toast(omitidos ? `Los ${omitidos} eventos ya existen; no se creó nada` : 'No hay nada para crear', !omitidos);
+    if (!confirm(`Se crearán ${combos.length} evento(s)${omitidos ? ` (se omiten ${omitidos} ya existentes)` : ''}. ¿Continuar?`)) return;
+
+    const cat = ($('#mv_cat') || {}).value, perManual = ($('#mv_per') || {}).value;
     const org = ($('#mv_org') || {}).value?.trim() || null;
-    const hi = ($('#mv_hi') || {}).value || null;
-    const hf = ($('#mv_hf') || {}).value || null;
-    const lug = ($('#mv_lug') || {}).value?.trim() || '';
+    const lug = ($('#mv_lug') || {}).value || '';
+    const lugEsp = ['Sede Chía', 'Otro', 'Sistema Académico en Línea (SALA)', 'SAUCE'].includes(lug) ? (($('#mv_lugesp') || {}).value?.trim() || '') : '';
     const piso = ($('#mv_piso') || {}).value?.trim() || '';
     const enl = normalizarEnlace(($('#mv_enl') || {}).value || '');
+    if (($('#mv_enl') || {}).value?.trim() && !enl) return toast('El enlace no es válido. Ej: https://meet.google.com/abc-defg-hij', true);
     const est = ($('#mv_est') || {}).value || 'publicado';
-    const suf = ($('#mv_sufijo') || {}).checked;
-    const facs = [...($('#mv_fac')?.selectedOptions || [])].map(o => o.value);
     const areas = [...($('#mv_area')?.selectedOptions || [])].map(o => o.value);
-    const perManual = ($('#mv_per') || {}).value;
-    const desc = ($('#mv_desc') || {}).value?.trim() || '';
 
-    // Asegurar que existan los semestres (periodos) que usarán los eventos: la BD los exige (llave foránea)
+    // Asegurar que existan los semestres (periodos): la BD los exige (llave foránea)
     {
       const necesarios = new Set();
       for (const c of combos) {
@@ -4120,30 +4082,26 @@ let dbClient = null;
       }
     }
 
-    let ok = 0, fail = 0, ultimoError = '';
-    let n = 0;
+    let ok = 0, fail = 0, ultimoError = '', n = 0;
     for (const c of combos) {
       if (combos.length > 12 && (++n % 10 === 1)) toast(`⏳ Creando ${n}/${combos.length}…`);
-      const titulo = c.tituloFinal || ((suf && c.pub) ? `${tit} · ${c.pub}` : tit);
-      const id = uid();
       let periodo = perManual, periodo2 = null;
       if (!periodo || periodo === 'auto') {
         const ps = periodosDeRango(c.ini, c.fin || c.ini);
         periodo = ps[0]; if (ps.length > 1) periodo2 = ps[ps.length - 1];
       }
       const payload = {
-        ...marcaPrueba(), id, titulo, descripcion: c.descFinal != null ? c.descFinal : desc,
-        categoria_id: cat, subcategoria: c.subFinal != null ? c.subFinal : sub,
+        ...marcaPrueba(), id: uid(), titulo: c.titulo, descripcion: c.desc || '',
+        categoria_id: cat, subcategoria: c.sub || null,
         periodo_id: periodo, periodo2_id: periodo2,
         fecha_inicio: c.ini, fecha_fin: c.fin || c.ini,
-        hora_inicio: hi, hora_fin: hf,
-        lugar: lug, piso: piso || null, enlace: enl || null,
+        hora_inicio: c.hi, hora_fin: c.hf,
+        lugar: lug, lugar_especifico: lugEsp, piso: piso || null, enlace: enl || null,
         organizador: org, estado: est,
         updated_at: new Date().toISOString()
       };
+      if (c.niv) payload.niveles = [c.niv];
       try {
-        payload.lugar_especifico = '';
-        if (c.nivFinal) payload.niveles = [c.nivFinal];
         let ev = null, errIns = null;
         for (let intento = 0; intento < 8 && !ev; intento++) {
           const r = await dbClient.from('eventos').insert([payload]).select().single();
@@ -4154,17 +4112,15 @@ let dbClient = null;
           delete payload[m[1]];
         }
         if (!ev) { fail++; ultimoError = (errIns && errIns.message) || 'Error desconocido'; console.error(errIns); continue; }
-        const eid = ev.id;
-        const hijos = [];
-        if (c.pub) hijos.push(dbClient.from('evento_publicos').insert([{ evento_id: eid, publico: c.pub }]));
-        const facsEv = c.facId ? [c.facId] : facs;
-        if (facsEv.length) hijos.push(dbClient.from('evento_facultades').insert(facsEv.map(f => ({ evento_id: eid, facultad_id: f }))));
+        const eid = ev.id, hijos = [];
+        if (c.pubs.length) hijos.push(dbClient.from('evento_publicos').insert(c.pubs.map(p => ({ evento_id: eid, publico: p }))));
+        if (c.facs.length) hijos.push(dbClient.from('evento_facultades').insert(c.facs.map(f => ({ evento_id: eid, facultad_id: f }))));
         if (areas.length) hijos.push(dbClient.from('evento_areas').insert(areas.map(a => ({ evento_id: eid, area_id: a }))));
         for (const h of await Promise.all(hijos)) if (h.error) { ultimoError = h.error.message; console.error(h.error); }
         ok++;
-      } catch (e) { fail++; console.error(e); }
+      } catch (e) { fail++; ultimoError = e.message || String(e); console.error(e); }
     }
-    registrarLog('Creó eventos masivos', `${ok}/${combos.length}: ${tit}`);
+    registrarLog('Creó eventos masivos', `${ok}/${combos.length}: ${pls.map(p => p.tit).join(' / ')}`);
     const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos;
     toast(ok ? `✅ ${ok} evento(s) creados` + (fail ? ` · ${fail} fallaron (${esc(ultimoError)})` : '') : 'No se pudo crear ningún evento: ' + esc(ultimoError), !ok || !!fail);
     if (ok) {
@@ -4530,24 +4486,8 @@ let dbClient = null;
     if (a === 'nuevo') return puede('crear') ? modalEvento() : sinPermiso();
     if (a === 'mvCrear') return crearEventosMasivos();
     if (a === 'mvAddPl') { const c = $('#mv_plant'); if (c) c.insertAdjacentHTML('beforeend', mvFilaPl()); return mvActualizarPreview(); }
-    if (a === 'mvDelPl') { const r = ac.closest('.mv-pl'); if (r && document.querySelectorAll('#mv_plant .mv-pl').length > 1) r.remove(); else toast('Debe quedar al menos una plantilla', true); return mvActualizarPreview(); }
+    if (a === 'mvDelPl') { const r = ac.closest('.mv-pl'); if (r && document.querySelectorAll('#mv_plant .mv-pl').length > 1) r.remove(); else toast('Debe quedar al menos un evento', true); return mvActualizarPreview(); }
     if (a === 'mvFacAll' || a === 'mvFacNone') { document.querySelectorAll('input[name="mv_facsel"]').forEach(c => c.checked = a === 'mvFacAll'); return mvActualizarPreview(); }
-    if (a === 'mvSelAll') { document.querySelectorAll('input[name="mv_pub"]').forEach(c => c.checked = true); if (typeof mvActualizarPreview === 'function') mvActualizarPreview(); return; }
-    if (a === 'mvSelNone') { document.querySelectorAll('input[name="mv_pub"]').forEach(c => c.checked = false); if (typeof mvActualizarPreview === 'function') mvActualizarPreview(); return; }
-    if (a === 'mvAddFecha') {
-      const ini = ($('#mv_fecha_add') || {}).value; if (!ini) return toast('Elige una fecha', true);
-      const fin = ($('#mv_fecha_add_fin') || {}).value || ini;
-      window._mvFechasExtra = window._mvFechasExtra || [];
-      window._mvFechasExtra.push({ ini, fin });
-      if ($('#mv_fecha_add')) $('#mv_fecha_add').value = '';
-      if ($('#mv_fecha_add_fin')) $('#mv_fecha_add_fin').value = '';
-      mvPintarFechas(); return;
-    }
-    if (a === 'mvDelFecha') {
-      const i = +ac.dataset.i;
-      window._mvFechasExtra.splice(i, 1);
-      mvPintarFechas(); return;
-    }
     if (a === 'editar') return puede('editar') ? modalEvento(i) : sinPermiso();
     if (a === 'dup') { if (!puede('crear')) return sinPermiso(); const o = D.eventos.find(x => x.id === i); if (!o) return; if (!puedeEnEvento(o)) return sinArea(); DUP = { ...o, id: '', titulo: o.titulo + ' (copia)', estado: 'borrador' }; return modalEvento(); }
     if (a === 'cerrar') return cerrarModal();
