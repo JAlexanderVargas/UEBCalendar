@@ -2261,7 +2261,7 @@ let dbClient = null;
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
   };
   document.addEventListener('change', async ev => {
-    if (ev.target && (ev.target.name === 'mv_modo' || ev.target.name === 'mv_pub')) { if (typeof mvActualizarPreview === 'function') mvActualizarPreview(); }
+    if (ev.target && (ev.target.name === 'mv_modo' || ev.target.name === 'mv_pub' || ev.target.name === 'mv_facsel')) { if (typeof mvActualizarPreview === 'function') mvActualizarPreview(); }
  const t = ev.target; if (!t.dataset || !t.dataset.emoT) return; const v = t.value.trim(); const r = await dbClient.from(t.dataset.emoT).update({ emoji: v || null }).eq('id', t.dataset.emoI); if (r.error) return toast('Falta la columna "emoji". Ejecuta el SQL actualizado.', true); const nd = await leerNube(); if (nd) D = nd; toast('Emoji actualizado ' + v); });
   document.addEventListener('click', ev => { const t = ev.target.closest('[data-nov]'); if (t && !ev.target.closest('a')) abrirNovedad(t.dataset.nov); });
 
@@ -3870,6 +3870,7 @@ let dbClient = null;
         <label><input type="radio" name="mv_modo" value="pub" checked> 👥 Mismo evento · varios «Dirigido a»</label>
         <label><input type="radio" name="mv_modo" value="fechas"> 📅 Mismo evento · muchas fechas</label>
         <label><input type="radio" name="mv_modo" value="ambos"> 🔁 Combinado (públicos × fechas)</label>
+        <label><input type="radio" name="mv_modo" value="fac"> 🏛️ Plantillas × facultades (un evento por facultad)</label>
       </div>
       <p style="font-size:.86rem;color:var(--suave);">Elige cómo se multiplica el evento. En <b>combinado</b> se crea un registro por cada público y cada fecha.</p>
     </div>
@@ -3938,6 +3939,24 @@ let dbClient = null;
       <p style="font-size:.8rem;color:var(--suave);margin-top:.5rem;">La fecha base del bloque 1 siempre se incluye. Aquí solo sumas las demás.</p>
     </div>
 
+    <div class="caja" id="mv_box_fac">
+      <h2>3b · Plantillas × facultades</h2>
+      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Solo para el modo <b>Plantillas × facultades</b>: cada plantilla se crea <b>una vez por cada facultad marcada</b>, con esa facultad asignada (como la inducción por facultad). En este modo se usan estas plantillas en lugar del título, fechas y «Dirigido a» de los bloques 1 a 3; el resto de datos del bloque 1 (categoría, semestre, hora, lugar, enlace, estado, organizador) se aplican a todas.</p>
+      <div id="mv_plant">${mvFilaPl()}</div>
+      <button class="btn sm pri" type="button" data-a="mvAddPl">➕ Agregar otra plantilla</button>
+      <h3 style="font-size:1rem;margin:1rem 0 .4rem;">Facultades</h3>
+      <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;">
+        <button class="btn sm" type="button" data-a="mvFacAll">Todas</button>
+        <button class="btn sm" type="button" data-a="mvFacNone">Ninguna</button>
+        <span id="mv_fcount" style="font-size:.88rem;color:var(--suave);"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.2rem;max-height:260px;overflow:auto;border:1px solid var(--linea);border-radius:12px;padding:.55rem;">
+        ${D.facultades.filter(esAct).map(f => `<label class="mv-chk"><input type="checkbox" name="mv_facsel" value="${esc(f.id)}" checked> ${esc(f.nombre)}</label>`).join('')}
+      </div>
+      <label style="display:flex;align-items:center;gap:.5rem;font-weight:600;margin-top:.8rem;"><input type="checkbox" id="mv_fac_sufijo" checked> Añadir el nombre de la facultad al título («… - Facultad de X»)</label>
+      <label style="display:flex;align-items:center;gap:.5rem;font-weight:600;margin-top:.4rem;"><input type="checkbox" id="mv_fac_skip" checked> Omitir los que ya existen (mismo título, fecha y facultad)</label>
+    </div>
+
     <div class="caja">
       <h2>4 · Crear</h2>
       <p id="mv_preview" style="font-size:.9rem;color:var(--suave);margin-bottom:.8rem;">Selecciona opciones para ver cuántos eventos se generarán.</p>
@@ -3945,25 +3964,79 @@ let dbClient = null;
     </div>`;
   }
 
+  document.addEventListener('input', ev => { const c = ev.target && ev.target.classList; if (c && (c.contains('pl-fechas') || c.contains('pl-ini') || c.contains('pl-fin')) && typeof mvActualizarPreview === 'function') mvActualizarPreview(); });
+  function mvFilaPl(v) {
+    v = v || {};
+    const pubs = '<option value="">— Sin público específico —</option>' + PUBLICOS_ROLES.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    return `<div class="mv-pl" style="border:1px solid var(--linea);border-radius:12px;padding:.7rem .8rem;margin-bottom:.6rem;background:var(--fondo);">
+      <div class="fr2">
+        <div class="fr"><label>Título de la plantilla *</label><input class="pl-tit" placeholder="Ej: Inducción estudiantes primer semestre"></div>
+        <div class="fr"><label>Subcategoría</label><input class="pl-sub" placeholder="Ej: Estudiantes"></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Fecha inicio *</label><input type="date" class="pl-ini"></div>
+        <div class="fr"><label>Fecha fin (opcional)</label><input type="date" class="pl-fin"></div>
+      </div>
+      <div class="fr2">
+        <div class="fr"><label>Dirigido a</label><select class="pl-pub">${pubs}</select></div>
+        <div class="fr"><label>Nivel (opcional)</label><select class="pl-niv"><option value="">—</option><option value="Pregrado">Pregrado</option><option value="Posgrado">Posgrado</option></select></div>
+      </div>
+      <div class="fr"><label>Más fechas (opcional) · una por línea o separadas por coma</label><textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-15&#10;(también vale 10/05/2027)"></textarea><small class="pl-fcount" style="color:var(--suave);"></small></div>
+      <div class="fr"><label>Descripción (se añade « - Facultad» si lo marcas abajo)</label><input class="pl-desc" placeholder="Jornada de inducción…"></div>
+      <button class="btn sm peligro" type="button" data-a="mvDelPl">🗑 Quitar plantilla</button>
+    </div>`;
+  }
+  function mvParseFechas(txt) {
+    const iso = d => { const m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/.exec(d); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : d; };
+    const out = [];
+    String(txt || '').split(/[\n;,]+/).forEach(l => {
+      const t = (l.match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.]\d{1,2}[\/.]\d{4}/g) || []).map(iso);
+      if (!t.length) return;
+      const ini = t[0], fin = t[1] && t[1] >= t[0] ? t[1] : t[0];
+      out.push({ ini, fin });
+    });
+    return out;
+  }
+  function mvLeerPlantillas() {
+    return [...document.querySelectorAll('#mv_plant .mv-pl')].map(r => {
+      const g = c => (r.querySelector('.' + c) || {}).value?.trim() || '';
+      const ini = g('pl-ini'), fin = g('pl-fin');
+      const fechas = [];
+      const add = f => { if (!fechas.some(x => x.ini === f.ini && x.fin === f.fin)) fechas.push(f); };
+      if (ini) add({ ini, fin: fin && fin >= ini ? fin : ini });
+      mvParseFechas(g('pl-fechas')).forEach(add);
+      fechas.sort((a, b) => a.ini.localeCompare(b.ini));
+      return { tit: g('pl-tit'), sub: g('pl-sub'), ini, fin, fechas, pub: g('pl-pub'), niv: g('pl-niv'), desc: g('pl-desc') };
+    });
+  }
   window._mvFechasExtra = [];
   function mvActualizarPreview() {
     const modo = (document.querySelector('input[name="mv_modo"]:checked') || {}).value || 'pub';
     const pubs = [...document.querySelectorAll('input[name="mv_pub"]:checked')].map(c => c.value);
-    const nPub = pubs.length || 1;
+    const nFacSel = document.querySelectorAll('input[name="mv_facsel"]:checked').length;
+    const plsP = typeof mvLeerPlantillas === 'function' ? mvLeerPlantillas() : [];
+    const nPl = plsP.length, nFechasPl = plsP.reduce((t, p) => t + p.fechas.length, 0);
+    document.querySelectorAll('#mv_plant .mv-pl').forEach((r, i) => { const c = r.querySelector('.pl-fcount'); if (c) c.textContent = (plsP[i] ? plsP[i].fechas.length : 0) + ' fecha(s) en total'; });
     const nFec = 1 + (window._mvFechasExtra || []).length;
     let total = 1;
     if (modo === 'pub') total = Math.max(1, pubs.length);
     else if (modo === 'fechas') total = nFec;
+    else if (modo === 'fac') total = nFechasPl * nFacSel;
     else total = Math.max(1, pubs.length) * nFec;
     const el = document.getElementById('mv_preview');
     if (el) el.innerHTML = `Se generarán aproximadamente <b style="color:var(--petroleo);font-size:1.1rem;">${total}</b> evento(s)` +
-      (modo === 'ambos' ? ` (${Math.max(1, pubs.length)} públicos × ${nFec} fechas)` : '') + '.';
+      (modo === 'ambos' ? ` (${Math.max(1, pubs.length)} públicos × ${nFec} fechas)` : '') +
+      (modo === 'fac' ? ` (${nFechasPl} fecha(s) en ${nPl} plantilla(s) × ${nFacSel} facultad(es))` : '') + '.';
     const cnt = document.getElementById('mv_count');
     if (cnt) cnt.textContent = pubs.length + ' seleccionados';
+    const fc = document.getElementById('mv_fcount');
+    if (fc) fc.textContent = nFacSel + ' facultad(es) marcada(s)';
     const boxP = document.getElementById('mv_box_pub');
     const boxF = document.getElementById('mv_box_fechas');
-    if (boxP) boxP.style.opacity = modo === 'fechas' ? '0.55' : '1';
-    if (boxF) boxF.style.opacity = modo === 'pub' ? '0.55' : '1';
+    const boxL = document.getElementById('mv_box_fac');
+    if (boxP) boxP.style.opacity = (modo === 'fechas' || modo === 'fac') ? '0.4' : '1';
+    if (boxF) boxF.style.opacity = (modo === 'pub' || modo === 'fac') ? '0.4' : '1';
+    if (boxL) boxL.style.opacity = modo === 'fac' ? '1' : '0.4';
   }
   function mvPintarFechas() {
     const box = document.getElementById('mv_fechas_lista');
@@ -3976,27 +4049,39 @@ let dbClient = null;
 
   async function crearEventosMasivos() {
     if (!puede('crear')) return sinPermiso();
-    const tit = ($('#mv_tit') || {}).value?.trim();
-    const iniBase = ($('#mv_ini') || {}).value;
-    if (!tit || !iniBase) return toast('Título y fecha base son obligatorios', true);
     const modo = (document.querySelector('input[name="mv_modo"]:checked') || {}).value || 'pub';
-    let pubs = [...document.querySelectorAll('input[name="mv_pub"]:checked')].map(c => c.value);
-    if (modo === 'fechas') pubs = pubs.length ? pubs : [null];
-    else if (!pubs.length) pubs = [null];
-    const fechas = [{ ini: iniBase, fin: ($('#mv_fin') || {}).value || iniBase }];
-    if (modo !== 'pub') fechas.push(...(window._mvFechasExtra || []));
-    if (modo === 'pub') { /* solo fecha base */ while (fechas.length > 1) fechas.pop(); }
-
-    const total = (modo === 'fechas' ? 1 : pubs.length) * (modo === 'pub' ? 1 : fechas.length);
-    // recalculate properly
+    let tit = ($('#mv_tit') || {}).value?.trim();
+    const iniBase = ($('#mv_ini') || {}).value;
     const combos = [];
-    const pubList = (modo === 'fechas' && !document.querySelectorAll('input[name="mv_pub"]:checked').length) ? [null] : pubs;
-    const fecList = modo === 'pub' ? [{ ini: iniBase, fin: ($('#mv_fin') || {}).value || iniBase }] : fechas;
-    for (const pub of pubList) {
-      for (const fec of fecList) combos.push({ pub, ...fec });
+    if (modo === 'fac') {
+      const pls = mvLeerPlantillas();
+      const facIds = [...document.querySelectorAll('input[name="mv_facsel"]:checked')].map(c => c.value);
+      if (!facIds.length) return toast('Marca al menos una facultad', true);
+      if (pls.some(pl => !pl.tit || !pl.fechas.length)) return toast('Cada plantilla necesita título y al menos una fecha', true);
+      if (pls.some(pl => pl.fin && pl.ini && pl.fin < pl.ini)) return toast('Una plantilla tiene la fecha fin antes del inicio', true);
+      const conSuf = ($('#mv_fac_sufijo') || {}).checked, omitir = ($('#mv_fac_skip') || {}).checked;
+      let omitidos = 0;
+      for (const pl of pls) for (const fec of pl.fechas) for (const fid of facIds) {
+        const f = D.facultades.find(x => String(x.id) === String(fid)); if (!f) continue;
+        const titulo = conSuf ? `${pl.tit} - ${f.nombre}` : pl.tit;
+        if (omitir && D.eventos.some(x => norm(x.titulo) === norm(titulo) && x.inicio === fec.ini && (x.facultad || []).map(String).includes(String(fid)))) { omitidos++; continue; }
+        combos.push({ pub: pl.pub || null, ini: fec.ini, fin: fec.fin, tituloFinal: titulo, descFinal: pl.desc ? (conSuf ? `${pl.desc} - ${f.nombre}` : pl.desc) : null, subFinal: pl.sub || null, nivFinal: pl.niv || null, facId: fid });
+      }
+      window._mvOmitidos = omitidos;
+      tit = pls.map(pl => pl.tit).join(' / ');
+      if (!combos.length) return toast(omitidos ? `Todos los eventos (${omitidos}) ya existen; no se creó nada` : 'No hay combinaciones para crear', !omitidos);
+    } else {
+      if (!tit || !iniBase) return toast('Título y fecha base son obligatorios', true);
+      let pubs = [...document.querySelectorAll('input[name="mv_pub"]:checked')].map(c => c.value);
+      if (!pubs.length) pubs = [null];
+      const fechas = [{ ini: iniBase, fin: ($('#mv_fin') || {}).value || iniBase }];
+      if (modo !== 'pub') fechas.push(...(window._mvFechasExtra || []));
+      const pubList = modo === 'fechas' ? (pubs[0] === null ? [null] : pubs) : pubs;
+      const fecList = modo === 'pub' ? [fechas[0]] : fechas;
+      for (const pub of pubList) for (const fec of fecList) combos.push({ pub, ...fec });
     }
     if (!combos.length) return toast('No hay combinaciones para crear', true);
-    if (!confirm(`Se crearán ${combos.length} evento(s) con el título base «${tit}». ¿Continuar?`)) return;
+    if (!confirm(`Se crearán ${combos.length} evento(s)${modo === 'fac' ? '' : ` con el título base «${tit}»`}${modo === 'fac' && window._mvOmitidos ? ` (se omiten ${window._mvOmitidos} ya existentes)` : ''}. ¿Continuar?`)) return;
 
     const cat = ($('#mv_cat') || {}).value;
     const sub = ($('#mv_sub') || {}).value?.trim() || null;
@@ -4014,8 +4099,10 @@ let dbClient = null;
     const desc = ($('#mv_desc') || {}).value?.trim() || '';
 
     let ok = 0, fail = 0, ultimoError = '';
+    let n = 0;
     for (const c of combos) {
-      const titulo = (suf && c.pub) ? `${tit} · ${c.pub}` : tit;
+      if (combos.length > 12 && (++n % 10 === 1)) toast(`⏳ Creando ${n}/${combos.length}…`);
+      const titulo = c.tituloFinal || ((suf && c.pub) ? `${tit} · ${c.pub}` : tit);
       const id = uid();
       let periodo = perManual, periodo2 = null;
       if (!periodo || periodo === 'auto') {
@@ -4023,8 +4110,8 @@ let dbClient = null;
         periodo = ps[0]; if (ps.length > 1) periodo2 = ps[ps.length - 1];
       }
       const payload = {
-        ...marcaPrueba(), id, titulo, descripcion: desc,
-        categoria_id: cat, subcategoria: sub,
+        ...marcaPrueba(), id, titulo, descripcion: c.descFinal != null ? c.descFinal : desc,
+        categoria_id: cat, subcategoria: c.subFinal != null ? c.subFinal : sub,
         periodo_id: periodo, periodo2_id: periodo2,
         fecha_inicio: c.ini, fecha_fin: c.fin || c.ini,
         hora_inicio: hi, hora_fin: hf,
@@ -4034,6 +4121,7 @@ let dbClient = null;
       };
       try {
         payload.lugar_especifico = '';
+        if (c.nivFinal) payload.niveles = [c.nivFinal];
         let ev = null, errIns = null;
         for (let intento = 0; intento < 8 && !ev; intento++) {
           const r = await dbClient.from('eventos').insert([payload]).select().single();
@@ -4047,7 +4135,8 @@ let dbClient = null;
         const eid = ev.id;
         const hijos = [];
         if (c.pub) hijos.push(dbClient.from('evento_publicos').insert([{ evento_id: eid, publico: c.pub }]));
-        if (facs.length) hijos.push(dbClient.from('evento_facultades').insert(facs.map(f => ({ evento_id: eid, facultad_id: f }))));
+        const facsEv = c.facId ? [c.facId] : facs;
+        if (facsEv.length) hijos.push(dbClient.from('evento_facultades').insert(facsEv.map(f => ({ evento_id: eid, facultad_id: f }))));
         if (areas.length) hijos.push(dbClient.from('evento_areas').insert(areas.map(a => ({ evento_id: eid, area_id: a }))));
         for (const h of await Promise.all(hijos)) if (h.error) { ultimoError = h.error.message; console.error(h.error); }
         ok++;
@@ -4418,6 +4507,9 @@ let dbClient = null;
     
     if (a === 'nuevo') return puede('crear') ? modalEvento() : sinPermiso();
     if (a === 'mvCrear') return crearEventosMasivos();
+    if (a === 'mvAddPl') { const c = $('#mv_plant'); if (c) c.insertAdjacentHTML('beforeend', mvFilaPl()); return mvActualizarPreview(); }
+    if (a === 'mvDelPl') { const r = ac.closest('.mv-pl'); if (r && document.querySelectorAll('#mv_plant .mv-pl').length > 1) r.remove(); else toast('Debe quedar al menos una plantilla', true); return mvActualizarPreview(); }
+    if (a === 'mvFacAll' || a === 'mvFacNone') { document.querySelectorAll('input[name="mv_facsel"]').forEach(c => c.checked = a === 'mvFacAll'); return mvActualizarPreview(); }
     if (a === 'mvSelAll') { document.querySelectorAll('input[name="mv_pub"]').forEach(c => c.checked = true); if (typeof mvActualizarPreview === 'function') mvActualizarPreview(); return; }
     if (a === 'mvSelNone') { document.querySelectorAll('input[name="mv_pub"]').forEach(c => c.checked = false); if (typeof mvActualizarPreview === 'function') mvActualizarPreview(); return; }
     if (a === 'mvAddFecha') {
