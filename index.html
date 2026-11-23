@@ -3268,8 +3268,8 @@ let dbClient = null;
       </div>
       
       <div class="fr2">
-        <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"></div>
-        <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"></div>
+        <div class="fr"><label>Desde *</label><input type="date" id="f_ini" value="${e.inicio}"><label class="chk-fecha" style="display:flex;align-items:center;gap:.4rem;font-weight:600;font-size:.8rem;margin:.45rem 0 0;cursor:pointer;"><input type="checkbox" id="f_use_ini" style="width:auto;margin:0;"> Usar fecha «Desde»</label></div>
+        <div class="fr"><label>Hasta</label><input type="date" id="f_fin" value="${e.fin && e.fin !== e.inicio ? e.fin : ''}"><label class="chk-fecha" style="display:flex;align-items:center;gap:.4rem;font-weight:600;font-size:.8rem;margin:.45rem 0 0;cursor:pointer;"><input type="checkbox" id="f_use_fin" style="width:auto;margin:0;"> Usar fecha «Hasta»</label></div>
       </div>
       <div id="f_fechas_hint" style="font-size:.8rem;color:var(--suave);margin:-.4rem 0 .6rem;"></div>
       
@@ -3370,6 +3370,7 @@ let dbClient = null;
         }
       });
     }
+    iniciarCasillasFechas(e);
     aplicarModoFechas();
     setTimeout(() => $('#f_titulo').focus(), 50);
   }
@@ -3456,25 +3457,47 @@ let dbClient = null;
   }
   function aplicarModoFechas() {
     const m = modoFechas(($('#f_titulo').value || '') + ' ' + ($('#f_desc').value || ''));
-    const cfg = {
-      libre:  { ini: [true, true],  fin: [true, false] },
-      inicio: { ini: [true, true],  fin: [false, false] },
-      fin:    { ini: [false, false], fin: [true, true] },
-      ambos:  { ini: [true, true],  fin: [true, true] }
+    const auto = {
+      libre:  { ini: true,  fin: true  },
+      inicio: { ini: true,  fin: false },
+      fin:    { ini: false, fin: true  },
+      ambos:  { ini: true,  fin: true  }
     }[m];
-    [['f_ini', 'Desde', cfg.ini], ['f_fin', 'Hasta', cfg.fin]].forEach(([id, nombre, [on, req]]) => {
+    const cIni = $('#f_use_ini'), cFin = $('#f_use_fin');
+    // Si la persona marcó o desmarcó la casilla a mano, se respeta; si no, la define el texto (inicio / fin y sinónimos)
+    if (!cIni.dataset.manual) cIni.checked = auto.ini;
+    if (!cFin.dataset.manual) cFin.checked = auto.fin;
+    // Desde es obligatorio si está activo; Hasta lo es si es la única fecha o si el texto dice inicio y fin
+    const reqFin = cFin.checked && (!cIni.checked || m === 'ambos');
+    [['f_ini', 'Desde', cIni.checked, cIni.checked], ['f_fin', 'Hasta', cFin.checked, reqFin]].forEach(([id, nombre, on, req]) => {
       const inp = $('#' + id), lab = inp.closest('.fr').querySelector('label');
       if (!on && inp.value) { inp.dataset.prev = inp.value; inp.value = ''; }
       if (on && !inp.value && inp.dataset.prev) { inp.value = inp.dataset.prev; delete inp.dataset.prev; }
       inp.disabled = !on; inp.style.opacity = on ? '' : '.45';
       lab.textContent = nombre + (req ? ' *' : '');
     });
-    $('#f_fechas_hint').textContent = {
-      libre: '',
-      inicio: 'El texto indica inicio: solo se pide la fecha «Desde».',
-      fin: 'El texto indica finalización: solo se pide la fecha «Hasta».',
-      ambos: 'El texto indica inicio y fin: se piden «Desde» y «Hasta».'
-    }[m];
+    const manual = cIni.dataset.manual || cFin.dataset.manual;
+    $('#f_fechas_hint').textContent = manual
+      ? 'Fechas activadas manualmente. Para volver a la detección automática por el texto, pulsa «Automático».'
+      : ({
+        libre: '',
+        inicio: 'El texto indica inicio: solo se pide «Desde». Marca «Usar fecha Hasta» si también la necesitas.',
+        fin: 'El texto indica finalización: solo se pide «Hasta». Marca «Usar fecha Desde» si también la necesitas.',
+        ambos: 'El texto indica inicio y fin: se piden «Desde» y «Hasta».'
+      }[m]);
+    let br = $('#f_fechas_auto');
+    if (manual && !br) {
+      br = document.createElement('button'); br.type = 'button'; br.id = 'f_fechas_auto'; br.className = 'btn sm'; br.textContent = '↺ Automático'; br.style.margin = '0 0 .8rem';
+      br.onclick = () => { delete cIni.dataset.manual; delete cFin.dataset.manual; aplicarModoFechas(); };
+      $('#f_fechas_hint').after(br);
+    } else if (!manual && br) br.remove();
+  }
+  function iniciarCasillasFechas(e) {
+    const cIni = $('#f_use_ini'), cFin = $('#f_use_fin');
+    [cIni, cFin].forEach(c => c.addEventListener('change', () => { c.dataset.manual = '1'; aplicarModoFechas(); }));
+    // Al editar un evento que ya tiene rango completo, se dejan activas las dos fechas
+    const m = modoFechas((e.titulo || '') + ' ' + (e.descripcion || ''));
+    if (e.inicio && e.fin && e.fin !== e.inicio && (m === 'inicio' || m === 'fin')) { cIni.dataset.manual = '1'; cIni.checked = true; cFin.dataset.manual = '1'; cFin.checked = true; }
   }
 
   // ===== Historial de versiones y control de duplicados de eventos =====
@@ -3513,13 +3536,16 @@ let dbClient = null;
     const g = i => $('#' + i).value.trim();
     const tituloRaw = g('f_titulo');
     const modo = modoFechas(tituloRaw + ' ' + g('f_desc'));
-    let inicio = g('f_ini'), fin = g('f_fin') || inicio;
-    if (modo === 'fin') { inicio = fin = g('f_fin'); }
-    else if (modo === 'inicio') { fin = inicio; }
+    const usaIni = $('#f_use_ini').checked, usaFin = $('#f_use_fin').checked;
+    let inicio = usaIni ? g('f_ini') : '', fin = usaFin ? g('f_fin') : '';
     if (!tituloRaw) return toast('Escribe el nombre del evento', true);
-    if (modo === 'fin' && !fin) return toast('Falta la fecha «Hasta» (el evento indica finalización)', true);
-    if (modo === 'ambos' && !g('f_fin')) return toast('Falta la fecha «Hasta» (el evento indica inicio y fin)', true);
-    if (!inicio) return toast('Falta la fecha de inicio', true);
+    if (!usaIni && !usaFin) return toast('Activa al menos una fecha («Desde» o «Hasta»)', true);
+    if (!usaIni) { if (!fin) return toast('Falta la fecha «Hasta»', true); inicio = fin; }
+    else {
+      if (!inicio) return toast('Falta la fecha «Desde»', true);
+      if (usaFin && modo === 'ambos' && !fin) return toast('Falta la fecha «Hasta» (el evento indica inicio y fin)', true);
+      if (!fin) fin = inicio;
+    }
     if (fin < inicio) return toast('La fecha final no puede ser antes', true);
     const publico = [...$('#f_pub').selectedOptions].map(o => o.value);
     const facultad = [...$('#f_fac').selectedOptions].map(o => o.value);
