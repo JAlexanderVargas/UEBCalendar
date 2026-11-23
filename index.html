@@ -3128,7 +3128,7 @@ let dbClient = null;
       ${fila('fec', 'Fechas', `<div style="display:flex;gap:.5rem;"><input type="date" id="me_fi" style="${css}"><input type="date" id="me_ff" style="${css}"></div>`)}
       ${fila('pis', 'Piso / Salón', `<input id="me_pis" style="${css}">`)}
       ${fila('cat', 'Categoría', `<select id="me_cat" style="${css}">${D.categorias.map(c => opt(c.id, c.nombre, false)).join('')}</select>`)}
-      ${fila('sub', 'Subcategoría', `<input id="me_sub" placeholder="Ej: Directivo (vacío = quitar)" style="${css}">`)}
+      ${fila('sub', 'Subcategoría', `<select id="me_sub" style="${css}"><option value="">— Sin subcategoría (vacío = quitar) —</option></select>`)}
       ${fila('est', 'Estado', `<select id="me_est" style="${css}">${opt('publicado', 'Publicado', true)}${opt('borrador', 'Borrador', false)}</select>`)}
       ${fila('fac', 'Facultades', `<select id="me_fac" multiple size="6" style="${css}">${D.facultades.map(f => opt(f.id, f.nombre, false)).join('')}</select>`)}
       ${fila('hor', 'Horario', `<div style="display:flex;gap:.5rem;"><input type="time" id="me_hi" style="${css}"><input type="time" id="me_hf" style="${css}"></div>`)}
@@ -3137,6 +3137,27 @@ let dbClient = null;
       <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;"><button class="btn" id="me_cancel">Cancelar</button><button class="btn pri" id="me_ok">Aplicar a ${ids.length}</button></div></div>`;
     document.body.appendChild(ov);
     $('#me_cancel').onclick = () => ov.remove();
+        const mePintarSub = () => {
+      const catId = ($('#me_cat') || {}).value;
+      const lista = typeof subcatsDe === 'function' ? subcatsDe(catId) : [];
+      const sel = $('#me_sub'); if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">— Sin subcategoría (vacío = quitar) —</option>' +
+        lista.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      if (cur && lista.includes(cur)) sel.value = cur;
+    };
+    const meCat = ov.querySelector('#me_cat');
+    if (meCat) {
+      const cats = [...new Set(ids.map(id => (D.eventos.find(x => x.id === id) || {}).categoria).filter(Boolean))];
+      if (cats.length === 1) meCat.value = cats[0];
+      meCat.addEventListener('change', mePintarSub);
+      mePintarSub();
+      const subs = [...new Set(ids.map(id => (D.eventos.find(x => x.id === id) || {}).subcategoria).filter(Boolean))];
+      if (subs.length === 1 && [...($('#me_sub').options || [])].some(o => o.value === subs[0])) $('#me_sub').value = subs[0];
+    }
+    const shared = (getter) => { const vals = ids.map(id => getter(D.eventos.find(x => x.id === id) || {})); const u = [...new Set(vals.map(v => v == null ? '' : String(v)))]; return u.length === 1 ? u[0] : null; };
+    const st = shared(e => e.estado || 'publicado'); if (st && $('#me_est')) $('#me_est').value = st;
+
     $('#me_ok').onclick = async () => {
       const on = k => $('#me_c_' + k).checked, row = {};
       if (on('cat')) row.categoria_id = $('#me_cat').value;
@@ -4120,26 +4141,23 @@ let dbClient = null;
   function mvPintarSubcats() {
     const catId = ($('#mv_cat') || {}).value;
     const lista = typeof subcatsDe === 'function' ? subcatsDe(catId) : [];
-    const fill = (sel, keepEmptyLabel) => {
-      if (!sel) return;
-      const cur = sel.value;
-      const empty = keepEmptyLabel || '— Sin subcategoría —';
-      sel.innerHTML = `<option value="">${empty}</option>` + lista.map(x => `<option value="${esc(x)}" ${x === cur ? 'selected' : ''}>${esc(x)}</option>`).join('');
-      if (cur && lista.includes(cur)) sel.value = cur;
-    };
-    fill($('#mv_sub'), '— Sin subcategoría —');
-    document.querySelectorAll('#mv_plant .pl-sub').forEach(s => fill(s, '— Usar la de datos comunes —'));
+    const sel = $('#mv_sub'); if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Sin subcategoría —</option>' +
+      lista.map(x => `<option value="${esc(x)}"${x === cur ? ' selected' : ''}>${esc(x)}</option>`).join('');
+    if (cur && lista.includes(cur)) sel.value = cur;
+    if (!lista.length) {
+      const o = document.createElement('option');
+      o.disabled = true;
+      o.textContent = '(Esta categoría no tiene subcategorías definidas)';
+      sel.appendChild(o);
+    }
   }
 
   function mvFilaPl() {
     const pubs = PUBLICOS_ROLES.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
     return `<div class="mv-pl" style="border:1px solid var(--linea);border-radius:12px;padding:.8rem .9rem;margin-bottom:.7rem;background:var(--fondo);">
-      <div class="fr2">
-        <div class="fr"><label>Título *</label><input class="pl-tit" placeholder="Ej: Comité administrativo / Inducción docentes"></div>
-        <div class="fr"><label>Subcategoría de este evento <small style="font-weight:400;color:var(--suave)">(opcional; si vacío usa la de datos comunes)</small></label>
-          <select class="pl-sub"><option value="">— Usar la de datos comunes —</option></select>
-        </div>
-      </div>
+      <div class="fr"><label>Título *</label><input class="pl-tit" placeholder="Ej: Comité administrativo / Inducción docentes"></div>
       <div class="fr"><label>Fechas * <small class="pl-fcount" style="color:var(--suave);font-weight:400;"></small></label>
         <p style="font-size:.82rem;color:var(--suave);margin:0 0 .35rem;">• <b>Día suelto</b> = un evento ese día · • <b>Rango</b> (inicio → fin) = <b>un solo evento de varios días</b></p>
         <textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-16"></textarea>
@@ -4197,7 +4215,7 @@ let dbClient = null;
     return [...document.querySelectorAll('#mv_plant .mv-pl')].map(r => {
       const g = c => (r.querySelector('.' + c) || {}).value?.trim() || '';
       return {
-        tit: g('pl-tit'), sub: g('pl-sub'), niv: g('pl-niv'), desc: g('pl-desc'), hi: g('pl-hi') || null, hf: g('pl-hf') || null,
+        tit: g('pl-tit'), sub: '', niv: g('pl-niv'), desc: g('pl-desc'), hi: g('pl-hi') || null, hf: g('pl-hf') || null,
         fechas: mvParseFechas(g('pl-fechas')),
         pubs: [...(r.querySelector('.pl-pub') ? r.querySelector('.pl-pub').selectedOptions : [])].map(o => o.value)
       };
