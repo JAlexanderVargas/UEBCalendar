@@ -2982,6 +2982,7 @@ let dbClient = null;
     let html; try { html = await PANELES[p](); } catch (e) { console.error(e); html = encabezado('Error', esc(e.message || String(e))); }
     if (P !== p || !USUARIO_ACTUAL) return;
     $('#admin-panel-inner').innerHTML = html;
+    if (p === 'masivos') { try { mvPintarSubcats(); mvActualizarPreview(); } catch (e) { console.error(e); } }
     if (p === 'eventos') pintarTabla();
     if (p === 'masivos') mvActualizarPreview();
     if (p === 'logs') pintarLogs();
@@ -4042,7 +4043,6 @@ let dbClient = null;
     const areaOpts = D.areas.map(a => `<option value="${esc(a.id)}">${esc(a.nombre)}</option>`).join('');
     const perOpts = D.periodos.map(p => `<option value="${esc(p.id)}">${esc(nombrePeriodo(p.id))}</option>`).join('');
     const bloques = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}">Bloque ${l}</option>`).join('');
-    const subs = [...new Set(D.categorias.flatMap(c => c.subcategorias || []))].map(x => `<option value="${esc(x)}">`).join('');
     const facs = D.facultades.filter(esAct).map(f => `<label class="mv-chk"><input type="checkbox" name="mv_facsel" value="${esc(f.id)}" checked> ${esc(f.nombre)}</label>`).join('');
     return encabezado('📦 Creación masiva de eventos', 'Define uno o varios eventos con todas sus fechas; el sistema los multiplica por facultad y por público sin que repitas datos.') + `
     <style>
@@ -4056,8 +4056,7 @@ let dbClient = null;
     <div id="mv_root">
     <div class="caja">
       <h2>1 · Eventos a crear</h2>
-      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Cada tarjeta es un evento distinto. Pega <b>todas sus fechas</b> (una por línea o separadas por coma; vale <code>2027-02-10</code>, <code>10/02/2027</code> o un rango <code>2027-04-14 → 2027-04-15</code>) o usa el selector para ir sumándolas.</p>
-      <datalist id="mv_subs">${subs}</datalist>
+      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Cada tarjeta es un evento distinto. <b>Días sueltos</b> (uno por línea) crean un evento por día. Un <b>rango</b> <code>2027-04-14 → 2027-04-16</code> crea <b>un solo evento de varios días</b>. También puedes usar los selectores de abajo.</p>
       <div id="mv_plant">${mvFilaPl()}</div>
       <button class="btn sm pri" type="button" data-a="mvAddPl">➕ Agregar otro evento</button>
     </div>
@@ -4083,8 +4082,14 @@ let dbClient = null;
     <div class="caja">
       <h2>3 · Datos comunes a todos</h2>
       <div class="fr2">
-        <div class="fr"><label>Categoría</label><select id="mv_cat">${cats}</select></div>
+        <div class="fr"><label>Categoría</label><select id="mv_cat" onchange="mvPintarSubcats()">${cats}</select></div>
+        <div class="fr"><label>Subcategoría <span style="font-weight:400;color:var(--suave)">(según categoría)</span></label>
+          <select id="mv_sub"><option value="">— Sin subcategoría —</option></select>
+        </div>
+      </div>
+      <div class="fr2">
         <div class="fr"><label>Semestre</label><select id="mv_per"><option value="auto">Detectar por fecha</option>${perOpts}</select></div>
+        <div class="fr"></div>
       </div>
       <div class="fr2">
         <div class="fr"><label>Bloque / Ubicación</label><select id="mv_lug"><option value="">-- Seleccionar --</option><optgroup label="Bloques">${bloques}</optgroup><optgroup label="Especiales"><option>Auditorio Principal o Central</option><option>Auditorio Fundadores</option><option>Clínicas Odontológicas</option><option>Sistema Académico en Línea (SALA)</option><option>SAUCE</option><option>Sede Chía</option><option>Otro</option></optgroup></select></div>
@@ -4111,16 +4116,39 @@ let dbClient = null;
     </div>`;
   }
 
+
+  function mvPintarSubcats() {
+    const catId = ($('#mv_cat') || {}).value;
+    const lista = typeof subcatsDe === 'function' ? subcatsDe(catId) : [];
+    const fill = (sel, keepEmptyLabel) => {
+      if (!sel) return;
+      const cur = sel.value;
+      const empty = keepEmptyLabel || '— Sin subcategoría —';
+      sel.innerHTML = `<option value="">${empty}</option>` + lista.map(x => `<option value="${esc(x)}" ${x === cur ? 'selected' : ''}>${esc(x)}</option>`).join('');
+      if (cur && lista.includes(cur)) sel.value = cur;
+    };
+    fill($('#mv_sub'), '— Sin subcategoría —');
+    document.querySelectorAll('#mv_plant .pl-sub').forEach(s => fill(s, '— Usar la de datos comunes —'));
+  }
+
   function mvFilaPl() {
     const pubs = PUBLICOS_ROLES.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
     return `<div class="mv-pl" style="border:1px solid var(--linea);border-radius:12px;padding:.8rem .9rem;margin-bottom:.7rem;background:var(--fondo);">
       <div class="fr2">
         <div class="fr"><label>Título *</label><input class="pl-tit" placeholder="Ej: Comité administrativo / Inducción docentes"></div>
-        <div class="fr"><label>Subcategoría (opcional)</label><input class="pl-sub" list="mv_subs" placeholder="Ej: Docentes"></div>
+        <div class="fr"><label>Subcategoría de este evento <small style="font-weight:400;color:var(--suave)">(opcional; si vacío usa la de datos comunes)</small></label>
+          <select class="pl-sub"><option value="">— Usar la de datos comunes —</option></select>
+        </div>
       </div>
       <div class="fr"><label>Fechas * <small class="pl-fcount" style="color:var(--suave);font-weight:400;"></small></label>
-        <textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-15"></textarea>
-        <div style="display:flex;gap:.5rem;align-items:center;margin-top:.35rem;font-size:.85rem;color:var(--suave);">➕ Sumar fecha: <input type="date" class="pl-addf" style="max-width:170px;"></div>
+        <p style="font-size:.82rem;color:var(--suave);margin:0 0 .35rem;">• <b>Día suelto</b> = un evento ese día · • <b>Rango</b> (inicio → fin) = <b>un solo evento de varios días</b></p>
+        <textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-16"></textarea>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end;margin-top:.45rem;font-size:.85rem;color:var(--suave);">
+          <label style="display:flex;flex-direction:column;gap:.2rem;">➕ Día suelto<input type="date" class="pl-addf" style="max-width:170px;"></label>
+          <label style="display:flex;flex-direction:column;gap:.2rem;">Rango desde<input type="date" class="pl-addr-ini" style="max-width:170px;"></label>
+          <label style="display:flex;flex-direction:column;gap:.2rem;">hasta<input type="date" class="pl-addr-fin" style="max-width:170px;"></label>
+          <button type="button" class="btn sm" data-a="mvAddRango">➕ Agregar rango</button>
+        </div>
       </div>
       <div class="fr2">
         <div class="fr"><label>Hora inicio (opcional)</label><input type="time" class="pl-hi"></div>
@@ -4135,12 +4163,32 @@ let dbClient = null;
     </div>`;
   }
   function mvParseFechas(txt) {
-    const iso = d => { const m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/.exec(d); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : d; };
+    const iso = d => {
+      d = String(d || '').trim();
+      let m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+      if (m) return d;
+      m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/.exec(d);
+      return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : d;
+    };
     const out = [];
-    String(txt || '').split(/[\n;,]+/).forEach(l => {
-      const t = (l.match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.]\d{1,2}[\/.]\d{4}/g) || []).map(iso);
-      if (!t.length) return;
-      out.push({ ini: t[0], fin: t[1] && t[1] >= t[0] ? t[1] : t[0] });
+    String(txt || '').split(/[\n;]+/).forEach(l => {
+      l = l.trim(); if (!l) return;
+      // Rango: "2027-04-14 → 2027-04-16" | "14/04/2027 al 16/04/2027" | "a" | "-"
+      const rango = l.split(/\s*(?:→|->|—|–|\ba\b|\bal\b|hasta)\s*/i);
+      if (rango.length >= 2) {
+        const ma = rango[0].match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{4}/);
+        const mb = rango[1].match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{4}/);
+        const a = iso((ma && ma[0]) || rango[0]);
+        const b = iso((mb && mb[0]) || rango[1]);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(a)) out.push({ ini: a, fin: /^\d{4}-\d{2}-\d{2}$/.test(b) && b >= a ? b : a });
+        return;
+      }
+      // Varias fechas en una línea separadas por coma
+      String(l).split(/[,]+/).forEach(part => {
+        const t = (part.match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{4}/g) || []).map(iso).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
+        if (!t.length) return;
+        out.push({ ini: t[0], fin: t[1] && t[1] >= t[0] ? t[1] : t[0] });
+      });
     });
     const vistos = new Set();
     return out.filter(f => { const k = f.ini + '|' + f.fin; if (vistos.has(k)) return false; vistos.add(k); return true; }).sort((a, b) => a.ini.localeCompare(b.ini));
@@ -4193,6 +4241,7 @@ let dbClient = null;
     if (cfg.facModo !== 'ninguna' && !cfg.facSel.length) return toast('Marca al menos una facultad (o elige «Institucional»)', true);
     const conSufFac = ($('#mv_fac_sufijo') || {}).checked, omitir = ($('#mv_skip') || {}).checked;
 
+    const commonSub = (($('#mv_sub') || {}).value || '').trim();
     const combos = []; let omitidos = 0;
     for (const pl of pls) for (const fec of pl.fechas) {
       const pubList = cfg.split && pl.pubs.length ? pl.pubs.map(p => [p]) : [pl.pubs];
@@ -4204,7 +4253,7 @@ let dbClient = null;
         if (f && conSufFac) { titulo += ' - ' + f.nombre; if (desc) desc += ' - ' + f.nombre; }
         const facs = cfg.facModo === 'copias' ? (fid ? [fid] : []) : (cfg.facModo === 'junto' ? cfg.facSel : []);
         if (omitir && D.eventos.some(x => norm(x.titulo) === norm(titulo) && x.inicio === fec.ini && (!fid || (x.facultad || []).map(String).includes(String(fid))) && (!pubs.length || pubs.every(p => (x.publico || []).includes(p))))) { omitidos++; continue; }
-        combos.push({ titulo, desc, sub: pl.sub, niv: pl.niv, hi: pl.hi, hf: pl.hf, pubs, facs, ini: fec.ini, fin: fec.fin });
+        combos.push({ titulo, desc, sub: pl.sub || commonSub || null, niv: pl.niv, hi: pl.hi, hf: pl.hf, pubs, facs, ini: fec.ini, fin: fec.fin });
       }
     }
     if (!combos.length) return toast(omitidos ? `Los ${omitidos} eventos ya existen; no se creó nada` : 'No hay nada para crear', !omitidos);
@@ -4645,7 +4694,20 @@ let dbClient = null;
     
     if (a === 'nuevo') return puede('crear') ? modalEvento() : sinPermiso();
     if (a === 'mvCrear') return crearEventosMasivos();
-    if (a === 'mvAddPl') { const c = $('#mv_plant'); if (c) c.insertAdjacentHTML('beforeend', mvFilaPl()); return mvActualizarPreview(); }
+    if (a === 'mvAddPl') { const c = $('#mv_plant'); if (c) c.insertAdjacentHTML('beforeend', mvFilaPl()); if (typeof mvPintarSubcats === 'function') mvPintarSubcats(); return mvActualizarPreview(); }
+    if (a === 'mvAddRango') {
+      const card = ac.closest('.mv-pl'); if (!card) return;
+      const ini = (card.querySelector('.pl-addr-ini') || {}).value;
+      const fin = (card.querySelector('.pl-addr-fin') || {}).value || ini;
+      if (!ini) return toast('Elige la fecha de inicio del rango', true);
+      if (fin < ini) return toast('La fecha fin debe ser ≥ inicio', true);
+      const ta = card.querySelector('.pl-fechas');
+      const line = ini === fin ? ini : (ini + ' → ' + fin);
+      ta.value = (ta.value.trim() ? ta.value.trim() + '\n' : '') + line;
+      card.querySelector('.pl-addr-ini').value = '';
+      if (card.querySelector('.pl-addr-fin')) card.querySelector('.pl-addr-fin').value = '';
+      return mvActualizarPreview();
+    }
     if (a === 'mvDelPl') { const r = ac.closest('.mv-pl'); if (r && document.querySelectorAll('#mv_plant .mv-pl').length > 1) r.remove(); else toast('Debe quedar al menos un evento', true); return mvActualizarPreview(); }
     if (a === 'mvFacAll' || a === 'mvFacNone') { document.querySelectorAll('input[name="mv_facsel"]').forEach(c => c.checked = a === 'mvFacAll'); return mvActualizarPreview(); }
     if (a === 'editar') return puede('editar') ? modalEvento(i) : sinPermiso();
