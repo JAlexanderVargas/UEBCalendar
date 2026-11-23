@@ -3540,14 +3540,14 @@ let dbClient = null;
     let avisoCols = [];
     try {
       if (DB_READY) {
-        const payload = { ...marcaPrueba(), titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, subcategoria: o.subcategoria || null, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, organizador: o.organizador || null, estado: o.estado, updated_at: new Date().toISOString() };
-        if (id) payload.id = id;
+        const payload = { ...marcaPrueba(), id: o.id, titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, subcategoria: o.subcategoria || null, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, organizador: o.organizador || null, estado: o.estado, updated_at: new Date().toISOString() };
+        if (!payload.id) payload.id = uid();
         let ev = null;
         for (let intento = 0; intento < 5 && !ev; intento++) {
           const r = await dbClient.from('eventos').upsert([payload]).select().single();
           if (!r.error) { ev = r.data; break; }
           const m = /Could not find the '([^']+)' column of 'eventos'/.exec(r.error.message || '');
-          if (!m || !(m[1] in payload)) throw r.error;
+          if (!m || !(m[1] in payload) || m[1] === 'id') throw r.error;
           delete payload[m[1]]; avisoCols.push(m[1]);
         }
         if (!ev) throw new Error('No se pudo guardar el evento');
@@ -3564,7 +3564,11 @@ let dbClient = null;
         const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos;
       }
       toast(avisoCols.length ? `Evento guardado, pero sin: ${avisoCols.join(', ')}. Ejecuta el SQL de actualización en Supabase.` : `${FLATICONS.check} Evento guardado`, !!avisoCols.length); cerrarModal(); refrescar();
-    } catch (e) { console.error(e); toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true); }
+    } catch (e) {
+      console.error(e);
+      const msg = (e && e.message) || (e && e.error && e.error.message) || String(e);
+      toast('Error al guardar: ' + msg, true);
+    }
   }
 
   async function eliminarEventoAdmin(id) {
