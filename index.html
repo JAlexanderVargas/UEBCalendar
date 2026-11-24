@@ -12,6 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Fechas académicas de la Universidad El Bosque: matrículas, grados, posgrados y más, por semestre, facultad y programa.">
 <meta name="theme-color" content="#003B36">
+<meta name="app-version" content="2.5.0">
 <title>Calendario Académico · Universidad El Bosque</title>
 <link rel="icon" type="image/png" href="Logo_de_la_Universidad_El_Bosque.png">
 <link rel="apple-touch-icon" href="Logo_de_la_Universidad_El_Bosque.png">
@@ -193,29 +194,109 @@
   /* ========== LOADER PREMIUM ========== */
   #loader {
     position: fixed; inset: 0;
-    background: radial-gradient(900px 560px at 50% 38%, var(--superficie), var(--fondo) 72%);
+    background:
+      radial-gradient(1000px 600px at 50% 30%, color-mix(in srgb, var(--lima) 18%, transparent), transparent 60%),
+      radial-gradient(800px 500px at 20% 80%, color-mix(in srgb, var(--verde) 12%, transparent), transparent 55%),
+      linear-gradient(165deg, var(--superficie) 0%, var(--fondo) 100%);
     z-index: 9999;
     display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 1.1rem;
+    flex-direction: column; gap: 1.25rem;
     transition: opacity 0.55s var(--ease-out), visibility 0.55s;
+    overflow: hidden;
   }
   #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-  .ld-wrap { animation: ldBreath 2.8s ease-in-out infinite; }
-  .ld-wrap svg { width: min(72vw, 380px); height: auto; filter: drop-shadow(0 16px 28px color-mix(in srgb, var(--verde) 28%, transparent)); }
+  .ld-stage { position: relative; width: min(92vw, 440px); display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .ld-wrap {
+    position: relative;
+    width: min(78vw, 320px); height: min(78vw, 320px);
+    animation: ldBreath 2.8s ease-in-out infinite;
+  }
+  .ld-wrap svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 20px 36px color-mix(in srgb, var(--verde) 32%, transparent));
+  }
   .ld-orbit, .ld-ring { transform-box: view-box; transform-origin: 50% 50%; }
-  .ld-orbit { animation: ldSpin 3.2s linear infinite; }
-  .ld-ring { stroke: var(--lima); stroke-dasharray: 9 14; animation: ldSpin 11s linear infinite reverse; }
-  .ld-fill { animation: ldFill 2.5s cubic-bezier(.55,0,.25,1) infinite; }
+  .ld-orbit { animation: ldSpin 2.8s linear infinite; }
+  .ld-ring { stroke: var(--lima); stroke-dasharray: 10 12; animation: ldSpin 9s linear infinite reverse; }
+  .ld-fill { animation: ldFill 2.6s cubic-bezier(.55,0,.25,1) infinite; }
   @keyframes ldFill { 0% { transform: translateY(0); } 88%, 100% { transform: translateY(-122px); } }
   @keyframes ldSpin { to { transform: rotate(360deg); } }
-  @keyframes ldBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
-  .ld-t { font-family: var(--display); font-weight: 700; font-size: clamp(1.25rem, 3.2vw, 1.75rem); color: var(--petroleo); letter-spacing: 0.01em; }
-  [data-theme="dark"] .ld-t { color: var(--claro); }
-  .ld-s { color: var(--suave); font-weight: 600; font-size: 0.88rem; animation: ldPulse 1.5s ease-in-out infinite; }
-  .ld-bar { width: min(58vw, 260px); height: 5px; border-radius: 99px; background: var(--linea); overflow: hidden; }
-  .ld-bar i { display: block; height: 100%; width: 42%; border-radius: 99px; background: linear-gradient(90deg, var(--verde), var(--lima)); animation: ldBar 1.35s ease-in-out infinite; }
+  @keyframes ldBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+  .ld-brand {
+    text-align: center;
+    max-width: min(92vw, 420px);
+  }
+  .ld-t {
+    font-family: 'Montserrat', var(--texto);
+    font-weight: 800;
+    font-size: clamp(1.35rem, 4.2vw, 2.05rem);
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    background: linear-gradient(105deg, var(--petroleo) 0%, var(--verde) 45%, #0a9e9a 70%, var(--lima) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    animation: ldShimmer 3.5s ease-in-out infinite;
+    filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--verde) 25%, transparent));
+  }
+  [data-theme="dark"] .ld-t {
+    background: linear-gradient(105deg, var(--claro) 0%, var(--lima) 50%, #fff 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip: text;
+  }
+  @keyframes ldShimmer {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+  .ld-sub {
+    margin-top: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--verde);
+    opacity: 0.9;
+  }
+  .ld-s { color: var(--suave); font-weight: 600; font-size: 0.9rem; animation: ldPulse 1.5s ease-in-out infinite; }
+  .ld-bar {
+    width: min(70vw, 300px); height: 6px; border-radius: 99px;
+    background: var(--linea); overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.06);
+  }
+  .ld-bar i {
+    display: block; height: 100%; width: 42%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--verde), var(--lima), var(--verde));
+    background-size: 200% 100%;
+    animation: ldBar 1.35s ease-in-out infinite, ldBarGlow 2s ease-in-out infinite;
+  }
   @keyframes ldBar { 0% { transform: translateX(-110%); } 100% { transform: translateX(340%); } }
+  @keyframes ldBarGlow { 50% { filter: brightness(1.15); } }
   @keyframes ldPulse { 50% { opacity: 0.5; } }
+  .ld-ver {
+    font-size: 0.75rem; font-weight: 700; color: var(--suave-2);
+    letter-spacing: 0.06em; margin-top: 0.15rem;
+  }
+  /* Tita caminando en el loader */
+  .ld-tita-track {
+    position: absolute; left: 0; right: 0; bottom: 8%;
+    height: 110px; pointer-events: none; overflow: hidden;
+  }
+  .ld-tita-walk {
+    position: absolute; bottom: 0;
+    width: min(28vw, 120px); height: auto;
+    animation: ldTitaWalk 4.8s ease-in-out infinite;
+    filter: drop-shadow(0 8px 16px rgba(0,59,54,0.22));
+  }
+  @keyframes ldTitaWalk {
+    0%   { left: -15%; transform: scaleX(1) translateY(0); }
+    45%  { left: 78%;  transform: scaleX(1) translateY(-6px); }
+    50%  { left: 82%;  transform: scaleX(-1) translateY(0); }
+    95%  { left: -8%;  transform: scaleX(-1) translateY(-4px); }
+    100% { left: -15%; transform: scaleX(1) translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ld-tita-walk, .ld-wrap, .ld-t, .ld-bar i { animation: none !important; }
+  }
 
   #error-box {
     position: fixed; inset: 0; background: var(--fondo); z-index: 10000;
@@ -320,10 +401,13 @@
   }
   .titulo-oficina .to-ic img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
   .titulo-oficina .txt {
-    background: linear-gradient(90deg, var(--petroleo), var(--verde));
+    background: linear-gradient(105deg, var(--petroleo) 0%, var(--verde) 40%, #0a9e9a 70%, var(--lima) 100%);
+    background-size: 180% auto;
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
     font-family: 'Montserrat', var(--texto); font-weight: 800;
+    letter-spacing: 0.06em;
+    animation: ldShimmer 5s ease-in-out infinite;
   }
   [data-theme="dark"] .titulo-oficina .txt {
     background: linear-gradient(90deg, var(--claro), var(--lima));
@@ -1373,7 +1457,42 @@
 
 <div id="tita-container"></div>
 
-<div id="loader"><div class="ld-wrap"><svg viewBox="0 0 120 120" aria-label="Registro y Control Académico"><defs><clipPath id="ldc"><rect class="ld-fill" x="0" y="120" width="120" height="122"/></clipPath><linearGradient id="ldg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#007A78"/><stop offset="1" stop-color="#A6CE39"/></linearGradient></defs><circle cx="60" cy="60" r="54" fill="none" stroke="#DCE5E1" stroke-width="5"/><circle class="ld-ring" cx="60" cy="60" r="58.5" fill="none" stroke-width="1.6"/><g class="ld-orbit"><circle cx="60" cy="1.6" r="3.4" fill="#A6CE39"/></g><circle cx="60" cy="60" r="44" fill="none" stroke="#DCE5E1" stroke-width="1.5" stroke-dasharray="4 4"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="#DCE5E1">RYC</text><g clip-path="url(#ldc)"><circle cx="60" cy="60" r="54" fill="#EAF4D6" stroke="url(#ldg)" stroke-width="5"/><text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="38" fill="url(#ldg)">RYC</text></g></svg></div><p class="ld-t">Registro y Control Académico</p><div class="ld-bar"><i></i></div><p class="ld-s">Cargando calendario…</p></div>
+<div id="loader">
+  <div class="ld-tita-track" aria-hidden="true">
+    <img class="ld-tita-walk" src="tita_camina.png" alt="" onerror="this.style.display='none'">
+  </div>
+  <div class="ld-stage">
+    <div class="ld-wrap">
+      <svg viewBox="0 0 120 120" aria-label="Registro y Control Académico">
+        <defs>
+          <clipPath id="ldc"><rect class="ld-fill" x="0" y="120" width="120" height="122"/></clipPath>
+          <linearGradient id="ldg" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#007A78"/><stop offset="1" stop-color="#A6CE39"/>
+          </linearGradient>
+          <filter id="ldGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <circle cx="60" cy="60" r="54" fill="none" stroke="#DCE5E1" stroke-width="5"/>
+        <circle class="ld-ring" cx="60" cy="60" r="58.5" fill="none" stroke-width="1.8"/>
+        <g class="ld-orbit"><circle cx="60" cy="1.6" r="3.8" fill="#A6CE39" filter="url(#ldGlow)"/></g>
+        <circle cx="60" cy="60" r="44" fill="none" stroke="#DCE5E1" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="40" fill="#DCE5E1">RYC</text>
+        <g clip-path="url(#ldc)">
+          <circle cx="60" cy="60" r="54" fill="#EAF4D6" stroke="url(#ldg)" stroke-width="5"/>
+          <text x="60" y="73" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="40" fill="url(#ldg)">RYC</text>
+        </g>
+      </svg>
+    </div>
+    <div class="ld-brand">
+      <p class="ld-t">Registro y Control Académico</p>
+      <p class="ld-sub">Universidad El Bosque</p>
+    </div>
+    <div class="ld-bar"><i></i></div>
+    <p class="ld-s">Cargando calendario…</p>
+    <p class="ld-ver" id="ldVer">v2.5.0</p>
+  </div>
+</div>
 <div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
 
 <div id="public-panel" style="position:relative; z-index:10;">
@@ -1475,7 +1594,7 @@
 
   <footer class="pie-pro">
     <div class="pie-logo"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="32" cy="32" r="22" fill="none" stroke="#A6CE39" stroke-width="1.5" stroke-dasharray="3 3"/><text x="32" y="37" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="17" fill="#fff">RYC</text></svg><small>REGISTRO Y CONTROL<br>ACADÉMICO</small></div>
-    <div class="pie-centro"><span id="origen"></span><span id="actual"></span></div>
+    <div class="pie-centro"><span id="origen"></span><span id="actual"></span><span id="appVer" style="opacity:.85;font-weight:700;">v2.5.0</span></div>
     <div class="pie-contacto"><b>Av. Cra 9 No. 131 A - 02</b><span>PBX (601) 648 9000 EXT 1500 - 1506</span><a href="mailto:registroacademico@unbosque.edu.co">registroacademico@unbosque.edu.co</a></div>
     <div class="pie-copy">© 2026 Jhon Alexander Vargas Serrano · Derechos de autor reservados. Prohibida su copia, reproducción o distribución sin autorización del autor.</div>
   </footer>
@@ -1686,6 +1805,8 @@ let dbClient = null;
   const donaG = items => { const tot = items.reduce((a, x) => a + x.n, 0), tt = tot || 1; let ac = 0; const cono = items.filter(x => x.n).map(x => { const i = ac / tt * 100; ac += x.n; return `${x.c} ${i}% ${ac / tt * 100}%`; }).join(',') || '#e5ece8 0 100%'; return `<div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;"><div class="dona" style="background:conic-gradient(${cono})"><span>${tot}</span></div><div style="flex:1;min-width:150px;font-size:.88rem;">${items.map(x => `<div style="display:flex;gap:.4rem;align-items:center;margin:.2rem 0;"><i style="width:11px;height:11px;border-radius:50%;background:${x.c}"></i>${x.l} <b style="margin-left:auto">${x.n}</b></div>`).join('')}</div></div>`; };
   const cuenta = (arr, f) => { const m = {}; arr.forEach(x => { const k = f(x); m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
   async function enLotes(ids, fn, n = 40) { for (let i = 0; i < ids.length; i += n) { const r = await fn(ids.slice(i, i + n)); if (r && r.error) return r; } return { error: null }; }
+  const APP_VERSION = '2.5.0';
+  const APP_BUILD = '2026-11-24';
   const uid = () => {
     try { if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID(); } catch (_) {}
     return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 11);
@@ -2148,7 +2269,49 @@ let dbClient = null;
     { key: 'bandera', m: 8, d: 7, nombre: 'Día de la Bandera (Boyacá)', emoji: '🚩', cat: 'nacional' },
     { key: 'amor_amistad', m: 9, d: 19, nombre: 'Día del Amor y la Amistad (Colombia)', emoji: '💕', cat: 'nacional' },
     { key: 'halloween', m: 10, d: 31, nombre: 'Halloween / Noche de Brujas', emoji: '🎃', cat: 'internacional' },
-    { key: 'ano_nuevo_viejito', m: 12, d: 31, nombre: 'Fin de Año', emoji: '🎆', cat: 'nacional' }
+    { key: 'ano_nuevo_viejito', m: 12, d: 31, nombre: 'Fin de Año', emoji: '🎆', cat: 'nacional' },
+    // Tradiciones colombianas
+    { key: 'velitas', m: 12, d: 7, nombre: 'Día de las Velitas', emoji: '🕯️', cat: 'nacional' },
+    { key: 'velitas_noche', m: 12, d: 8, nombre: 'Noche de Velitas / Inmaculada', emoji: '✨', cat: 'nacional' },
+    { key: 'reyes_tradicion', m: 1, d: 6, nombre: 'Día de Reyes', emoji: '👑', cat: 'nacional' },
+    { key: 'carnaval_barranquilla', m: 2, d: 15, nombre: 'Carnaval de Barranquilla (aprox.)', emoji: '🎭', cat: 'nacional' },
+    { key: 'feria_flores', m: 8, d: 1, nombre: 'Feria de las Flores (Medellín, aprox.)', emoji: '🌺', cat: 'nacional' },
+    { key: 'black_friday', m: 11, d: 27, nombre: 'Black Friday (aprox.)', emoji: '🛍️', cat: 'internacional' },
+    { key: 'cyber_monday', m: 11, d: 30, nombre: 'Cyber Monday (aprox.)', emoji: '💻', cat: 'internacional' },
+    // Más profesionales
+    { key: 'fonoaudiologo', m: 5, d: 15, nombre: 'Día del Fonoaudiólogo', emoji: '🗣️', cat: 'profesional' },
+    { key: 'optometra', m: 3, d: 23, nombre: 'Día del Optómetra', emoji: '👓', cat: 'profesional' },
+    { key: 'instrumentador', m: 5, d: 15, nombre: 'Día del Instrumentador Quirúrgico', emoji: '🏥', cat: 'profesional' },
+    { key: 'bacteriologo', m: 4, d: 15, nombre: 'Día del Bacteriólogo', emoji: '🦠', cat: 'profesional' },
+    { key: 'terapeuta_ocup', m: 10, d: 27, nombre: 'Día del Terapeuta Ocupacional', emoji: '🧩', cat: 'profesional' },
+    { key: 'ingeniero_sistemas', m: 9, d: 15, nombre: 'Día del Ingeniero de Sistemas', emoji: '🖥️', cat: 'profesional' },
+    { key: 'publicista', m: 12, d: 4, nombre: 'Día del Publicista', emoji: '📣', cat: 'profesional' },
+    { key: 'comunicador', m: 9, d: 8, nombre: 'Día del Comunicador Social', emoji: '📡', cat: 'profesional' },
+    { key: 'chef', m: 10, d: 20, nombre: 'Día del Chef / Gastronomía', emoji: '👨‍🍳', cat: 'profesional' },
+    { key: 'deportista', m: 6, d: 23, nombre: 'Día Olímpico / Deporte', emoji: '🏅', cat: 'profesional' },
+    // Más internacionales / ONU
+    { key: 'ambiente_humano', m: 6, d: 5, nombre: 'Día Mundial del Medio Ambiente', emoji: '🌏', cat: 'ambiente' },
+    { key: 'biodiversidad', m: 5, d: 22, nombre: 'Día de la Biodiversidad', emoji: '🦋', cat: 'ambiente' },
+    { key: 'sin_autos', m: 9, d: 22, nombre: 'Día Mundial Sin Autos', emoji: '🚲', cat: 'ambiente' },
+    { key: 'voluntario', m: 12, d: 5, nombre: 'Día Internacional de los Voluntarios', emoji: '🤲', cat: 'derechos' },
+    { key: 'migrante', m: 12, d: 18, nombre: 'Día del Migrante', emoji: '🧳', cat: 'derechos' },
+    { key: 'lengua_senas', m: 9, d: 23, nombre: 'Día de las Lenguas de Señas', emoji: '🤟', cat: 'derechos' },
+    { key: 'salud_mental_joven', m: 3, d: 1, nombre: 'Día de la Cero Discriminación', emoji: '🤍', cat: 'derechos' },
+    { key: 'lectura', m: 4, d: 23, nombre: 'Día Mundial del Libro y del Derecho de Autor', emoji: '📕', cat: 'educacion' },
+    { key: 'alfabetizacion', m: 9, d: 8, nombre: 'Día Internacional de la Alfabetización', emoji: '✏️', cat: 'educacion' },
+    { key: 'universidades', m: 4, d: 15, nombre: 'Día Mundial del Arte', emoji: '🎨', cat: 'educacion' },
+    { key: 'internet', m: 5, d: 17, nombre: 'Día de Internet', emoji: '🌐', cat: 'educacion' },
+    { key: 'seguridad_vial', m: 11, d: 17, nombre: 'Día Mundial en Recuerdo de las Víctimas de Tránsito', emoji: '🚦', cat: 'salud' },
+    { key: 'lavado_manos', m: 10, d: 15, nombre: 'Día Mundial del Lavado de Manos', emoji: '🧼', cat: 'salud' },
+    { key: 'alimentacion', m: 10, d: 16, nombre: 'Día Mundial de la Alimentación', emoji: '🍽️', cat: 'salud' },
+    { key: 'no_violencia_mujer', m: 11, d: 25, nombre: 'Día de la No Violencia contra la Mujer', emoji: '🧡', cat: 'derechos' },
+    { key: 'orgullo', m: 6, d: 28, nombre: 'Día Internacional del Orgullo LGBTI', emoji: '🏳️‍🌈', cat: 'derechos' },
+    { key: 'adulto_mayor', m: 10, d: 1, nombre: 'Día Internacional de las Personas de Edad', emoji: '👴', cat: 'derechos' },
+    { key: 'constitucion', m: 7, d: 20, nombre: 'Día de la Independencia / Constitución', emoji: '📜', cat: 'nacional' },
+    { key: 'policia', m: 11, d: 5, nombre: 'Día de la Policía Nacional', emoji: '🛡️', cat: 'nacional' },
+    { key: 'fuerzas_militares', m: 8, d: 7, nombre: 'Día del Ejército Nacional', emoji: '🎖️', cat: 'nacional' },
+    { key: 'bomberos', m: 8, d: 4, nombre: 'Día del Bombero', emoji: '🚒', cat: 'profesional' },
+    { key: 'cruz_roja', m: 5, d: 8, nombre: 'Día de la Cruz Roja', emoji: '🆘', cat: 'salud' }
   ];
   const CELEB_LS = 'ubosque_celeb_disabled';
   function celebOffSet() { try { return new Set(JSON.parse(localStorage.getItem(CELEB_LS) || '[]')); } catch (_) { return new Set(); } }
@@ -2662,6 +2825,8 @@ let dbClient = null;
     $('#vistaLista').innerHTML = vistaLista(todos);
     $('#cuentaLista').innerHTML = `${FLATICONS.calendario} ${todos.length} fechas`;
     $('#origen').innerHTML = `Fuente: <b>Jhon Vargas</b>`;
+    const av = document.getElementById('appVer'); if (av && typeof APP_VERSION !== 'undefined') av.textContent = 'v' + APP_VERSION;
+    const lv = document.getElementById('ldVer'); if (lv && typeof APP_VERSION !== 'undefined') lv.textContent = 'v' + APP_VERSION + (typeof APP_BUILD !== 'undefined' ? ' · ' + APP_BUILD : '');
     $('#actual').textContent = D.actualizado ? 'Actualizado: ' + new Date(D.actualizado).toLocaleDateString('es-CO') : '';
     S.dir = ''; revelar();
   }
