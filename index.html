@@ -846,6 +846,14 @@
   .ev.festivo { border-color: #f3b8b4; background-color: var(--rojo-fondo); background-image: none; }
   .ev.festivo .fecha-block { background: var(--rojo); }
   .ev.festivo .fecha-block b, .ev.festivo .fecha-block .mes, .ev.festivo .fecha-block .dia-sem { color: #fff; }
+  .ev.celeb { border-color: color-mix(in srgb, var(--c-celeb, #5C6BC0) 35%, var(--linea)); background: color-mix(in srgb, var(--c-celeb, #5C6BC0) 8%, var(--superficie)); }
+  .ev.celeb .fecha-block { background: var(--c-celeb, #5C6BC0); }
+  .ev.celeb .fecha-block b, .ev.celeb .fecha-block .mes { color: #fff; }
+  .pill.celeb { background: var(--c-celeb, #5C6BC0); color: #fff; border-left-color: transparent; font-weight: 700; }
+  .cal .dia.celeb-day .n { color: #5C6BC0; font-weight: 800; }
+  .leyenda-celeb { display:flex; flex-wrap:wrap; gap:.6rem 1rem; margin-top:.6rem; font-size:.82rem; color:var(--suave); }
+  .leyenda-celeb span { display:inline-flex; align-items:center; gap:.3rem; }
+  .leyenda-celeb i { width:10px; height:10px; border-radius:3px; display:inline-block; }
 
   @keyframes breathe-mix {
     0%, 100% { box-shadow: 0 0 0 0 transparent; }
@@ -1432,6 +1440,7 @@
 
     <label class="chk" style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fInst" checked> Incluir toda la institución</label>
     <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fFest" checked> <span style="color:var(--rojo);font-weight:700">●</span> Festivos</label>
+    <label style="font-size:0.85rem; display:flex; gap:0.4rem; align-items:center; cursor:pointer;"><input type="checkbox" id="fCeleb" checked> <span style="font-size:1rem;">🎉</span> Celebraciones</label>
     <div class="der cl-acc">
       <button class="btn" onclick="irHoy()">📍 Hoy</button>
       <button class="btn" onclick="limpiarFiltros()" title="Quitar todos los filtros">🧹 Limpiar</button>
@@ -1677,7 +1686,10 @@ let dbClient = null;
   const donaG = items => { const tot = items.reduce((a, x) => a + x.n, 0), tt = tot || 1; let ac = 0; const cono = items.filter(x => x.n).map(x => { const i = ac / tt * 100; ac += x.n; return `${x.c} ${i}% ${ac / tt * 100}%`; }).join(',') || '#e5ece8 0 100%'; return `<div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;"><div class="dona" style="background:conic-gradient(${cono})"><span>${tot}</span></div><div style="flex:1;min-width:150px;font-size:.88rem;">${items.map(x => `<div style="display:flex;gap:.4rem;align-items:center;margin:.2rem 0;"><i style="width:11px;height:11px;border-radius:50%;background:${x.c}"></i>${x.l} <b style="margin-left:auto">${x.n}</b></div>`).join('')}</div></div>`; };
   const cuenta = (arr, f) => { const m = {}; arr.forEach(x => { const k = f(x); m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
   async function enLotes(ids, fn, n = 40) { for (let i = 0; i < ids.length; i += n) { const r = await fn(ids.slice(i, i + n)); if (r && r.error) return r; } return { error: null }; }
-  const uid = () => crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); });
+  const uid = () => {
+    try { if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID(); } catch (_) {}
+    return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 11);
+  };
 
   /* ========== FRASES ACADÉMICAS PREDETERMINADAS ========== */
   const FRASES_ACADEMICAS = [
@@ -2021,7 +2033,7 @@ let dbClient = null;
   }
   function toast(m, err) { const t = $('#toast'); t.innerHTML = m; t.className = 'on' + (err ? ' err' : ''); clearTimeout(t._x); t._x = setTimeout(() => t.className = '', 3400); }
 
-  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, dir: '', q: '', ref: new Date(), publico: [] };
+  const S = { anio: 0, sem: '', cat: '', grupo: '', prog: '', inst: true, festivos: true, celebraciones: true, dir: '', q: '', ref: new Date(), publico: [] };
   let listaFiltradaCompleta = [];
 
   function getColores(D, e) {
@@ -2049,31 +2061,162 @@ let dbClient = null;
 
   const esInstitucional = e => !(e.facultad || []).length && !(e.area || []).length;
 
+  /* ========== FESTIVOS OFICIALES + CELEBRACIONES (CO) ========== */
+  const CELEB_CATS = {
+    oficial: { nombre: 'Festivos oficiales', emoji: '🔴', color: '#B3261E' },
+    profesional: { nombre: 'Días profesionales', emoji: '💼', color: '#5C6BC0' },
+    internacional: { nombre: 'Días internacionales', emoji: '🌍', color: '#00897B' },
+    educacion: { nombre: 'Educación y cultura', emoji: '📚', color: '#FB8C00' },
+    salud: { nombre: 'Salud', emoji: '🏥', color: '#E53935' },
+    ambiente: { nombre: 'Ambiente', emoji: '🌱', color: '#43A047' },
+    derechos: { nombre: 'Derechos humanos', emoji: '🕊️', color: '#8E24AA' },
+    nacional: { nombre: 'Conmemorativos nacionales', emoji: '🇨🇴', color: '#F9A825' }
+  };
+  // Celebraciones fijas (mes, día). key estable para habilitar/deshabilitar.
+  const CELEBRACIONES_FIJAS = [
+    // Profesionales (Colombia / reconocidos)
+    { key: 'odontologo', m: 10, d: 3, nombre: 'Día del Odontólogo', emoji: '🦷', cat: 'profesional' },
+    { key: 'medico', m: 12, d: 3, nombre: 'Día del Médico', emoji: '🩺', cat: 'profesional' },
+    { key: 'enfermera', m: 5, d: 12, nombre: 'Día Internacional de la Enfermería', emoji: '💉', cat: 'profesional' },
+    { key: 'ingeniero', m: 5, d: 29, nombre: 'Día del Ingeniero (Colombia)', emoji: '⚙️', cat: 'profesional' },
+    { key: 'arquitecto', m: 7, d: 1, nombre: 'Día del Arquitecto', emoji: '🏗️', cat: 'profesional' },
+    { key: 'abogado', m: 7, d: 22, nombre: 'Día del Abogado (Colombia)', emoji: '⚖️', cat: 'profesional' },
+    { key: 'contador', m: 5, d: 25, nombre: 'Día del Contador Público', emoji: '🧮', cat: 'profesional' },
+    { key: 'periodista', m: 2, d: 9, nombre: 'Día del Periodista (Colombia)', emoji: '📰', cat: 'profesional' },
+    { key: 'psicologo', m: 11, d: 20, nombre: 'Día del Psicólogo (Colombia)', emoji: '🧠', cat: 'profesional' },
+    { key: 'trabajador_social', m: 3, d: 28, nombre: 'Día del Trabajador Social', emoji: '🤝', cat: 'profesional' },
+    { key: 'bibliotecologo', m: 7, d: 24, nombre: 'Día del Bibliotecólogo', emoji: '📖', cat: 'profesional' },
+    { key: 'farmaceutico', m: 9, d: 25, nombre: 'Día del Químico Farmacéutico', emoji: '💊', cat: 'profesional' },
+    { key: 'veterinario', m: 8, d: 26, nombre: 'Día del Médico Veterinario', emoji: '🐾', cat: 'profesional' },
+    { key: 'fisioterapeuta', m: 9, d: 8, nombre: 'Día Mundial de la Fisioterapia', emoji: '🏃', cat: 'profesional' },
+    { key: 'nutricionista', m: 8, d: 31, nombre: 'Día del Nutricionista', emoji: '🥗', cat: 'profesional' },
+    { key: 'administrativo', m: 9, d: 5, nombre: 'Día del Administrativo', emoji: '🗂️', cat: 'profesional' },
+    { key: 'secretaria', m: 4, d: 26, nombre: 'Día de la Secretaria', emoji: '⌨️', cat: 'profesional' },
+    { key: 'programador', m: 9, d: 13, nombre: 'Día del Programador', emoji: '💻', cat: 'profesional' },
+    { key: 'disenador', m: 4, d: 27, nombre: 'Día del Diseñador Gráfico', emoji: '🎨', cat: 'profesional' },
+    { key: 'traductor', m: 9, d: 30, nombre: 'Día Internacional de la Traducción', emoji: '🌐', cat: 'profesional' },
+    { key: 'economista', m: 7, d: 8, nombre: 'Día del Economista', emoji: '📈', cat: 'profesional' },
+    { key: 'agricultor', m: 6, d: 9, nombre: 'Día del Agricultor', emoji: '🌾', cat: 'profesional' },
+    { key: 'maestro', m: 5, d: 15, nombre: 'Día del Maestro (Colombia)', emoji: '👩‍🏫', cat: 'educacion' },
+    { key: 'estudiante', m: 9, d: 21, nombre: 'Día del Estudiante', emoji: '🎓', cat: 'educacion' },
+    // Internacionales
+    { key: 'mujer', m: 3, d: 8, nombre: 'Día Internacional de la Mujer', emoji: '💜', cat: 'internacional' },
+    { key: 'hombre', m: 11, d: 19, nombre: 'Día Internacional del Hombre', emoji: '💙', cat: 'internacional' },
+    { key: 'nino', m: 4, d: 30, nombre: 'Día del Niño (Colombia)', emoji: '🧒', cat: 'internacional' },
+    { key: 'ninos_onu', m: 11, d: 20, nombre: 'Día Universal del Niño', emoji: '🧒', cat: 'internacional' },
+    { key: 'juventud', m: 8, d: 12, nombre: 'Día Internacional de la Juventud', emoji: '✨', cat: 'internacional' },
+    { key: 'familia', m: 5, d: 15, nombre: 'Día Internacional de la Familia', emoji: '👨‍👩‍👧‍👦', cat: 'internacional' },
+    { key: 'madre', m: 5, d: 11, nombre: 'Día de la Madre (aprox. 2.º domingo mayo)', emoji: '💐', cat: 'nacional' },
+    { key: 'padre', m: 6, d: 15, nombre: 'Día del Padre (aprox. 3.er domingo junio)', emoji: '👔', cat: 'nacional' },
+    { key: 'amistad', m: 7, d: 20, nombre: 'Día de la Amistad', emoji: '💛', cat: 'internacional' },
+    { key: 'paz', m: 9, d: 21, nombre: 'Día Internacional de la Paz', emoji: '☮️', cat: 'derechos' },
+    { key: 'derechos_humanos', m: 12, d: 10, nombre: 'Día de los Derechos Humanos', emoji: '🕊️', cat: 'derechos' },
+    { key: 'no_violencia', m: 10, d: 2, nombre: 'Día Internacional de la No Violencia', emoji: '🕊️', cat: 'derechos' },
+    { key: 'tolerancia', m: 11, d: 16, nombre: 'Día Internacional de la Tolerancia', emoji: '🤝', cat: 'derechos' },
+    { key: 'discapacidad', m: 12, d: 3, nombre: 'Día Internacional de las Personas con Discapacidad', emoji: '♿', cat: 'derechos' },
+    { key: 'indigenas', m: 8, d: 9, nombre: 'Día Internacional de los Pueblos Indígenas', emoji: '🪶', cat: 'derechos' },
+    { key: 'afrodescendencia', m: 5, d: 21, nombre: 'Día Nacional de la Afrocolombianidad', emoji: '🥁', cat: 'nacional' },
+    { key: 'idioma_materno', m: 2, d: 21, nombre: 'Día Internacional de la Lengua Materna', emoji: '🗣️', cat: 'educacion' },
+    { key: 'libro', m: 4, d: 23, nombre: 'Día del Libro', emoji: '📚', cat: 'educacion' },
+    { key: 'poesia', m: 3, d: 21, nombre: 'Día Mundial de la Poesía', emoji: '✍️', cat: 'educacion' },
+    { key: 'musica', m: 6, d: 21, nombre: 'Día de la Música', emoji: '🎵', cat: 'educacion' },
+    { key: 'arte', m: 4, d: 15, nombre: 'Día Mundial del Arte', emoji: '🖼️', cat: 'educacion' },
+    { key: 'ciencia', m: 11, d: 10, nombre: 'Día Mundial de la Ciencia', emoji: '🔬', cat: 'educacion' },
+    { key: 'filosofia', m: 11, d: 19, nombre: 'Día Mundial de la Filosofía', emoji: '🤔', cat: 'educacion' },
+    { key: 'docente_onu', m: 10, d: 5, nombre: 'Día Mundial de los Docentes', emoji: '🍎', cat: 'educacion' },
+    { key: 'estudiantes_onu', m: 10, d: 17, nombre: 'Día Internacional de los Estudiantes', emoji: '🎒', cat: 'educacion' },
+    // Salud
+    { key: 'salud', m: 4, d: 7, nombre: 'Día Mundial de la Salud', emoji: '🏥', cat: 'salud' },
+    { key: 'salud_mental', m: 10, d: 10, nombre: 'Día de la Salud Mental', emoji: '🧘', cat: 'salud' },
+    { key: 'sida', m: 12, d: 1, nombre: 'Día Mundial del Sida', emoji: '🎗️', cat: 'salud' },
+    { key: 'cancer', m: 2, d: 4, nombre: 'Día Mundial contra el Cáncer', emoji: '🎗️', cat: 'salud' },
+    { key: 'diabetes', m: 11, d: 14, nombre: 'Día Mundial de la Diabetes', emoji: '🩸', cat: 'salud' },
+    { key: 'corazon', m: 9, d: 29, nombre: 'Día Mundial del Corazón', emoji: '❤️', cat: 'salud' },
+    { key: 'donante', m: 6, d: 14, nombre: 'Día Mundial del Donante de Sangre', emoji: '🩸', cat: 'salud' },
+    { key: 'no_tabaco', m: 5, d: 31, nombre: 'Día Mundial sin Tabaco', emoji: '🚭', cat: 'salud' },
+    // Ambiente
+    { key: 'tierra', m: 4, d: 22, nombre: 'Día de la Tierra', emoji: '🌍', cat: 'ambiente' },
+    { key: 'ambiente', m: 6, d: 5, nombre: 'Día Mundial del Medio Ambiente', emoji: '🌿', cat: 'ambiente' },
+    { key: 'agua', m: 3, d: 22, nombre: 'Día Mundial del Agua', emoji: '💧', cat: 'ambiente' },
+    { key: 'arbol', m: 6, d: 29, nombre: 'Día del Árbol (Colombia)', emoji: '🌳', cat: 'ambiente' },
+    { key: 'animal', m: 10, d: 4, nombre: 'Día Mundial de los Animales', emoji: '🐾', cat: 'ambiente' },
+    { key: 'oceanos', m: 6, d: 8, nombre: 'Día Mundial de los Océanos', emoji: '🌊', cat: 'ambiente' },
+    // Nacionales / conmemorativos
+    { key: 'independencia_criolla', m: 7, d: 20, nombre: 'Independencia de Colombia', emoji: '🇨🇴', cat: 'nacional' },
+    { key: 'raza', m: 10, d: 12, nombre: 'Día de la Raza / Diversidad Étnica', emoji: '🌎', cat: 'nacional' },
+    { key: 'idioma', m: 4, d: 23, nombre: 'Día del Idioma', emoji: '🇪🇸', cat: 'nacional' },
+    { key: 'bandera', m: 8, d: 7, nombre: 'Día de la Bandera (Boyacá)', emoji: '🚩', cat: 'nacional' },
+    { key: 'amor_amistad', m: 9, d: 19, nombre: 'Día del Amor y la Amistad (Colombia)', emoji: '💕', cat: 'nacional' },
+    { key: 'halloween', m: 10, d: 31, nombre: 'Halloween / Noche de Brujas', emoji: '🎃', cat: 'internacional' },
+    { key: 'ano_nuevo_viejito', m: 12, d: 31, nombre: 'Fin de Año', emoji: '🎆', cat: 'nacional' }
+  ];
+  const CELEB_LS = 'ubosque_celeb_disabled';
+  function celebOffSet() { try { return new Set(JSON.parse(localStorage.getItem(CELEB_LS) || '[]')); } catch (_) { return new Set(); } }
+  function celebEstaOn(key) { return !celebOffSet().has(key); }
+  function celebSetOn(key, on) {
+    const s = celebOffSet();
+    if (on) s.delete(key); else s.add(key);
+    try { localStorage.setItem(CELEB_LS, JSON.stringify([...s])); } catch (_) {}
+    FEST = {}; // invalidar caché por año
+  }
+  function celebSetCat(cat, on) {
+    CELEBRACIONES_FIJAS.filter(c => c.cat === cat).forEach(c => celebSetOn(c.key, on));
+  }
+
   function calcularFestivos(anio) {
     const festivos = [];
-    const add = (m, d, n) => festivos.push({ fecha: `${anio}-${pad(m)}-${pad(d)}`, nombre: n, esFestivo: true });
-    add(1, 1, 'Año Nuevo'); add(5, 1, 'Día del Trabajo'); add(7, 20, 'Día de la Independencia');
-    add(8, 7, 'Batalla de Boyacá'); add(12, 8, 'Inmaculada Concepción'); add(12, 25, 'Navidad');
-    const emiliani = (m, d, n) => { let date = new Date(anio, m - 1, d); if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7)); add(date.getMonth() + 1, date.getDate(), n); };
-    emiliani(1, 6, 'Reyes Magos'); emiliani(3, 19, 'San José'); emiliani(6, 29, 'San Pedro y San Pablo');
-    emiliani(8, 15, 'Asunción de la Virgen'); emiliani(10, 12, 'Día de la Raza');
-    emiliani(11, 1, 'Todos los Santos'); emiliani(11, 11, 'Independencia de Cartagena');
+    const add = (m, d, n, key) => festivos.push({
+      fecha: `${anio}-${pad(m)}-${pad(d)}`, nombre: n, esFestivo: true, esCelebracion: false,
+      emoji: '🔴', cat: 'oficial', key: key || ('fest_' + m + '_' + d)
+    });
+    add(1, 1, 'Año Nuevo', 'ano_nuevo'); add(5, 1, 'Día del Trabajo', 'trabajo');
+    add(7, 20, 'Día de la Independencia', 'independencia'); add(8, 7, 'Batalla de Boyacá', 'boyaca');
+    add(12, 8, 'Inmaculada Concepción', 'inmaculada'); add(12, 25, 'Navidad', 'navidad');
+    const emiliani = (m, d, n, key) => { let date = new Date(anio, m - 1, d); if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7)); add(date.getMonth() + 1, date.getDate(), n, key); };
+    emiliani(1, 6, 'Reyes Magos', 'reyes'); emiliani(3, 19, 'San José', 'san_jose');
+    emiliani(6, 29, 'San Pedro y San Pablo', 'pedro_pablo'); emiliani(8, 15, 'Asunción de la Virgen', 'asuncion');
+    emiliani(10, 12, 'Día de la Raza', 'raza_fest'); emiliani(11, 1, 'Todos los Santos', 'santos');
+    emiliani(11, 11, 'Independencia de Cartagena', 'cartagena');
     const getPascua = (y) => { const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), month = Math.floor((h + l - 7 * m + 114) / 31), day = ((h + l - 7 * m + 114) % 31) + 1; return new Date(y, month - 1, day); };
     const pascua = getPascua(anio);
     const restarDias = (date, n) => { const d = new Date(date); d.setDate(d.getDate() - n); return d; };
-    const jv = restarDias(pascua, 3); add(jv.getMonth() + 1, jv.getDate(), 'Jueves Santo');
-    const vv = restarDias(pascua, 2); add(vv.getMonth() + 1, vv.getDate(), 'Viernes Santo');
-    const addEmiliani = (dateObj, n) => { let date = new Date(dateObj); if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7)); add(date.getMonth() + 1, date.getDate(), n); };
-    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 43), 'Ascensión del Señor');
-    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 64), 'Corpus Christi');
-    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 71), 'Sagrado Corazón');
+    const jv = restarDias(pascua, 3); add(jv.getMonth() + 1, jv.getDate(), 'Jueves Santo', 'jueves_santo');
+    const vv = restarDias(pascua, 2); add(vv.getMonth() + 1, vv.getDate(), 'Viernes Santo', 'viernes_santo');
+    const addEmiliani = (dateObj, n, key) => { let date = new Date(dateObj); if (date.getDay() !== 1) date.setDate(date.getDate() + ((8 - date.getDay()) % 7)); add(date.getMonth() + 1, date.getDate(), n, key); };
+    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 43), 'Ascensión del Señor', 'ascension');
+    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 64), 'Corpus Christi', 'corpus');
+    addEmiliani(new Date(pascua.getFullYear(), pascua.getMonth(), pascua.getDate() + 71), 'Sagrado Corazón', 'sagrado');
     return festivos;
   }
 
-  const FEST = {};
-  function festivosAnio(y) { return FEST[y] || (FEST[y] = calcularFestivos(y).map(f => ({ ...f, id: 'festivo-' + f.fecha, titulo: f.nombre, inicio: f.fecha, fin: f.fecha }))); }
+  let FEST = {};
+  function diasEspecialesAnio(y) {
+    if (FEST[y]) return FEST[y];
+    const off = celebOffSet();
+    const oficial = calcularFestivos(y).filter(f => !off.has(f.key)).map(f => ({
+      ...f, id: 'festivo-' + f.fecha + '-' + f.key, titulo: f.nombre, inicio: f.fecha, fin: f.fecha
+    }));
+    const celeb = CELEBRACIONES_FIJAS.filter(c => !off.has(c.key)).map(c => {
+      const fecha = `${y}-${pad(c.m)}-${pad(c.d)}`;
+      return {
+        fecha, nombre: c.nombre, titulo: c.nombre, emoji: c.emoji, cat: c.cat, key: c.key,
+        esFestivo: false, esCelebracion: true,
+        id: 'festivo-' + fecha + '-' + c.key, inicio: fecha, fin: fecha
+      };
+    });
+    return (FEST[y] = [...oficial, ...celeb]);
+  }
+  function festivosAnio(y) {
+    // Compatible: solo oficiales + celebraciones según filtros S
+    return diasEspecialesAnio(y).filter(f => {
+      if (f.esFestivo) return S.festivos !== false;
+      if (f.esCelebracion) return S.celebraciones !== false;
+      return true;
+    });
+  }
   const festivosDia = s => festivosAnio(+s.slice(0, 4)).filter(f => f.fecha === s);
-  const amb = e => e.esFestivo ? 'Festivo nacional' : ambito(D, e);
+  const amb = e => e.esFestivo ? 'Festivo nacional' : (e.esCelebracion ? ((CELEB_CATS[e.cat] || {}).nombre || 'Celebración') : ambito(D, e));
+  const colorCeleb = e => (e && (CELEB_CATS[e.cat] || {}).color) || '#5C6BC0';
   let IO; function revelar() { if (IO) IO.disconnect(); if (!window.IntersectionObserver) return $$('.rev').forEach(x => x.classList.add('vis')); IO = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('vis'); IO.unobserve(x.target); } }), { threshold: .05 }); $$('.rev').forEach((el, i) => { el.style.transitionDelay = (i % 8) * 40 + 'ms'; IO.observe(el); }); }
   function irMes() { const el = $('#m-' + S.ref.getFullYear() + '-' + S.ref.getMonth()), L = $('#vistaLista'); if (el && L) L.scrollTo({ top: el.offsetTop - 4, behavior: 'smooth' }); }
   const ORD = [['general','calendario'],['matricul','documento'],['pregrado','libro'],['posgrado','birrete'],['ceremon','trofeo'],['no ceremon','documento'],['talento','personas'],['otro','estrella']];
@@ -2130,6 +2273,7 @@ let dbClient = null;
   
   function estadoDe(e) {
     if (e.esFestivo) return { t: 'Festivo', c: 'e-fin' };
+    if (e.esCelebracion) return { t: 'Celebración', c: 'e-prox' };
     const h = hoy(), f = finDe(e);
     if (f < h) return { t: 'Finalizado', c: 'e-fin', pasado: true };
     if (e.inicio <= h) return { t: 'En curso', c: 'e-curso' };
@@ -2204,7 +2348,7 @@ let dbClient = null;
   function irHoy() { const h = new Date(); S.anio = h.getFullYear(); S.ref = h; S.q = ''; S.publico = []; const q = $('#q'); if (q) q.value = ''; pintarPublico(); irMes(); }
 
   function limpiarFiltros() {
-    S.cat = ''; S.grupo = ''; S.prog = ''; S.q = ''; S.publico = []; S.inst = true; S.festivos = true;
+    S.cat = ''; S.grupo = ''; S.prog = ''; S.q = ''; S.publico = []; S.inst = true; S.festivos = true; S.celebraciones = true; const fc = $('#fCeleb'); if (fc) fc.checked = true;
     const q = $('#q'); if (q) q.value = '';
     pintarPublico();
   }
@@ -2214,14 +2358,15 @@ let dbClient = null;
     const ya = +h.slice(0, 4);
     const savedCat = S.cat; S.cat = '';
     const propios = filtrar({ sinPeriodo: true }).filter(e => finDe(e) >= h);
-    const fest = S.festivos ? [...festivosAnio(ya), ...festivosAnio(ya + 1)].filter(f => f.fecha >= h) : [];
+    const fest = (S.festivos || S.celebraciones) ? [...festivosAnio(ya), ...festivosAnio(ya + 1)].filter(f => f.fecha >= h) : [];
     const lista = [...propios, ...fest].sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 4);
     S.cat = savedCat;
     $('#proximos').innerHTML = lista.length ? lista.map(e => {
       const en = e.inicio <= h ? 0 : diffDias(h, e.inicio);
       const inminente = esInminente(e);
-      const tit = e.esFestivo ? e.titulo : tituloInteligente(e);
-      return `<div class="px ${inminente ? 'destacado' : ''}" data-id="${e.id}"><div class="px-dias" style="${e.esFestivo ? 'background:var(--rojo);color:white;' : ''}"><b>${en === 0 ? 'Hoy' : en}</b><span>${en === 0 ? 'en curso' : en === 1 ? 'día' : 'días'}</span></div><div><div class="px-t">${esc(tit)}</div><div class="px-m">${fmtRango(e)} · ${esc(amb(e))}</div></div></div>`;
+      const tit = (e.esFestivo || e.esCelebracion) ? ((e.emoji ? e.emoji + ' ' : '') + (e.titulo || e.nombre || '')) : tituloInteligente(e);
+      const pxStyle = e.esFestivo ? 'background:var(--rojo);color:white;' : (e.esCelebracion ? `background:${colorCeleb(e)};color:white;` : '');
+      return `<div class="px ${inminente ? 'destacado' : ''}" data-id="${e.id}"><div class="px-dias" style="${pxStyle}"><b>${en === 0 ? 'Hoy' : en}</b><span>${en === 0 ? 'en curso' : en === 1 ? 'día' : 'días'}</span></div><div><div class="px-t">${esc(tit)}</div><div class="px-m">${fmtRango(e)} · ${esc(amb(e))}</div></div></div>`;
     }).join('') : '<p style="opacity:0.8; font-size:0.9rem; padding:0.4rem 0; color:#fff;">No hay fechas próximas.</p>';
   }
 
@@ -2412,26 +2557,30 @@ let dbClient = null;
 
   function filaEvento(e, mostrarAmbito = true) {
     const st = estadoDe(e);
-    const { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
-    const c = e.esFestivo ? { nombre: 'Festivo Nacional' } : catDe(D, e.categoria);
+    const esEsp = e.esFestivo || e.esCelebracion;
+    let facColor, catColor, icono;
+    if (e.esFestivo) { facColor = catColor = 'var(--rojo)'; icono = e.emoji || '🔴'; }
+    else if (e.esCelebracion) { facColor = catColor = colorCeleb(e); icono = e.emoji || '🎉'; }
+    else { ({ facColor, catColor, icono } = getColores(D, e)); }
+    const c = e.esFestivo ? { nombre: 'Festivo Nacional', emoji: '🔴' }
+      : e.esCelebracion ? { nombre: (CELEB_CATS[e.cat] || {}).nombre || 'Celebración', emoji: e.emoji || '🎉' }
+      : catDe(D, e.categoria);
     const d = parse(e.inicio);
     const inminente = esInminente(e);
-    const titMostrado = e.esFestivo ? e.titulo : tituloInteligente(e);
-    const ambitoHtml = mostrarAmbito && !e.esFestivo ? `<span class="info-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span>` : '';
+    const titMostrado = esEsp ? ((e.emoji ? e.emoji + ' ' : '') + (e.titulo || e.nombre || '')) : tituloInteligente(e);
+    const ambitoHtml = mostrarAmbito && !esEsp ? `<span class="info-pill">${icono ? icono : FLATICONS.birrete} ${esc(ambito(D, e))}</span>` : '';
     const lugarTxt = e.lugar ? (e.lugarEsp ? `${e.lugarEsp}` : e.lugar) : '';
     const pisoTxt = e.piso ? ` - ${e.piso}` : '';
     const lugarHtml = lugarTxt ? `<span class="info-pill">${FLATICONS.pin} ${esc(lugarTxt + pisoTxt)}</span>` : '';
     let horaHtml = '';
     if (e.horaInicio) horaHtml = `<span class="info-pill">${FLATICONS.reloj} ${e.horaInicio}${e.horaFin ? ' - ' + e.horaFin : ''}</span>`;
-    
     const L = infoEnlace(e.enlace);
     const linkHtml = L ? pillEnlace(L, ' onclick="event.stopPropagation()"') : '';
-    
-    const msHtml = !e.esFestivo ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" title="Agregar a Outlook Calendar" onclick="event.stopPropagation()">📅 Outlook</a>` : '';
+    const msHtml = !esEsp ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" title="Agregar a Outlook Calendar" onclick="event.stopPropagation()">📅 Outlook</a>` : '';
     const dirigidoA = e.publico && e.publico.length ? e.publico[0] : 'Comunidad universitaria';
-    const infoExtraHtml = `<span class="info-pill">${em(emojiPub(dirigidoA))} ${esc(dirigidoA)}${e.publico && e.publico.length > 1 ? ` +${e.publico.length - 1}` : ''}</span> <span class="info-pill">${FLATICONS.calendario} ${nombrePeriodo(e.periodo)}</span>`;
-
-    return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${e.esFestivo ? 'festivo' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor}" data-id="${e.id}" tabindex="0">
+    const infoExtraHtml = esEsp ? '' : `<span class="info-pill">${em(emojiPub(dirigidoA))} ${esc(dirigidoA)}${e.publico && e.publico.length > 1 ? ` +${e.publico.length - 1}` : ''}</span> <span class="info-pill">${FLATICONS.calendario} ${nombrePeriodo(e.periodo)}</span>`;
+    const clsEsp = e.esFestivo ? 'festivo' : (e.esCelebracion ? 'celeb' : '');
+    return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${clsEsp} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};--c-celeb:${facColor}" data-id="${e.id}" tabindex="0">
       <div class="fecha-block"><b>${d.getDate()}</b><span class="mes">${MESES_C[d.getMonth()]}</span><span class="dia-sem">${diaSem(e)}</span></div>
       <div class="ev-content"><div class="ev-top"><h3>${esc(titMostrado)}</h3><span class="cat-pill">${c.emoji ? esc(c.emoji) + ' ' : ''}${esc(c.nombre)}${e.subcategoria ? ' · ' + esc(e.subcategoria) : ''}</span></div><div class="ev-bottom">${horaHtml}${ambitoHtml}${lugarHtml}${infoExtraHtml}${linkHtml}${msHtml}</div></div>
       <div class="estado-block"><span class="estado ${st.c}">${st.t}</span></div>
@@ -2470,21 +2619,25 @@ let dbClient = null;
       h += `<div class="sem" style="grid-template-rows:30px ${'var(--lh) '.repeat(nl)}minmax(8px,auto)">`;
       dias.forEach((dia, c) => {
         const s = ss[c];
-        h += `<div class="dia c${c} ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${festivosDia(s).length ? 'festivo' : ''}" style="grid-column:${c + 1};grid-row:1 / ${nl + 3}"><span class="n">${dia.getDate()}</span></div>`;
+        h += `<div class="dia c${c} ${dia.getMonth() !== m ? 'fuera' : ''} ${s === h0 ? 'hoy' : ''} ${festivosDia(s).some(f => f.esFestivo) ? 'festivo' : ''} ${festivosDia(s).some(f => f.esCelebracion) ? 'celeb-day' : ''}" style="grid-column:${c + 1};grid-row:1 / ${nl + 3}"><span class="n">${dia.getDate()}</span></div>`;
       });
       items.filter(it => it.l < MAXL).forEach(it => {
         const e = it.e;
-        const { facColor, catColor, icono } = e.esFestivo ? { facColor: 'var(--rojo)', catColor: 'var(--rojo)', icono: '' } : getColores(D, e);
-        const titulo = e.esFestivo ? (e.titulo || e.nombre || '') : tituloInteligente(e);
+        let facColor, catColor, icono;
+        if (e.esFestivo) { facColor = catColor = 'var(--rojo)'; icono = e.emoji || '🔴'; }
+        else if (e.esCelebracion) { facColor = catColor = colorCeleb(e); icono = e.emoji || '🎉'; }
+        else { ({ facColor, catColor, icono } = getColores(D, e)); }
+        const titulo = (e.esFestivo || e.esCelebracion) ? (e.titulo || e.nombre || '') : tituloInteligente(e);
         const eid = e.id || ('festivo-' + e.fecha);
         const span = it.b - it.a + 1;
-        const rg = !e.esFestivo && e.inicio !== finDe(e) ? rango(e) : '';
-        h += `<button class="pill ${e.esFestivo ? 'festivo' : ''} ${esInminente(e) ? 'destacado' : ''} ${it.antes ? 'sigue-ant' : ''} ${it.despues ? 'sigue-sig' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};grid-column:${it.a + 1} / span ${span};grid-row:${it.l + 2}" data-id="${eid}" title="${esc(titulo + (rg ? ' · ' + rg : ''))}">${it.antes ? '◂ ' : ''}${icono ? icono + ' ' : ''}${esc(titulo)}${rg && span >= 3 ? `<span class="rg">${rg}</span>` : ''}${it.despues ? ' ▸' : ''}</button>`;
+        const rg = !e.esFestivo && !e.esCelebracion && e.inicio !== finDe(e) ? rango(e) : '';
+        const clsEsp = e.esFestivo ? 'festivo' : (e.esCelebracion ? 'celeb' : '');
+        h += `<button class="pill ${clsEsp} ${esInminente(e) ? 'destacado' : ''} ${it.antes ? 'sigue-ant' : ''} ${it.despues ? 'sigue-sig' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};--c-celeb:${facColor};grid-column:${it.a + 1} / span ${span};grid-row:${it.l + 2}" data-id="${eid}" title="${esc(titulo + (rg ? ' · ' + rg : ''))}">${it.antes ? '◂ ' : ''}${icono ? icono + ' ' : ''}${esc(titulo)}${rg && span >= 3 ? `<span class="rg">${rg}</span>` : ''}${it.despues ? ' ▸' : ''}</button>`;
       });
       ocultos.forEach((n, c) => { if (n) h += `<button class="mas-dia" style="grid-column:${c + 1};grid-row:${nl + 2}" data-dia="${ss[c]}">+${n} más</button>`; });
       h += '</div>';
     }
-    return h + '</div><p class="leyenda"><i></i>Festivo nacional de Colombia</p>';
+    return h + '</div><div class="leyenda-celeb"><span><i style="background:var(--rojo)"></i> Festivo oficial</span><span><i style="background:#5C6BC0"></i> Profesional</span><span><i style="background:#00897B"></i> Internacional</span><span><i style="background:#FB8C00"></i> Educación</span><span><i style="background:#43A047"></i> Ambiente</span><span><i style="background:#8E24AA"></i> Derechos</span></div>';
   }
 
   function vistaLista(L) {
@@ -2497,11 +2650,11 @@ let dbClient = null;
     if (!D) return;
     pintarEncabezado(); pintarProximos(); pintarProgreso(); pintarModulos(); pintarNovedades(); pintarFacultadesIzquierda();
     const L = filtrar(); let fest = [];
-    if (S.festivos && !S.cat) {
+    if ((S.festivos || S.celebraciones) && !S.cat) {
       const m0 = S.sem == 2 ? 6 : 0;
       const m1 = S.sem == 1 ? 5 : 11;
       fest = festivosAnio(S.anio).filter(f => { const m = +f.fecha.slice(5, 7) - 1; return m >= m0 && m <= m1; });
-      if (S.q) fest = fest.filter(f => norm(f.nombre).includes(norm(S.q)));
+      if (S.q) fest = fest.filter(f => norm((f.nombre || '') + ' ' + (f.titulo || '')).includes(norm(S.q)));
     }
     const todos = [...L, ...fest].sort((a, b) => a.inicio.localeCompare(b.inicio) || (a.titulo || '').localeCompare(b.titulo || ''));
     listaFiltradaCompleta = todos;
@@ -2515,9 +2668,20 @@ let dbClient = null;
 
   function abrirDetalle(id) {
     if (String(id).startsWith('festivo-')) {
-      const f = festivosAnio(+id.slice(8, 12)).find(x => x.id === id);
+      const y = +String(id).slice(8, 12);
+      const f = diasEspecialesAnio(y).find(x => x.id === id) || festivosAnio(y).find(x => x.id === id);
       if (!f) return;
-      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; color:var(--petroleo);">${FLATICONS.estrella} ${esc(f.nombre)}</h2><dl><dt>Fecha</dt><dd>${fmtFecha(f.fecha)}</dd><dt>Nota</dt><dd>Este es un día festivo oficial en Colombia.</dd></dl>`;
+      const catInfo = CELEB_CATS[f.cat] || { nombre: f.esFestivo ? 'Festivo oficial' : 'Celebración', emoji: '🎉' };
+      const nota = f.esFestivo
+        ? 'Festivo oficial en Colombia (día no laboral según calendario laboral).'
+        : 'Celebración o conmemoración reconocida en Colombia. No necesariamente es día no laboral.';
+      $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button>
+        <h2 style="font-family:var(--display); font-size:1.6rem; line-height:1.15; margin:.5rem 0 1rem; padding-right:2rem; color:var(--petroleo);">${f.emoji || catInfo.emoji} ${esc(f.nombre)}</h2>
+        <dl>
+          <dt>Fecha</dt><dd>${fmtFecha(f.fecha)}</dd>
+          <dt>Categoría</dt><dd>${catInfo.emoji} ${esc(catInfo.nombre)}</dd>
+          <dt>Nota</dt><dd>${nota}</dd>
+        </dl>`;
       $('#velo').classList.add('on'); $('#cajon').classList.add('on');
       return;
     }
@@ -2586,7 +2750,11 @@ let dbClient = null;
     const fDelDia = festivosDia(s);
     const todos = [...fDelDia, ...L];
     $('#cajon').innerHTML = `<button class="cerrar" data-cerrar>×</button><h2 style="font-family:var(--display); font-size:1.6rem; margin-bottom:1rem; color:var(--petroleo);">${FLATICONS.calendario} ${fmtFecha(s)}</h2>` + (todos.length ? todos.map(e => {
-       if (e.esFestivo) return `<div class="ev festivo" style="--c-fac:var(--rojo);--c-cat:var(--rojo); cursor:default;" data-id="festivo-${e.fecha}"><div class="fecha-block"><b>${parse(e.fecha).getDate()}</b><span class="mes">Festivo</span></div><div><h3>${esc(e.nombre)}</h3></div></div>`;
+       if (e.esFestivo || e.esCelebracion) {
+         const col = e.esFestivo ? 'var(--rojo)' : colorCeleb(e);
+         const tag = e.esFestivo ? 'Festivo' : ((CELEB_CATS[e.cat] || {}).nombre || 'Celebración');
+         return `<div class="ev ${e.esFestivo ? 'festivo' : 'celeb'}" style="--c-fac:${col};--c-cat:${col};--c-celeb:${col}; cursor:default;" data-id="${e.id || ('festivo-' + e.fecha)}"><div class="fecha-block"><b>${parse(e.fecha).getDate()}</b><span class="mes">${esc(tag)}</span></div><div><h3>${e.emoji ? e.emoji + ' ' : ''}${esc(e.nombre)}</h3></div></div>`;
+       }
        return filaEvento(e);
     }).join('') : '<p style="color:var(--suave); text-align:center; padding:2rem;">No hay eventos este día.</p>');
     $('#velo').classList.add('on'); $('#cajon').classList.add('on');
@@ -2646,7 +2814,8 @@ let dbClient = null;
     if (ev.key === 'Enter' && ev.target.classList.contains('ev')) abrirDetalle(ev.target.dataset.id);
   });
   $('#fAnio').onchange = e => { S.anio = +e.target.value; S.ref = new Date(S.anio, S.ref.getMonth(), 1); pintarPublico(); };
-  $('#fFest').onchange = e => { S.festivos = e.target.checked; pintarPublico(); };
+  $('#fFest').onchange = e => { S.festivos = e.target.checked; FEST = {}; pintarPublico(); };
+  $('#fCeleb').onchange = e => { S.celebraciones = e.target.checked; FEST = {}; pintarPublico(); };
   $('#fGrupo').onchange = e => { S.grupo = e.target.value; S.prog = ''; pintarPublico(); };
   $('#fProg').onchange = e => { S.prog = e.target.value; pintarPublico(); };
   $('#fInst').onchange = e => { S.inst = e.target.checked; pintarPublico(); };
@@ -2982,6 +3151,7 @@ let dbClient = null;
     let html; try { html = await PANELES[p](); } catch (e) { console.error(e); html = encabezado('Error', esc(e.message || String(e))); }
     if (P !== p || !USUARIO_ACTUAL) return;
     $('#admin-panel-inner').innerHTML = html;
+    if (p === 'masivos') { try { mvPintarSubcats(); mvActualizarPreview(); } catch (e) { console.error(e); } }
     if (p === 'eventos') pintarTabla();
     if (p === 'masivos') mvActualizarPreview();
     if (p === 'logs') pintarLogs();
@@ -3127,7 +3297,7 @@ let dbClient = null;
       ${fila('fec', 'Fechas', `<div style="display:flex;gap:.5rem;"><input type="date" id="me_fi" style="${css}"><input type="date" id="me_ff" style="${css}"></div>`)}
       ${fila('pis', 'Piso / Salón', `<input id="me_pis" style="${css}">`)}
       ${fila('cat', 'Categoría', `<select id="me_cat" style="${css}">${D.categorias.map(c => opt(c.id, c.nombre, false)).join('')}</select>`)}
-      ${fila('sub', 'Subcategoría', `<input id="me_sub" placeholder="Ej: Directivo (vacío = quitar)" style="${css}">`)}
+      ${fila('sub', 'Subcategoría', `<select id="me_sub" style="${css}"><option value="">— Sin subcategoría (vacío = quitar) —</option></select>`)}
       ${fila('est', 'Estado', `<select id="me_est" style="${css}">${opt('publicado', 'Publicado', true)}${opt('borrador', 'Borrador', false)}</select>`)}
       ${fila('fac', 'Facultades', `<select id="me_fac" multiple size="6" style="${css}">${D.facultades.map(f => opt(f.id, f.nombre, false)).join('')}</select>`)}
       ${fila('hor', 'Horario', `<div style="display:flex;gap:.5rem;"><input type="time" id="me_hi" style="${css}"><input type="time" id="me_hf" style="${css}"></div>`)}
@@ -3136,6 +3306,27 @@ let dbClient = null;
       <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;"><button class="btn" id="me_cancel">Cancelar</button><button class="btn pri" id="me_ok">Aplicar a ${ids.length}</button></div></div>`;
     document.body.appendChild(ov);
     $('#me_cancel').onclick = () => ov.remove();
+        const mePintarSub = () => {
+      const catId = ($('#me_cat') || {}).value;
+      const lista = typeof subcatsDe === 'function' ? subcatsDe(catId) : [];
+      const sel = $('#me_sub'); if (!sel) return;
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">— Sin subcategoría (vacío = quitar) —</option>' +
+        lista.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+      if (cur && lista.includes(cur)) sel.value = cur;
+    };
+    const meCat = ov.querySelector('#me_cat');
+    if (meCat) {
+      const cats = [...new Set(ids.map(id => (D.eventos.find(x => x.id === id) || {}).categoria).filter(Boolean))];
+      if (cats.length === 1) meCat.value = cats[0];
+      meCat.addEventListener('change', mePintarSub);
+      mePintarSub();
+      const subs = [...new Set(ids.map(id => (D.eventos.find(x => x.id === id) || {}).subcategoria).filter(Boolean))];
+      if (subs.length === 1 && [...($('#me_sub').options || [])].some(o => o.value === subs[0])) $('#me_sub').value = subs[0];
+    }
+    const shared = (getter) => { const vals = ids.map(id => getter(D.eventos.find(x => x.id === id) || {})); const u = [...new Set(vals.map(v => v == null ? '' : String(v)))]; return u.length === 1 ? u[0] : null; };
+    const st = shared(e => e.estado || 'publicado'); if (st && $('#me_est')) $('#me_est').value = st;
+
     $('#me_ok').onclick = async () => {
       const on = k => $('#me_c_' + k).checked, row = {};
       if (on('cat')) row.categoria_id = $('#me_cat').value;
@@ -3518,17 +3709,61 @@ let dbClient = null;
     let avisoCols = [];
     try {
       if (DB_READY) {
-        const payload = { ...marcaPrueba(), titulo: o.titulo, descripcion: o.descripcion, categoria_id: o.categoria, subcategoria: o.subcategoria || null, periodo_id: o.periodo, periodo2_id: o.periodo2, fecha_inicio: o.inicio, fecha_fin: o.fin, hora_inicio: o.horaInicio || null, hora_fin: o.horaFin || null, lugar: o.lugar, lugar_especifico: o.lugarEsp, piso: o.piso, enlace: o.enlace, organizador: o.organizador || null, estado: o.estado, updated_at: new Date().toISOString() };
-        if (id) payload.id = id;
+        // id obligatorio: la tabla eventos no tiene DEFAULT y es NOT NULL
+        const eventId = String((id && String(id).trim()) || o.id || uid()).trim();
+        if (!eventId) throw new Error('No se pudo generar el id del evento');
+        o.id = eventId;
+        const payload = {
+          ...marcaPrueba(),
+          id: eventId,
+          titulo: o.titulo,
+          descripcion: o.descripcion,
+          categoria_id: o.categoria,
+          subcategoria: o.subcategoria || null,
+          periodo_id: o.periodo,
+          periodo2_id: o.periodo2,
+          fecha_inicio: o.inicio,
+          fecha_fin: o.fin,
+          hora_inicio: o.horaInicio || null,
+          hora_fin: o.horaFin || null,
+          lugar: o.lugar,
+          lugar_especifico: o.lugarEsp,
+          piso: o.piso,
+          enlace: o.enlace,
+          organizador: o.organizador || null,
+          estado: o.estado,
+          updated_at: new Date().toISOString()
+        };
+        const esEdicion = !!(id && String(id).trim());
         let ev = null;
-        for (let intento = 0; intento < 5 && !ev; intento++) {
-          const r = await dbClient.from('eventos').upsert([payload]).select().single();
+        for (let intento = 0; intento < 8 && !ev; intento++) {
+          // Crear = INSERT (con id). Editar = UPDATE por id. Evita upsert que a veces omite id.
+          let r;
+          if (esEdicion) {
+            const { id: _drop, ...soloCampos } = payload;
+            r = await dbClient.from('eventos').update(soloCampos).eq('id', eventId).select().single();
+          } else {
+            if (!payload.id) payload.id = uid();
+            r = await dbClient.from('eventos').insert([payload]).select().single();
+          }
           if (!r.error) { ev = r.data; break; }
-          const m = /Could not find the '([^']+)' column of 'eventos'/.exec(r.error.message || '');
-          if (!m || !(m[1] in payload)) throw r.error;
-          delete payload[m[1]]; avisoCols.push(m[1]);
+          const msg = r.error.message || '';
+          const m = /Could not find the '([^']+)' column of 'eventos'/.exec(msg);
+          if (m && m[1] in payload && m[1] !== 'id') {
+            delete payload[m[1]];
+            avisoCols.push(m[1]);
+            continue;
+          }
+          // Si el id ya existe al insertar (rare), reintentar con otro id
+          if (!esEdicion && /duplicate|unique|already exists/i.test(msg)) {
+            payload.id = uid();
+            o.id = payload.id;
+            continue;
+          }
+          throw r.error;
         }
-        if (!ev) throw new Error('No se pudo guardar el evento');
+        if (!ev) throw new Error('No se pudo guardar el evento (id=' + eventId + ')');
+        if (!ev.id) throw new Error('Supabase devolvió el evento sin id');
         await dbClient.from('evento_facultades').delete().eq('evento_id', ev.id);
         await dbClient.from('evento_programas').delete().eq('evento_id', ev.id);
         await dbClient.from('evento_areas').delete().eq('evento_id', ev.id);
@@ -3542,7 +3777,11 @@ let dbClient = null;
         const nuevosDatos = await leerNube(); if (nuevosDatos) D = nuevosDatos;
       }
       toast(avisoCols.length ? `Evento guardado, pero sin: ${avisoCols.join(', ')}. Ejecuta el SQL de actualización en Supabase.` : `${FLATICONS.check} Evento guardado`, !!avisoCols.length); cerrarModal(); refrescar();
-    } catch (e) { console.error(e); toast('Error al guardar: ' + (e.message || 'revisa la conexión'), true); }
+    } catch (e) {
+      console.error(e);
+      const msg = (e && e.message) || (e && e.error && e.error.message) || String(e);
+      toast('Error al guardar: ' + msg, true);
+    }
   }
 
   async function eliminarEventoAdmin(id) {
@@ -3990,7 +4229,30 @@ let dbClient = null;
     const lista = (l, tit, base) => `<div class="caja"><h2>${tit}</h2><div class="chips-cfg">${chipsLista(l, base)}</div>
       <div style="display:flex;gap:.5rem;margin-top:.8rem;"><input id="op_${l}" placeholder="Nueva opción…" style="flex:1;padding:.5rem .8rem;border:1px solid var(--linea);border-radius:10px;"><button class="btn pri" data-a="addOpc" data-l="${l}">➕ Agregar</button></div></div>`;
     const progs = D.facultades.flatMap(f => f.programas.map(pr => ({ ...pr, nombre: pr.nombre + ' · ' + f.nombre })));
+    const off = celebOffSet();
+    const celebAdmin = Object.keys(CELEB_CATS).filter(k => k !== 'oficial').map(cat => {
+      const info = CELEB_CATS[cat];
+      const items = CELEBRACIONES_FIJAS.filter(c => c.cat === cat);
+      const onAll = items.every(c => !off.has(c.key));
+      return `<div class="caja" style="margin-bottom:.8rem;">
+        <h2 style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">${info.emoji} ${esc(info.nombre)}
+          <button class="btn sm" data-a="celebCat" data-cat="${cat}" data-on="1">✅ Todas</button>
+          <button class="btn sm" data-a="celebCat" data-cat="${cat}" data-on="0">⏸ Todas</button>
+        </h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.35rem;">
+          ${items.map(c => `<label class="mv-chk" style="border:1px solid var(--linea);border-radius:10px;padding:.4rem .55rem;${!off.has(c.key) ? '' : 'opacity:.55;'}">
+            <input type="checkbox" data-a="celebToggle" data-key="${c.key}" ${off.has(c.key) ? '' : 'checked'}>
+            <span>${c.emoji} ${esc(c.nombre)}</span>
+          </label>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
     return encabezado('⚙️ Listas y Estado', 'Crea opciones para las listas desplegables y habilita o suspende facultades, programas, áreas y categorías (lo suspendido se oculta del portal público).') + `
+    <div class="caja">
+      <h2>🎉 Celebraciones y días conmemorativos</h2>
+      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.8rem;">Activa o desactiva cada celebración en el calendario público. Los <b>festivos oficiales</b> de Colombia se calculan automáticamente (ley Emiliani) y se controlan con el filtro «Festivos» del portal.</p>
+      ${celebAdmin}
+    </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;">
       ${lista('publico', '🎯 Opciones de «Dirigido a»', PUB_BASE)}
       ${lista('modalidad', '💻 Modalidades (novedades)', MOD_BASE)}
@@ -4042,7 +4304,6 @@ let dbClient = null;
     const areaOpts = D.areas.map(a => `<option value="${esc(a.id)}">${esc(a.nombre)}</option>`).join('');
     const perOpts = D.periodos.map(p => `<option value="${esc(p.id)}">${esc(nombrePeriodo(p.id))}</option>`).join('');
     const bloques = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l => `<option value="Bloque ${l}">Bloque ${l}</option>`).join('');
-    const subs = [...new Set(D.categorias.flatMap(c => c.subcategorias || []))].map(x => `<option value="${esc(x)}">`).join('');
     const facs = D.facultades.filter(esAct).map(f => `<label class="mv-chk"><input type="checkbox" name="mv_facsel" value="${esc(f.id)}" checked> ${esc(f.nombre)}</label>`).join('');
     return encabezado('📦 Creación masiva de eventos', 'Define uno o varios eventos con todas sus fechas; el sistema los multiplica por facultad y por público sin que repitas datos.') + `
     <style>
@@ -4056,8 +4317,7 @@ let dbClient = null;
     <div id="mv_root">
     <div class="caja">
       <h2>1 · Eventos a crear</h2>
-      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Cada tarjeta es un evento distinto. Pega <b>todas sus fechas</b> (una por línea o separadas por coma; vale <code>2027-02-10</code>, <code>10/02/2027</code> o un rango <code>2027-04-14 → 2027-04-15</code>) o usa el selector para ir sumándolas.</p>
-      <datalist id="mv_subs">${subs}</datalist>
+      <p style="font-size:.88rem;color:var(--suave);margin-bottom:.6rem;">Cada tarjeta es un evento distinto. <b>Días sueltos</b> (uno por línea) crean un evento por día. Un <b>rango</b> <code>2027-04-14 → 2027-04-16</code> crea <b>un solo evento de varios días</b>. También puedes usar los selectores de abajo.</p>
       <div id="mv_plant">${mvFilaPl()}</div>
       <button class="btn sm pri" type="button" data-a="mvAddPl">➕ Agregar otro evento</button>
     </div>
@@ -4083,8 +4343,14 @@ let dbClient = null;
     <div class="caja">
       <h2>3 · Datos comunes a todos</h2>
       <div class="fr2">
-        <div class="fr"><label>Categoría</label><select id="mv_cat">${cats}</select></div>
+        <div class="fr"><label>Categoría</label><select id="mv_cat" onchange="mvPintarSubcats()">${cats}</select></div>
+        <div class="fr"><label>Subcategoría <span style="font-weight:400;color:var(--suave)">(según categoría)</span></label>
+          <select id="mv_sub"><option value="">— Sin subcategoría —</option></select>
+        </div>
+      </div>
+      <div class="fr2">
         <div class="fr"><label>Semestre</label><select id="mv_per"><option value="auto">Detectar por fecha</option>${perOpts}</select></div>
+        <div class="fr"></div>
       </div>
       <div class="fr2">
         <div class="fr"><label>Bloque / Ubicación</label><select id="mv_lug"><option value="">-- Seleccionar --</option><optgroup label="Bloques">${bloques}</optgroup><optgroup label="Especiales"><option>Auditorio Principal o Central</option><option>Auditorio Fundadores</option><option>Clínicas Odontológicas</option><option>Sistema Académico en Línea (SALA)</option><option>SAUCE</option><option>Sede Chía</option><option>Otro</option></optgroup></select></div>
@@ -4111,16 +4377,36 @@ let dbClient = null;
     </div>`;
   }
 
+
+  function mvPintarSubcats() {
+    const catId = ($('#mv_cat') || {}).value;
+    const lista = typeof subcatsDe === 'function' ? subcatsDe(catId) : [];
+    const sel = $('#mv_sub'); if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Sin subcategoría —</option>' +
+      lista.map(x => `<option value="${esc(x)}"${x === cur ? ' selected' : ''}>${esc(x)}</option>`).join('');
+    if (cur && lista.includes(cur)) sel.value = cur;
+    if (!lista.length) {
+      const o = document.createElement('option');
+      o.disabled = true;
+      o.textContent = '(Esta categoría no tiene subcategorías definidas)';
+      sel.appendChild(o);
+    }
+  }
+
   function mvFilaPl() {
     const pubs = PUBLICOS_ROLES.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
     return `<div class="mv-pl" style="border:1px solid var(--linea);border-radius:12px;padding:.8rem .9rem;margin-bottom:.7rem;background:var(--fondo);">
-      <div class="fr2">
-        <div class="fr"><label>Título *</label><input class="pl-tit" placeholder="Ej: Comité administrativo / Inducción docentes"></div>
-        <div class="fr"><label>Subcategoría (opcional)</label><input class="pl-sub" list="mv_subs" placeholder="Ej: Docentes"></div>
-      </div>
+      <div class="fr"><label>Título *</label><input class="pl-tit" placeholder="Ej: Comité administrativo / Inducción docentes"></div>
       <div class="fr"><label>Fechas * <small class="pl-fcount" style="color:var(--suave);font-weight:400;"></small></label>
-        <textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-15"></textarea>
-        <div style="display:flex;gap:.5rem;align-items:center;margin-top:.35rem;font-size:.85rem;color:var(--suave);">➕ Sumar fecha: <input type="date" class="pl-addf" style="max-width:170px;"></div>
+        <p style="font-size:.82rem;color:var(--suave);margin:0 0 .35rem;">• <b>Día suelto</b> = un evento ese día · • <b>Rango</b> (inicio → fin) = <b>un solo evento de varios días</b></p>
+        <textarea class="pl-fechas" rows="3" placeholder="2027-02-10&#10;2027-03-10&#10;2027-04-14 → 2027-04-16"></textarea>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end;margin-top:.45rem;font-size:.85rem;color:var(--suave);">
+          <label style="display:flex;flex-direction:column;gap:.2rem;">➕ Día suelto<input type="date" class="pl-addf" style="max-width:170px;"></label>
+          <label style="display:flex;flex-direction:column;gap:.2rem;">Rango desde<input type="date" class="pl-addr-ini" style="max-width:170px;"></label>
+          <label style="display:flex;flex-direction:column;gap:.2rem;">hasta<input type="date" class="pl-addr-fin" style="max-width:170px;"></label>
+          <button type="button" class="btn sm" data-a="mvAddRango">➕ Agregar rango</button>
+        </div>
       </div>
       <div class="fr2">
         <div class="fr"><label>Hora inicio (opcional)</label><input type="time" class="pl-hi"></div>
@@ -4135,12 +4421,32 @@ let dbClient = null;
     </div>`;
   }
   function mvParseFechas(txt) {
-    const iso = d => { const m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/.exec(d); return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : d; };
+    const iso = d => {
+      d = String(d || '').trim();
+      let m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+      if (m) return d;
+      m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/.exec(d);
+      return m ? `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}` : d;
+    };
     const out = [];
-    String(txt || '').split(/[\n;,]+/).forEach(l => {
-      const t = (l.match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.]\d{1,2}[\/.]\d{4}/g) || []).map(iso);
-      if (!t.length) return;
-      out.push({ ini: t[0], fin: t[1] && t[1] >= t[0] ? t[1] : t[0] });
+    String(txt || '').split(/[\n;]+/).forEach(l => {
+      l = l.trim(); if (!l) return;
+      // Rango: "2027-04-14 → 2027-04-16" | "14/04/2027 al 16/04/2027" | "a" | "-"
+      const rango = l.split(/\s*(?:→|->|—|–|\ba\b|\bal\b|hasta)\s*/i);
+      if (rango.length >= 2) {
+        const ma = rango[0].match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{4}/);
+        const mb = rango[1].match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{4}/);
+        const a = iso((ma && ma[0]) || rango[0]);
+        const b = iso((mb && mb[0]) || rango[1]);
+        if (/^\d{4}-\d{2}-\d{2}$/.test(a)) out.push({ ini: a, fin: /^\d{4}-\d{2}-\d{2}$/.test(b) && b >= a ? b : a });
+        return;
+      }
+      // Varias fechas en una línea separadas por coma
+      String(l).split(/[,]+/).forEach(part => {
+        const t = (part.match(/\d{4}-\d{2}-\d{2}|\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{4}/g) || []).map(iso).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
+        if (!t.length) return;
+        out.push({ ini: t[0], fin: t[1] && t[1] >= t[0] ? t[1] : t[0] });
+      });
     });
     const vistos = new Set();
     return out.filter(f => { const k = f.ini + '|' + f.fin; if (vistos.has(k)) return false; vistos.add(k); return true; }).sort((a, b) => a.ini.localeCompare(b.ini));
@@ -4149,7 +4455,7 @@ let dbClient = null;
     return [...document.querySelectorAll('#mv_plant .mv-pl')].map(r => {
       const g = c => (r.querySelector('.' + c) || {}).value?.trim() || '';
       return {
-        tit: g('pl-tit'), sub: g('pl-sub'), niv: g('pl-niv'), desc: g('pl-desc'), hi: g('pl-hi') || null, hf: g('pl-hf') || null,
+        tit: g('pl-tit'), sub: '', niv: g('pl-niv'), desc: g('pl-desc'), hi: g('pl-hi') || null, hf: g('pl-hf') || null,
         fechas: mvParseFechas(g('pl-fechas')),
         pubs: [...(r.querySelector('.pl-pub') ? r.querySelector('.pl-pub').selectedOptions : [])].map(o => o.value)
       };
@@ -4193,6 +4499,7 @@ let dbClient = null;
     if (cfg.facModo !== 'ninguna' && !cfg.facSel.length) return toast('Marca al menos una facultad (o elige «Institucional»)', true);
     const conSufFac = ($('#mv_fac_sufijo') || {}).checked, omitir = ($('#mv_skip') || {}).checked;
 
+    const commonSub = (($('#mv_sub') || {}).value || '').trim();
     const combos = []; let omitidos = 0;
     for (const pl of pls) for (const fec of pl.fechas) {
       const pubList = cfg.split && pl.pubs.length ? pl.pubs.map(p => [p]) : [pl.pubs];
@@ -4204,7 +4511,7 @@ let dbClient = null;
         if (f && conSufFac) { titulo += ' - ' + f.nombre; if (desc) desc += ' - ' + f.nombre; }
         const facs = cfg.facModo === 'copias' ? (fid ? [fid] : []) : (cfg.facModo === 'junto' ? cfg.facSel : []);
         if (omitir && D.eventos.some(x => norm(x.titulo) === norm(titulo) && x.inicio === fec.ini && (!fid || (x.facultad || []).map(String).includes(String(fid))) && (!pubs.length || pubs.every(p => (x.publico || []).includes(p))))) { omitidos++; continue; }
-        combos.push({ titulo, desc, sub: pl.sub, niv: pl.niv, hi: pl.hi, hf: pl.hf, pubs, facs, ini: fec.ini, fin: fec.fin });
+        combos.push({ titulo, desc, sub: pl.sub || commonSub || null, niv: pl.niv, hi: pl.hi, hf: pl.hf, pubs, facs, ini: fec.ini, fin: fec.fin });
       }
     }
     if (!combos.length) return toast(omitidos ? `Los ${omitidos} eventos ya existen; no se creó nada` : 'No hay nada para crear', !omitidos);
@@ -4264,11 +4571,12 @@ let dbClient = null;
       try {
         let ev = null, errIns = null;
         for (let intento = 0; intento < 8 && !ev; intento++) {
+          if (!payload.id) payload.id = uid();
           const r = await dbClient.from('eventos').insert([payload]).select().single();
           if (!r.error) { ev = r.data; break; }
           errIns = r.error;
           const m = /Could not find the '([^']+)' column of 'eventos'/.exec(r.error.message || '');
-          if (!m || !(m[1] in payload)) break;
+          if (!m || !(m[1] in payload) || m[1] === 'id') break;
           delete payload[m[1]];
         }
         if (!ev) { fail++; ultimoError = (errIns && errIns.message) || 'Error desconocido'; console.error(errIns); continue; }
@@ -4645,7 +4953,20 @@ let dbClient = null;
     
     if (a === 'nuevo') return puede('crear') ? modalEvento() : sinPermiso();
     if (a === 'mvCrear') return crearEventosMasivos();
-    if (a === 'mvAddPl') { const c = $('#mv_plant'); if (c) c.insertAdjacentHTML('beforeend', mvFilaPl()); return mvActualizarPreview(); }
+    if (a === 'mvAddPl') { const c = $('#mv_plant'); if (c) c.insertAdjacentHTML('beforeend', mvFilaPl()); if (typeof mvPintarSubcats === 'function') mvPintarSubcats(); return mvActualizarPreview(); }
+    if (a === 'mvAddRango') {
+      const card = ac.closest('.mv-pl'); if (!card) return;
+      const ini = (card.querySelector('.pl-addr-ini') || {}).value;
+      const fin = (card.querySelector('.pl-addr-fin') || {}).value || ini;
+      if (!ini) return toast('Elige la fecha de inicio del rango', true);
+      if (fin < ini) return toast('La fecha fin debe ser ≥ inicio', true);
+      const ta = card.querySelector('.pl-fechas');
+      const line = ini === fin ? ini : (ini + ' → ' + fin);
+      ta.value = (ta.value.trim() ? ta.value.trim() + '\n' : '') + line;
+      card.querySelector('.pl-addr-ini').value = '';
+      if (card.querySelector('.pl-addr-fin')) card.querySelector('.pl-addr-fin').value = '';
+      return mvActualizarPreview();
+    }
     if (a === 'mvDelPl') { const r = ac.closest('.mv-pl'); if (r && document.querySelectorAll('#mv_plant .mv-pl').length > 1) r.remove(); else toast('Debe quedar al menos un evento', true); return mvActualizarPreview(); }
     if (a === 'mvFacAll' || a === 'mvFacNone') { document.querySelectorAll('input[name="mv_facsel"]').forEach(c => c.checked = a === 'mvFacAll'); return mvActualizarPreview(); }
     if (a === 'editar') return puede('editar') ? modalEvento(i) : sinPermiso();
@@ -4745,6 +5066,18 @@ let dbClient = null;
       if (a === 'eDel') { if (!confirm(`¿Eliminar ${selP.length} programa(s) y ${selF.length} facultad(es)? Al eliminar una facultad se eliminan también sus programas.`)) return; if (selP.length) await enLotes(selP, c => dbClient.from('programas').delete().in('id', c)); if (selF.length) { const r = await enLotes(selF, c => dbClient.from('facultades').delete().in('id', c)); if (r.error) return toast('Error: ' + r.error.message, true); } registrarLog('Eliminó estructura', `${selP.length} programas, ${selF.length} facultades`); return fin('🗑 Eliminado'); }
     }
     if (a === 'hist') return abrirHistorial(i);
+    if (a === 'celebToggle') {
+      const key = ac.dataset.key; if (!key) return;
+      celebSetOn(key, ac.checked);
+      toast(ac.checked ? '✅ Celebración visible' : '⏸ Celebración oculta');
+      return;
+    }
+    if (a === 'celebCat') {
+      const cat = ac.dataset.cat, on = ac.dataset.on === '1';
+      celebSetCat(cat, on);
+      toast(on ? '✅ Categoría habilitada' : '⏸ Categoría suspendida');
+      return refrescar();
+    }
     if (a === 'limpiarF') { Object.keys(F).forEach(k => F[k] = ''); SEL.clear(); return ir('eventos'); }
     if (a === 'm_edit') { if (!puede('editar')) return sinPermiso(); return abrirEdicionMasiva(); }
     if (a === 'm_del' || a === 'm_delall') {
