@@ -936,6 +936,17 @@
   .ev.celeb .fecha-block { background: var(--c-celeb, #5C6BC0); }
   .ev.celeb .fecha-block b, .ev.celeb .fecha-block .mes { color: #fff; }
   .pill.celeb { background: var(--c-celeb, #5C6BC0); color: #fff; border-left-color: transparent; font-weight: 700; }
+
+  .ev.tita-bday { border-color: color-mix(in srgb, var(--lima) 50%, var(--linea)); background: linear-gradient(135deg, color-mix(in srgb, var(--lima) 12%, var(--superficie)), var(--superficie)); }
+  .ev.tita-bday .fecha-block { background: linear-gradient(160deg, var(--verde), var(--petroleo)); }
+  .ev-tita-face {
+    width: 52px; height: 52px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--lima); box-shadow: 0 4px 12px rgba(0,59,54,.2);
+    flex: none; margin-right: .15rem;
+  }
+  .pill.tita-bday { background: linear-gradient(90deg, var(--verde), #00938f); color: #fff; }
+  .pill.tita-bday img { width: 18px; height: 18px; border-radius: 50%; vertical-align: middle; margin-right: 4px; object-fit: cover; }
+
   .cal .dia.celeb-day .n { color: #5C6BC0; font-weight: 800; }
   .leyenda-celeb { display:flex; flex-wrap:wrap; gap:.6rem 1rem; margin-top:.6rem; font-size:.82rem; color:var(--suave); }
   .leyenda-celeb span { display:inline-flex; align-items:center; gap:.3rem; }
@@ -1492,7 +1503,7 @@
     </div>
     <div class="ld-bar"><i></i></div>
     <p class="ld-s">Cargando calendario…</p>
-    <p class="ld-ver" id="ldVer">v2.6.0</p>
+    <p class="ld-ver" id="ldVer">v2.7.0</p>
   </div>
 </div>
 <div id="error-box" hidden><h2>⚠️ Error de conexión</h2><p id="error-msg"></p></div>
@@ -1596,7 +1607,7 @@
 
   <footer class="pie-pro">
     <div class="pie-logo"><svg viewBox="0 0 64 64" width="58" height="58" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="32" cy="32" r="22" fill="none" stroke="#A6CE39" stroke-width="1.5" stroke-dasharray="3 3"/><text x="32" y="37" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="800" font-size="17" fill="#fff">RYC</text></svg><small>REGISTRO Y CONTROL<br>ACADÉMICO</small></div>
-    <div class="pie-centro"><span id="origen"></span><span id="actual"></span><span id="appVer" style="opacity:.85;font-weight:700;">v2.6.0</span></div>
+    <div class="pie-centro"><span id="origen"></span><span id="actual"></span><span id="appVer" style="opacity:.85;font-weight:700;">v2.7.0</span></div>
     <div class="pie-contacto"><b>Av. Cra 9 No. 131 A - 02</b><span>PBX (601) 648 9000 EXT 1500 - 1506</span><a href="mailto:registroacademico@unbosque.edu.co">registroacademico@unbosque.edu.co</a></div>
     <div class="pie-copy">© 2026 Jhon Alexander Vargas Serrano · Derechos de autor reservados. Prohibida su copia, reproducción o distribución sin autorización del autor.</div>
   </footer>
@@ -1791,7 +1802,23 @@ let dbClient = null;
   
   const periodoDe = s => { const d = parse(s); return `${d.getFullYear()}-${d.getMonth() < 6 ? 1 : 2}`; };
   const periodoAuto = (D, fecha) => { const p = D.periodos.find(p => p.inicio <= fecha && fecha <= p.fin); return p ? p.id : periodoDe(fecha); };
-  const nombrePeriodo = id => { if(!id) return ''; const [a, s] = id.split('-'); return `${a} · Semestre ${s}`; };
+  const parsePeriodoId = id => {
+    const m = String(id || '').match(/^(\d{4})-(M|C)?(\d+)$/i);
+    if (!m) return { anio: 0, tipo: 'semestre', num: 0, raw: id };
+    const pref = (m[2] || '').toUpperCase();
+    return { anio: +m[1], tipo: pref === 'M' ? 'modulo' : pref === 'C' ? 'ciclo' : 'semestre', num: +m[3], raw: id };
+  };
+  const nombrePeriodo = id => {
+    if (!id) return '';
+    const p = (typeof D !== 'undefined' && D && D.periodos) ? D.periodos.find(x => x.id === id) : null;
+    if (p && p.nombre) return p.nombre;
+    const info = parsePeriodoId(id);
+    if (info.tipo === 'modulo') return `${info.anio} · Módulo ${info.num}`;
+    if (info.tipo === 'ciclo') return `${info.anio} · Ciclo ${info.num}`;
+    return `${info.anio || id} · Semestre ${info.num || id}`;
+  };
+  const etiquetaTipoPeriodo = t => t === 'modulo' ? 'Módulo' : t === 'ciclo' ? 'Ciclo' : 'Semestre';
+
   const periodoActivo = id => { const p = ((typeof D !== 'undefined' && D && D.periodos) || []).find(x => x.id === id); return !p || p.activo !== false; };
   const eventoVisiblePublico = e => (periodoActivo(e.periodo) || (!!e.periodo2 && periodoActivo(e.periodo2))) && catEvActiva(e) && entidadesActivas(e);
   const catEvActiva = e => esAct(D.categorias.find(x => x.id === e.categoria));
@@ -1807,8 +1834,8 @@ let dbClient = null;
   const donaG = items => { const tot = items.reduce((a, x) => a + x.n, 0), tt = tot || 1; let ac = 0; const cono = items.filter(x => x.n).map(x => { const i = ac / tt * 100; ac += x.n; return `${x.c} ${i}% ${ac / tt * 100}%`; }).join(',') || '#e5ece8 0 100%'; return `<div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;"><div class="dona" style="background:conic-gradient(${cono})"><span>${tot}</span></div><div style="flex:1;min-width:150px;font-size:.88rem;">${items.map(x => `<div style="display:flex;gap:.4rem;align-items:center;margin:.2rem 0;"><i style="width:11px;height:11px;border-radius:50%;background:${x.c}"></i>${x.l} <b style="margin-left:auto">${x.n}</b></div>`).join('')}</div></div>`; };
   const cuenta = (arr, f) => { const m = {}; arr.forEach(x => { const k = f(x); m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
   async function enLotes(ids, fn, n = 40) { for (let i = 0; i < ids.length; i += n) { const r = await fn(ids.slice(i, i + n)); if (r && r.error) return r; } return { error: null }; }
-  const APP_VERSION = '2.6.0';
-  const APP_BUILD = '2026-11-25';
+  const APP_VERSION = '2.7.0';
+  const APP_BUILD = '2026-11-25b';
   const uid = () => {
     try { if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID(); } catch (_) {}
     return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 11);
@@ -1888,6 +1915,14 @@ let dbClient = null;
     return '';
   }
 
+  function esCumpleTita(e) {
+    const t = ((e && (e.titulo || e.nombre || '')) + ' ' + ((e && e.descripcion) || '')).toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return /cumpleanos\s*tita|cumplea\s*tita|birthday\s*tita|tita\s*cumple/.test(t);
+  }
+  function imgCumpleTita() {
+    return 'cara_tita1.jpg';
+  }
   function tituloInteligente(e) {
     const base = String((e && (e.titulo || e.nombre)) || '').trim();
     if (!base || (e && e.esFestivo)) return base;
@@ -2197,169 +2232,145 @@ let dbClient = null;
   };
   // Celebraciones fijas (mes, día). key estable para habilitar/deshabilitar.
   const CELEBRACIONES_FIJAS = [
-    // Profesionales (Colombia / reconocidos)
-    { key: 'odontologo', m: 10, d: 3, nombre: 'Día del Odontólogo', emoji: '🦷', cat: 'profesional' },
-    { key: 'medico', m: 12, d: 3, nombre: 'Día del Médico', emoji: '🩺', cat: 'profesional' },
-    { key: 'enfermera', m: 5, d: 12, nombre: 'Día Internacional de la Enfermería', emoji: '💉', cat: 'profesional' },
-    { key: 'ingeniero', m: 5, d: 29, nombre: 'Día del Ingeniero (Colombia)', emoji: '⚙️', cat: 'profesional' },
-    { key: 'arquitecto', m: 7, d: 1, nombre: 'Día del Arquitecto', emoji: '🏗️', cat: 'profesional' },
-    { key: 'abogado', m: 7, d: 22, nombre: 'Día del Abogado (Colombia)', emoji: '⚖️', cat: 'profesional' },
-    { key: 'contador', m: 5, d: 25, nombre: 'Día del Contador Público', emoji: '🧮', cat: 'profesional' },
-    { key: 'periodista', m: 2, d: 9, nombre: 'Día del Periodista (Colombia)', emoji: '📰', cat: 'profesional' },
-    { key: 'psicologo', m: 11, d: 20, nombre: 'Día del Psicólogo (Colombia)', emoji: '🧠', cat: 'profesional' },
-    { key: 'trabajador_social', m: 3, d: 28, nombre: 'Día del Trabajador Social', emoji: '🤝', cat: 'profesional' },
-    { key: 'bibliotecologo', m: 7, d: 24, nombre: 'Día del Bibliotecólogo', emoji: '📖', cat: 'profesional' },
-    { key: 'farmaceutico', m: 9, d: 25, nombre: 'Día del Químico Farmacéutico', emoji: '💊', cat: 'profesional' },
-    { key: 'veterinario', m: 8, d: 26, nombre: 'Día del Médico Veterinario', emoji: '🐾', cat: 'profesional' },
-    { key: 'fisioterapeuta', m: 9, d: 8, nombre: 'Día Mundial de la Fisioterapia', emoji: '🏃', cat: 'profesional' },
-    { key: 'nutricionista', m: 8, d: 31, nombre: 'Día del Nutricionista', emoji: '🥗', cat: 'profesional' },
-    { key: 'administrativo', m: 9, d: 5, nombre: 'Día del Administrativo', emoji: '🗂️', cat: 'profesional' },
-    { key: 'secretaria', m: 4, d: 26, nombre: 'Día de la Secretaria', emoji: '⌨️', cat: 'profesional' },
-    { key: 'programador', m: 9, d: 13, nombre: 'Día del Programador', emoji: '💻', cat: 'profesional' },
-    { key: 'disenador', m: 4, d: 27, nombre: 'Día del Diseñador Gráfico', emoji: '🎨', cat: 'profesional' },
-    { key: 'traductor', m: 9, d: 30, nombre: 'Día Internacional de la Traducción', emoji: '🌐', cat: 'profesional' },
-    { key: 'economista', m: 7, d: 8, nombre: 'Día del Economista', emoji: '📈', cat: 'profesional' },
-    { key: 'agricultor', m: 6, d: 9, nombre: 'Día del Agricultor', emoji: '🌾', cat: 'profesional' },
-    { key: 'maestro', m: 5, d: 15, nombre: 'Día del Maestro (Colombia)', emoji: '👩‍🏫', cat: 'educacion' },
-    { key: 'estudiante', m: 9, d: 21, nombre: 'Día del Estudiante', emoji: '🎓', cat: 'educacion' },
-    // Internacionales
-    { key: 'mujer', m: 3, d: 8, nombre: 'Día Internacional de la Mujer', emoji: '💜', cat: 'internacional' },
-    { key: 'hombre', m: 11, d: 19, nombre: 'Día Internacional del Hombre', emoji: '💙', cat: 'internacional' },
-    { key: 'nino', m: 4, d: 30, nombre: 'Día del Niño (Colombia)', emoji: '🧒', cat: 'internacional' },
-    { key: 'ninos_onu', m: 11, d: 20, nombre: 'Día Universal del Niño', emoji: '🧒', cat: 'internacional' },
-    { key: 'juventud', m: 8, d: 12, nombre: 'Día Internacional de la Juventud', emoji: '✨', cat: 'internacional' },
-    { key: 'familia', m: 5, d: 15, nombre: 'Día Internacional de la Familia', emoji: '👨‍👩‍👧‍👦', cat: 'internacional' },
-    { key: 'madre', m: 5, d: 11, nombre: 'Día de la Madre (aprox. 2.º domingo mayo)', emoji: '💐', cat: 'nacional' },
-    { key: 'padre', m: 6, d: 15, nombre: 'Día del Padre (aprox. 3.er domingo junio)', emoji: '👔', cat: 'nacional' },
-    { key: 'amistad', m: 7, d: 20, nombre: 'Día de la Amistad', emoji: '💛', cat: 'internacional' },
-    { key: 'paz', m: 9, d: 21, nombre: 'Día Internacional de la Paz', emoji: '☮️', cat: 'derechos' },
-    { key: 'derechos_humanos', m: 12, d: 10, nombre: 'Día de los Derechos Humanos', emoji: '🕊️', cat: 'derechos' },
-    { key: 'no_violencia', m: 10, d: 2, nombre: 'Día Internacional de la No Violencia', emoji: '🕊️', cat: 'derechos' },
-    { key: 'tolerancia', m: 11, d: 16, nombre: 'Día Internacional de la Tolerancia', emoji: '🤝', cat: 'derechos' },
-    { key: 'discapacidad', m: 12, d: 3, nombre: 'Día Internacional de las Personas con Discapacidad', emoji: '♿', cat: 'derechos' },
-    { key: 'indigenas', m: 8, d: 9, nombre: 'Día Internacional de los Pueblos Indígenas', emoji: '🪶', cat: 'derechos' },
-    { key: 'afrodescendencia', m: 5, d: 21, nombre: 'Día Nacional de la Afrocolombianidad', emoji: '🥁', cat: 'nacional' },
-    { key: 'idioma_materno', m: 2, d: 21, nombre: 'Día Internacional de la Lengua Materna', emoji: '🗣️', cat: 'educacion' },
-    { key: 'libro', m: 4, d: 23, nombre: 'Día del Libro', emoji: '📚', cat: 'educacion' },
-    { key: 'poesia', m: 3, d: 21, nombre: 'Día Mundial de la Poesía', emoji: '✍️', cat: 'educacion' },
-    { key: 'musica', m: 6, d: 21, nombre: 'Día de la Música', emoji: '🎵', cat: 'educacion' },
-    { key: 'arte', m: 4, d: 15, nombre: 'Día Mundial del Arte', emoji: '🖼️', cat: 'educacion' },
-    { key: 'ciencia', m: 11, d: 10, nombre: 'Día Mundial de la Ciencia', emoji: '🔬', cat: 'educacion' },
-    { key: 'filosofia', m: 11, d: 19, nombre: 'Día Mundial de la Filosofía', emoji: '🤔', cat: 'educacion' },
-    { key: 'docente_onu', m: 10, d: 5, nombre: 'Día Mundial de los Docentes', emoji: '🍎', cat: 'educacion' },
-    { key: 'estudiantes_onu', m: 10, d: 17, nombre: 'Día Internacional de los Estudiantes', emoji: '🎒', cat: 'educacion' },
-    // Salud
-    { key: 'salud', m: 4, d: 7, nombre: 'Día Mundial de la Salud', emoji: '🏥', cat: 'salud' },
-    { key: 'salud_mental', m: 10, d: 10, nombre: 'Día de la Salud Mental', emoji: '🧘', cat: 'salud' },
-    { key: 'sida', m: 12, d: 1, nombre: 'Día Mundial del Sida', emoji: '🎗️', cat: 'salud' },
-    { key: 'cancer', m: 2, d: 4, nombre: 'Día Mundial contra el Cáncer', emoji: '🎗️', cat: 'salud' },
-    { key: 'diabetes', m: 11, d: 14, nombre: 'Día Mundial de la Diabetes', emoji: '🩸', cat: 'salud' },
-    { key: 'corazon', m: 9, d: 29, nombre: 'Día Mundial del Corazón', emoji: '❤️', cat: 'salud' },
-    { key: 'donante', m: 6, d: 14, nombre: 'Día Mundial del Donante de Sangre', emoji: '🩸', cat: 'salud' },
-    { key: 'no_tabaco', m: 5, d: 31, nombre: 'Día Mundial sin Tabaco', emoji: '🚭', cat: 'salud' },
-    // Ambiente
-    { key: 'tierra', m: 4, d: 22, nombre: 'Día de la Tierra', emoji: '🌍', cat: 'ambiente' },
-    { key: 'ambiente', m: 6, d: 5, nombre: 'Día Mundial del Medio Ambiente', emoji: '🌿', cat: 'ambiente' },
-    { key: 'agua', m: 3, d: 22, nombre: 'Día Mundial del Agua', emoji: '💧', cat: 'ambiente' },
-    { key: 'arbol', m: 6, d: 29, nombre: 'Día del Árbol (Colombia)', emoji: '🌳', cat: 'ambiente' },
-    { key: 'animal', m: 10, d: 4, nombre: 'Día Mundial de los Animales', emoji: '🐾', cat: 'ambiente' },
-    { key: 'oceanos', m: 6, d: 8, nombre: 'Día Mundial de los Océanos', emoji: '🌊', cat: 'ambiente' },
-    // Nacionales / conmemorativos
-    { key: 'independencia_criolla', m: 7, d: 20, nombre: 'Independencia de Colombia', emoji: '🇨🇴', cat: 'nacional' },
-    { key: 'raza', m: 10, d: 12, nombre: 'Día de la Raza / Diversidad Étnica', emoji: '🌎', cat: 'nacional' },
-    { key: 'idioma', m: 4, d: 23, nombre: 'Día del Idioma', emoji: '🇪🇸', cat: 'nacional' },
-    { key: 'bandera', m: 8, d: 7, nombre: 'Día de la Bandera (Boyacá)', emoji: '🚩', cat: 'nacional' },
-    { key: 'amor_amistad', m: 9, d: 19, nombre: 'Día del Amor y la Amistad (Colombia)', emoji: '💕', cat: 'nacional' },
-    { key: 'halloween', m: 10, d: 31, nombre: 'Halloween / Noche de Brujas', emoji: '🎃', cat: 'internacional' },
-    { key: 'ano_nuevo_viejito', m: 12, d: 31, nombre: 'Fin de Año', emoji: '🎆', cat: 'nacional' },
-    // Tradiciones colombianas
-    { key: 'velitas', m: 12, d: 7, nombre: 'Día de las Velitas', emoji: '🕯️', cat: 'nacional' },
-    { key: 'velitas_noche', m: 12, d: 8, nombre: 'Noche de Velitas / Inmaculada', emoji: '✨', cat: 'nacional' },
     { key: 'reyes_tradicion', m: 1, d: 6, nombre: 'Día de Reyes', emoji: '👑', cat: 'nacional' },
-    { key: 'carnaval_barranquilla', m: 2, d: 15, nombre: 'Carnaval de Barranquilla (aprox.)', emoji: '🎭', cat: 'nacional' },
-    { key: 'feria_flores', m: 8, d: 1, nombre: 'Feria de las Flores (Medellín, aprox.)', emoji: '🌺', cat: 'nacional' },
-    { key: 'black_friday', m: 11, d: 27, nombre: 'Black Friday (aprox.)', emoji: '🛍️', cat: 'internacional' },
-    { key: 'cyber_monday', m: 11, d: 30, nombre: 'Cyber Monday (aprox.)', emoji: '💻', cat: 'internacional' },
-    // Más profesionales
-    { key: 'fonoaudiologo', m: 5, d: 15, nombre: 'Día del Fonoaudiólogo', emoji: '🗣️', cat: 'profesional' },
-    { key: 'optometra', m: 3, d: 23, nombre: 'Día del Optómetra', emoji: '👓', cat: 'profesional' },
-    { key: 'instrumentador', m: 5, d: 15, nombre: 'Día del Instrumentador Quirúrgico', emoji: '🏥', cat: 'profesional' },
-    { key: 'bacteriologo', m: 4, d: 15, nombre: 'Día del Bacteriólogo', emoji: '🦠', cat: 'profesional' },
-    { key: 'terapeuta_ocup', m: 10, d: 27, nombre: 'Día del Terapeuta Ocupacional', emoji: '🧩', cat: 'profesional' },
-    { key: 'ingeniero_sistemas', m: 9, d: 15, nombre: 'Día del Ingeniero de Sistemas', emoji: '🖥️', cat: 'profesional' },
-    { key: 'publicista', m: 12, d: 4, nombre: 'Día del Publicista', emoji: '📣', cat: 'profesional' },
-    { key: 'comunicador', m: 9, d: 8, nombre: 'Día del Comunicador Social', emoji: '📡', cat: 'profesional' },
-    { key: 'chef', m: 10, d: 20, nombre: 'Día del Chef / Gastronomía', emoji: '👨‍🍳', cat: 'profesional' },
-    { key: 'deportista', m: 6, d: 23, nombre: 'Día Olímpico / Deporte', emoji: '🏅', cat: 'profesional' },
-    // Más internacionales / ONU
-    { key: 'ambiente_humano', m: 6, d: 5, nombre: 'Día Mundial del Medio Ambiente', emoji: '🌏', cat: 'ambiente' },
-    { key: 'biodiversidad', m: 5, d: 22, nombre: 'Día de la Biodiversidad', emoji: '🦋', cat: 'ambiente' },
-    { key: 'sin_autos', m: 9, d: 22, nombre: 'Día Mundial Sin Autos', emoji: '🚲', cat: 'ambiente' },
-    { key: 'voluntario', m: 12, d: 5, nombre: 'Día Internacional de los Voluntarios', emoji: '🤲', cat: 'derechos' },
-    { key: 'migrante', m: 12, d: 18, nombre: 'Día del Migrante', emoji: '🧳', cat: 'derechos' },
-    { key: 'lengua_senas', m: 9, d: 23, nombre: 'Día de las Lenguas de Señas', emoji: '🤟', cat: 'derechos' },
-    { key: 'salud_mental_joven', m: 3, d: 1, nombre: 'Día de la Cero Discriminación', emoji: '🤍', cat: 'derechos' },
-    { key: 'lectura', m: 4, d: 23, nombre: 'Día Mundial del Libro y del Derecho de Autor', emoji: '📕', cat: 'educacion' },
-    { key: 'alfabetizacion', m: 9, d: 8, nombre: 'Día Internacional de la Alfabetización', emoji: '✏️', cat: 'educacion' },
-    { key: 'universidades', m: 4, d: 15, nombre: 'Día Mundial del Arte', emoji: '🎨', cat: 'educacion' },
-    { key: 'internet', m: 5, d: 17, nombre: 'Día de Internet', emoji: '🌐', cat: 'educacion' },
-    { key: 'seguridad_vial', m: 11, d: 17, nombre: 'Día Mundial en Recuerdo de las Víctimas de Tránsito', emoji: '🚦', cat: 'salud' },
-    { key: 'lavado_manos', m: 10, d: 15, nombre: 'Día Mundial del Lavado de Manos', emoji: '🧼', cat: 'salud' },
-    { key: 'alimentacion', m: 10, d: 16, nombre: 'Día Mundial de la Alimentación', emoji: '🍽️', cat: 'salud' },
-    { key: 'no_violencia_mujer', m: 11, d: 25, nombre: 'Día de la No Violencia contra la Mujer', emoji: '🧡', cat: 'derechos' },
-    { key: 'orgullo', m: 6, d: 28, nombre: 'Día Internacional del Orgullo LGBTI', emoji: '🏳️‍🌈', cat: 'derechos' },
-    { key: 'adulto_mayor', m: 10, d: 1, nombre: 'Día Internacional de las Personas de Edad', emoji: '👴', cat: 'derechos' },
-    { key: 'constitucion', m: 7, d: 20, nombre: 'Día de la Independencia / Constitución', emoji: '📜', cat: 'nacional' },
-    { key: 'policia', m: 11, d: 5, nombre: 'Día de la Policía Nacional', emoji: '🛡️', cat: 'nacional' },
-    { key: 'fuerzas_militares', m: 8, d: 7, nombre: 'Día del Ejército Nacional', emoji: '🎖️', cat: 'nacional' },
-    { key: 'bomberos', m: 8, d: 4, nombre: 'Día del Bombero', emoji: '🚒', cat: 'profesional' },
-    { key: 'cruz_roja', m: 5, d: 8, nombre: 'Día de la Cruz Roja', emoji: '🆘', cat: 'salud' },
-    // Más Colombia + internacionales celebrados también aquí
     { key: 'candelaria', m: 2, d: 2, nombre: 'Día de la Candelaria', emoji: '🕯️', cat: 'nacional' },
+    { key: 'cancer', m: 2, d: 4, nombre: 'Día Mundial contra el Cáncer', emoji: '🎗️', cat: 'salud' },
+    { key: 'periodista', m: 2, d: 9, nombre: 'Día del Periodista (Colombia)', emoji: '📰', cat: 'profesional' },
     { key: 'san_valentin', m: 2, d: 14, nombre: 'Día de San Valentín', emoji: '💝', cat: 'internacional' },
+    { key: 'carnaval_barranquilla', m: 2, d: 15, nombre: 'Carnaval de Barranquilla (aprox.)', emoji: '🎭', cat: 'nacional' },
+    { key: 'idioma_materno', m: 2, d: 21, nombre: 'Día Internacional de la Lengua Materna', emoji: '🗣️', cat: 'educacion' },
+    { key: 'salud_mental_joven', m: 3, d: 1, nombre: 'Día de la Cero Discriminación', emoji: '🤍', cat: 'derechos' },
+    { key: 'mujer', m: 3, d: 8, nombre: 'Día Internacional de la Mujer', emoji: '💜', cat: 'internacional' },
     { key: 'mujer_col', m: 3, d: 8, nombre: 'Día de la Mujer (Colombia)', emoji: '♀️', cat: 'nacional' },
     { key: 'san_jose_trab', m: 3, d: 19, nombre: 'Día de San José / Padre trabajador', emoji: '🪚', cat: 'nacional' },
+    { key: 'poesia', m: 3, d: 21, nombre: 'Día Mundial de la Poesía', emoji: '✍️', cat: 'educacion' },
+    { key: 'agua', m: 3, d: 22, nombre: 'Día Mundial del Agua', emoji: '💧', cat: 'ambiente' },
+    { key: 'optometra', m: 3, d: 23, nombre: 'Día del Optómetra', emoji: '👓', cat: 'profesional' },
     { key: 'hora_planeta', m: 3, d: 28, nombre: 'Hora del Planeta (último sáb. marzo, aprox.)', emoji: '🌎', cat: 'ambiente' },
+    { key: 'trabajador_social', m: 3, d: 28, nombre: 'Día del Trabajador Social', emoji: '🤝', cat: 'profesional' },
+    { key: 'salud', m: 4, d: 7, nombre: 'Día Mundial de la Salud', emoji: '🏥', cat: 'salud' },
+    { key: 'arte', m: 4, d: 15, nombre: 'Día Mundial del Arte', emoji: '🖼️', cat: 'educacion' },
+    { key: 'bacteriologo', m: 4, d: 15, nombre: 'Día del Bacteriólogo', emoji: '🦠', cat: 'profesional' },
+    { key: 'dia_idiomas_onu', m: 4, d: 20, nombre: 'Día del Idioma Español (ONU, 23 abr. relacionado)', emoji: '🇪🇸', cat: 'educacion' },
+    { key: 'tierra', m: 4, d: 22, nombre: 'Día de la Tierra', emoji: '🌍', cat: 'ambiente' },
+    { key: 'idioma', m: 4, d: 23, nombre: 'Día del Idioma', emoji: '🇪🇸', cat: 'nacional' },
+    { key: 'libro', m: 4, d: 23, nombre: 'Día del Libro', emoji: '📚', cat: 'educacion' },
+    { key: 'bibliotecas', m: 4, d: 24, nombre: 'Día Mundial del Libro Infantil y Juvenil / Bibliotecas', emoji: '📗', cat: 'educacion' },
+    { key: 'secretaria', m: 4, d: 26, nombre: 'Día de la Secretaria', emoji: '⌨️', cat: 'profesional' },
+    { key: 'disenador', m: 4, d: 27, nombre: 'Día del Diseñador Gráfico', emoji: '🎨', cat: 'profesional' },
+    { key: 'danza', m: 4, d: 29, nombre: 'Día Internacional de la Danza', emoji: '💃', cat: 'educacion' },
     { key: 'dia_nino_americas', m: 4, d: 30, nombre: 'Día del Niño en las Américas', emoji: '🎈', cat: 'internacional' },
-    { key: 'dia_madre_oficial', m: 5, d: 10, nombre: 'Día de la Madre (2.º domingo de mayo, aprox.)', emoji: '🌷', cat: 'nacional' },
+    { key: 'nino', m: 4, d: 30, nombre: 'Día del Niño (Colombia)', emoji: '🧒', cat: 'internacional' },
+    { key: 'dia_libertad_prensa', m: 5, d: 3, nombre: 'Día Mundial de la Libertad de Prensa', emoji: '📰', cat: 'derechos' },
+    { key: 'cruz_roja', m: 5, d: 8, nombre: 'Día de la Cruz Roja', emoji: '🆘', cat: 'salud' },
+    { key: 'madre', m: 5, d: 11, nombre: 'Día de la Madre (aprox. 2.º domingo mayo)', emoji: '💐', cat: 'nacional' },
+    { key: 'enfermera', m: 5, d: 12, nombre: 'Día Internacional de la Enfermería', emoji: '💉', cat: 'profesional' },
     { key: 'dia_maestro_col', m: 5, d: 15, nombre: 'Día del Maestro en Colombia', emoji: '📚', cat: 'educacion' },
+    { key: 'familia', m: 5, d: 15, nombre: 'Día Internacional de la Familia', emoji: '👨‍👩‍👧‍👦', cat: 'internacional' },
+    { key: 'fonoaudiologo', m: 5, d: 15, nombre: 'Día del Fonoaudiólogo', emoji: '🗣️', cat: 'profesional' },
+    { key: 'instrumentador', m: 5, d: 15, nombre: 'Día del Instrumentador Quirúrgico', emoji: '🏥', cat: 'profesional' },
+    { key: 'maestro', m: 5, d: 15, nombre: 'Día del Maestro (Colombia)', emoji: '👩‍🏫', cat: 'educacion' },
+    { key: 'internet', m: 5, d: 17, nombre: 'Día de Internet', emoji: '🌐', cat: 'educacion' },
+    { key: 'museos', m: 5, d: 18, nombre: 'Día Internacional de los Museos', emoji: '🏛️', cat: 'educacion' },
+    { key: 'afrodescendencia', m: 5, d: 21, nombre: 'Día Nacional de la Afrocolombianidad', emoji: '🥁', cat: 'nacional' },
+    { key: 'biodiversidad', m: 5, d: 22, nombre: 'Día de la Biodiversidad', emoji: '🦋', cat: 'ambiente' },
+    { key: 'contador', m: 5, d: 25, nombre: 'Día del Contador Público', emoji: '🧮', cat: 'profesional' },
+    { key: 'ingeniero', m: 5, d: 29, nombre: 'Día del Ingeniero (Colombia)', emoji: '⚙️', cat: 'profesional' },
+    { key: 'no_tabaco', m: 5, d: 31, nombre: 'Día Mundial sin Tabaco', emoji: '🚭', cat: 'salud' },
     { key: 'dia_campesino', m: 6, d: 2, nombre: 'Día del Campesino', emoji: '🌽', cat: 'nacional' },
-    { key: 'dia_padre_oficial', m: 6, d: 21, nombre: 'Día del Padre (3.er domingo de junio, aprox.)', emoji: '👔', cat: 'nacional' },
+    { key: 'ambiente', m: 6, d: 5, nombre: 'Día Mundial del Medio Ambiente', emoji: '🌿', cat: 'ambiente' },
+    { key: 'seguridad_alim', m: 6, d: 7, nombre: 'Día de la Inocuidad de los Alimentos', emoji: '🧪', cat: 'salud' },
+    { key: 'oceanos', m: 6, d: 8, nombre: 'Día Mundial de los Océanos', emoji: '🌊', cat: 'ambiente' },
+    { key: 'agricultor', m: 6, d: 9, nombre: 'Día del Agricultor', emoji: '🌾', cat: 'profesional' },
+    { key: 'donante', m: 6, d: 14, nombre: 'Día Mundial del Donante de Sangre', emoji: '🩸', cat: 'salud' },
+    { key: 'padre', m: 6, d: 15, nombre: 'Día del Padre (aprox. 3.er domingo junio)', emoji: '👔', cat: 'nacional' },
+    { key: 'dia_refugiado', m: 6, d: 20, nombre: 'Día Mundial de los Refugiados', emoji: '🏕️', cat: 'derechos' },
+    { key: 'musica', m: 6, d: 21, nombre: 'Día de la Música', emoji: '🎵', cat: 'educacion' },
+    { key: 'deportista', m: 6, d: 23, nombre: 'Día Olímpico / Deporte', emoji: '🏅', cat: 'profesional' },
+    { key: 'orgullo', m: 6, d: 28, nombre: 'Día Internacional del Orgullo LGBTI', emoji: '🏳️‍🌈', cat: 'derechos' },
+    { key: 'arbol', m: 6, d: 29, nombre: 'Día del Árbol (Colombia)', emoji: '🌳', cat: 'ambiente' },
+    { key: 'arquitecto', m: 7, d: 1, nombre: 'Día del Arquitecto', emoji: '🏗️', cat: 'profesional' },
+    { key: 'dia_cooperativas', m: 7, d: 4, nombre: 'Día Internacional de las Cooperativas', emoji: '🤝', cat: 'internacional' },
+    { key: 'economista', m: 7, d: 8, nombre: 'Día del Economista', emoji: '📈', cat: 'profesional' },
+    { key: 'dia_poblacion', m: 7, d: 11, nombre: 'Día Mundial de la Población', emoji: '👥', cat: 'internacional' },
     { key: 'virgen_carmen', m: 7, d: 16, nombre: 'Virgen del Carmen (patrona de conductores)', emoji: '🚗', cat: 'nacional' },
-    { key: 'amor_amistad_col', m: 9, d: 20, nombre: 'Día del Amor y la Amistad (3.er sábado sep., aprox.)', emoji: '💗', cat: 'nacional' },
-    { key: 'dia_raza_diversidad', m: 10, d: 12, nombre: 'Día de la Diversidad Étnica y Cultural', emoji: '🌍', cat: 'nacional' },
-    { key: 'dia_brujas', m: 10, d: 31, nombre: 'Noche de Brujas', emoji: '👻', cat: 'internacional' },
+    { key: 'amistad', m: 7, d: 20, nombre: 'Día de la Amistad', emoji: '💛', cat: 'internacional' },
+    { key: 'constitucion', m: 7, d: 20, nombre: 'Día de la Independencia / Constitución', emoji: '📜', cat: 'nacional' },
+    { key: 'independencia_criolla', m: 7, d: 20, nombre: 'Independencia de Colombia', emoji: '🇨🇴', cat: 'nacional' },
+    { key: 'abogado', m: 7, d: 22, nombre: 'Día del Abogado (Colombia)', emoji: '⚖️', cat: 'profesional' },
+    { key: 'bibliotecologo', m: 7, d: 24, nombre: 'Día del Bibliotecólogo', emoji: '📖', cat: 'profesional' },
+    { key: 'amigabilidad', m: 7, d: 30, nombre: 'Día Internacional de la Amistad (ONU)', emoji: '💛', cat: 'internacional' },
+    { key: 'feria_flores', m: 8, d: 1, nombre: 'Feria de las Flores (Medellín, aprox.)', emoji: '🌺', cat: 'nacional' },
+    { key: 'bomberos', m: 8, d: 4, nombre: 'Día del Bombero', emoji: '🚒', cat: 'profesional' },
+    { key: 'bandera', m: 8, d: 7, nombre: 'Día de la Bandera (Boyacá)', emoji: '🚩', cat: 'nacional' },
+    { key: 'fuerzas_militares', m: 8, d: 7, nombre: 'Día del Ejército Nacional', emoji: '🎖️', cat: 'nacional' },
+    { key: 'indigenas', m: 8, d: 9, nombre: 'Día Internacional de los Pueblos Indígenas', emoji: '🪶', cat: 'derechos' },
+    { key: 'juventud', m: 8, d: 12, nombre: 'Día Internacional de la Juventud', emoji: '✨', cat: 'internacional' },
+    { key: 'veterinario', m: 8, d: 26, nombre: 'Día del Médico Veterinario', emoji: '🐾', cat: 'profesional' },
+    { key: 'nutricionista', m: 8, d: 31, nombre: 'Día del Nutricionista', emoji: '🥗', cat: 'profesional' },
+    { key: 'administrativo', m: 9, d: 5, nombre: 'Día del Administrativo', emoji: '🗂️', cat: 'profesional' },
+    { key: 'alfabetizacion', m: 9, d: 8, nombre: 'Día Internacional de la Alfabetización', emoji: '✏️', cat: 'educacion' },
+    { key: 'comunicador', m: 9, d: 8, nombre: 'Día del Comunicador Social', emoji: '📡', cat: 'profesional' },
+    { key: 'fisioterapeuta', m: 9, d: 8, nombre: 'Día Mundial de la Fisioterapia', emoji: '🏃', cat: 'profesional' },
+    { key: 'programador', m: 9, d: 13, nombre: 'Día del Programador', emoji: '💻', cat: 'profesional' },
+    { key: 'dia_democracia', m: 9, d: 15, nombre: 'Día Internacional de la Democracia', emoji: '🗳️', cat: 'derechos' },
+    { key: 'ingeniero_sistemas', m: 9, d: 15, nombre: 'Día del Ingeniero de Sistemas', emoji: '🖥️', cat: 'profesional' },
+    { key: 'amor_amistad', m: 9, d: 19, nombre: 'Día del Amor y la Amistad (Colombia)', emoji: '💕', cat: 'nacional' },
+    { key: 'estudiante', m: 9, d: 21, nombre: 'Día del Estudiante', emoji: '🎓', cat: 'educacion' },
+    { key: 'paz', m: 9, d: 21, nombre: 'Día Internacional de la Paz', emoji: '☮️', cat: 'derechos' },
+    { key: 'sin_autos', m: 9, d: 22, nombre: 'Día Mundial Sin Autos', emoji: '🚲', cat: 'ambiente' },
+    { key: 'lengua_senas', m: 9, d: 23, nombre: 'Día de las Lenguas de Señas', emoji: '🤟', cat: 'derechos' },
+    { key: 'sordo', m: 9, d: 23, nombre: 'Día Internacional de las Lenguas de Señas', emoji: '🤟', cat: 'derechos' },
+    { key: 'farmaceutico', m: 9, d: 25, nombre: 'Día del Químico Farmacéutico', emoji: '💊', cat: 'profesional' },
+    { key: 'dia_turismo', m: 9, d: 27, nombre: 'Día Mundial del Turismo', emoji: '✈️', cat: 'internacional' },
+    { key: 'corazon', m: 9, d: 29, nombre: 'Día Mundial del Corazón', emoji: '❤️', cat: 'salud' },
+    { key: 'traductor', m: 9, d: 30, nombre: 'Día Internacional de la Traducción', emoji: '🌐', cat: 'profesional' },
+    { key: 'adulto_mayor', m: 10, d: 1, nombre: 'Día Internacional de las Personas de Edad', emoji: '👴', cat: 'derechos' },
+    { key: 'no_violencia', m: 10, d: 2, nombre: 'Día Internacional de la No Violencia', emoji: '🕊️', cat: 'derechos' },
+    { key: 'odontologo', m: 10, d: 3, nombre: 'Día del Odontólogo', emoji: '🦷', cat: 'profesional' },
+    { key: 'animal', m: 10, d: 4, nombre: 'Día Mundial de los Animales', emoji: '🐾', cat: 'ambiente' },
+    { key: 'docente_onu', m: 10, d: 5, nombre: 'Día Mundial de los Docentes', emoji: '🍎', cat: 'educacion' },
+    { key: 'habitat', m: 10, d: 6, nombre: 'Día Mundial del Hábitat', emoji: '🏠', cat: 'ambiente' },
+    { key: 'dia_salud_mental_onu', m: 10, d: 10, nombre: 'Día Mundial de la Salud Mental', emoji: '🧠', cat: 'salud' },
+    { key: 'salud_mental', m: 10, d: 10, nombre: 'Día de la Salud Mental', emoji: '🧘', cat: 'salud' },
+    { key: 'raza', m: 10, d: 12, nombre: 'Día de la Raza / Diversidad Étnica', emoji: '🌎', cat: 'nacional' },
+    { key: 'escritoras', m: 10, d: 15, nombre: 'Día de las Escritoras', emoji: '✍️', cat: 'educacion' },
+    { key: 'lavado_manos', m: 10, d: 15, nombre: 'Día Mundial del Lavado de Manos', emoji: '🧼', cat: 'salud' },
+    { key: 'alimentacion', m: 10, d: 16, nombre: 'Día Mundial de la Alimentación', emoji: '🍽️', cat: 'salud' },
+    { key: 'estudiantes_onu', m: 10, d: 17, nombre: 'Día Internacional de los Estudiantes', emoji: '🎒', cat: 'educacion' },
+    { key: 'chef', m: 10, d: 20, nombre: 'Día del Chef / Gastronomía', emoji: '👨‍🍳', cat: 'profesional' },
+    { key: 'dia_naciones_unidas', m: 10, d: 24, nombre: 'Día de las Naciones Unidas', emoji: '🌐', cat: 'internacional' },
+    { key: 'terapeuta_ocup', m: 10, d: 27, nombre: 'Día del Terapeuta Ocupacional', emoji: '🧩', cat: 'profesional' },
+    { key: 'animacion', m: 10, d: 28, nombre: 'Día Mundial de la Animación', emoji: '🎬', cat: 'educacion' },
+    { key: 'halloween', m: 10, d: 31, nombre: 'Halloween / Noche de Brujas', emoji: '🎃', cat: 'internacional' },
     { key: 'todos_santos_trad', m: 11, d: 1, nombre: 'Día de Todos los Santos', emoji: '🪦', cat: 'nacional' },
     { key: 'fieles_difuntos', m: 11, d: 2, nombre: 'Día de los Fieles Difuntos', emoji: '🌸', cat: 'nacional' },
-    { key: 'no_violencia_genero', m: 11, d: 25, nombre: 'Día Internacional de la Eliminación de la Violencia contra la Mujer', emoji: '🧡', cat: 'derechos' },
+    { key: 'policia', m: 11, d: 5, nombre: 'Día de la Policía Nacional', emoji: '🛡️', cat: 'nacional' },
+    { key: 'ciencia', m: 11, d: 10, nombre: 'Día Mundial de la Ciencia', emoji: '🔬', cat: 'educacion' },
+    { key: 'diabetes', m: 11, d: 14, nombre: 'Día Mundial de la Diabetes', emoji: '🩸', cat: 'salud' },
+    { key: 'tolerancia', m: 11, d: 16, nombre: 'Día Internacional de la Tolerancia', emoji: '🤝', cat: 'derechos' },
+    { key: 'seguridad_vial', m: 11, d: 17, nombre: 'Día Mundial en Recuerdo de las Víctimas de Tránsito', emoji: '🚦', cat: 'salud' },
+    { key: 'filosofia', m: 11, d: 19, nombre: 'Día Mundial de la Filosofía', emoji: '🤔', cat: 'educacion' },
+    { key: 'hombre', m: 11, d: 19, nombre: 'Día Internacional del Hombre', emoji: '💙', cat: 'internacional' },
+    { key: 'ninos_onu', m: 11, d: 20, nombre: 'Día Universal del Niño', emoji: '🧒', cat: 'internacional' },
+    { key: 'psicologo', m: 11, d: 20, nombre: 'Día del Psicólogo (Colombia)', emoji: '🧠', cat: 'profesional' },
+    { key: 'tv', m: 11, d: 21, nombre: 'Día Mundial de la Televisión', emoji: '📺', cat: 'internacional' },
+    { key: 'no_violencia_mujer', m: 11, d: 25, nombre: 'Día de la No Violencia contra la Mujer', emoji: '🧡', cat: 'derechos' },
+    { key: 'black_friday', m: 11, d: 27, nombre: 'Black Friday (aprox.)', emoji: '🛍️', cat: 'internacional' },
+    { key: 'cyber_monday', m: 11, d: 30, nombre: 'Cyber Monday (aprox.)', emoji: '💻', cat: 'internacional' },
+    { key: 'sida', m: 12, d: 1, nombre: 'Día Mundial del Sida', emoji: '🎗️', cat: 'salud' },
+    { key: 'discapacidad', m: 12, d: 3, nombre: 'Día Internacional de las Personas con Discapacidad', emoji: '♿', cat: 'derechos' },
+    { key: 'medico', m: 12, d: 3, nombre: 'Día del Médico', emoji: '🩺', cat: 'profesional' },
+    { key: 'publicista', m: 12, d: 4, nombre: 'Día del Publicista', emoji: '📣', cat: 'profesional' },
+    { key: 'voluntario', m: 12, d: 5, nombre: 'Día Internacional de los Voluntarios', emoji: '🤲', cat: 'derechos' },
+    { key: 'velitas', m: 12, d: 7, nombre: 'Día de las Velitas', emoji: '🕯️', cat: 'nacional' },
+    { key: 'velitas_noche', m: 12, d: 8, nombre: 'Noche de Velitas / Inmaculada', emoji: '✨', cat: 'nacional' },
+    { key: 'derechos_humanos', m: 12, d: 10, nombre: 'Día de los Derechos Humanos', emoji: '🕊️', cat: 'derechos' },
     { key: 'novena_aguinaldos', m: 12, d: 16, nombre: 'Inicio de la Novena de Aguinaldos', emoji: '🎄', cat: 'nacional' },
+    { key: 'migrante', m: 12, d: 18, nombre: 'Día del Migrante', emoji: '🧳', cat: 'derechos' },
+    { key: 'solidaridad', m: 12, d: 20, nombre: 'Día Internacional de la Solidaridad Humana', emoji: '🫂', cat: 'derechos' },
     { key: 'nochebuena', m: 12, d: 24, nombre: 'Nochebuena', emoji: '⭐', cat: 'nacional' },
-    { key: 'dia_idiomas_onu', m: 4, d: 20, nombre: 'Día del Idioma Español (ONU, 23 abr. relacionado)', emoji: '🇪🇸', cat: 'educacion' },
-    { key: 'dia_tierra_joven', m: 4, d: 22, nombre: 'Día Internacional de la Madre Tierra', emoji: '🌱', cat: 'ambiente' },
-    { key: 'dia_libertad_prensa', m: 5, d: 3, nombre: 'Día Mundial de la Libertad de Prensa', emoji: '📰', cat: 'derechos' },
-    { key: 'dia_cruz_roja_mundo', m: 5, d: 8, nombre: 'Día Mundial de la Cruz Roja y de la Media Luna Roja', emoji: '⛑️', cat: 'salud' },
-    { key: 'dia_familias_onu', m: 5, d: 15, nombre: 'Día Internacional de las Familias', emoji: '👨‍👩‍👧', cat: 'internacional' },
-    { key: 'dia_medio_ambiente', m: 6, d: 5, nombre: 'Día Mundial del Medio Ambiente', emoji: '♻️', cat: 'ambiente' },
-    { key: 'dia_refugiado', m: 6, d: 20, nombre: 'Día Mundial de los Refugiados', emoji: '🏕️', cat: 'derechos' },
-    { key: 'dia_cooperativas', m: 7, d: 4, nombre: 'Día Internacional de las Cooperativas', emoji: '🤝', cat: 'internacional' },
-    { key: 'dia_poblacion', m: 7, d: 11, nombre: 'Día Mundial de la Población', emoji: '👥', cat: 'internacional' },
-    { key: 'dia_juventud_onu', m: 8, d: 12, nombre: 'Día Internacional de la Juventud', emoji: '🌟', cat: 'internacional' },
-    { key: 'dia_indigenas_onu', m: 8, d: 9, nombre: 'Día Internacional de los Pueblos Indígenas', emoji: '🪶', cat: 'derechos' },
-    { key: 'dia_alfabetizacion', m: 9, d: 8, nombre: 'Día Internacional de la Alfabetización', emoji: '📖', cat: 'educacion' },
-    { key: 'dia_democracia', m: 9, d: 15, nombre: 'Día Internacional de la Democracia', emoji: '🗳️', cat: 'derechos' },
-    { key: 'dia_paz_onu', m: 9, d: 21, nombre: 'Día Internacional de la Paz', emoji: '☮️', cat: 'derechos' },
-    { key: 'dia_turismo', m: 9, d: 27, nombre: 'Día Mundial del Turismo', emoji: '✈️', cat: 'internacional' },
-    { key: 'dia_profesor_onu', m: 10, d: 5, nombre: 'Día Mundial de los Docentes', emoji: '🍎', cat: 'educacion' },
-    { key: 'dia_salud_mental_onu', m: 10, d: 10, nombre: 'Día Mundial de la Salud Mental', emoji: '🧠', cat: 'salud' },
-    { key: 'dia_alimentacion_onu', m: 10, d: 16, nombre: 'Día Mundial de la Alimentación', emoji: '🥗', cat: 'salud' },
-    { key: 'dia_naciones_unidas', m: 10, d: 24, nombre: 'Día de las Naciones Unidas', emoji: '🌐', cat: 'internacional' },
-    { key: 'dia_diabetes_onu', m: 11, d: 14, nombre: 'Día Mundial de la Diabetes', emoji: '💙', cat: 'salud' },
-    { key: 'dia_filosofia_onu', m: 11, d: 20, nombre: 'Día Mundial de la Filosofía', emoji: '💭', cat: 'educacion' },
-    { key: 'dia_violencia_mujer_onu', m: 11, d: 25, nombre: 'No a la violencia contra la mujer', emoji: '💜', cat: 'derechos' },
-    { key: 'dia_sida_onu', m: 12, d: 1, nombre: 'Día Mundial de la Lucha contra el Sida', emoji: '🎗️', cat: 'salud' },
-    { key: 'dia_discapacidad_onu', m: 12, d: 3, nombre: 'Día Internacional de las Personas con Discapacidad', emoji: '♿', cat: 'derechos' },
-    { key: 'dia_ddhh_onu', m: 12, d: 10, nombre: 'Día de los Derechos Humanos', emoji: '🕊️', cat: 'derechos' },
-    { key: 'dia_voluntarios_onu', m: 12, d: 5, nombre: 'Día Internacional de los Voluntarios', emoji: '🤲', cat: 'derechos' }
+    { key: 'ano_nuevo_viejito', m: 12, d: 31, nombre: 'Fin de Año', emoji: '🎆', cat: 'nacional' }
   ];
   const CELEB_LS = 'ubosque_celeb_disabled';
   function celebOffSet() { try { return new Set(JSON.parse(localStorage.getItem(CELEB_LS) || '[]')); } catch (_) { return new Set(); } }
@@ -2465,10 +2476,15 @@ let dbClient = null;
       if (!p1 && !p2 && !enAnio) return false;
       if (!sinPeriodo && S.sem) {
         const sm = String(S.sem);
-        const desde = S.anio + (sm === '2' ? '-07-01' : '-01-01'), hasta = S.anio + (sm === '2' ? '-12-31' : '-06-30');
-        const porFecha = e.inicio <= hasta && fe >= desde;
-        const porEtiqueta = (e.periodo === S.anio + '-' + sm) || (e.periodo2 === S.anio + '-' + sm);
-        if (!porFecha && !porEtiqueta) return false;
+        // sm puede ser "1"/"2" o id completo "2026-M3"
+        if (sm.includes('-')) {
+          if (e.periodo !== sm && e.periodo2 !== sm) return false;
+        } else {
+          const desde = S.anio + (sm === '2' ? '-07-01' : '-01-01'), hasta = S.anio + (sm === '2' ? '-12-31' : '-06-30');
+          const porFecha = e.inicio <= hasta && fe >= desde;
+          const porEtiqueta = (e.periodo === S.anio + '-' + sm) || (e.periodo2 === S.anio + '-' + sm);
+          if (!porFecha && !porEtiqueta) return false;
+        }
       }
       if (!sinCat && S.cat && e.categoria !== S.cat) return false;
       if (S.publico.length) {
@@ -2508,7 +2524,26 @@ let dbClient = null;
     $('#hoyTxt').textContent = `Hoy, ${DIAS_C[h.getDay()]} ${h.getDate()} de ${MESES[h.getMonth()].toLowerCase()} de ${h.getFullYear()}`;
     $('#heroTit').textContent = S.sem ? `${S.anio} · Semestre ${S.sem}` : `Año académico ${S.anio}`;
     $('#fAnio').innerHTML = aniosDisponibles().map(a => `<option ${a === S.anio ? 'selected' : ''}>${a}</option>`).join('');
-    $$('#fSem button').forEach(b => b.classList.toggle('on', b.dataset.v === String(S.sem)));
+    // Chips de periodo del año: semestres y/o módulos/ciclos
+    const fSem = $('#fSem');
+    if (fSem) {
+      const delAnio = (D.periodos || []).filter(p => String(p.id).startsWith(S.anio + '-') && p.activo !== false)
+        .sort((a, b) => a.id.localeCompare(b.id));
+      const hayMod = delAnio.some(p => parsePeriodoId(p.id).tipo !== 'semestre');
+      if (hayMod && delAnio.length) {
+        fSem.innerHTML = `<button data-v="" class="${!S.sem ? 'on' : ''}">Todos</button>` +
+          delAnio.map(p => {
+            const info = parsePeriodoId(p.id);
+            const lab = info.tipo === 'modulo' ? `M${info.num}` : info.tipo === 'ciclo' ? `C${info.num}` : `Sem ${info.num}`;
+            const on = String(S.sem) === String(p.id) || String(S.sem) === String(info.num) && info.tipo === 'semestre';
+            return `<button data-v="${esc(p.id)}" class="${on ? 'on' : ''}" title="${esc(nombrePeriodo(p.id))}">${lab}</button>`;
+          }).join('');
+      } else {
+        fSem.innerHTML = `<button data-v="" class="${!S.sem ? 'on' : ''}">Todos</button>
+      <button data-v="1" class="${String(S.sem)==='1'?'on':''}">1er semestre</button>
+      <button data-v="2" class="${String(S.sem)==='2'?'on':''}">2do semestre</button>`;
+      }
+    }
     let g = '<option value="">Toda la institución</option><optgroup label="Facultades">' + D.facultades.filter(esAct).map(f => `<option value="f:${f.id}" ${S.grupo === 'f:' + f.id ? 'selected' : ''}>${emojiFac(f)} ${esc(f.nombre)}</option>`).join('') + '</optgroup><optgroup label="Áreas administrativas">' + D.areas.map(a => `<option value="a:${a.id}" ${S.grupo === 'a:' + a.id ? 'selected' : ''}>${emojiArea(a)} ${esc(a.nombre)}</option>`).join('') + '</optgroup>';
     $('#fGrupo').innerHTML = g;
     const f = S.grupo.startsWith('f:') ? D.facultades.find(x => x.id === S.grupo.slice(2)) : null;
@@ -2790,10 +2825,13 @@ let dbClient = null;
     const msHtml = !esEsp ? `<a href="${enlaceOutlook(e)}" target="_blank" rel="noopener" class="link-pill ms" title="Agregar a Outlook Calendar" onclick="event.stopPropagation()">📅 Outlook</a>` : '';
     const dirigidoA = e.publico && e.publico.length ? e.publico[0] : 'Comunidad universitaria';
     const infoExtraHtml = esEsp ? '' : `<span class="info-pill">${em(emojiPub(dirigidoA))} ${esc(dirigidoA)}${e.publico && e.publico.length > 1 ? ` +${e.publico.length - 1}` : ''}</span> <span class="info-pill">${FLATICONS.calendario} ${nombrePeriodo(e.periodo)}</span>`;
+    const esTita = !esEsp && esCumpleTita(e);
     const clsEsp = e.esFestivo ? 'festivo' : (e.esCelebracion ? 'celeb' : '');
-    return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${clsEsp} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};--c-celeb:${facColor}" data-id="${e.id}" tabindex="0">
+    const titaFace = esTita ? `<img class="ev-tita-face" src="${imgCumpleTita()}" alt="Tita" onerror="this.onerror=null;this.src='cara_tita.png'">` : '';
+    return `<article class="ev rev ${st.pasado ? 'pasado' : ''} ${clsEsp} ${esTita ? 'tita-bday' : ''} ${inminente ? 'destacado' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};--c-celeb:${facColor}" data-id="${e.id}" tabindex="0">
       <div class="fecha-block"><b>${d.getDate()}</b><span class="mes">${MESES_C[d.getMonth()]}</span><span class="dia-sem">${diaSem(e)}</span></div>
-      <div class="ev-content"><div class="ev-top"><h3>${esc(titMostrado)}</h3><span class="cat-pill">${c.emoji ? esc(c.emoji) + ' ' : ''}${esc(c.nombre)}${e.subcategoria ? ' · ' + esc(e.subcategoria) : ''}</span></div><div class="ev-bottom">${horaHtml}${ambitoHtml}${lugarHtml}${infoExtraHtml}${linkHtml}${msHtml}</div></div>
+      ${titaFace}
+      <div class="ev-content"><div class="ev-top"><h3>${esTita ? '🎉 ' : ''}${esc(titMostrado)}</h3><span class="cat-pill">${esTita ? '🦦 Tita · ' : ''}${c.emoji ? esc(c.emoji) + ' ' : ''}${esc(c.nombre)}${e.subcategoria ? ' · ' + esc(e.subcategoria) : ''}</span></div><div class="ev-bottom">${horaHtml}${ambitoHtml}${lugarHtml}${infoExtraHtml}${linkHtml}${msHtml}</div></div>
       <div class="estado-block"><span class="estado ${st.c}">${st.t}</span></div>
     </article>`;
   }
@@ -2842,8 +2880,10 @@ let dbClient = null;
         const eid = e.id || ('festivo-' + e.fecha);
         const span = it.b - it.a + 1;
         const rg = !e.esFestivo && !e.esCelebracion && e.inicio !== finDe(e) ? rango(e) : '';
-        const clsEsp = e.esFestivo ? 'festivo' : (e.esCelebracion ? 'celeb' : '');
-        h += `<button class="pill ${clsEsp} ${esInminente(e) ? 'destacado' : ''} ${it.antes ? 'sigue-ant' : ''} ${it.despues ? 'sigue-sig' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};--c-celeb:${facColor};grid-column:${it.a + 1} / span ${span};grid-row:${it.l + 2}" data-id="${eid}" title="${esc(titulo + (rg ? ' · ' + rg : ''))}">${it.antes ? '◂ ' : ''}${icono ? icono + ' ' : ''}${esc(titulo)}${rg && span >= 3 ? `<span class="rg">${rg}</span>` : ''}${it.despues ? ' ▸' : ''}</button>`;
+        const esTita = !e.esFestivo && !e.esCelebracion && esCumpleTita(e);
+        const clsEsp = e.esFestivo ? 'festivo' : (e.esCelebracion ? 'celeb' : (esTita ? 'tita-bday' : ''));
+        const titaIcon = esTita ? `<img src="${imgCumpleTita()}" alt="" onerror="this.onerror=null;this.src='cara_tita.png'">` : '';
+        h += `<button class="pill ${clsEsp} ${esInminente(e) ? 'destacado' : ''} ${it.antes ? 'sigue-ant' : ''} ${it.despues ? 'sigue-sig' : ''}" style="--c-fac:${facColor};--c-cat:${catColor};--c-celeb:${facColor};grid-column:${it.a + 1} / span ${span};grid-row:${it.l + 2}" data-id="${eid}" title="${esc(titulo + (rg ? ' · ' + rg : ''))}">${it.antes ? '◂ ' : ''}${titaIcon}${icono && !esTita ? icono + ' ' : ''}${esc(titulo)}${rg && span >= 3 ? `<span class="rg">${rg}</span>` : ''}${it.despues ? ' ▸' : ''}</button>`;
       });
       ocultos.forEach((n, c) => { if (n) h += `<button class="mas-dia" style="grid-column:${c + 1};grid-row:${nl + 2}" data-dia="${ss[c]}">+${n} más</button>`; });
       h += '</div>';
@@ -3019,7 +3059,18 @@ let dbClient = null;
     const mas = t.closest('[data-dia]'); if (mas) return abrirDia(mas.dataset.dia);
     const nav = t.closest('[data-mes]');
     if (nav) { const v = +nav.dataset.mes; S.dir = v < 0 ? 'izq' : v > 0 ? 'der' : ''; S.ref = v === 0 ? new Date() : new Date(S.ref.getFullYear(), S.ref.getMonth() + v, 1); const y = S.ref.getFullYear(), m = S.ref.getMonth(); if (y !== S.anio) { S.anio = y; S.sem = ''; } else if (S.sem && (m < 6 ? 1 : 2) != S.sem) S.sem = ''; pintarPublico(); return irMes(); }
-    const sm = t.closest('#fSem button'); if (sm) { S.sem = sm.dataset.v; if (S.sem) S.ref = new Date(S.anio, S.sem == 2 ? 6 : 0, 1); pintarPublico(); return irMes(); }
+    const sm = t.closest('#fSem button'); if (sm) {
+      S.sem = sm.dataset.v || '';
+      if (S.sem) {
+        const p = D.periodos.find(x => x.id === S.sem);
+        if (p && p.inicio) S.ref = parse(p.inicio);
+        else {
+          const info = parsePeriodoId(S.sem.includes('-') ? S.sem : (S.anio + '-' + S.sem));
+          S.ref = new Date(S.anio, info.tipo === 'semestre' && info.num == 2 ? 6 : 0, 1);
+        }
+      }
+      pintarPublico(); return irMes();
+    }
     const row = t.closest('[data-id]'); if (row) { abrirDetalle(row.dataset.id); }
   });
   document.addEventListener('keydown', ev => {
@@ -3759,11 +3810,24 @@ let dbClient = null;
   function periodosDeRango(ini, fin) {
     if (!ini) return [];
     fin = fin && fin >= ini ? fin : ini;
+    // Preferir periodos reales de la BD que se solapen con el rango (sirve para semestres, módulos y ciclos)
+    const reales = (D.periodos || []).filter(p => p.inicio && p.fin && p.inicio <= fin && p.fin >= ini)
+      .sort((a, b) => a.inicio.localeCompare(b.inicio) || a.id.localeCompare(b.id))
+      .map(p => p.id);
+    if (reales.length) return [...new Set(reales)];
     const a = periodoAuto(D, ini), b = periodoAuto(D, fin);
-    const [ya, sa] = a.split('-').map(Number), [yb, sb] = b.split('-').map(Number);
-    const out = []; let y = ya, h = sa, guard = 0;
-    while ((y < yb || (y === yb && h <= sb)) && guard++ < 12) { out.push(y + '-' + h); if (h === 1) h = 2; else { h = 1; y++; } }
-    return out.length ? out : [a];
+    if (a === b) return [a];
+    // Fallback clásico solo si son semestres numéricos 1/2
+    const ia = parsePeriodoId(a), ib = parsePeriodoId(b);
+    if (ia.tipo === 'semestre' && ib.tipo === 'semestre') {
+      const out = []; let y = ia.anio, h = ia.num, guard = 0;
+      while ((y < ib.anio || (y === ib.anio && h <= ib.num)) && guard++ < 12) {
+        out.push(y + '-' + h);
+        if (h === 1) h = 2; else { h = 1; y++; }
+      }
+      return out.length ? out : [a];
+    }
+    return [...new Set([a, b])];
   }
   window.actualizarHintPeriodo = function() {
     const hint = $('#f_per_hint'); if (!hint) return;
@@ -3771,7 +3835,7 @@ let dbClient = null;
     if (!ini && !fin) { hint.innerHTML = ''; return; }
     const ps = periodosDeRango(ini || fin, fin || ini), sel = $('#f_per').value;
     const manual = sel !== 'auto' && !ps.includes(sel);
-    hint.innerHTML = `<span style="display:inline-flex;gap:.35rem;flex-wrap:wrap;align-items:center;">🎯 Semestre${ps.length > 1 ? 's' : ''} detectado${ps.length > 1 ? 's' : ''}: ${ps.map(p => `<b style="background:var(--verde);color:#fff;padding:.1rem .55rem;border-radius:99px;">${esc(nombrePeriodo(p))}</b>`).join('')}</span>${manual ? `<div style="color:var(--rojo);margin-top:.25rem;">⚠ Elegiste otro semestre manualmente; elige «Detectar por la fecha» para usar el detectado.</div>` : ''}`;
+    hint.innerHTML = `<span style="display:inline-flex;gap:.35rem;flex-wrap:wrap;align-items:center;">🎯 Periodo${ps.length > 1 ? 's' : ''} detectado${ps.length > 1 ? 's' : ''}: ${ps.map(p => `<b style="background:var(--verde);color:#fff;padding:.1rem .55rem;border-radius:99px;">${esc(nombrePeriodo(p))}</b>`).join('')}</span>${manual ? `<div style="color:var(--rojo);margin-top:.25rem;">⚠ Elegiste otro semestre manualmente; elige «Detectar por la fecha» para usar el detectado.</div>` : ''}`;
   };
   document.addEventListener('input', ev => { if (ev.target && (ev.target.id === 'f_ini' || ev.target.id === 'f_fin' || ev.target.id === 'f_per')) actualizarHintPeriodo(); });
   document.addEventListener('change', ev => { if (ev.target && ev.target.id === 'f_ini' || ev.target.id === 'f_fin') { const sp = $('#f_per'); if (sp && sp.value !== 'auto' && !periodosDeRango($('#f_ini').value, $('#f_fin').value).includes(sp.value)) sp.value = 'auto'; actualizarHintPeriodo(); } });
@@ -4252,18 +4316,25 @@ let dbClient = null;
 
   function pPeriodos() {
     const per = [...D.periodos].sort((a, b) => a.id.localeCompare(b.id));
-    return encabezado(`${FLATICONS.calendario} Semestres`, 'Los semestres dividen el calendario. Solo los activos se muestran en la vista pública.') + `
-    <div class="caja"><h2>Crear nuevo semestre</h2>
+    const numsMod = Array.from({length: 12}, (_, i) => i + 1).map(n => `<option value="${n}">${n}</option>`).join('');
+    return encabezado(`${FLATICONS.calendario} Periodos académicos`, 'Semestres (1 y 2), módulos o ciclos para programas que no siguen el esquema de dos semestres. Solo los activos se muestran en el portal público.') + `
+    <div class="caja"><h2>Crear periodo</h2>
+      <p style="font-size:.86rem;color:var(--suave);margin-bottom:.7rem;">Usa <b>Semestre</b> para el calendario clásico. Usa <b>Módulo</b> o <b>Ciclo</b> para programas por módulos (ids como <code>2026-M1</code>, <code>2026-C2</code>).</p>
       <div style="display:flex; flex-wrap:wrap; gap:.6rem; align-items:flex-end;">
         <div class="fr" style="margin:0; flex:0 0 110px;"><label>Año</label><input type="number" id="np_a" value="${new Date().getFullYear() + 1}" min="2020" max="2040"></div>
-        <div class="fr" style="margin:0; flex:0 0 130px;"><label>Semestre</label><select id="np_s"><option value="1">1er semestre</option><option value="2">2do semestre</option></select></div>
+        <div class="fr" style="margin:0; flex:0 0 140px;"><label>Tipo</label><select id="np_tipo"><option value="semestre">Semestre</option><option value="modulo">Módulo</option><option value="ciclo">Ciclo</option></select></div>
+        <div class="fr" style="margin:0; flex:0 0 130px;"><label>Número</label><select id="np_s"><option value="1">1</option><option value="2">2</option>${numsMod}</select></div>
         <div class="fr" style="margin:0; flex:1 1 160px;"><label>Inicia el</label><input type="date" id="np_i"></div>
         <div class="fr" style="margin:0; flex:1 1 160px;"><label>Termina el</label><input type="date" id="np_f"></div>
-        <button class="btn pri" data-a="addPer">${FLATICONS.check} Crear semestre</button>
+        <button class="btn pri" data-a="addPer">${FLATICONS.check} Crear periodo</button>
       </div>
     </div>
-    <div class="tw"><table><thead><tr><th>Semestre</th><th>Estado</th><th>Inicia</th><th>Termina</th><th>Eventos</th><th></th></tr></thead><tbody>` +
-      per.map(p => { const n = usadosPeriodo(p.id), act = p.activo !== false; return `<tr style="${act ? '' : 'opacity:.65'}"><td><b>${nombrePeriodo(p.id)}</b></td><td><button class="est ${act ? 'pub' : 'bor'}" data-a="togPer" data-i="${p.id}" title="Cambiar visibilidad">${act ? '✅ Activo' : '⏸ Suspendido'}</button></td><td><input type="date" value="${p.inicio}" data-per="${p.id}" data-c="inicio"></td><td><input type="date" value="${p.fin}" data-per="${p.id}" data-c="fin"></td><td>${n}</td><td>${n ? `<span style="color:var(--suave);font-size:.82rem;">En uso</span>` : `<button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button>`}</td></tr>`; }).join('') +
+    <div class="tw"><table><thead><tr><th>Periodo</th><th>Tipo</th><th>Estado</th><th>Inicia</th><th>Termina</th><th>Eventos</th><th></th></tr></thead><tbody>` +
+      per.map(p => {
+        const n = usadosPeriodo(p.id), act = p.activo !== false, info = parsePeriodoId(p.id);
+        const tipo = p.tipo || info.tipo;
+        return `<tr style="${act ? '' : 'opacity:.65'}"><td><b>${nombrePeriodo(p.id)}</b><div style="font-size:.75rem;color:var(--suave);font-family:var(--mono)">${esc(p.id)}</div></td><td>${esc(etiquetaTipoPeriodo(tipo))}</td><td><button class="est ${act ? 'pub' : 'bor'}" data-a="togPer" data-i="${p.id}" title="Cambiar visibilidad">${act ? '✅ Activo' : '⏸ Suspendido'}</button></td><td><input type="date" value="${p.inicio}" data-per="${p.id}" data-c="inicio"></td><td><input type="date" value="${p.fin}" data-per="${p.id}" data-c="fin"></td><td>${n}</td><td>${n ? `<span style="color:var(--suave);font-size:.82rem;">En uso</span>` : `<button class="btn sm pel" data-a="delPer" data-i="${p.id}">${FLATICONS.basura} Eliminar</button>`}</td></tr>`;
+      }).join('') +
     '</tbody></table></div>';
   }
 
@@ -5503,12 +5574,34 @@ let dbClient = null;
     }
     
     if (a === 'addPer') {
-      const anio = +$('#np_a').value, sem = +$('#np_s').value, id = `${anio}-${sem}`;
-      if (D.periodos.some(p => p.id === id)) return toast('Ese semestre ya existe', true);
-      const ini = $('#np_i').value || `${anio}-${sem === 1 ? '01-15' : '07-15'}`, fin = $('#np_f').value || `${anio}-${sem === 1 ? '06-30' : '12-15'}`;
-      const { error } = await dbClient.from('periodos').insert([{ id, nombre: `${anio} - Semestre ${sem}`, inicio: ini, fin, activo: true }]);
-      if (error) return toast('Error al crear semestre: ' + error.message, true);
-      registrarLog('Creó semestre', id); D = await leerNube(); toast('Semestre creado'); refrescar();
+      const anio = +$('#np_a').value, num = +$('#np_s').value;
+      const tipo = ($('#np_tipo') || {}).value || 'semestre';
+      if (!anio || !num) return toast('Indica año y número de periodo', true);
+      const pref = tipo === 'modulo' ? 'M' : tipo === 'ciclo' ? 'C' : '';
+      const id = `${anio}-${pref}${num}`;
+      if (D.periodos.some(p => p.id === id)) return toast('Ese periodo ya existe', true);
+      let ini = ($('#np_i') || {}).value, fin = ($('#np_f') || {}).value;
+      if (!ini || !fin) {
+        if (tipo === 'semestre') {
+          ini = ini || `${anio}-${num === 1 ? '01-15' : '07-15'}`;
+          fin = fin || `${anio}-${num === 1 ? '06-30' : '12-15'}`;
+        } else {
+          // Módulos/ciclos: repartir el año en N bloques de ~30-45 días si no hay fechas
+          const startMonth = Math.min(11, Math.max(0, (num - 1) * 2));
+          ini = ini || `${anio}-${String(startMonth + 1).padStart(2,'0')}-01`;
+          const endD = new Date(anio, startMonth + 2, 0);
+          fin = fin || `${anio}-${String(endD.getMonth()+1).padStart(2,'0')}-${String(endD.getDate()).padStart(2,'0')}`;
+        }
+      }
+      const nombre = `${anio} - ${etiquetaTipoPeriodo(tipo)} ${num}`;
+      let payload = { id, nombre, inicio: ini, fin, activo: true, tipo };
+      let { error } = await dbClient.from('periodos').insert([payload]);
+      if (error && /tipo/i.test(error.message || '')) {
+        delete payload.tipo;
+        ({ error } = await dbClient.from('periodos').insert([payload]));
+      }
+      if (error) return toast('Error al crear periodo: ' + error.message, true);
+      registrarLog('Creó periodo', id + ' (' + tipo + ')'); D = await leerNube(); toast(etiquetaTipoPeriodo(tipo) + ' creado'); refrescar();
     }
     if (a === 'togPer') { const p = D.periodos.find(x => x.id === i); if (!p) return; const act = p.activo === false; const { error } = await dbClient.from('periodos').update({ activo: act }).eq('id', i); if (error) return toast('Error: ' + error.message, true); registrarLog(act ? 'Activó semestre' : 'Suspendió semestre', i); D = await leerNube(); toast(act ? 'Semestre activo' : 'Semestre suspendido'); refrescar(); }
     if (a === 'delPer') { if (confirm('¿Eliminar semestre?')) { await dbClient.from('periodos').delete().eq('id', i); registrarLog('Eliminó semestre', i); D = await leerNube(); toast('Semestre eliminado'); refrescar(); } }
